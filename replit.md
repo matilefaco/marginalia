@@ -40,37 +40,44 @@ A Portuguese-language literary social network where users annotate book passages
 - `artifacts/marginalia` — React + Vite frontend (previewPath: `/`)
 - `artifacts/api-server` — Express API server (port 8080)
 
-### Pages
-1. **Home** (`/`) — Feed with "Lendo agora" card, "Ecos do seu momento" annotations feed, "Descobrir" carousel
-2. **Explore** (`/explore`) — Search, trending annotations, readers, emerging books grid
-3. **Library** (`/library`) — Book grid with filters (Todos / Lendo / Concluídos / Lista de desejos)
-4. **Profile** (`/profile`) — User stats, identity phrase, favorite excerpts
-5. **BookHub** (`/book/:id`) — Progress card (% display), heatmap with locked chapters, recent annotations, shareable cards
-6. **Reader** (`/reader/:id`) — Full-screen reading with tap-to-annotate panel, reaction chips, highlight mode
-7. **Thread** (`/thread/:id`) — Annotation thread with replies, clickable reaction chips, reply input
+### Architecture — Post-Refactor
+**Frontend runs off AppContext + mock data** (not API-dependent for UI). The API server still exists but the React app uses an in-memory data layer for all UI operations.
+
+- **AppContext** (`src/context/AppContext.tsx`) — global state with currentUser, books, margins, progress, notifications + actions
+- **Mock data** (`src/data/mockData.ts`) — 7 books, 8 margins, 5 users, progress, notifications, collections
+- **Constants** (`src/data/constants.ts`) — GENRES, SPOILER_PREFERENCES, MARGIN_TYPES, SPOILER_LEVELS, REACTION_TYPES, etc.
+- **Utils**: `spoiler.ts` (anti-spoiler filter logic), `formatting.ts` (timeAgo, formatReference, etc.)
+
+### Onboarding Flow
+1. Splash screen (2.2s)
+2. **Welcome** — manifesto screen, "Começar" / "Já tenho conta"
+3. **Genres** — multi-select genre chips
+4. **Ritmo da leitura** — anti-spoiler preference (Ver tudo / Ver só o que li / Modo protegido)
+5. **Sign up** — name, @username, city, email, password
+6. **Books** — search + select initial books, set status + progress %
+
+### Main Screens (13 total)
+1. **Home** (`/`) — Continue reading card, "Hoje para você" feed (anti-spoiler filtered), "Em alta", "Sua atividade", rituais
+2. **Explore** (`/explore`) — Search, editorial collections, trending margins, books in debate, compatible readers
+3. **Nova Margem** (`/nova-margem`) — 7-step wizard: book → excerpt → reference → type → commentary → spoiler → visibility → publish
+4. **Library** (`/library`) — Status filters (Todos/Lendo/Concluídos/Quero ler/Abandonados/Favoritos), book cards with progress
+5. **Book Detail** (`/book/:id`) — Community hub (NOT reader); progress editor, community stats, tabs (Ecos/Teorias/Críticas/Perguntas/Meus registros), anti-spoiler banner
+6. **Profile** (`/profile`) — Reading signature, 4-stat grid, genre chips, my margins, compatible readers
+7. **Notifications** (`/notifications`) — Typed notification list with unread dots
+8. **Settings** (`/settings`) — Ritmo da leitura preference + genre toggles
+9. **Thread** (`/thread/:id`) — Margin detail with reactions (8 types), reply input
 
 ### Key Components
-- `AnnotationCard` — Annotation card with reaction chips (5 types, distinct styles each)
-- `BookCover` — Placeholder book cover with paper texture
-- `LogoMark` — SVG logo (book with Marginalia colors)
-- `Navbar` — Bottom nav with center "Ler" button elevated
+- `MarginCard` — Shows margin OR SpoilerShieldCard if blocked by anti-spoiler rules
+- `LogoMark` — SVG book logo
+- `Navbar` — 5-item bottom nav with elevated center "+" button for /nova-margem
+- `SpoilerShieldCard` — Elegant blocked content card with update progress / unlock actions
 
-### Database Schema
-- `books` — id, title, author, progress, currentPage, totalPages, annotations, highlights, debates, currentChapter, status, heatmap (jsonb), createdAt
-- `annotations` — id, bookId, bookTitle, chapter, progressAt, excerpt, note, type, isPublic, userId, userName, userInitials, reactions (jsonb), replyCount, createdAt
-- `replies` — id, annotationId, userId, userName, userInitials, text, reactions (jsonb), createdAt
+### Anti-Spoiler System ("Ritmo da leitura")
+- `canUserSeeMargin(margin, spoilerPreference, progress)` in `utils/spoiler.ts`
+- 3 modes: `all` (see everything), `progress_only` (by progress %), `protected` (hide major/ending spoilers)
+- SpoilerShieldCard shown when blocked — "Trecho ocultado para preservar sua leitura"
+- Configurable in onboarding + Settings
 
-### Heatmap Logic
-Chapters beyond current reading progress are shown as locked (blurred bar + lock icon + "em breve").
-
-### API Routes
-- `GET /api/books` — list all books
-- `GET /api/books/:id` — book detail + heatmap + recentAnnotations
-- `GET /api/books/:id/cards` — shareable cards for a book
-- `POST /api/annotations` — create annotation
-- `GET /api/annotations/:id` — get annotation thread (annotation + replies)
-- `POST /api/annotations/:id/reactions` — add reaction
-- `GET /api/feed` — home feed (currentReading, echoes, discover)
-- `GET /api/explore` — explore page (trending, readers, emergingBooks)
-- `GET /api/users/me` — current user profile
-- `GET /api/healthz` — health check
+### API Routes (backend — not used by default UI)
+- `GET /api/books`, `GET /api/books/:id`, `POST /api/annotations`, `GET /api/feed`, etc.

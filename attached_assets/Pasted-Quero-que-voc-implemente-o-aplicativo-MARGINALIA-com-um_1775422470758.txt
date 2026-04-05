@@ -1,0 +1,705 @@
+Quero que você implemente o aplicativo MARGINALIA com uma estrutura de projeto organizada, escalável e clara, para evitar confusão durante a construção. Siga exatamente esta arquitetura de pastas, separação de responsabilidades e ordem de implementação.
+
+OBJETIVO
+Construir um front-end React mobile-first, com aparência de produto real, organizado de forma profissional, fácil de expandir depois e com componentes reutilizáveis.
+
+ESTRUTURA DE PASTAS
+Organize o projeto assim:
+
+src/
+  app/
+    AppShell.jsx
+    routes.js
+    AppContext.jsx
+    initialState.js
+
+  components/
+    ui/
+      TopBar.jsx
+      BottomNav.jsx
+      PrimaryButton.jsx
+      SecondaryButton.jsx
+      GhostButton.jsx
+      Chip.jsx
+      FilterChip.jsx
+      Input.jsx
+      TextArea.jsx
+      SearchBar.jsx
+      SectionHeader.jsx
+      EmptyState.jsx
+      ModalSheet.jsx
+      SegmentedControl.jsx
+      StatCard.jsx
+      Avatar.jsx
+
+    cards/
+      BookCard.jsx
+      ContinueReadingCard.jsx
+      MarginCard.jsx
+      SpoilerShieldCard.jsx
+      ReadingProgressCard.jsx
+      ReadingSignatureCard.jsx
+      CompatibilityCard.jsx
+      CollectionCard.jsx
+      NotificationCard.jsx
+
+    onboarding/
+      GenreSelector.jsx
+      SpoilerPreferenceSelector.jsx
+      BookOnboardingSelector.jsx
+
+    margin/
+      MarginComposer.jsx
+      MarginTypeSelector.jsx
+      SpoilerLevelSelector.jsx
+      VisibilitySelector.jsx
+      ReferenceInput.jsx
+
+    book/
+      BookHeader.jsx
+      BookProgressEditor.jsx
+      BookCommunityTabs.jsx
+      BookStatsRow.jsx
+
+    profile/
+      ProfileHeader.jsx
+      ProfileStats.jsx
+      ReadingSignaturePanel.jsx
+      CompatibleReadersList.jsx
+      PublicCollectionsList.jsx
+
+  screens/
+    onboarding/
+      OnboardingWelcomeScreen.jsx
+      OnboardingGenresScreen.jsx
+      OnboardingSpoilerScreen.jsx
+      OnboardingBooksScreen.jsx
+
+    auth/
+      SignUpScreen.jsx
+
+    main/
+      HomeScreen.jsx
+      ExploreScreen.jsx
+      NewMarginScreen.jsx
+      LibraryScreen.jsx
+      BookDetailScreen.jsx
+      ProfileScreen.jsx
+      NotificationsScreen.jsx
+      SettingsScreen.jsx
+
+  data/
+    mockUsers.js
+    mockBooks.js
+    mockProgress.js
+    mockPosts.js
+    mockComments.js
+    mockCollections.js
+    mockNotifications.js
+    mockExplore.js
+    index.js
+
+  hooks/
+    useAppState.js
+    useFilteredFeed.js
+    useBookProgress.js
+    useCompatibleReaders.js
+    useReadingSignature.js
+
+  utils/
+    spoiler.js
+    progress.js
+    collections.js
+    compatibility.js
+    formatting.js
+    mockHelpers.js
+    constants.js
+
+  styles/
+    theme.js
+    global.css
+    tokens.css
+    components.css
+    utilities.css
+
+  assets/
+    covers/
+    icons/
+    illustrations/
+
+  main.jsx
+
+ARQUIVOS E RESPONSABILIDADES
+
+app/AppShell.jsx
+Responsável por:
+- layout geral do app
+- renderização da tela ativa
+- exibição da navbar inferior no fluxo principal
+- esconder navbar nas telas de onboarding e signup
+- envolver o app com contexto global
+
+app/routes.js
+Definir rotas e nomes de telas.
+Exemplo:
+- onboarding-welcome
+- onboarding-genres
+- onboarding-spoiler
+- signup
+- onboarding-books
+- home
+- explore
+- new-margin
+- library
+- book-detail
+- profile
+- notifications
+- settings
+
+app/AppContext.jsx
+Criar contexto global simples para armazenar:
+- currentUser
+- users
+- books
+- progress
+- posts
+- comments
+- collections
+- notifications
+- currentRoute
+- selectedBookId
+- onboardingCompleted
+
+Também definir ações como:
+- navigate(route, params)
+- updateSpoilerPreference()
+- updatePreferredGenres()
+- updateBookProgress()
+- createMargin()
+- markNotificationRead()
+- selectBook()
+
+app/initialState.js
+Juntar todos os dados mockados em um estado inicial coerente.
+
+COMPONENTES UI
+Esses componentes devem ser totalmente reutilizáveis e estilisticamente consistentes.
+
+TopBar.jsx
+- título
+- subtítulo opcional
+- ações à direita
+- usar em Home, Explore, Library, Profile, Notifications, Settings
+
+BottomNav.jsx
+- 5 itens fixos
+- item central destacado
+- estados ativo/inativo claros
+
+PrimaryButton.jsx
+- botão principal
+- usado em CTAs fortes
+
+SecondaryButton.jsx
+- botão secundário
+
+GhostButton.jsx
+- botão leve, discreto
+
+Chip.jsx / FilterChip.jsx
+- gêneros
+- reações
+- filtros
+- estados de seleção
+
+Input.jsx / TextArea.jsx
+- campos reutilizáveis
+- foco visível
+- altura confortável
+- boa legibilidade
+
+SearchBar.jsx
+- busca por livro, autor, trecho ou leitor
+
+SectionHeader.jsx
+- título de seção
+- subtítulo opcional
+- ação opcional “ver mais”
+
+EmptyState.jsx
+- estado vazio bonito e útil
+
+SegmentedControl.jsx
+- alternância entre opções curtas
+
+StatCard.jsx
+- cartões pequenos de estatísticas
+
+CARDS DE PRODUTO
+BookCard.jsx
+Mostrar:
+- capa
+- título
+- autor
+- status opcional
+- progresso opcional
+- atividade opcional
+
+ContinueReadingCard.jsx
+Mostrar:
+- livro atual
+- progresso salvo
+- quantidade de novos ecos liberados
+- CTA principal e secundário
+
+MarginCard.jsx
+Mostrar:
+- trecho
+- referência
+- tipo de margem
+- comentário
+- autor do post
+- reações
+- comentários
+- livro relacionado
+
+SpoilerShieldCard.jsx
+Mostrar quando conteúdo estiver bloqueado:
+- título elegante
+- explicação
+- botão para atualizar progresso
+- botão para liberar manualmente
+
+ReadingProgressCard.jsx
+Mostrar progresso em livro da biblioteca ou home.
+
+ReadingSignatureCard.jsx
+Exibir assinatura de leitura.
+
+CompatibilityCard.jsx
+Exibir leitor compatível + porcentagem + pequena justificativa.
+
+CollectionCard.jsx
+Exibir coleção pública pessoal/editorial.
+
+NotificationCard.jsx
+Exibir notificação com tipo, texto e estado lido/não lido.
+
+COMPONENTES DE ONBOARDING
+GenreSelector.jsx
+- seleção múltipla de gêneros
+
+SpoilerPreferenceSelector.jsx
+- cards para:
+  - Ver tudo
+  - Ver só o que eu já li
+  - Modo protegido
+
+BookOnboardingSelector.jsx
+- seleção inicial de livros
+- status
+- progresso
+
+COMPONENTES DE NOVA MARGEM
+MarginComposer.jsx
+Componente principal da criação de margem.
+Subcomponentes:
+- seletor de livro
+- textarea do trecho
+- campo de referência
+- tipo de margem
+- comentário
+- spoiler
+- visibilidade
+- botão publicar
+
+MarginTypeSelector.jsx
+SpoilerLevelSelector.jsx
+VisibilitySelector.jsx
+ReferenceInput.jsx
+
+COMPONENTES DE LIVRO
+BookHeader.jsx
+- capa
+- título
+- autor
+- status do usuário
+
+BookProgressEditor.jsx
+- editar página / capítulo / %
+- status: Quero ler / Lendo / Concluído
+
+BookCommunityTabs.jsx
+- Ecos
+- Teorias
+- Críticas
+- Perguntas
+- Seus registros
+
+BookStatsRow.jsx
+- leitores
+- margens
+- debates
+- salvamentos
+
+COMPONENTES DE PERFIL
+ProfileHeader.jsx
+- avatar
+- nome
+- username
+- cidade
+- bio
+
+ProfileStats.jsx
+- livros
+- margens
+- debates
+- salvos
+
+ReadingSignaturePanel.jsx
+- assinatura de leitura com destaque editorial
+
+CompatibleReadersList.jsx
+- lista horizontal ou vertical curta
+
+PublicCollectionsList.jsx
+- coleções públicas do usuário
+
+TELAS E RESPONSABILIDADES
+
+OnboardingWelcomeScreen.jsx
+- manifesto inicial
+- entrar no fluxo
+
+OnboardingGenresScreen.jsx
+- salvar preferredGenres
+
+OnboardingSpoilerScreen.jsx
+- salvar spoilerPreference
+
+SignUpScreen.jsx
+- nome
+- username
+- cidade
+- email
+- senha
+- CTA criar conta
+
+OnboardingBooksScreen.jsx
+- adicionar livros iniciais
+- marcar status
+- informar progresso
+
+HomeScreen.jsx
+Seções:
+- cabeçalho vivo
+- ContinueReadingCard
+- Hoje para você
+- Em alta, sem estragar sua leitura
+- Sua atividade
+- Rituais de leitura
+
+ExploreScreen.jsx
+Seções:
+- busca
+- tendências
+- livros em alta
+- autores em alta
+- coleções editoriais
+- leitores compatíveis
+
+NewMarginScreen.jsx
+- tela principal do composer
+- foco total na criação de margem
+
+LibraryScreen.jsx
+- filtros por status
+- ordenação
+- grid/lista de livros
+- navegação para BookDetail
+
+BookDetailScreen.jsx
+- capa, autor, progresso
+- tabs da comunidade
+- filtro anti-spoiler visível
+- botão adicionar margem
+
+ProfileScreen.jsx
+- retrato de sensibilidade
+- assinatura de leitura
+- stats
+- coleções
+- leitores compatíveis
+
+NotificationsScreen.jsx
+- lista de notificações
+
+SettingsScreen.jsx
+- preferências do usuário
+- anti-spoiler
+- gêneros
+- bio
+- cidade
+
+HOOKS
+useAppState.js
+Abstrair acesso ao contexto global.
+
+useFilteredFeed.js
+Montar feed visível para o usuário com base em:
+- preferência de spoiler
+- progresso
+- livros em andamento
+- gêneros preferidos
+
+useBookProgress.js
+Retornar progresso de um livro específico.
+
+useCompatibleReaders.js
+Calcular leitores compatíveis com lógica simples.
+
+useReadingSignature.js
+Gerar ou selecionar assinatura de leitura.
+
+UTILS
+utils/constants.js
+Colocar todas as listas e enums:
+- gêneros
+- tipos de margem
+- reações
+- status de biblioteca
+- níveis de spoiler
+- preferências de spoiler
+- labels da UI
+
+utils/spoiler.js
+Implementar:
+- canUserSeePost(post, spoilerPreference, progress)
+- getBlockedReason(post, progress)
+- isPostBeyondProgress(post, progress)
+
+utils/progress.js
+Implementar:
+- getBookProgress(userId, bookId, progressList)
+- formatProgressLabel(progress)
+- updateProgressData()
+
+utils/compatibility.js
+Implementar:
+- getCompatibleReaders(currentUser, users, progress, posts)
+
+utils/collections.js
+Implementar helpers para montar coleções.
+
+utils/formatting.js
+- datas relativas
+- labels legíveis
+- formatação de referência
+- capitalização amigável
+
+DATA
+Criar dados mockados elegantes e coerentes.
+Não usar dados genéricos sem alma.
+
+mockUsers.js
+Criar 5 a 8 leitores plausíveis.
+
+mockBooks.js
+Criar 10 a 16 livros coerentes com o universo Marginalia.
+
+mockPosts.js
+Criar margens com:
+- trechos curtos
+- comentários interessantes
+- vários tipos de margem
+- diferentes níveis de spoiler
+- diferentes livros
+
+mockProgress.js
+Criar progresso variado:
+- alguns concluídos
+- alguns em andamento
+- alguns só quero ler
+
+mockCollections.js
+Exemplos:
+- “frases que me destruíram este mês”
+- “passagens que ainda estão ecoando”
+- “livros que me devolveram a mim”
+
+mockNotifications.js
+Exemplos:
+- reação recebida
+- comentário novo
+- novos ecos liberados
+- coleção salva
+
+THEME E ESTILO
+styles/theme.js
+Definir tokens centrais:
+- colors
+- typography
+- spacing
+- radius
+- shadows
+
+Exemplo de categorias:
+colors:
+- background
+- surface
+- surfaceSoft
+- text
+- textSoft
+- textMuted
+- accent
+- accentSoft
+- border
+- dangerSoft
+- successSoft
+
+typography:
+- display
+- title
+- subtitle
+- body
+- caption
+- label
+
+spacing:
+- xs
+- sm
+- md
+- lg
+- xl
+- xxl
+
+radius:
+- sm
+- md
+- lg
+- xl
+- pill
+
+DIREÇÃO DE LEGIBILIDADE
+Aplicar no código:
+- texto principal mais escuro
+- melhor contraste
+- tamanho mínimo confortável
+- line-height mais generoso
+- placeholders legíveis
+- labels menos apagadas
+- CTA com peso visual claro
+- metadados suaves, mas legíveis
+
+ORDEM EXATA DE IMPLEMENTAÇÃO
+
+FASE 1 — BASE
+1. Criar theme.js
+2. Criar global.css / tokens.css
+3. Criar routes.js
+4. Criar mock data
+5. Criar initialState.js
+6. Criar AppContext.jsx
+7. Criar AppShell.jsx
+8. Criar BottomNav.jsx
+
+FASE 2 — UI FUNDAMENTAL
+9. Criar TopBar.jsx
+10. Criar botões
+11. Criar Input / TextArea
+12. Criar Chip / FilterChip
+13. Criar SectionHeader
+14. Criar SearchBar
+15. Criar EmptyState
+16. Criar StatCard
+
+FASE 3 — ONBOARDING E AUTH
+17. OnboardingWelcomeScreen
+18. OnboardingGenresScreen
+19. OnboardingSpoilerScreen
+20. SignUpScreen
+21. OnboardingBooksScreen
+
+FASE 4 — LÓGICA DE PRODUTO
+22. Implementar constants.js
+23. Implementar progress.js
+24. Implementar spoiler.js
+25. Implementar useFilteredFeed.js
+26. Implementar useBookProgress.js
+27. Implementar useCompatibleReaders.js
+28. Implementar useReadingSignature.js
+
+FASE 5 — COMPONENTES DE CONTEÚDO
+29. BookCard
+30. ContinueReadingCard
+31. MarginCard
+32. SpoilerShieldCard
+33. ReadingProgressCard
+34. ReadingSignatureCard
+35. CompatibilityCard
+36. CollectionCard
+37. NotificationCard
+
+FASE 6 — TELA PRINCIPAL DE CRIAÇÃO
+38. ReferenceInput
+39. MarginTypeSelector
+40. SpoilerLevelSelector
+41. VisibilitySelector
+42. MarginComposer
+43. NewMarginScreen
+
+FASE 7 — TELAS PRINCIPAIS
+44. HomeScreen
+45. ExploreScreen
+46. LibraryScreen
+47. BookHeader
+48. BookProgressEditor
+49. BookStatsRow
+50. BookCommunityTabs
+51. BookDetailScreen
+52. ProfileHeader
+53. ProfileStats
+54. ReadingSignaturePanel
+55. CompatibleReadersList
+56. PublicCollectionsList
+57. ProfileScreen
+58. NotificationsScreen
+59. SettingsScreen
+
+FASE 8 — ACABAMENTO
+60. Revisar legibilidade em todas as telas
+61. Melhorar estados ativos
+62. Ajustar espaçamentos
+63. Refinar cards bloqueados do anti-spoiler
+64. Refinar navbar
+65. Adicionar transições suaves
+66. Garantir consistência visual
+67. Revisar mobile-first em todas as telas
+
+REGRAS DE IMPLEMENTAÇÃO IMPORTANTES
+1. Não reconstruir o app como reader.
+2. Nunca exibir páginas completas do livro.
+3. Toda interação principal deve girar em torno de margens, progresso, descoberta e comunidade.
+4. O anti-spoiler deve ser visível, elegante e funcional.
+5. A home deve respeitar progresso e preferência do usuário.
+6. O botão central deve ser a ação principal do produto.
+7. O app precisa parecer sofisticado, mas fácil de usar.
+8. O código deve ficar limpo e bem dividido.
+9. O design não pode sacrificar legibilidade.
+10. A experiência precisa parecer um produto premium real.
+
+DEFINIÇÃO DE PRONTO
+Considerar a primeira versão pronta apenas quando:
+- onboarding estiver funcional
+- cadastro estiver funcional
+- navbar estiver funcional
+- Nova Margem estiver funcional
+- Home estiver personalizada
+- Biblioteca estiver navegável
+- página de livro estiver comunitária
+- anti-spoiler estiver funcionando visualmente
+- perfil estiver desejável
+- legibilidade estiver boa em mobile real
+
+RESULTADO ESPERADO
+Quero uma base sólida de front-end, organizada como produto real, pronta para crescer depois com backend, autenticação e banco de dados, mas já convincente o suficiente para parecer um app de verdade no Replit.

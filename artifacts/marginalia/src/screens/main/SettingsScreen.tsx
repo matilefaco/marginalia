@@ -1,0 +1,126 @@
+import { ArrowLeft, Eye, BookOpen, Shield } from "lucide-react";
+import { Link } from "wouter";
+import { useApp } from "@/context/AppContext";
+import { SPOILER_PREFERENCES, GENRES, type SpoilerPreference } from "@/data/constants";
+
+const ICONS = [Eye, BookOpen, Shield];
+
+export function SettingsScreen() {
+  const { currentUser, updateSpoilerPreference, updatePreferredGenres } = useApp();
+
+  const toggleGenre = (genre: string) => {
+    const current = currentUser.preferredGenres;
+    const next = current.includes(genre)
+      ? current.filter((g) => g !== genre)
+      : [...current, genre];
+    updatePreferredGenres(next);
+  };
+
+  return (
+    <div className="min-h-full bg-[#FAF8F3]">
+      <div className="flex items-center gap-3 px-5 pt-8 pb-4">
+        <Link href="/profile">
+          <button className="text-[#454545]/40">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+        </Link>
+        <h1 className="font-serif italic text-[22px] text-[#454545]">Preferências</h1>
+      </div>
+
+      <div className="px-5 pb-8 space-y-8">
+        {/* Spoiler Preference */}
+        <section data-testid="section-spoiler-settings">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              Ritmo da leitura
+            </span>
+            <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+          </div>
+          <p className="font-serif italic text-[12px] text-[#454545]/50 mb-3">
+            "O Marginalia respeita o seu ritmo de leitura."
+          </p>
+          <div className="space-y-2">
+            {SPOILER_PREFERENCES.map((pref, i) => {
+              const Icon = ICONS[i];
+              const isSelected = currentUser.spoilerPreference === pref.id;
+              return (
+                <button
+                  key={pref.id}
+                  data-testid={`settings-spoiler-${pref.id}`}
+                  onClick={() => updateSpoilerPreference(pref.id as SpoilerPreference)}
+                  className={`w-full flex items-start gap-3 p-4 rounded-[12px] border text-left transition-all ${
+                    isSelected
+                      ? "border-[#AE8F7D]/40 bg-[#AE8F7D]/5"
+                      : "border-[#454545]/8 hover:border-[#AE8F7D]/25"
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isSelected ? "text-[#AE8F7D]" : "text-[#454545]/30"}`} />
+                  <div className="flex-1">
+                    <p className={`font-sans font-light text-[12px] mb-0.5 ${isSelected ? "text-[#454545]" : "text-[#454545]/60"}`}>
+                      {pref.label}
+                    </p>
+                    <p className="font-sans font-light text-[10px] text-[#454545]/35 leading-relaxed">
+                      {pref.description}
+                    </p>
+                  </div>
+                  {isSelected && (
+                    <div className="w-4 h-4 rounded-full bg-[#AE8F7D] flex-shrink-0 flex items-center justify-center mt-0.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#FAF8F3]" />
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Genres */}
+        <section data-testid="section-genres-settings">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              Gêneros de interesse
+            </span>
+            <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {GENRES.map((g) => {
+              const isSelected = currentUser.preferredGenres.includes(g);
+              return (
+                <button
+                  key={g}
+                  data-testid={`settings-genre-${g}`}
+                  onClick={() => toggleGenre(g)}
+                  className={`font-sans text-[10px] font-light px-3 py-1.5 rounded-full border transition-all ${
+                    isSelected
+                      ? "bg-[#454545] text-[#FAF8F3] border-transparent"
+                      : "bg-transparent text-[#454545]/50 border-[#454545]/12 hover:border-[#AE8F7D]/30"
+                  }`}
+                >
+                  {g}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Account */}
+        <section>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              Conta
+            </span>
+            <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+          </div>
+          <div className="space-y-1">
+            {["Editar perfil", "Notificações", "Privacidade", "Sobre o Marginalia"].map((item) => (
+              <div key={item} className="flex items-center justify-between py-3.5 border-b border-[#454545]/5">
+                <span className="font-sans font-light text-[13px] text-[#454545]/65">{item}</span>
+                <span className="text-[#454545]/20">›</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}

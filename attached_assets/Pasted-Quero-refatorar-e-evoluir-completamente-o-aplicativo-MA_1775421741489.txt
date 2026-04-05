@@ -1,0 +1,919 @@
+Quero refatorar e evoluir completamente o aplicativo MARGINALIA com foco em produto real, legibilidade, onboarding, personalização, filtro anti-spoiler, cadastro, retenção, viralização e identidade premium.
+
+IMPORTANTE:
+Não quero apenas ajustes visuais isolados.
+Quero uma reorganização completa da experiência do usuário, mantendo a identidade estética elegante, literária, calma, editorial e refinada do app, mas transformando o protótipo atual em algo com lógica real de produto, navegação funcional, dados coerentes, utilidade clara e forte potencial de compartilhamento.
+
+POSICIONAMENTO DO PRODUTO
+O Marginalia não deve ser construído como:
+- um e-reader
+- um app de resumos
+- uma rede social genérica de livros
+
+O Marginalia deve ser construído e apresentado como:
+“Uma rede social de margens, ecos e leitura compartilhada.”
+
+A ideia central é:
+“Leia junto. Sinta junto.”
+
+O foco não é hospedar o livro inteiro dentro do app.
+O foco é:
+- registrar trechos marcantes
+- guardar margens pessoais
+- compartilhar interpretações
+- descobrir como outras pessoas atravessaram os mesmos trechos
+- criar conversa em torno da experiência de leitura
+- preservar o ritmo de leitura de cada pessoa com anti-spoiler inteligente
+
+OBJETIVO CENTRAL DO APP
+O usuário entra no Marginalia para:
+1. registrar trechos importantes
+2. escrever o que pensou, sentiu ou teorizou sobre eles
+3. acompanhar livros que está lendo
+4. descobrir ecos e debates sem ser exposto a spoilers indesejados
+5. compartilhar uma identidade leitora refinada e interessante
+
+PRINCÍPIO DE PRODUTO
+Toda funcionalidade, bloco, tela, CTA e componente deve responder a pelo menos uma destas perguntas:
+1. Isso ajuda o leitor a registrar sua experiência de leitura?
+2. Isso ajuda o leitor a descobrir experiências de leitura compatíveis?
+3. Isso ajuda o leitor a evitar spoilers e preservar seu ritmo?
+4. Isso ajuda o leitor a voltar ao app com desejo genuíno?
+5. Isso ajuda o leitor a compartilhar algo belo, pessoal e culturalmente interessante?
+
+Se a resposta for não, simplificar, substituir ou remover.
+
+MUDANÇA ESTRUTURAL MAIS IMPORTANTE
+Remover a lógica de páginas completas de leitura dos livros.
+Não quero mais simulação de reader nem páginas inteiras como se o livro estivesse hospedado no app.
+
+Isso enfraquece o conceito e cria uma promessa errada.
+
+Em vez disso, o usuário deve:
+- selecionar o livro
+- digitar manualmente o trecho que deseja registrar
+- informar a referência do trecho
+- classificar o tipo de postagem
+- escrever seu comentário
+- definir nível de spoiler
+- escolher a visibilidade
+- publicar a margem
+
+O coração do produto deve ser:
+“registrar, guardar, descobrir e compartilhar margens de leitura.”
+
+ARQUITETURA PRINCIPAL DO APP
+A navegação inferior deve ter 5 itens:
+1. Início
+2. Explorar
+3. Nova Margem
+4. Biblioteca
+5. Perfil
+
+O botão central deve ser o mais importante visualmente e abrir diretamente a tela de criação de uma nova margem.
+Ele não deve abrir uma tela de leitura do livro.
+
+ONBOARDING — NOVO FLUXO
+Criar um onboarding premium, elegante, emocional e funcional, com mobile-first real.
+
+TELA 1 — BOAS-VINDAS
+Elementos:
+- logo/símbolo do Marginalia
+- título “Marginalia”
+- subtítulo “Leia junto. Sinta junto.”
+- texto curto:
+  “Um espaço para registrar trechos, compartilhar margens e descobrir como outras pessoas atravessam os mesmos livros.”
+- CTA principal: “Começar”
+- CTA secundário discreto: “Já tenho conta”
+
+Quero que essa tela pareça um manifesto suave do produto.
+
+TELA 2 — GÊNEROS DE PREFERÊNCIA
+Pergunta:
+“Que leituras mais chamam você?”
+Exibir seleção múltipla com chips ou cards elegantes.
+
+Gêneros:
+- Romance literário
+- Clássicos
+- Ficção contemporânea
+- Poesia
+- Filosofia
+- Drama
+- Fantasia
+- Ficção científica
+- Terror
+- Não ficção
+- Biografia
+- Ensaios
+- Feminismo
+- Psicanálise
+- Espiritualidade
+- Literatura brasileira
+- Literatura estrangeira
+- Outros
+
+Salvar essas preferências no estado do usuário.
+
+TELA 3 — FILTRO DE EXPERIÊNCIA / ANTI-SPOILER
+Essa tela deve apresentar uma das features centrais do produto.
+
+Título:
+“Como você prefere explorar o app?”
+
+Subtítulo:
+“O Marginalia respeita o seu ritmo de leitura.”
+
+Opções em cards:
+1. Ver tudo
+Descrição:
+“Veja todo o conteúdo público, inclusive trechos e discussões além do seu progresso.”
+2. Ver só o que eu já li
+Descrição:
+“Mostrar apenas conteúdos dentro do meu progresso informado.”
+3. Modo protegido
+Descrição:
+“Ocultar automaticamente conteúdos potencialmente sensíveis até eu liberar.”
+
+Salvar isso como preferência principal do usuário.
+
+Sugestão de nome interno e de marca para essa feature:
+“Ritmo da leitura”
+
+Essa feature deve ser tratada como assinatura do app.
+
+TELA 4 — CADASTRO
+Criar fluxo de cadastro com prioridade para e-mail.
+
+Campos:
+- nome do leitor
+- @username
+- cidade
+- e-mail
+- senha
+
+CTA:
+“Criar conta”
+
+Também exibir opções secundárias:
+- Continuar com Google
+- Continuar com Apple
+
+Mas o fluxo visual principal deve ser e-mail.
+
+TELA 5 — PRIMEIRA PERSONALIZAÇÃO
+Pergunta:
+“Quais livros você está lendo ou já leu recentemente?”
+
+Permitir:
+- buscar livro
+- adicionar manualmente
+- marcar status: Quero ler / Lendo / Concluído
+- informar progresso atual por página, capítulo ou %
+
+Esses dados devem alimentar:
+- recomendações iniciais
+- feed personalizado
+- sistema anti-spoiler
+
+HOME — NOVA LÓGICA
+A home não deve ser apenas bonita.
+Ela deve ser uma tela de retorno e continuidade.
+
+A home precisa transmitir:
+- que existe algo novo
+- que o app conhece o usuário
+- que há conversa acontecendo agora
+- que há conteúdo disponível sem spoiler
+- que vale a pena voltar amanhã
+
+Estrutura recomendada:
+
+1. Cabeçalho vivo
+Elementos:
+- logo Marginalia
+- saudação discreta
+- subtítulo variável, por exemplo:
+  - “Leia junto”
+  - “Seu ritmo está protegido”
+  - “Novos ecos sem spoiler”
+  - “Hoje há 12 novas margens dentro do seu progresso”
+- ícone de notificações
+- ícone de filtros
+
+2. Bloco prioritário: “Continue de onde você parou”
+Se houver livro em andamento, mostrar:
+- capa
+- título
+- progresso salvo
+- quantos novos ecos foram liberados desde a última visita
+- CTA: “Ver ecos liberados”
+- CTA secundário: “Adicionar margem”
+
+3. Bloco: “Hoje para você”
+Feed personalizado com base em:
+- gêneros escolhidos
+- livros salvos
+- autores recorrentes
+- conteúdo semelhante ao que o usuário curte
+- debates compatíveis
+- margens populares permitidas pelo filtro de spoiler
+
+4. Bloco: “Em alta, sem estragar sua leitura”
+Mostrar conteúdos populares respeitando o filtro do usuário.
+Se algo estiver bloqueado, exibir teaser suave e elegante em vez de esconder de modo seco.
+
+5. Bloco: “Sua atividade”
+Mostrar:
+- última margem publicada
+- último livro atualizado
+- nova reação recebida
+- debate em andamento
+
+6. Bloco: “Rituais de leitura”
+Criar sensação de retorno e hábito suave.
+Exemplos:
+- “Você marcou 3 trechos esta semana”
+- “Faz 2 dias desde sua última margem”
+- “Quer registrar uma frase antes de esquecê-la?”
+Com CTA leve:
+“Nova margem”
+
+ANTI-SPOILER — FEATURE CENTRAL
+O anti-spoiler deve ser uma das features mais importantes e memoráveis do app.
+
+Ele não deve ser uma configuração escondida.
+Ele deve aparecer:
+- no onboarding
+- nos filtros da home
+- nas páginas de livro
+- nos cards bloqueados
+- nas configurações
+- na comunicação de marca
+
+Nome sugerido:
+“Ritmo da leitura”
+
+Texto de apoio:
+“O Marginalia respeita o seu ritmo de leitura.”
+
+MODELO DE FUNCIONAMENTO
+Cada postagem precisa ter metadados:
+- livro
+- autor
+- tipo de referência: página / capítulo / porcentagem / sem referência exata
+- valor da referência
+- nível de spoiler:
+  - sem spoiler
+  - spoiler leve
+  - spoiler importante
+  - final / revelação central
+
+Cada usuário também terá progresso salvo por livro:
+- status: quero ler / lendo / concluído
+- página atual
+- capítulo atual
+- porcentagem atual
+- preferência de visibilidade
+
+REGRAS DO FILTRO
+1. Se o usuário escolheu “Ver tudo”, mostrar tudo normalmente.
+2. Se escolheu “Ver só o que eu já li”, mostrar apenas conteúdos com referência menor ou igual ao progresso salvo.
+3. Se escolheu “Modo protegido”, ocultar automaticamente:
+   - textos sensíveis
+   - trechos posteriores ao progresso salvo
+   - finais
+   - revelações centrais
+4. Se o usuário não informou progresso daquele livro, mostrar apenas conteúdo marcado como “sem spoiler”.
+
+Quando um conteúdo estiver oculto, mostrar um card bonito e elegante.
+
+Exemplo:
+Título:
+“Trecho ocultado para preservar sua leitura”
+Texto:
+“Este conteúdo pode avançar além do ponto que você informou neste livro.”
+Ações:
+- Atualizar meu progresso
+- Liberar mesmo assim
+
+Outro texto possível:
+“Ocultado para preservar sua experiência de leitura.”
+
+NOVA MARGEM — TELA CENTRAL DO APP
+O botão central deve abrir diretamente a tela de criação de margem.
+Essa deve ser uma das melhores telas do produto.
+
+Objetivo emocional:
+fazer o leitor sentir que está guardando algo precioso, e não apenas criando um post.
+
+MICROCOPY SUGERIDA
+- “Que trecho ficou com você?”
+- “O que isso abriu em você?”
+- “Quer guardar isso só para você ou compartilhar?”
+- “Marque o ponto do livro para respeitar o ritmo dos outros leitores.”
+
+ESTRUTURA DA TELA NOVA MARGEM
+PASSO 1
+Selecionar livro
+- buscar livro
+- escolher da biblioteca
+- adicionar manualmente se necessário
+
+PASSO 2
+Campo do trecho
+- textarea grande
+- placeholder:
+  “Digite aqui o trecho que você marcou no livro”
+- aviso discreto:
+  “Compartilhe apenas trechos curtos”
+
+PASSO 3
+Campo de referência
+- página
+- capítulo
+- porcentagem
+- ou “sem referência exata”
+
+PASSO 4
+Tipo de postagem
+Opções:
+- Insight
+- Teoria
+- Crítica
+- Pergunta
+- Reação
+- Citação favorita
+- Conexão pessoal
+- Leitura simbólica
+
+PASSO 5
+Comentário pessoal
+Placeholder:
+“O que esse trecho abriu em você?”
+ou
+“O que você quer dizer sobre isso?”
+
+PASSO 6
+Configuração de spoiler
+- sem spoiler
+- spoiler leve
+- spoiler importante
+- final / revelação central
+
+PASSO 7
+Visibilidade
+- pública
+- só amigos
+- privada
+
+PASSO 8
+Botão final
+“Publicar margem”
+
+Após publicar:
+- salvar no histórico do livro
+- salvar no perfil do usuário
+- disponibilizar para o feed conforme regras de spoiler e visibilidade
+
+Opcional:
+mostrar preview bonito do card antes da publicação.
+
+TIPOS DE MARGEM COMO SISTEMA
+Cada tipo de margem deve ter identidade própria.
+Isso deve afetar:
+- ícone
+- label
+- destaque visual
+- filtros
+- possíveis ordenações
+
+Tipos:
+- Insight
+- Teoria
+- Crítica
+- Pergunta
+- Reação
+- Citação favorita
+- Conexão pessoal
+- Leitura simbólica
+
+PÁGINA DE LIVRO — REFORMULAÇÃO TOTAL
+A página de livro não deve mais parecer um reader.
+Ela deve funcionar como uma comunidade viva daquele livro.
+
+Ela precisa responder:
+- o que as pessoas estão marcando nesse livro?
+- quais debates surgiram?
+- o que está liberado para mim sem spoiler?
+- o que eu já registrei aqui?
+- que tipo de experiência coletiva esse livro está gerando?
+
+Elementos:
+1. Cabeçalho com capa, título, autor e status do usuário
+2. Controle de progresso:
+- Quero ler
+- Lendo
+- Concluído
+- atualizar página/capítulo/%
+3. Estatísticas da comunidade:
+- leitores ativos
+- número de margens
+- número de debates
+- trechos mais salvos
+4. Abas ou seções:
+- Ecos liberados para você
+- Teorias em circulação
+- Críticas
+- Perguntas abertas
+- Seus registros
+- Pessoas lendo junto agora
+5. Filtro de spoiler visível
+6. Botão:
+“Adicionar margem a este livro”
+
+Tudo nessa tela deve respeitar o progresso do usuário.
+
+EXPLORAR — DESCOBERTA CULTURAL
+A tela Explorar deve ser claramente diferente da Home.
+
+A Home é pessoal.
+Explorar é descoberta.
+
+EXPLORAR deve conter:
+- busca por livro, autor, trecho ou leitor
+- tendências da semana
+- autores em alta
+- livros com mais discussão
+- gêneros em alta
+- coleções editoriais
+- novos leitores interessantes
+- debates públicos relevantes
+
+COLEÇÕES EDITORIAIS SUGERIDAS
+- “Livros que devastaram leitores esta semana”
+- “Trechos mais sublinhados”
+- “Frases que fizeram leitores parar”
+- “Leituras para quem amou Clarice”
+- “Passagens que ainda ecoam”
+- “Livros que estão formando comunidade”
+
+BIBLIOTECA — MAPA DE VIDA LEITORA
+A Biblioteca não deve ser só uma grade de capas.
+Ela deve ser um mapa vivo da trajetória de leitura.
+
+Adicionar:
+- filtros por status:
+  - Quero ler
+  - Lendo
+  - Concluídos
+  - Abandonados
+  - Favoritos
+- ordenação por atividade recente
+- quantidade de margens pessoais
+- quantidade de ecos liberados
+- data da última atualização
+- indicador visual de novos conteúdos disponíveis
+
+Ao tocar num livro:
+abrir a comunidade daquele livro, não uma leitura simulada.
+
+PERFIL — RETRATO DE SENSIBILIDADE
+O perfil precisa fazer o usuário querer cuidar dele.
+Deve parecer menos bio comum e mais retrato de sensibilidade.
+
+Elementos:
+- avatar
+- nome
+- @username
+- cidade
+- bio curta
+- gêneros preferidos
+- estatísticas:
+  - livros
+  - margens publicadas
+  - debates iniciados
+  - trechos salvos
+- seção “Sua assinatura de leitura”
+- estantes públicas
+- trechos mais curtidos
+- teorias mais discutidas
+- listas e coleções públicas
+- autores mais recorrentes
+- livros que mais renderam margens
+- frases mais salvas
+- leitores compatíveis
+
+ASSINATURA DE LEITURA
+Criar uma feature central chamada:
+“Assinatura de leitura”
+
+Ela deve sintetizar a forma como a pessoa lê, com base em:
+- trechos marcados
+- reações usadas
+- temas recorrentes
+- tipos de margem
+- livros e autores mais presentes
+
+Exemplos:
+- “Você lê em busca do que quase foi dito.”
+- “Você marca silêncios, perdas e gestos interrompidos.”
+- “Você persegue frases que queimam devagar.”
+- “Seu olhar volta sempre para rupturas íntimas.”
+- “Você lê como quem procura uma fresta.”
+
+Essa assinatura pode aparecer:
+- no perfil
+- em resumos mensais
+- em cards compartilháveis
+- em áreas de descoberta de leitores parecidos
+
+REAÇÕES — NÃO USAR LIKE GENÉRICO
+Não quero sistema banal de like.
+Quero reações mais literárias, memoráveis e específicas.
+
+Reações sugeridas:
+- Isso mudou minha visão
+- Me atravessou
+- Belo demais
+- Preciso pensar mais nisso
+- Me identifiquei profundamente
+- Quero reler esse trecho
+- Discordo, mas amei ler
+- Isso abriu uma teoria
+
+Essas reações devem:
+- aparecer como chips elegantes
+- alimentar rankings
+- ajudar a construir perfis e compatibilidade
+- parecer refinadas, não infantis
+
+COMPATIBILIDADE ENTRE LEITORES
+Adicionar sistema de afinidade entre usuários baseado em:
+- gêneros preferidos
+- livros em comum
+- tipos de margem
+- padrões de reação
+- temas recorrentes
+
+Textos possíveis:
+- “Você e Ana Clara compartilham 82% da sensibilidade de leitura.”
+- “Vocês costumam marcar os mesmos tipos de passagem.”
+- “Vocês se encontram em temas como silêncio, perda e deslocamento.”
+
+Isso pode aparecer:
+- no perfil
+- em sugestões de pessoas
+- em áreas de descoberta
+
+COLEÇÕES PESSOAIS COMPARTILHÁVEIS
+Permitir que o usuário organize suas margens em coleções.
+Exemplos:
+- 5 frases que me destruíram este mês
+- passagens que me fizeram parar
+- trechos que ainda estão ecoando
+- personagens que me deixaram inquieto
+- frases que parecem me conhecer
+- livros que me devolveram a mim
+
+Cada coleção pode ser:
+- privada
+- pública
+- compartilhável
+
+CARD COMPARTILHÁVEL PARA STORY
+Cada margem deve poder virar um card premium de compartilhamento.
+Esse card precisa ser imediatamente reconhecível como Marginalia.
+
+Pode conter:
+- trecho
+- livro
+- autor
+- tipo de margem
+- identidade visual do app
+- nome do leitor ou @username, se ele quiser
+- fundo editorial bonito
+
+Também permitir compartilhamento de:
+- assinatura de leitura
+- coleção pessoal
+- resumo mensal
+- compatibilidade com outro leitor
+
+RETENÇÃO — MOTIVOS PARA VOLTAR TODO DIA
+Quero mecanismos de retorno suaves, elegantes e relevantes.
+Sem tom ansioso ou manipulação barata.
+
+Exemplos:
+1. novos ecos liberados conforme o progresso muda
+2. comentários em margens do usuário
+3. debates ativos em livros acompanhados
+4. sugestão do dia:
+   “Hoje você talvez goste deste eco.”
+5. memória recente:
+   “Faz alguns dias que você salvou este trecho. Ainda pensa nisso?”
+6. resumo da semana:
+   “Seu mapa de leitura da semana”
+7. leituras em comum:
+   “3 pessoas começaram o mesmo livro que você esta semana”
+
+HOME COMO LOOP DE RETORNO
+A Home deve sempre ajudar o usuário a perceber:
+- o que há de novo
+- o que ficou disponível
+- o que ele pode fazer agora
+- o que merece ser compartilhado
+- o que ainda ecoa nele
+
+NOTIFICAÇÕES
+Criar sistema de notificações coerente com o produto.
+
+Exemplos:
+- alguém reagiu à sua margem
+- alguém respondeu sua teoria
+- novos ecos ficaram disponíveis no livro que você está lendo
+- um leitor compatível começou um livro que você ama
+- uma coleção sua foi salva
+- um debate que você acompanha recebeu novas respostas
+
+RANKINGS E CURADORIA
+Adicionar curadoria editorial sofisticada.
+Nada de gamificação infantil.
+
+Seções possíveis:
+- Margens mais discutidas da semana
+- Livros com mais ecos crescendo agora
+- Teorias mais salvas
+- Trechos que fizeram leitores parar
+- Debates mais elegantes
+- Autores mais sublinhados da semana
+- Leituras que estão formando comunidade
+
+BADGES E DISTINTIVOS
+Se houver badges, devem ser discretos, bonitos e editoriais.
+Exemplos:
+- Leitor de margem fina
+- Leitor de abismos
+- Colecionador de ecos
+- Curador de passagens
+- Anotador compulsivo
+- Leitor de frases-lâmina
+- Guardião de silêncios
+
+Quero que eles pareçam selos editoriais, não troféus de jogo.
+
+LEGIBILIDADE — MELHORAR SEM PERDER A SOFISTICAÇÃO
+Hoje o app está bonito, mas um pouco claro e leve demais.
+Quero melhorar a legibilidade mantendo a alma visual.
+
+Aplicar:
+1. aumentar contraste do texto principal
+2. escurecer um pouco o texto de corpo
+3. aumentar tamanho mínimo de:
+- labels
+- chips
+- filtros
+- placeholders
+- navegação inferior
+4. melhorar espaçamento entre linhas em trechos longos
+5. melhorar altura de botões
+6. reforçar estados ativos
+7. usar serif elegante apenas onde ela realmente valorize a leitura
+8. usar sans mais legível para UI, filtros, inputs, números e navegação
+9. reforçar hierarquia entre:
+- título
+- subtítulo
+- metadado
+- corpo
+- CTA
+10. reduzir a sensação de interface “lavada”
+11. evitar que textos importantes fiquem em tons apagados demais
+12. revisar leitura real em iPhone
+
+DIREÇÃO VISUAL
+Manter:
+- estética literária
+- atmosfera calma
+- delicadeza editorial
+- sensação premium
+- suavidade emocional
+
+Mas tornar a interface:
+- mais clara
+- mais funcional
+- mais contrastada
+- mais hierárquica
+- mais utilizável
+
+A estética não pode prejudicar usabilidade.
+
+Ajustes visuais desejados:
+- CTA principal mais evidente
+- estados ativos mais claros
+- bordas mais consistentes
+- espaçamentos mais respirados
+- inputs claramente interativos
+- cards com melhor hierarquia
+- navbar com item ativo melhor destacado
+
+MICROCOPY DO APP
+A escrita interna do app deve ser bela, leve, autoral e editorial.
+Evitar tom técnico, genérico ou frio.
+
+Exemplos de tom:
+- “Leia junto”
+- “Sinta junto”
+- “Seu ritmo está protegido”
+- “O que esse trecho abriu em você?”
+- “Guardar como margem”
+- “Novos ecos disponíveis”
+- “Atualize seu progresso para ver mais”
+- “Sem spoilers além do que você permitiu”
+- “Uma conversa em torno do que foi lido”
+
+VIRALIZAÇÃO — SEM PERDER ELEGÂNCIA
+Quero mecanismos fortes de compartilhamento orgânico.
+Não quero vulgarizar o app.
+
+Adicionar:
+1. card compartilhável de trecho
+2. assinatura de leitura
+3. coleções compartilháveis
+4. resumo emocional mensal
+5. reações sofisticadas
+6. compatibilidade entre leitores
+7. convites para ler junto
+8. debates por trecho
+9. destaques editoriais semanais
+10. badges elegantes
+
+Exemplos de conteúdo compartilhável:
+- “5 frases que me destruíram este mês”
+- “Você lê em busca do que quase foi dito.”
+- “Você e Ana Clara compartilham 82% da sensibilidade de leitura.”
+- “Em abril, você marcou mais trechos sobre perda, silêncio e desejo.”
+
+DIFERENÇA ENTRE HOME E EXPLORAR
+HOME:
+- pessoal
+- personalizada
+- protegida pelo progresso
+- focada em continuidade e retorno
+
+EXPLORAR:
+- descoberta cultural
+- tendências
+- debates públicos
+- novos leitores
+- livros em alta
+- curadoria editorial
+
+Não misturar excessivamente essas funções.
+
+DADOS ESTRUTURADOS / MODELOS SUGERIDOS
+Organizar a aplicação com dados mockados coerentes para algo que pareça real.
+
+User:
+- id
+- nome
+- username
+- cidade
+- email
+- bio
+- avatar
+- preferredGenres[]
+- spoilerPreference
+- favoriteAuthors[]
+- readingSignature
+- createdAt
+
+Book:
+- id
+- title
+- author
+- cover
+- genres[]
+- totalPages
+- totalChapters
+- description
+- createdAt
+
+UserBookProgress:
+- id
+- userId
+- bookId
+- status
+- currentPage
+- currentChapter
+- currentPercent
+- updatedAt
+
+Post / MarginEntry:
+- id
+- userId
+- bookId
+- excerpt
+- referenceType
+- page
+- chapter
+- percent
+- postType
+- commentary
+- spoilerLevel
+- visibility
+- reactionsCount
+- commentsCount
+- createdAt
+
+Reaction:
+- id
+- postId
+- userId
+- type
+
+Comment:
+- id
+- postId
+- userId
+- body
+- spoilerLevel
+- createdAt
+
+Collection:
+- id
+- userId
+- title
+- description
+- isPublic
+- postIds[]
+- createdAt
+
+Notification:
+- id
+- userId
+- type
+- body
+- isRead
+- createdAt
+
+COMPORTAMENTO DE IMPLEMENTAÇÃO
+Quero um front-end funcional com:
+- navegação entre telas
+- componentes reutilizáveis
+- dados mockados realistas
+- estados ativos
+- filtros funcionando
+- lógica visual de anti-spoiler
+- fluxo de onboarding
+- fluxo de cadastro
+- Nova Margem funcional
+- progresso por livro funcionando
+- feed adaptado à preferência do usuário
+- visual mobile-first real
+
+Quero que pareça produto, não mockup.
+
+IMPLEMENTAÇÃO PRIORITÁRIA
+Se precisar organizar em ordem:
+1. onboarding com preferências e anti-spoiler
+2. cadastro
+3. nova arquitetura sem reader
+4. botão central Nova Margem
+5. progresso por livro
+6. feed respeitando spoiler
+7. página de livro como comunidade
+8. melhorias de legibilidade
+9. cards compartilháveis
+10. assinatura de leitura
+11. compatibilidade entre leitores
+12. coleções
+13. curadoria editorial
+14. notificações relevantes
+
+PEDIDO FINAL
+Quero que você:
+1. reorganize a arquitetura das telas com base em tudo isso
+2. remova a lógica de leitura simulada dos livros
+3. crie as novas telas de onboarding
+4. crie o fluxo de cadastro
+5. implemente a tela central de Nova Margem
+6. atualize Home, Explorar, Biblioteca, Livro e Perfil
+7. implemente a base visual e lógica do filtro anti-spoiler
+8. melhore muito a legibilidade
+9. mantenha a identidade visual refinada do Marginalia
+10. entregue um app funcional de front-end com dados mockados coerentes, navegação real e sensação de produto premium
+
+RESULTADO ESPERADO
+Quero que o Marginalia pareça:
+- um aplicativo cultural premium
+- memorável
+- sofisticado
+- imediatamente autoral
+- social sem ser genérico
+- viralizável sem perder elegância
+- centrado em margens e ecos
+- com anti-spoiler como grande diferencial
+- com motivo real para o usuário voltar e compartilhar
+
+Objetivo final:
+fazer o Marginalia parecer um produto de verdade, com profundidade, identidade própria, utilidade clara e forte desejo de uso.

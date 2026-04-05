@@ -1,0 +1,658 @@
+Quero que você implemente o aplicativo MARGINALIA em React, com arquitetura limpa, componentes reutilizáveis, navegação real, dados mockados consistentes e experiência mobile-first premium.
+
+OBJETIVO
+Transformar o protótipo atual em um front-end funcional de produto real.
+
+IMPORTANTE
+O app NÃO deve funcionar como e-reader.
+Remover a lógica de páginas completas de leitura do livro.
+O app deve ser centrado em:
+- registrar trechos
+- adicionar interpretações pessoais
+- descobrir ecos de leitura de outras pessoas
+- proteger o ritmo de leitura com anti-spoiler
+- criar experiência social literária premium
+
+STACK E DIREÇÃO TÉCNICA
+Implementar em React com foco em front-end.
+Pode usar:
+- React
+- CSS modular ou CSS-in-JS simples
+- componentes reutilizáveis
+- estado local com useState/useMemo
+- contexto simples se necessário
+- dados mockados internos
+- navegação simulada por estado ou rotas leves, dependendo da estrutura existente
+
+Se possível, organizar em:
+- components/
+- screens/
+- data/
+- hooks/
+- utils/
+- styles/
+
+Se houver React Router já disponível, usar.
+Se não houver, criar navegação simples por estado global/local, mas com sensação real de app.
+
+OBJETIVO VISUAL
+Manter a identidade do Marginalia:
+- literária
+- editorial
+- calma
+- refinada
+- premium
+- suave
+
+Mas melhorar:
+- legibilidade
+- contraste
+- hierarquia
+- clareza dos estados ativos
+- funcionalidade real
+
+REGRAS DE UX
+1. Mobile-first
+2. Toda tela deve parecer utilizável em iPhone
+3. Evitar interfaces lavadas demais
+4. CTAs principais precisam ter mais peso visual
+5. O item central da navbar deve ser a ação mais forte
+6. Serif para atmosfera
+7. Sans para interface e clareza
+8. Anti-spoiler visível e compreensível
+9. Navegação fluida entre telas
+10. O produto deve parecer real, não mockup estático
+
+ARQUITETURA DE TELAS
+Criar as seguintes telas principais:
+
+1. OnboardingWelcomeScreen
+2. OnboardingGenresScreen
+3. OnboardingSpoilerScreen
+4. SignUpScreen
+5. OnboardingBooksScreen
+6. HomeScreen
+7. ExploreScreen
+8. NewMarginScreen
+9. LibraryScreen
+10. BookDetailScreen
+11. ProfileScreen
+12. NotificationsScreen
+13. SettingsScreen
+
+ROTAS / NAVEGAÇÃO
+Estrutura principal:
+- onboarding/welcome
+- onboarding/genres
+- onboarding/spoiler
+- signup
+- onboarding/books
+- home
+- explore
+- new-margin
+- library
+- book/:id
+- profile
+- notifications
+- settings
+
+Se não houver router real, simular essas rotas com estado e parâmetros.
+
+NAVBAR INFERIOR
+Criar uma navbar fixa inferior com 5 itens:
+- Início
+- Explorar
+- Nova Margem
+- Biblioteca
+- Perfil
+
+O botão central “Nova Margem” deve ser visualmente especial.
+Não abrir reader.
+Abrir diretamente a tela de criação de margem.
+
+ESTRUTURA DE DADOS MOCKADOS
+Criar um arquivo data/mockData.js com estruturas consistentes.
+
+USUÁRIOS
+Cada usuário deve conter:
+- id
+- name
+- username
+- city
+- email
+- bio
+- avatar
+- preferredGenres
+- spoilerPreference
+- favoriteAuthors
+- readingSignature
+- compatibilityScore opcional
+- stats
+
+LIVROS
+Cada livro:
+- id
+- title
+- author
+- cover
+- genres
+- totalPages
+- totalChapters
+- description
+- communityStats
+- trendingScore
+
+PROGRESSO DO USUÁRIO POR LIVRO
+- id
+- userId
+- bookId
+- status
+- currentPage
+- currentChapter
+- currentPercent
+- lastOpenedAt
+
+MARGENS / POSTS
+Cada post:
+- id
+- userId
+- bookId
+- excerpt
+- referenceType
+- page
+- chapter
+- percent
+- postType
+- commentary
+- spoilerLevel
+- visibility
+- reactions
+- commentsCount
+- createdAt
+
+COMENTÁRIOS
+- id
+- postId
+- userId
+- body
+- spoilerLevel
+- createdAt
+
+COLEÇÕES
+- id
+- userId
+- title
+- description
+- postIds
+- isPublic
+
+NOTIFICAÇÕES
+- id
+- userId
+- type
+- body
+- isRead
+- createdAt
+
+ENUMS / CONSTANTES
+Criar constantes reutilizáveis:
+preferredGenresOptions
+spoilerPreferenceOptions
+marginTypes
+spoilerLevels
+visibilityOptions
+reactionTypes
+libraryStatuses
+
+Sugestão:
+
+spoilerPreferenceOptions:
+- all
+- progress_only
+- protected
+
+spoilerLevels:
+- none
+- light
+- major
+- ending
+
+marginTypes:
+- insight
+- theory
+- critique
+- question
+- reaction
+- favorite_quote
+- personal_connection
+- symbolic_reading
+
+reactionTypes:
+- Isso mudou minha visão
+- Me atravessou
+- Belo demais
+- Preciso pensar mais nisso
+- Me identifiquei profundamente
+- Quero reler esse trecho
+- Discordo, mas amei ler
+- Isso abriu uma teoria
+
+UTILS IMPORTANTES
+Criar utils para lógica de produto.
+
+1. getBookProgress(userId, bookId)
+Retorna progresso do usuário naquele livro.
+
+2. canUserSeePost(post, spoilerPreference, progress)
+Implementar a lógica anti-spoiler.
+
+Regras:
+- se spoilerPreference = all => true
+- se spoilerPreference = progress_only => mostrar apenas se referência <= progresso
+- se spoilerPreference = protected => bloquear conteúdos sensíveis e avançados
+- se não houver progresso => mostrar apenas posts com spoilerLevel = none
+
+3. getBlockedReason(post, userProgress)
+Retorna texto elegante explicando por que o card foi ocultado.
+
+4. getAvailablePostsForUser(posts, user, progressMap)
+Filtra feed.
+
+5. getReadingSignature(user, posts)
+Pode ser mockado, mas estruturar como função.
+
+6. getCompatibleReaders(user, users)
+Pode usar lógica simples baseada em gêneros e livros em comum.
+
+COMPONENTES REUTILIZÁVEIS
+Criar componentes reutilizáveis e consistentes.
+
+UI BASE
+- AppShell
+- ScreenContainer
+- TopBar
+- SectionHeader
+- PrimaryButton
+- SecondaryButton
+- GhostButton
+- Chip
+- FilterChip
+- Input
+- TextArea
+- SegmentedControl
+- BottomNav
+- EmptyState
+- StatCard
+- SpoilerShieldCard
+- ModalSheet
+- SearchBar
+
+COMPONENTES DE PRODUTO
+- BookCard
+- ContinueReadingCard
+- MarginCard
+- MarginComposer
+- ReactionChips
+- ReadingProgressCard
+- ReadingSignatureCard
+- CompatibilityCard
+- CollectionCard
+- NotificationCard
+- GenreSelector
+- SpoilerPreferenceSelector
+- BookProgressEditor
+- BookCommunityTabs
+
+TELAS — DETALHAMENTO
+
+1. OnboardingWelcomeScreen
+Objetivo:
+apresentar o app com força emocional.
+
+Conteúdo:
+- símbolo/logo
+- título “Marginalia”
+- subtítulo “Leia junto. Sinta junto.”
+- pequeno texto de posicionamento
+- CTA “Começar”
+- CTA secundário “Já tenho conta”
+
+2. OnboardingGenresScreen
+Objetivo:
+capturar gosto literário.
+
+Componente:
+GenreSelector com seleção múltipla.
+
+Salvar no estado:
+currentUser.preferredGenres
+
+3. OnboardingSpoilerScreen
+Objetivo:
+apresentar a feature assinatura do app.
+
+Título:
+“Como você prefere explorar o app?”
+Subtítulo:
+“O Marginalia respeita o seu ritmo de leitura.”
+
+Usar cards elegantes para:
+- Ver tudo
+- Ver só o que eu já li
+- Modo protegido
+
+Salvar em:
+currentUser.spoilerPreference
+
+4. SignUpScreen
+Campos:
+- nome
+- username
+- cidade
+- email
+- senha
+
+Botões:
+- Criar conta
+- Continuar com Google
+- Continuar com Apple
+
+Importante:
+deixar visual principal no fluxo por e-mail.
+
+5. OnboardingBooksScreen
+Objetivo:
+definir biblioteca inicial e alimentar anti-spoiler.
+
+Funcionalidade:
+- buscar entre livros mockados
+- adicionar livros
+- definir status
+- informar progresso
+
+6. HomeScreen
+Estrutura:
+- TopBar com logo, subtítulo vivo, notificações, filtros
+- ContinueReadingCard
+- seção “Hoje para você”
+- seção “Em alta, sem estragar sua leitura”
+- seção “Sua atividade”
+- seção “Rituais de leitura”
+
+Importante:
+feed precisa respeitar anti-spoiler.
+
+7. ExploreScreen
+Estrutura:
+- SearchBar
+- tendências da semana
+- livros em alta
+- autores em alta
+- coleções editoriais
+- leitores compatíveis
+- debates públicos populares
+
+Não deixar parecida com a Home.
+
+8. NewMarginScreen
+Essa é a tela mais importante do app.
+
+Criar um fluxo bonito e claro com:
+- seletor de livro
+- textarea do trecho
+- campo de referência
+- seletor de tipo de margem
+- textarea de comentário
+- seletor de spoiler
+- seletor de visibilidade
+- preview opcional
+- botão “Publicar margem”
+
+Ao publicar:
+- adicionar ao estado local de posts
+- voltar para Home ou BookDetail
+- mostrar feedback elegante de sucesso
+
+9. LibraryScreen
+Estrutura:
+- header “Biblioteca”
+- filtros por status
+- ordenação por atividade recente
+- cards de livros com:
+  - progresso
+  - número de margens pessoais
+  - ecos disponíveis
+  - atividade recente
+
+Ao tocar:
+abrir BookDetailScreen
+
+10. BookDetailScreen
+Estrutura:
+- capa, título, autor
+- progresso do usuário
+- botão para atualizar progresso
+- estatísticas da comunidade
+- tabs:
+  - Ecos liberados
+  - Teorias
+  - Críticas
+  - Perguntas
+  - Seus registros
+- botão “Adicionar margem a este livro”
+
+IMPORTANTE:
+não renderizar páginas do livro.
+Nunca simular leitura integral.
+
+11. ProfileScreen
+Estrutura:
+- avatar
+- nome
+- username
+- cidade
+- bio
+- gêneros
+- reading signature
+- estatísticas
+- coleções públicas
+- margens mais curtidas
+- leitores compatíveis
+
+12. NotificationsScreen
+Exibir:
+- reações recebidas
+- respostas
+- novos ecos disponíveis
+- atividade em debates
+- convites de leitura
+
+13. SettingsScreen
+Permitir editar:
+- spoilerPreference
+- preferredGenres
+- cidade
+- bio
+- notificações
+- visualização protegida
+
+LÓGICA DO ANTI-SPOILER
+Essa lógica deve aparecer visualmente no app inteiro.
+
+Ao renderizar MarginCard:
+- se o usuário puder ver, mostrar normalmente
+- se não puder, exibir SpoilerShieldCard
+
+SpoilerShieldCard deve conter:
+- título suave:
+  “Trecho ocultado para preservar sua leitura”
+- texto:
+  “Este conteúdo pode avançar além do ponto que você informou neste livro.”
+- ações:
+  - Atualizar meu progresso
+  - Liberar mesmo assim
+
+O bloqueio deve parecer elegante, não quebrado.
+
+ESTADOS GLOBAIS SUGERIDOS
+Criar estado central simples para:
+- currentUser
+- books
+- userProgress
+- posts
+- notifications
+- collections
+- selectedTab
+- currentRoute
+
+Pode ser via Context API simples, se necessário.
+Se não quiser contexto, pode começar com estado no componente raiz e passar props.
+
+APP ROOT
+No App principal:
+- decidir se usuário está em onboarding ou fluxo principal
+- renderizar a tela conforme rota atual
+- manter navbar apenas no fluxo principal
+- esconder navbar em onboarding/signup
+
+EXPERIÊNCIA DE MICROCOPY
+Usar linguagem autoral, suave e editorial.
+
+Exemplos:
+- “Seu ritmo está protegido”
+- “Que trecho ficou com você?”
+- “O que isso abriu em você?”
+- “Novos ecos disponíveis”
+- “Guardar como margem”
+- “Uma conversa em torno do que foi lido”
+
+Evitar cópia genérica de app social.
+
+LEGIBILIDADE
+Aplicar ajustes explícitos:
+- aumentar contraste do texto principal
+- usar corpo com melhor peso visual
+- aumentar tamanho de labels e navegação
+- melhorar line-height em trechos
+- evitar cinzas claros demais
+- reforçar estados ativos
+- tornar botões mais legíveis
+- melhorar leitura em telas pequenas
+
+DESIGN TOKENS
+Criar tokens para:
+- cores
+- raios
+- sombras
+- tipografia
+- spacing
+
+Exemplo de estrutura:
+const theme = {
+  colors: {
+    background: ...,
+    surface: ...,
+    surfaceSoft: ...,
+    text: ...,
+    textSoft: ...,
+    accent: ...,
+    accentSoft: ...,
+    border: ...,
+    success: ...,
+    warning: ...,
+  },
+  radius: {...},
+  spacing: {...},
+  typography: {...},
+  shadow: {...}
+}
+
+Quero consistência visual em todos os componentes.
+
+MOTION / TRANSIÇÕES
+Adicionar transições suaves em:
+- troca de tabs
+- hover/press states, se aplicável
+- abertura do composer
+- mudança de filtros
+- loading sutil
+Sem exagero.
+
+COMPARTILHAMENTO E VIRALIZAÇÃO — BASE VISUAL
+Mesmo que não implemente compartilhamento real ainda, deixar estrutura visual para:
+- cards compartilháveis de margem
+- assinatura de leitura
+- coleções pessoais
+- compatibilidade entre leitores
+- resumo mensal
+
+Pode ser mockado no front-end.
+
+SEÇÕES IMPORTANTES DO PERFIL
+Incluir:
+- “Sua assinatura de leitura”
+- “Coleções”
+- “Leitores parecidos com você”
+- “Margens mais salvas”
+
+SEÇÕES IMPORTANTES DO EXPLORE
+Incluir:
+- “Em alta esta semana”
+- “Trechos que fizeram leitores parar”
+- “Livros que estão formando comunidade”
+- “Leitores parecidos com você”
+
+SEÇÕES IMPORTANTES DO HOME
+Incluir:
+- “Continue de onde você parou”
+- “Hoje para você”
+- “Em alta, sem estragar sua leitura”
+- “Sua atividade”
+- “Rituais de leitura”
+
+DADOS MOCKADOS — TOM CULTURAL
+Usar livros e textos mockados coerentes com o universo do app.
+Exemplos possíveis:
+- Clarice Lispector
+- Machado de Assis
+- Guimarães Rosa
+- George Eliot
+- Kafka
+- Virginia Woolf
+- Elena Ferrante
+- Toni Morrison
+
+Os textos mockados devem soar literários e plausíveis.
+As reações também.
+
+ENTREGA ESPERADA
+Quero que você entregue:
+1. arquitetura reorganizada
+2. telas novas prontas
+3. navegação funcional
+4. componentes reutilizáveis
+5. lógica anti-spoiler visível
+6. botão central Nova Margem
+7. remoção total da simulação de leitura completa
+8. biblioteca realista
+9. página de livro como comunidade
+10. perfil mais desejável
+11. melhor legibilidade
+12. visual premium coerente
+13. dados mockados consistentes
+14. experiência de produto real
+
+RESULTADO FINAL
+O app precisa parecer:
+- sofisticado
+- autoral
+- utilizável
+- editorial
+- memorável
+- mobile-first
+- com identidade forte
+- com anti-spoiler como diferencial claro
+- com forte potencial de retenção e compartilhamento
+
+Se precisar, você pode reconstruir partes importantes do front-end para atingir isso corretamente.
+Priorize coerência, clareza, profundidade de produto e sensação de app real.
