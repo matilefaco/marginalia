@@ -1,0 +1,490 @@
+# MARGINALIA — Prompt Completo para Refinamento do App
+## Para usar no Lovable / Claude Code
+
+---
+
+## CONTEXTO DO PRODUTO
+
+**Marginalia** é uma plataforma de leitura social onde o texto deixa de ser estático e passa a ser um espaço vivo de pensamento coletivo. O nome vem das anotações feitas nas margens de livros ao longo da história.
+
+**Tagline:** Leia junto. Sinta junto.
+
+**Posicionamento:** Não é Kindle (consumo passivo), não é Goodreads (registro superficial), não é Twitter (fragmentação). É uma **Social Reading Platform** — leitura com profundidade social.
+
+**Sensação desejada:** Um livro vivo. Uma experiência íntima. Uma comunidade silenciosa. Um espaço de descoberta emocional.
+
+---
+
+## IDENTIDADE VISUAL — SEGUIR RIGOROSAMENTE
+
+### Símbolo da Marca
+O ícone é a **orelha do livro (dog-ear)** — a dobra da página que leitores fazem quando não têm marcador. Três elementos:
+1. **A página** — corpo preenchido em Doeskin (#BDAB9C), creme terroso, quente
+2. **A orelha** — triângulo no canto superior direito em branco cremoso (#FAF8F3 com opacidade 0.55), a dobra em si
+3. **O ponto na margem** — círculo pequeno em Old Vine (#697962) na margem esquerda da página, representando o leitor que já estava lá antes da anotação
+
+SVG do símbolo (usar em todo o app):
+```svg
+<svg viewBox="0 0 72 86" fill="none">
+  <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.9"/>
+  <line x1="13" y1="4" x2="13" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="0.8"/>
+  <line x1="17" y1="38" x2="52" y2="38" stroke="rgba(250,248,243,0.35)" stroke-width="1" stroke-linecap="round"/>
+  <line x1="17" y1="50" x2="48" y2="50" stroke="rgba(250,248,243,0.28)" stroke-width="1" stroke-linecap="round"/>
+  <line x1="17" y1="62" x2="40" y2="62" stroke="rgba(250,248,243,0.18)" stroke-width="1" stroke-linecap="round"/>
+  <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.55"/>
+  <circle cx="13" cy="70" r="5" fill="#697962" opacity="0.85"/>
+</svg>
+```
+
+### Paleta de Cores — EXATA
+```css
+--albescent:   #FAF8F3  /* fundo universal — 80-90% da interface */
+--albescent-2: #EBE6DB  /* superfícies secundárias, cards */
+--heather:     #AE8F7D  /* Heather Rose — destaques, anotações, ativo */
+--doeskin:     #BDAB9C  /* Old Doeskin — símbolo, decorativo */
+--old-vine:    #697962  /* Old Vine — confirmações, presença */
+--metal:       #454545  /* Machine Gun Metal — texto principal */
+--body-text:   #3D3D3D  /* texto de leitura */
+```
+
+Regras:
+- 80-90% Albescent + Metal (silêncio)
+- 10-15% Heather Rose (intervenção, emoção)
+- 5% Old Vine (confirmação, presença)
+- NUNCA preto puro #000 — sempre Metal #454545
+- NUNCA branco puro #fff — sempre Albescent #FAF8F3
+
+### Tipografia
+```
+Display/Leitura: Cormorant Garamond (Google Fonts)
+  - Títulos: font-style italic, font-weight 300-400
+  - Corpo de leitura: weight 400, size 17-18px, line-height 1.85
+  - Citações: italic weight 400
+
+Interface/UI: Jost (Google Fonts)
+  - Labels: weight 300-400, letter-spacing 0.14-0.22em, uppercase
+  - Botões: weight 400, letter-spacing 0.06em
+  - Metadados: weight 300, size 11-12px
+```
+
+### Estética Geral
+- Muito espaço negativo
+- Bordas: 0.5px solid rgba(174,143,125,0.15-0.25)
+- Border radius: 10-14px cards, 7-8px botões
+- Textura de papel: `background-image: radial-gradient(circle, rgba(189,171,156,0.1) 1px, transparent 1px); background-size: 5px 5px`
+- Sombras suaves: `box-shadow: 0 2px 16px rgba(69,69,69,0.05)`
+
+---
+
+## REGRA PRINCIPAL DE UX
+
+O usuário deve entender em até 3 segundos:
+1. "Estou lendo um livro"
+2. "Posso marcar momentos"
+3. "Posso ver o que outras pessoas sentiram nesses momentos"
+
+**Tudo que não serve a isso deve ser simplificado ou removido.**
+
+---
+
+## ARQUITETURA DO APP
+
+### Navegação (Bottom Bar)
+```
+[ Início ] [ Explorar ] [ Ler ] [ Biblioteca ] [ Perfil ]
+```
+- Item ativo: Heather (#AE8F7D)
+- Inativos: Metal opacity 0.3
+- Fundo: Albescent, borda superior 0.5px
+
+---
+
+### TELA 1: INÍCIO (Home)
+
+3 blocos obrigatórios nesta ordem:
+
+**Bloco 1 — Continue Lendo**
+```
+[Label] LENDO AGORA — Jost 8px Heather letter-spacing 0.16em
+
+[Título — Cormorant 20px Metal]
+[Autor — Jost 300 11px uppercase Metal 0.45]
+
+[Barra progresso — 3px Heather fill, fundo albescent-2]
+[XX% · Página YYY · ZZ anotações — Jost 9px Metal 0.35]
+
+[Botão "Continuar lendo" — Metal fill, texto Albescent, width 100%]
+```
+
+**Bloco 2 — Ecos do Seu Momento**
+```
+[Label] ECOS DO SEU MOMENTO
+[Sub] Apenas do que você já leu — sem spoilers
+
+[Card fundo Albescent-2, borda 0.5px]
+  [Rótulo tipo: INSIGHT / REAÇÃO / TEORIA — Jost 7px Heather]
+  [Capítulo · XX% — Jost 9px Metal 0.35]
+  [Trecho — Cormorant italic 13px]
+  [Nota — Cormorant regular 12px Metal 0.7]
+  [Avatar 14px circle + @usuario · tempo]
+  [Chips de reação]
+```
+
+**Bloco 3 — Descobrir**
+```
+[Label] DESCOBRIR
+[Cards horizontais scroll de outros livros]
+```
+
+---
+
+### TELA 2: LEITOR (tela mais importante)
+
+**Header mínimo:**
+```
+[← voltar  |  Título italic  |  ícone perfil]
+[Capítulo X · Autor — Jost 8px centrado Metal 0.35]
+```
+
+**Corpo de leitura:**
+- Fundo: #FAF8F3
+- Texto: Cormorant Garamond 17-18px, #3D3D3D, line-height 1.85
+- Margens: mínimo 24px laterais
+- SEM elementos de UI distraindo — o texto é o centro absoluto
+
+**Highlight ao selecionar texto:**
+- background: rgba(174,143,125,0.18)
+- box-shadow: inset 0 -1.5px 0 rgba(174,143,125,0.55)
+- Ao selecionar → painel de anotação (bottom sheet)
+
+**Painel de Anotação unificado (bottom sheet):**
+```
+[Trecho — Cormorant italic 11px, borda-left 2px Heather, Metal 0.45]
+
+[Reações rápidas — 5 chips em linha]
+  "Genial" | "Me identifico" | "Isso mudou minha visão" | "Preciso pensar" | "Discordo"
+
+[Campo nota — Cormorant italic placeholder "Escreva uma nota..." Metal 0.3]
+
+[Botão "Publicar" — Heather fill]
+[Botão "Apenas destacar" — ghost 0.5px borda]
+```
+
+**Footer do leitor:**
+```
+[Barra progresso 2px Heather]
+[Capítulo X de Y · XX% — Jost 9px Metal 0.3]
+```
+
+---
+
+### TELA 3: PÁGINA DO LIVRO (Hub)
+
+```
+[Header: título + autor]
+
+[Progresso visual — número grande XX% + barra]
+
+[Botão "Continuar lendo" — Metal fill]
+
+[HEATMAP — "Momentos do livro"]
+  Barras de intensidade por capítulo:
+    Cor Heather, opacidade varia por intensidade (0.3 a 1.0)
+    Capítulos não lidos: Metal opacity 0.15, desfocado
+    Ao tocar: abre insights daquele capítulo
+    Anti-spoiler: capítulos além do progresso → "🔒 Você ainda não chegou aqui"
+
+[INSIGHTS RECENTES — últimas anotações]
+
+[CARDS DO LIVRO]
+  Grid de cards gerados automaticamente
+  Botão "+ Gerar novo card"
+```
+
+---
+
+### TELA 4: THREAD DE ANOTAÇÃO
+
+```
+[Header: ← voltar | "trecho" italic | ícone salvar]
+
+[Trecho — borda-left 2px Heather, Cormorant italic, Metal 0.45]
+
+[Resumo reações — chips com contagem]
+
+[INSIGHTS em lista]
+  Para cada:
+    [Rótulo: INSIGHT / REAÇÃO / TEORIA — 7px Heather]
+    [@usuario · tempo — Jost 9px Metal 0.35]
+    [Texto — Cormorant 12px]
+    [Chips de reação]
+
+[Input bar fixo]
+  [Campo "Escreva uma anotação..." italic Cormorant]
+  [Ícone envio Heather]
+```
+
+---
+
+### TELA 5: EXPLORAR
+
+```
+[Search bar — fundo Albescent-2, borda 0.5px, Jost]
+
+[Em alta esta semana — cards de trechos virais]
+
+[Leitores como você — perfis + trecho recente]
+
+[Livros emergentes — grid com heatmap thumbnail]
+```
+
+---
+
+### TELA 6: BIBLIOTECA
+
+```
+[Header "Biblioteca"]
+
+[Filtros: Todos | Lendo | Concluídos | Lista de desejos]
+
+[Grid 2 colunas]
+  Para cada livro:
+    [Símbolo Marginalia como capa]
+    [Título Cormorant 14px]
+    [Autor Jost 10px]
+    [Barra progresso 2px]
+    [XX% · ZZ notas]
+```
+
+---
+
+### TELA 7: PERFIL
+
+```
+[Avatar circle — iniciais em fundo Old Vine]
+[Nome — Cormorant 22px]
+[Bio italic — Cormorant 14px Metal 0.55]
+
+[Stats 3 colunas: Livros | Anotações | Destaques]
+
+[Meus trechos favoritos — cards de citações]
+
+[Padrão de leitura — frase identitária]
+  "Você marca mais momentos de silêncio e perda"
+```
+
+---
+
+## SISTEMA DE CARDS COMPARTILHÁVEIS (MOTOR VIRAL)
+
+Cada livro gera automaticamente cards compartilháveis.
+
+**Estética base de todos os cards:**
+```css
+background: #FAF8F3;
+background-image: radial-gradient(circle, rgba(189,171,156,0.1) 1px, transparent 1px);
+background-size: 5px 5px;
+border: 0.5px solid rgba(174,143,125,0.2);
+border-radius: 14px;
+box-shadow: 0 2px 16px rgba(69,69,69,0.05);
+/* Dog-ear decorativo no canto superior direito — SVG triangular, opacidade 0.06 */
+/* Logo "Marginalia" Cormorant italic pequeno, Metal 0.3 */
+```
+
+### Card 1 — Momento (principal)
+```
+[PÁG. XX · MOMENTO MAIS INTENSO — Jost 8px Heather]
+[Trecho — Cormorant italic 18-20px, com trecho crítico destacado em rgba(174,143,125,0.2)]
+[Separador 0.5px]
+[Título do livro — Jost 8px uppercase Metal 0.35]
+[Autor — Cormorant italic 12px Metal 0.5]
+[Footer: "anotado por @usuario" Heather | "X leitores marcaram" Metal 0.3]
+```
+
+### Card 2 — Insight
+```
+[INSIGHT — Jost 8px Old Vine]
+[Trecho original — Cormorant italic 13px, borda-left 2px Heather]
+[Nota do leitor — Cormorant 15px Metal]
+[Footer: livro + usuario]
+```
+
+### Card 3 — Reação Emocional
+```
+[REAÇÃO — Jost 8px Heather]
+[Frase emocional — Cormorant italic 22-24px Metal]
+["Esse capítulo me destruiu." ou "Não consigo parar de pensar nisso."]
+[Livro + página no footer]
+```
+
+### Card 4 — Progresso
+```
+[MINHA LEITURA — Jost 8px Metal 0.35]
+[Título — Cormorant 22px]
+[Número de página grande — Cormorant italic Heather 48px, canto direito]
+[Barra progresso 3px]
+[XX% · ZZ notas · W debates]
+[Stats em grid 3 colunas]
+[Logo Marginalia]
+```
+
+### Card 5 — Identidade do Leitor
+```
+[MEU PERFIL DE LEITOR — Jost 8px]
+[Frase identitária — Cormorant italic 18px Metal]
+["Você marca mais momentos de silêncio e perda."]
+["Baseado em 28 anotações" — Jost 10px Metal 0.4]
+[3 livros mais anotados — lista pequena]
+[Logo Marginalia]
+```
+
+**Tela de Cards por Livro:**
+```
+[Header: título + "Compartilhar"]
+[Grid vertical de cards]
+[Botão flutuante "+ Gerar novo card" — Metal fill]
+[Em cada card: botão "Compartilhar" + "Salvar imagem"]
+```
+
+---
+
+## HEATMAP — FEATURE CENTRAL
+
+```css
+/* Por capítulo: */
+.heatmap-bar {
+  height: 4-6px;
+  background: #AE8F7D;
+  opacity: /* varia 0.3 a 1.0 por intensidade */;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+/* Capítulos não lidos: */
+.heatmap-bar.locked {
+  background: #454545;
+  opacity: 0.15;
+  filter: blur(1px);
+}
+```
+
+Anti-spoiler: capítulos além do progresso mostram "🔒 Você ainda não chegou aqui" em Jost 10px Metal 0.35.
+
+---
+
+## REAÇÕES NÃO-GENÉRICAS
+
+```
+"Isso mudou minha visão"      → bg Metal, texto Albescent
+"Preciso pensar mais"         → bg rgba(#AE8F7D, 0.1), texto Heather, borda 0.5px Heather 0.2
+"Genial"                      → bg Albescent-2, texto Metal 0.65, borda 0.5px
+"Discordo completamente"      → bg rgba(#697962, 0.08), texto Old Vine, borda 0.5px Old Vine 0.15
+"Me identifico profundamente" → bg Albescent-2, texto Metal 0.65
+```
+Chips: Jost 6-7px, padding 3px 8px, border-radius 20px.
+
+---
+
+## DADOS MOCK
+
+```javascript
+const books = [
+  {
+    id: 1, title: "A Hora da Estrela", author: "Clarice Lispector",
+    progress: 60, currentPage: 87, totalPages: 144,
+    annotations: 52, highlights: 18, debates: 7,
+    currentChapter: "IX",
+    heatmap: [0.3, 0.5, 0.8, 0.4, 0.9, 0.6, 0.7, 0.3, 0.85, 0.4]
+  },
+  {
+    id: 2, title: "Grande Sertão: Veredas", author: "João Guimarães Rosa",
+    progress: 23, currentPage: 142, totalPages: 624,
+    annotations: 28, highlights: 14, debates: 3,
+    currentChapter: "III",
+    heatmap: [0.6, 0.4, 0.7, 0.9, 0.5]
+  },
+  {
+    id: 3, title: "Middlemarch", author: "George Eliot",
+    progress: 67, currentPage: 542, totalPages: 880,
+    annotations: 64, highlights: 31, debates: 12,
+    currentChapter: "XLII",
+    heatmap: [0.4, 0.6, 0.5, 0.8, 0.7, 0.9, 0.6, 0.4]
+  }
+];
+
+const feedItems = [
+  {
+    type: "insight", book: "A Hora da Estrela", chapter: "IX", progress: 60,
+    excerpt: "Macabéa era tão discreta que nem ela mesma sabia que existia.",
+    note: "A invisibilidade como forma de existência. Clarice encontra a solidão mais absoluta.",
+    user: "@leitora_ana", time: "agora",
+    reactions: { "Genial": 4, "Me identifico": 12, "Isso me destruiu": 3 }
+  },
+  {
+    type: "reaction", book: "Grande Sertão: Veredas", chapter: "III", progress: 23,
+    emotionText: "Esse trecho me fez parar e fechar o livro por 10 minutos.",
+    user: "@rafael_m", time: "2h",
+    reactions: { "Me identifico": 8, "Preciso pensar mais": 5 }
+  },
+  {
+    type: "theory", book: "Middlemarch", chapter: "XLII", progress: 67,
+    excerpt: "sofria em silêncio, carregando o peso de sua própria limitação",
+    note: "Dois sofrimentos paralelos que nunca se tocam — Eliot encontrou a solidão mais precisa.",
+    user: "@beatriz_r", time: "ontem",
+    reactions: { "Genial": 7, "Discordo": 2 }
+  }
+];
+```
+
+---
+
+## REMOVER / SIMPLIFICAR
+
+- ❌ Múltiplos caminhos para a mesma ação
+- ❌ Botões redundantes
+- ❌ Mais de 2 CTAs primários por tela
+- ❌ Qualquer cor fora da paleta definida
+- ❌ Fundos escuros como cor de tela (Metal só para texto)
+- ❌ Aparência de "rede social comum"
+
+## ADICIONAR / REFORÇAR
+
+- ✅ Dog-ear SVG decorativo nos cantos de cards (opacity 0.06-0.1)
+- ✅ Textura de papel em fundos Albescent
+- ✅ Rótulos de tipo em todo conteúdo (INSIGHT / REAÇÃO / TEORIA / DESTAQUE)
+- ✅ Posição narrativa em todo conteúdo (Capítulo X · XX%)
+- ✅ Anti-spoiler obrigatório (bloqueio visual além do progresso)
+- ✅ Ponto Old Vine na margem após publicar anotação
+- ✅ Cards compartilháveis — mínimo 3 tipos por livro
+- ✅ Loop visual: Ler → Marcar → Ver ecos → Gerar card → Compartilhar → Voltar
+
+---
+
+## LOOP DE ENGAJAMENTO
+
+Após marcar trecho: "2 pessoas também marcaram isso" (ecos)
+Após gerar card: botão "Compartilhar agora"
+No feed: link claro "Continuar lendo"
+Notificações: "Alguém respondeu sua anotação em Middlemarch"
+
+---
+
+## CHECKLIST FINAL
+
+- [ ] Usuário entende em 3s o que o app faz
+- [ ] Home tem 3 blocos claros (Continue, Ecos, Descobrir)
+- [ ] Leitor parece um livro, não um app
+- [ ] Selecionar texto abre painel único unificado
+- [ ] Heatmap visível na página do livro
+- [ ] Cards compartilháveis funcionando (mínimo 3 tipos)
+- [ ] Reações não-genéricas implementadas
+- [ ] Anti-spoiler ativo no heatmap e feed
+- [ ] Navegação bottom bar com 5 itens
+- [ ] Cores seguem paleta exata
+- [ ] Tipografia: Cormorant Garamond + Jost
+- [ ] Símbolo Marginalia dog-ear presente
+- [ ] Microinterações nas ações principais
+
+---
+
+*Marginalia · Brand Identity V10 · 2025*
+*"The text is silent — until someone touches it."*

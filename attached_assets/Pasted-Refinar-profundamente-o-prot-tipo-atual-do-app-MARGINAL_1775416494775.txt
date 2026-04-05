@@ -1,0 +1,296 @@
+Refinar profundamente o protótipo atual do app MARGINALIA com foco em:
+
+- máxima clareza de uso
+- fluxo intuitivo
+- redução de complexidade
+- reforço da identidade do produto
+- criação de loops de engajamento
+- implementação de sistema de cards altamente compartilháveis
+
+O app já possui boa base visual, mas precisa ser reorganizado para se tornar extremamente fácil de entender e usar.
+
+---
+
+# 🔥 1. REGRA PRINCIPAL DE UX
+
+O usuário deve entender em até 3 segundos:
+
+→ “Eu estou lendo um livro”  
+→ “Eu posso marcar momentos”  
+→ “Eu posso ver o que outras pessoas sentiram nesses momentos”
+
+Se isso não estiver claro, ajustar toda a hierarquia.
+
+---
+
+# 🧭 2. CRIAR FLUXO GUIADO (ESSENCIAL)
+
+Adicionar direcionamento explícito no app.
+
+## Home deve ter 3 blocos principais:
+
+### 1. Continue lendo
+- livro atual
+- progresso
+- botão claro “Continuar”
+
+### 2. Ecos do seu momento
+- conteúdo apenas até onde o usuário leu
+- insights e reações relevantes
+
+### 3. Descobrir
+- trechos e insights de outros livros
+
+Isso resolve confusão.
+
+---
+
+# 🧠 3. SIMPLIFICAR AÇÕES
+
+Hoje há muitas possibilidades sem clareza.
+
+## Reduzir ações principais para 3:
+
+1. Ler  
+2. Marcar (highlight + reação + nota)  
+3. Explorar  
+
+Todas as outras ações devem ser secundárias.
+
+---
+
+# ✨ 4. UNIFICAR SISTEMA DE ANOTAÇÃO
+
+Hoje está fragmentado.
+
+Criar um fluxo único:
+
+## Ao selecionar texto:
+
+Abrir um único painel com:
+
+- botão destacar
+- escolher reação (rápido)
+- campo de nota (opcional)
+- botão publicar
+
+Sem múltiplos caminhos confusos.
+
+---
+
+# 🧠 5. MELHORAR IDENTIDADE DO CONTEÚDO
+
+Cada item do feed deve deixar claro o tipo.
+
+Adicionar rótulo discreto:
+
+- Insight
+- Teoria
+- Reação
+- Destaque
+
+Isso ajuda o usuário a entender o valor.
+
+---
+
+# 🔥 6. INTRODUZIR “MOMENTOS DO LIVRO”
+
+Adicionar conceito claro:
+
+→ cada conteúdo pertence a um momento específico do livro
+
+Mostrar sempre:
+
+- capítulo
+- progresso (ex: 42%)
+- posição narrativa
+
+---
+
+# 🔥 7. HEATMAP COMO CENTRO DO PRODUTO
+
+Transformar heatmap em feature principal.
+
+## Página do livro deve incluir:
+
+- progresso
+- botão continuar leitura
+- heatmap visível
+- insights por capítulo
+
+## Heatmap deve permitir:
+
+- visualizar intensidade por capítulo
+- tocar e explorar conteúdo daquele momento
+
+---
+
+# 🧠 8. FEED MAIS INTELIGENTE E CLARO
+
+Reorganizar feed em seções claras:
+
+- Continue sua leitura
+- Ecos do seu momento
+- Leitores como você
+- Descobrir novos livros
+
+Evitar feed único confuso.
+
+---
+
+# 🔥 9. SISTEMA DE CARDS (MOTOR VIRAL)
+
+Criar sistema completo de cards compartilháveis.
+
+## Importante:
+Cada livro deve gerar automaticamente seus próprios cards.
+
+---
+
+## Tipos de Cards
+
+### 1. Card de Momento (principal)
+- “Momento mais intenso até agora”
+- baseado no progresso do usuário
+- sem spoiler
+
+### 2. Card de Insight
+- interpretação do leitor
+- sem mostrar trecho completo se necessário
+
+### 3. Card de Reação
+- emoção pura
+- ex: “Esse capítulo me destruiu”
+
+### 4. Card de Progresso
+- progresso visual elegante
+- ex: “62% lido”
+
+### 5. Card de Identidade
+- baseado no comportamento do usuário
+- ex: “Você marca mais momentos de silêncio e perda”
+
+---
+
+## Anti-spoiler obrigatório nos cards
+
+Se conteúdo for além do progresso:
+
+- não mostrar trecho
+- mostrar apenas emoção ou reflexão
+
+---
+
+## UI dos Cards
+
+- fundo parchment
+- tipografia editorial
+- logo sutil
+- estética compartilhável
+
+---
+
+## Tela: Cards do Livro
+
+Cada livro deve ter:
+
+- seção de cards gerados automaticamente
+- botão “Gerar novo card”
+- botão “Compartilhar”
+
+---
+
+# 🧩 10. MELHORAR PÁGINA DO LIVRO
+
+Deve se tornar um hub:
+
+- capa
+- progresso
+- botão continuar
+- heatmap
+- insights recentes
+- cards disponíveis
+
+---
+
+# 🧠 11. MELHORAR THREAD
+
+Simplificar:
+
+- topo: trecho
+- resumo de reações
+- melhores insights
+- discussão
+
+Remover aparência de “comentários genéricos”
+
+---
+
+# 🔄 12. LOOP DE ENGAGEMENT (MUITO IMPORTANTE)
+
+Criar ciclo claro:
+
+Ler → marcar → ver ecos → gerar card → compartilhar → voltar
+
+O app deve reforçar esse loop visualmente.
+
+---
+
+# ⚡ 13. REDUZIR COMPLEXIDADE VISUAL
+
+Remover:
+
+- excesso de botões
+- excesso de opções simultâneas
+- elementos redundantes
+
+Priorizar:
+
+- leitura
+- texto
+- silêncio visual
+
+---
+
+# 🎯 14. NAVEGAÇÃO FINAL
+
+Bottom bar simples:
+
+- Home
+- Explorar
+- Ler
+- Biblioteca
+- Perfil
+
+---
+
+# 🧠 15. SENSAÇÃO FINAL DO PRODUTO
+
+O app deve parecer:
+
+- um livro vivo
+- uma experiência íntima
+- uma comunidade silenciosa
+- um espaço de descoberta emocional
+
+Não deve parecer:
+
+- rede social comum
+- app de quotes
+- app técnico
+
+---
+
+# RESULTADO ESPERADO
+
+Refinar o protótipo atual para:
+
+- ser extremamente intuitivo
+- ter fluxo claro
+- destacar momentos do livro
+- ter heatmap funcional
+- possuir sistema forte de cards compartilháveis
+- reduzir complexidade e aumentar clareza
+
+Nome: MARGINALIA  
+Tagline: Leia junto. Sinta junto.

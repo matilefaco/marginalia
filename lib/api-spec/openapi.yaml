@@ -1,15 +1,24 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Marginalia - Social Reading Platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: books
+    description: Book operations
+  - name: annotations
+    description: Annotation operations
+  - name: feed
+    description: Feed operations
+  - name: users
+    description: User operations
+  - name: cards
+    description: Shareable card operations
 paths:
   /healthz:
     get:
@@ -24,6 +33,210 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /books:
+    get:
+      operationId: listBooks
+      tags: [books]
+      summary: List all books in the library
+      responses:
+        "200":
+          description: List of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Book"
+
+  /books/{id}:
+    get:
+      operationId: getBook
+      tags: [books]
+      summary: Get a single book with heatmap and stats
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Book detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /books/{id}/annotations:
+    get:
+      operationId: getBookAnnotations
+      tags: [annotations]
+      summary: Get all annotations for a book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Annotations for the book
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Annotation"
+
+  /books/{id}/cards:
+    get:
+      operationId: getBookCards
+      tags: [cards]
+      summary: Get shareable cards for a book
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Shareable cards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShareableCard"
+
+  /annotations:
+    post:
+      operationId: createAnnotation
+      tags: [annotations]
+      summary: Create a new annotation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAnnotationBody"
+      responses:
+        "201":
+          description: Annotation created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Annotation"
+
+  /annotations/{id}:
+    get:
+      operationId: getAnnotation
+      tags: [annotations]
+      summary: Get a single annotation with its thread
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Annotation with thread
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnnotationThread"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /annotations/{id}/reactions:
+    post:
+      operationId: addReaction
+      tags: [annotations]
+      summary: Add a reaction to an annotation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddReactionBody"
+      responses:
+        "200":
+          description: Reaction added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Annotation"
+
+  /feed:
+    get:
+      operationId: getFeed
+      tags: [feed]
+      summary: Get the home feed with curated sections
+      responses:
+        "200":
+          description: Feed data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+
+  /explore:
+    get:
+      operationId: getExplore
+      tags: [feed]
+      summary: Get explore page content
+      responses:
+        "200":
+          description: Explore content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExploreResponse"
+
+  /users/me:
+    get:
+      operationId: getMe
+      tags: [users]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /users/me/reading:
+    get:
+      operationId: getCurrentReading
+      tags: [users]
+      summary: Get the book currently being read
+      responses:
+        "200":
+          description: Current reading book
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookDetail"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +247,346 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        author:
+          type: string
+        progress:
+          type: number
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+        annotations:
+          type: integer
+        highlights:
+          type: integer
+        debates:
+          type: integer
+        currentChapter:
+          type: string
+        status:
+          type: string
+          enum: [reading, completed, wishlist]
+      required:
+        - id
+        - title
+        - author
+        - progress
+        - currentPage
+        - totalPages
+        - annotations
+        - highlights
+        - debates
+        - currentChapter
+        - status
+
+    HeatmapEntry:
+      type: object
+      properties:
+        chapter:
+          type: integer
+        chapterTitle:
+          type: string
+        intensity:
+          type: number
+        annotationCount:
+          type: integer
+        locked:
+          type: boolean
+      required:
+        - chapter
+        - chapterTitle
+        - intensity
+        - annotationCount
+        - locked
+
+    BookDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        author:
+          type: string
+        progress:
+          type: number
+        currentPage:
+          type: integer
+        totalPages:
+          type: integer
+        annotations:
+          type: integer
+        highlights:
+          type: integer
+        debates:
+          type: integer
+        currentChapter:
+          type: string
+        status:
+          type: string
+          enum: [reading, completed, wishlist]
+        heatmap:
+          type: array
+          items:
+            $ref: "#/components/schemas/HeatmapEntry"
+        recentAnnotations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Annotation"
+      required:
+        - id
+        - title
+        - author
+        - progress
+        - currentPage
+        - totalPages
+        - annotations
+        - highlights
+        - debates
+        - currentChapter
+        - status
+        - heatmap
+        - recentAnnotations
+
+    Annotation:
+      type: object
+      properties:
+        id:
+          type: integer
+        bookId:
+          type: integer
+        bookTitle:
+          type: string
+        chapter:
+          type: string
+        progressAt:
+          type: number
+        excerpt:
+          type: string
+        note:
+          type: ["string", "null"]
+        type:
+          type: string
+          enum: [insight, reaction, theory, highlight]
+        userId:
+          type: string
+        userName:
+          type: string
+        userInitials:
+          type: string
+        createdAt:
+          type: string
+        reactions:
+          type: object
+          additionalProperties:
+            type: integer
+        replyCount:
+          type: integer
+        isPublic:
+          type: boolean
+      required:
+        - id
+        - bookId
+        - bookTitle
+        - chapter
+        - progressAt
+        - excerpt
+        - type
+        - userId
+        - userName
+        - userInitials
+        - createdAt
+        - reactions
+        - replyCount
+        - isPublic
+
+    AnnotationThread:
+      type: object
+      properties:
+        annotation:
+          $ref: "#/components/schemas/Annotation"
+        replies:
+          type: array
+          items:
+            $ref: "#/components/schemas/ThreadReply"
+      required:
+        - annotation
+        - replies
+
+    ThreadReply:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: string
+        userName:
+          type: string
+        userInitials:
+          type: string
+        text:
+          type: string
+        createdAt:
+          type: string
+        reactions:
+          type: object
+          additionalProperties:
+            type: integer
+      required:
+        - id
+        - userId
+        - userName
+        - userInitials
+        - text
+        - createdAt
+        - reactions
+
+    CreateAnnotationBody:
+      type: object
+      properties:
+        bookId:
+          type: integer
+        chapter:
+          type: string
+        progressAt:
+          type: number
+        excerpt:
+          type: string
+        note:
+          type: ["string", "null"]
+        type:
+          type: string
+          enum: [insight, reaction, theory, highlight]
+        isPublic:
+          type: boolean
+      required:
+        - bookId
+        - chapter
+        - progressAt
+        - excerpt
+        - type
+        - isPublic
+
+    AddReactionBody:
+      type: object
+      properties:
+        reaction:
+          type: string
+      required:
+        - reaction
+
+    FeedResponse:
+      type: object
+      properties:
+        currentReading:
+          $ref: "#/components/schemas/BookDetail"
+        echoes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Annotation"
+        discover:
+          type: array
+          items:
+            $ref: "#/components/schemas/Book"
+      required:
+        - echoes
+        - discover
+
+    ExploreResponse:
+      type: object
+      properties:
+        trending:
+          type: array
+          items:
+            $ref: "#/components/schemas/Annotation"
+        readers:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserProfile"
+        emergingBooks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Book"
+      required:
+        - trending
+        - readers
+        - emergingBooks
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        initials:
+          type: string
+        bio:
+          type: ["string", "null"]
+        booksRead:
+          type: integer
+        totalAnnotations:
+          type: integer
+        totalHighlights:
+          type: integer
+        identityPhrase:
+          type: string
+        recentExcerpts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Annotation"
+      required:
+        - id
+        - name
+        - initials
+        - booksRead
+        - totalAnnotations
+        - totalHighlights
+        - identityPhrase
+        - recentExcerpts
+
+    ShareableCard:
+      type: object
+      properties:
+        id:
+          type: integer
+        bookId:
+          type: integer
+        type:
+          type: string
+          enum: [moment, insight, reaction, progress, identity]
+        title:
+          type: string
+        content:
+          type: string
+        excerpt:
+          type: ["string", "null"]
+        chapter:
+          type: ["string", "null"]
+        progressAt:
+          type: ["number", "null"]
+        stats:
+          type: object
+          additionalProperties:
+            type: integer
+      required:
+        - id
+        - bookId
+        - type
+        - title
+        - content

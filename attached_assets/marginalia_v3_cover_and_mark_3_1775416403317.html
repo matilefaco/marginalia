@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: transparent; font-family: 'Jost', sans-serif; }
+
+  :root {
+    --albescent: #FAF8F3;
+    --albescent-2: #EBE6DB;
+    --heather: #AE8F7D;
+    --doeskin: #BDAB9C;
+    --old-vine: #697962;
+    --metal: #454545;
+    --metal-light: #515151;
+    --body-text: #3a3a3a;
+  }
+
+  .section-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 9px; font-weight: 400; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--color-text-tertiary);
+    margin-bottom: 20px; padding-bottom: 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  /* COVER */
+  .cover {
+    background: var(--albescent);
+    border-radius: 12px;
+    border: 0.5px solid rgba(174,143,125,0.2);
+    min-height: 340px;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 40px 48px;
+    position: relative; overflow: hidden;
+    margin-bottom: 3px;
+  }
+  .cover-brand-line {
+    position: absolute; top: 36px; left: 48px; right: 48px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .cover-brand-logo { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: rgba(69,69,69,0.45); letter-spacing: 0.04em; }
+  .cover-brand-right { font-family: 'Jost', sans-serif; font-size: 8px; font-weight: 300; letter-spacing: 0.2em; color: rgba(69,69,69,0.3); }
+  .cover-divider-top { position: absolute; top: 64px; left: 48px; right: 48px; height: 0.5px; background: rgba(69,69,69,0.1); }
+
+  .cover-symbol { margin-bottom: 28px; }
+  .cover-title { font-family: 'Cormorant Garamond', serif; font-size: 56px; font-weight: 300; font-style: italic; color: var(--metal); line-height: 1.0; margin-bottom: 12px; }
+  .cover-tagline { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; color: var(--heather); letter-spacing: 0.02em; }
+  .cover-bottom { position: absolute; bottom: 36px; left: 48px; right: 48px; display: flex; justify-content: space-between; align-items: flex-end; }
+  .cover-divider-bot { position: absolute; bottom: 64px; left: 48px; right: 48px; height: 0.5px; background: rgba(69,69,69,0.1); }
+
+  /* MARK ANATOMY */
+  .anatomy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+  .anatomy-card {
+    background: var(--albescent);
+    border-radius: 10px;
+    padding: 32px 28px;
+    border: 0.5px solid rgba(174,143,125,0.15);
+    position: relative; overflow: hidden;
+  }
+  .anatomy-card-dark {
+    background: var(--metal);
+    border-radius: 10px;
+    padding: 32px 28px;
+    border: 0.5px solid rgba(69,69,69,0.3);
+  }
+  .el-num { font-family: 'Jost', sans-serif; font-size: 8px; font-weight: 300; letter-spacing: 0.2em; color: var(--heather); margin-bottom: 8px; }
+  .el-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; color: var(--metal); margin-bottom: 10px; line-height: 1.2; }
+  .el-desc { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 300; color: rgba(69,69,69,0.6); line-height: 1.7; }
+  .el-title-light { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; color: var(--albescent); margin-bottom: 10px; line-height: 1.2; }
+  .el-desc-light { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 300; color: rgba(250,248,243,0.55); line-height: 1.7; }
+
+  /* Scale row */
+  .scale-row {
+    background: var(--albescent);
+    border-radius: 10px;
+    padding: 28px 32px;
+    border: 0.5px solid rgba(174,143,125,0.15);
+    margin-top: 3px;
+  }
+  .scale-inner { display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
+  .scale-item { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+  .scale-px { font-family: 'Jost', sans-serif; font-size: 8px; font-weight: 300; letter-spacing: 0.1em; color: rgba(69,69,69,0.4); }
+</style>
+</head>
+<body>
+<div style="padding:0 0 2rem;">
+  <div class="section-label">Marginalia · Brand Identity · V10 · 2025</div>
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-brand-line">
+      <div class="cover-brand-logo">Marginalia</div>
+      <div class="cover-brand-right">BRAND IDENTITY · X</div>
+    </div>
+    <div class="cover-divider-top"></div>
+
+    <!-- Large decorative dog-ear top right -->
+    <div style="position:absolute;top:0;right:0;opacity:0.07;">
+      <svg width="180" height="180" viewBox="0 0 180 180" fill="none">
+        <polygon points="0,0 180,0 180,180" fill="#AE8F7D"/>
+      </svg>
+    </div>
+
+    <div class="cover-symbol">
+      <!-- The mark — exact anatomy from PDF: filled page body in Doeskin, corner fold in Heather Rose, dot in Old Vine -->
+      <svg width="72" height="86" viewBox="0 0 72 86" fill="none">
+        <!-- Page body — Doeskin -->
+        <path d="M4 4 L4 82 L60 82 L60 28 L36 4 Z" fill="#BDAB9C" opacity="0.9"/>
+        <!-- Lighter inner left margin line -->
+        <line x1="14" y1="4" x2="14" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="0.8"/>
+        <!-- Text lines on page -->
+        <line x1="18" y1="38" x2="52" y2="38" stroke="rgba(250,248,243,0.35)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="18" y1="46" x2="52" y2="46" stroke="rgba(250,248,243,0.35)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="18" y1="54" x2="44" y2="54" stroke="rgba(250,248,243,0.25)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="18" y1="62" x2="48" y2="62" stroke="rgba(250,248,243,0.2)" stroke-width="1" stroke-linecap="round"/>
+        <!-- Dog-ear triangle — Heather Rose, lighter -->
+        <path d="M36 4 L60 28 L36 28 Z" fill="#FAF8F3" opacity="0.55"/>
+        <!-- Fold edge line -->
+        <line x1="36" y1="4" x2="60" y2="28" stroke="rgba(250,248,243,0.4)" stroke-width="0.8"/>
+        <!-- Old Vine dot — the reader was already here -->
+        <circle cx="14" cy="60" r="4" fill="#697962" opacity="0.85"/>
+      </svg>
+    </div>
+
+    <div class="cover-title">Marginalia</div>
+    <div class="cover-tagline">Leia junto. Sinta junto.</div>
+
+    <div class="cover-divider-bot"></div>
+    <div class="cover-bottom">
+      <div style="font-family:'Jost',sans-serif;font-size:8px;font-weight:300;letter-spacing:0.14em;color:rgba(69,69,69,0.35);">BRAND IDENTITY · V10 · 2025</div>
+      <div style="font-family:'Jost',sans-serif;font-size:8px;font-weight:300;letter-spacing:0.14em;color:rgba(69,69,69,0.3);">CONFIDENTIAL</div>
+    </div>
+  </div>
+
+  <!-- MARK ANATOMY -->
+  <div class="section-label" style="margin-top:28px;">02 — Mark Concept · Anatomia da Orelha</div>
+
+  <div class="anatomy-grid">
+
+    <div class="anatomy-card">
+      <div style="margin-bottom:24px;">
+        <!-- The mark large, centered -->
+        <svg width="90" height="108" viewBox="0 0 72 86" fill="none">
+          <path d="M4 4 L4 82 L60 82 L60 28 L36 4 Z" fill="#BDAB9C" opacity="0.9"/>
+          <line x1="14" y1="4" x2="14" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="0.8"/>
+          <line x1="18" y1="38" x2="52" y2="38" stroke="rgba(250,248,243,0.35)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="18" y1="46" x2="52" y2="46" stroke="rgba(250,248,243,0.35)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="18" y1="54" x2="44" y2="54" stroke="rgba(250,248,243,0.25)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="18" y1="62" x2="48" y2="62" stroke="rgba(250,248,243,0.2)" stroke-width="1" stroke-linecap="round"/>
+          <path d="M36 4 L60 28 L36 28 Z" fill="#FAF8F3" opacity="0.55"/>
+          <line x1="36" y1="4" x2="60" y2="28" stroke="rgba(250,248,243,0.4)" stroke-width="0.8"/>
+          <!-- Annotation callouts -->
+          <line x1="60" y1="16" x2="72" y2="10" stroke="#AE8F7D" stroke-width="0.6" stroke-dasharray="2 2"/>
+          <line x1="14" y1="60" x2="2" y2="68" stroke="#697962" stroke-width="0.6" stroke-dasharray="2 2"/>
+          <circle cx="14" cy="60" r="4" fill="#697962" opacity="0.85"/>
+        </svg>
+      </div>
+      <div class="el-num">ELEMENTO 01 · A PÁGINA</div>
+      <div class="el-title">A folha que sustenta</div>
+      <div class="el-desc">Doeskin — creme terroso, quente. Nunca branco frio. A sensação de papel real que foi tocado, lido, vivido.</div>
+    </div>
+
+    <div class="anatomy-card-dark">
+      <div style="margin-bottom:24px;">
+        <svg width="90" height="108" viewBox="0 0 72 86" fill="none">
+          <path d="M4 4 L4 82 L60 82 L60 28 L36 4 Z" fill="#BDAB9C" opacity="0.15"/>
+          <path d="M36 4 L60 28 L36 28 Z" fill="#AE8F7D" opacity="0.9"/>
+          <line x1="36" y1="4" x2="60" y2="28" stroke="rgba(174,143,125,0.5)" stroke-width="0.8"/>
+          <circle cx="14" cy="60" r="4" fill="#697962" opacity="0.4"/>
+        </svg>
+      </div>
+      <div class="el-num" style="color:#AE8F7D;">ELEMENTO 02 · A ORELHA</div>
+      <div class="el-title-light">Heather Rose</div>
+      <div class="el-desc-light">O canto dobrado. Rosa-acinzentado, quente mas discreto. Proibido em biblioteca. Praticado por todo leitor que já sentiu algo demais para parar.</div>
+    </div>
+
+  </div>
+
+  <!-- ELEMENT 3: dot, and scale -->
+  <div class="scale-row">
+    <div style="display:flex;gap:32px;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <div class="el-num">ELEMENTO 03 · O PONTO NA MARGEM</div>
+        <div class="el-title" style="font-size:18px;">Old Vine</div>
+        <div class="el-desc">O leitor já estava lá. Antes da dobra. Antes da anotação. Verde-cinza orgânico — presença humana ancorada no texto.</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:20px;">
+        <svg width="48" height="58" viewBox="0 0 72 86" fill="none">
+          <path d="M4 4 L4 82 L60 82 L60 28 L36 4 Z" fill="#BDAB9C" opacity="0.9"/>
+          <line x1="14" y1="4" x2="14" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="0.8"/>
+          <line x1="18" y1="38" x2="52" y2="38" stroke="rgba(250,248,243,0.35)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="18" y1="46" x2="52" y2="46" stroke="rgba(250,248,243,0.35)" stroke-width="1" stroke-linecap="round"/>
+          <path d="M36 4 L60 28 L36 28 Z" fill="#FAF8F3" opacity="0.55"/>
+          <circle cx="14" cy="60" r="4" fill="#697962" opacity="0.85"/>
+        </svg>
+        <!-- Highlight the dot -->
+        <div>
+          <div style="width:12px;height:12px;border-radius:50%;background:#697962;margin-bottom:6px;"></div>
+          <div style="font-family:'Jost',sans-serif;font-size:8px;font-weight:300;letter-spacing:0.12em;color:rgba(69,69,69,0.5);">OLD VINE<br>#697962</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Symbol scale -->
+    <div style="border-top:0.5px solid rgba(69,69,69,0.08);padding-top:20px;">
+      <div style="font-family:'Jost',sans-serif;font-size:8px;font-weight:300;letter-spacing:0.18em;color:rgba(69,69,69,0.4);margin-bottom:16px;text-transform:uppercase;">O símbolo em escala</div>
+      <div class="scale-inner">
+        <!-- 64px -->
+        <div class="scale-item">
+          <svg width="54" height="64" viewBox="0 0 72 86" fill="none">
+            <path d="M4 4 L4 82 L60 82 L60 28 L36 4 Z" fill="#BDAB9C" opacity="0.9"/>
+            <line x1="14" y1="4" x2="14" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="1"/>
+            <line x1="18" y1="38" x2="52" y2="38" stroke="rgba(250,248,243,0.4)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="18" y1="50" x2="44" y2="50" stroke="rgba(250,248,243,0.3)" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M36 4 L60 28 L36 28 Z" fill="#FAF8F3" opacity="0.55"/>
+            <circle cx="14" cy="64" r="5" fill="#697962" opacity="0.85"/>
+          </svg>
+          <div class="scale-px">64px</div>
+        </div>
+        <!-- 46px -->
+        <div class="scale-item">
+          <svg width="39" height="46" viewBox="0 0 72 86" fill="none">
+            <path d="M4 4 L4 82 L60 82 L60 28 L36 4 Z" fill="#BDAB9C" opacity="0.9"/>
+            <line x1="14" y1="4" x2="14" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="1"/>
+            <line x1="18" y1="42" x2="50" y2="42" stroke="rgba(250,248,243,0.4)" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="18" y1="54" x2="42" y2="54" stroke="rgba(250,248,243,0.25)" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M36 4 L60 28 L36 28 Z" fill="#FAF8F3" opacity="0.55"/>
+            <circle cx="14" cy="64" r="5.5" fill="#697962" opacity="0.85"/>
+          </svg>
+          <div class="scale-px">46px</div>
+        </div>
+        <!-- 30px -->
+        <div class="scale-item">
+          <svg width="25" height="30" viewBox="0 0 72 86" fill="none">
+            <path d="M4 4 L4 82 L60 82 L60 28 L36 4 Z" fill="#BDAB9C" opacity="0.9"/>
+            <path d="M36 4 L60 28 L36 28 Z" fill="#FAF8F3" opacity="0.55"/>
+            <circle cx="14" cy="64" r="6" fill="#697962" opacity="0.85"/>
+          </svg>
+          <div class="scale-px">30px</div>
+        </div>
+        <!-- 20px -->
+        <div class="scale-item">
+          <svg width="17" height="20" viewBox="0 0 72 86" fill="none">
+            <path d="M4 4 L4 82 L60 82 L60 28 L36 4 Z" fill="#BDAB9C" opacity="0.9"/>
+            <path d="M36 4 L60 28 L36 28 Z" fill="#FAF8F3" opacity="0.55"/>
+            <circle cx="14" cy="64" r="7" fill="#697962" opacity="0.85"/>
+          </svg>
+          <div class="scale-px">20px</div>
+        </div>
+        <!-- favicon -->
+        <div class="scale-item">
+          <svg width="13" height="16" viewBox="0 0 72 86" fill="none">
+            <path d="M4 4 L4 82 L60 82 L60 28 L36 4 Z" fill="#BDAB9C" opacity="0.9"/>
+            <path d="M36 4 L60 28 L36 28 Z" fill="#FAF8F3" opacity="0.6"/>
+            <circle cx="14" cy="64" r="8" fill="#697962"/>
+          </svg>
+          <div class="scale-px">favicon</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

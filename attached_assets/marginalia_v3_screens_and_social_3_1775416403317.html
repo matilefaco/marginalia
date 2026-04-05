@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: transparent; font-family: 'Jost', sans-serif; }
+
+  :root {
+    --alb: #FAF8F3;
+    --alb2: #EBE6DB;
+    --heather: #AE8F7D;
+    --doeskin: #BDAB9C;
+    --vine: #697962;
+    --metal: #454545;
+    --body: #3D3D3D;
+  }
+
+  .section-label {
+    font-size: 9px; font-weight: 400; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--color-text-tertiary);
+    margin-bottom: 20px; padding-bottom: 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .sub-label { font-size: 8.5px; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 12px; margin-top: 24px; }
+
+  .screens-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .screen-wrap { display: flex; flex-direction: column; gap: 7px; }
+  .screen-lbl { font-size: 8.5px; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-text-tertiary); text-align: center; }
+
+  .phone {
+    border-radius: 22px; overflow: hidden;
+    border: 1px solid rgba(189,171,156,0.25);
+    min-height: 490px; display: flex; flex-direction: column;
+    box-shadow: 0 2px 20px rgba(69,69,69,0.06);
+  }
+
+  /* ═══ SPLASH ═══ */
+  .splash { background: var(--alb); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; position: relative; }
+  .splash::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px); background-size: 5px 5px; pointer-events: none; }
+
+  /* ═══ HOME ═══ */
+  .home { background: var(--alb); flex: 1; display: flex; flex-direction: column; }
+  .home-bar { padding: 18px 16px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid rgba(189,171,156,0.25); }
+  .home-body { padding: 18px 16px; flex: 1; }
+  .home-nav { padding: 8px 14px 16px; border-top: 0.5px solid rgba(189,171,156,0.25); display: flex; justify-content: space-around; background: var(--alb); }
+  .nav-i { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .nav-lbl { font-size: 6.5px; font-weight: 300; color: rgba(69,69,69,0.35); }
+  .nav-lbl-a { font-size: 6.5px; font-weight: 400; color: var(--heather); }
+
+  /* ═══ ANNOTATIONS ═══ */
+  .annot { background: var(--alb); flex: 1; display: flex; flex-direction: column; }
+  .annot-bar { padding: 18px 14px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 0.5px solid rgba(189,171,156,0.25); }
+  .annot-body { padding: 16px 15px; flex: 1; overflow: hidden; }
+
+  /* ─ Reading area ─ */
+  .reader-chapter { font-family: 'Jost', sans-serif; font-size: 7px; font-weight: 300; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(69,69,69,0.35); margin-bottom: 16px; text-align: center; }
+  .reader-text { font-family: 'Cormorant Garamond', serif; font-size: 13px; line-height: 1.9; color: var(--body); }
+  .r-hl { background: rgba(174,143,125,0.18); box-shadow: inset 0 -1.5px 0 rgba(174,143,125,0.5); }
+
+  /* Annotation panel over text -->*/
+  .an-panel { background: var(--metal); border-radius: 10px; padding: 12px 13px; margin-top: 12px; }
+  .an-trecho { font-family: 'Cormorant Garamond', serif; font-size: 10px; font-style: italic; color: rgba(250,248,243,0.45); border-left: 1.5px solid rgba(174,143,125,0.5); padding-left: 7px; margin-bottom: 6px; line-height: 1.6; }
+  .an-note { font-family: 'Cormorant Garamond', serif; font-size: 11.5px; color: rgba(250,248,243,0.85); line-height: 1.6; margin-bottom: 7px; }
+  .an-meta { font-family: 'Jost', sans-serif; font-size: 6.5px; font-weight: 300; letter-spacing: 0.1em; color: var(--heather); }
+  .an-reacts { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+  .ar { font-family: 'Jost', sans-serif; font-size: 6.5px; font-weight: 300; color: rgba(250,248,243,0.45); background: rgba(250,248,243,0.06); border: 0.5px solid rgba(250,248,243,0.1); padding: 3px 7px; border-radius: 20px; }
+  .ar-a { font-family: 'Jost', sans-serif; font-size: 6.5px; font-weight: 300; color: var(--heather); background: rgba(174,143,125,0.1); border: 0.5px solid rgba(174,143,125,0.25); padding: 3px 7px; border-radius: 20px; }
+
+  .thread-sep { height: 0.5px; background: rgba(189,171,156,0.2); margin: 11px 0; }
+  .thread-entry { display: flex; gap: 7px; align-items: flex-start; margin-bottom: 9px; }
+  .th-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .th-text { font-family: 'Cormorant Garamond', serif; font-size: 10.5px; color: var(--body); line-height: 1.5; }
+  .th-meta { font-family: 'Jost', sans-serif; font-size: 6.5px; font-weight: 300; color: rgba(69,69,69,0.4); letter-spacing: 0.08em; margin-bottom: 2px; }
+
+  /* INPUT BAR -->*/
+  .input-bar { padding: 10px 14px 15px; border-top: 0.5px solid rgba(189,171,156,0.2); display: flex; gap: 8px; align-items: center; background: var(--alb); }
+  .input-text { flex: 1; font-family: 'Cormorant Garamond', serif; font-size: 11px; font-style: italic; color: rgba(69,69,69,0.3); }
+
+  /* PROGRESS BAR -->*/
+  .pg-bar { height: 1.5px; background: rgba(189,171,156,0.2); border-radius: 2px; margin: 6px 0 4px; }
+  .pg-fill { height: 1.5px; background: var(--heather); border-radius: 2px; }
+  .pg-label { display: flex; justify-content: space-between; font-family: 'Jost', sans-serif; font-size: 6.5px; font-weight: 300; color: rgba(69,69,69,0.3); letter-spacing: 0.06em; }
+
+  /* SOCIAL ASSETS -->*/
+  .social-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 12px; margin-bottom: 12px; }
+  .social-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Quote card parchment -->*/
+  .qc {
+    background: var(--alb);
+    border-radius: 14px; padding: 26px 26px 20px;
+    position: relative; overflow: hidden; min-height: 220px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    border: 0.5px solid rgba(189,171,156,0.25);
+    box-shadow: 0 2px 16px rgba(69,69,69,0.05);
+  }
+  .qc::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(189,171,156,0.1) 1px, transparent 1px); background-size: 5px 5px; pointer-events: none; }
+  .qc-corner { position: absolute; top: 0; right: 0; }
+  .qc-logo { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-style: italic; color: rgba(69,69,69,0.3); margin-bottom: 16px; }
+  .qc-quote { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; color: var(--body); line-height: 1.65; flex: 1; }
+  .qc-hl { background: rgba(174,143,125,0.2); box-shadow: inset 0 -1.5px 0 rgba(174,143,125,0.55); }
+  .qc-sep { height: 0.5px; background: rgba(69,69,69,0.08); margin: 16px 0 10px; }
+  .qc-book { font-family: 'Jost', sans-serif; font-size: 7px; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(69,69,69,0.35); margin-bottom: 2px; }
+  .qc-author { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-style: italic; color: rgba(69,69,69,0.55); margin-bottom: 10px; }
+  .qc-foot { display: flex; justify-content: space-between; align-items: center; }
+  .qc-user { font-family: 'Jost', sans-serif; font-size: 7px; font-weight: 300; color: var(--heather); letter-spacing: 0.08em; }
+  .qc-count { font-family: 'Jost', sans-serif; font-size: 7px; font-weight: 300; color: rgba(69,69,69,0.3); }
+
+  /* Progress share card -->*/
+  .pc { background: var(--alb); border-radius: 14px; padding: 20px; border: 0.5px solid rgba(189,171,156,0.25); position: relative; overflow: hidden; box-shadow: 0 2px 16px rgba(69,69,69,0.05); }
+  .pc::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(189,171,156,0.1) 1px, transparent 1px); background-size: 5px 5px; pointer-events: none; }
+  .pc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .pc-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 400; color: var(--body); line-height: 1.1; }
+  .pc-author { font-family: 'Jost', sans-serif; font-size: 7px; font-weight: 300; color: rgba(69,69,69,0.4); letter-spacing: 0.1em; margin-top: 3px; }
+  .pc-bar-bg { height: 2.5px; background: rgba(69,69,69,0.07); border-radius: 3px; margin-bottom: 4px; }
+  .pc-bar-fill { height: 2.5px; border-radius: 3px; background: var(--heather); }
+  .pc-pct { font-family: 'Jost', sans-serif; font-size: 7px; font-weight: 300; color: rgba(69,69,69,0.35); letter-spacing: 0.08em; margin-bottom: 14px; display: flex; justify-content: space-between; }
+  .pc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .pc-stat { background: rgba(69,69,69,0.03); border-radius: 7px; padding: 9px 5px; text-align: center; }
+  .pc-num { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 400; color: var(--body); }
+  .pc-label { font-family: 'Jost', sans-serif; font-size: 6px; font-weight: 300; color: rgba(69,69,69,0.35); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 1px; }
+
+  /* Reactions -->*/
+  .rc-card { background: var(--color-background-secondary); border-radius: 14px; padding: 18px; border: 0.5px solid var(--color-border-tertiary); }
+  .rc-list { display: flex; flex-direction: column; gap: 6px; }
+  .rc { display: flex; align-items: center; justify-content: space-between; padding: 8.5px 12px; border-radius: 7px; cursor: pointer; }
+  .rc-t { font-family: 'Jost', sans-serif; font-size: 10px; font-weight: 300; }
+  .rc-n { font-family: 'Cormorant Garamond', serif; font-size: 13px; }
+  .rc1 { background: var(--metal); }
+  .rc1 .rc-t { color: rgba(250,248,243,0.8); }
+  .rc1 .rc-n { color: rgba(250,248,243,0.3); }
+  .rc2 { background: rgba(174,143,125,0.1); border: 0.5px solid rgba(174,143,125,0.2); }
+  .rc2 .rc-t { color: var(--heather); }
+  .rc2 .rc-n { color: rgba(174,143,125,0.45); }
+  .rc3 { background: var(--alb); border: 0.5px solid rgba(69,69,69,0.08); }
+  .rc3 .rc-t { color: rgba(69,69,69,0.65); }
+  .rc3 .rc-n { color: rgba(69,69,69,0.25); }
+  .rc4 { background: rgba(105,121,98,0.08); border: 0.5px solid rgba(105,121,98,0.15); }
+  .rc4 .rc-t { color: var(--vine); }
+  .rc4 .rc-n { color: rgba(105,121,98,0.4); }
+
+  /* Buttons card -->*/
+  .btn-card { background: var(--color-background-secondary); border-radius: 14px; padding: 18px; border: 0.5px solid var(--color-border-tertiary); }
+  .btn-list { display: flex; flex-direction: column; gap: 7px; }
+  .btn-p { background: var(--metal); color: rgba(250,248,243,0.9); font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 400; padding: 10px 18px; border-radius: 7px; text-align: center; letter-spacing: 0.04em; }
+  .btn-h { background: rgba(174,143,125,0.12); color: var(--heather); font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 400; padding: 10px 18px; border-radius: 7px; text-align: center; letter-spacing: 0.04em; border: 0.5px solid rgba(174,143,125,0.3); }
+  .btn-s { background: transparent; color: rgba(69,69,69,0.7); font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 300; padding: 10px 18px; border-radius: 7px; text-align: center; letter-spacing: 0.04em; border: 0.5px solid rgba(69,69,69,0.15); }
+  .btn-v { background: rgba(105,121,98,0.1); color: var(--vine); font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 400; padding: 10px 18px; border-radius: 7px; text-align: center; letter-spacing: 0.04em; border: 0.5px solid rgba(105,121,98,0.2); }
+  .btn-g { background: rgba(69,69,69,0.04); color: rgba(69,69,69,0.3); font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 300; padding: 10px 18px; border-radius: 7px; text-align: center; }
+</style>
+</head>
+<body>
+<div style="padding:0 0 2rem;">
+
+  <!-- APP SCREENS -->
+  <div class="section-label">06 — App Screens · Splash · Home · Anotações</div>
+
+  <div class="screens-row">
+
+    <!-- SPLASH -->
+    <div class="screen-wrap">
+      <div class="phone">
+        <div class="splash">
+          <!-- Subtle dog-ear corners -->
+          <div style="position:absolute;top:0;right:0;opacity:0.06;">
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none"><polygon points="0,0 60,0 60,60" fill="#AE8F7D"/></svg>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;opacity:0.04;transform:rotate(180deg);">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><polygon points="0,0 40,0 40,40" fill="#AE8F7D"/></svg>
+          </div>
+          <div style="margin-bottom:22px;">
+            <svg width="52" height="62" viewBox="0 0 72 86" fill="none">
+              <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.85"/>
+              <line x1="13" y1="4" x2="13" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="0.8"/>
+              <line x1="17" y1="38" x2="52" y2="38" stroke="rgba(250,248,243,0.38)" stroke-width="1" stroke-linecap="round"/>
+              <line x1="17" y1="50" x2="48" y2="50" stroke="rgba(250,248,243,0.28)" stroke-width="1" stroke-linecap="round"/>
+              <line x1="17" y1="62" x2="40" y2="62" stroke="rgba(250,248,243,0.18)" stroke-width="1" stroke-linecap="round"/>
+              <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.5"/>
+              <circle cx="13" cy="70" r="5.5" fill="#697962" opacity="0.8"/>
+            </svg>
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-style:italic;font-weight:300;color:#3D3D3D;letter-spacing:0.02em;margin-bottom:7px;">Marginalia</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:#AE8F7D;letter-spacing:0.02em;">Leia junto. Sinta junto.</div>
+          <div style="font-family:'Jost',sans-serif;font-size:7px;font-weight:300;letter-spacing:0.18em;color:rgba(69,69,69,0.3);margin-top:28px;">CARREGANDO</div>
+          <div style="position:absolute;bottom:26px;display:flex;gap:5px;">
+            <div style="width:5px;height:5px;border-radius:50%;background:#AE8F7D;opacity:0.7;"></div>
+            <div style="width:5px;height:5px;border-radius:50%;background:rgba(69,69,69,0.15);"></div>
+            <div style="width:5px;height:5px;border-radius:50%;background:rgba(69,69,69,0.15);"></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-lbl">Splash</div>
+    </div>
+
+    <!-- HOME -->
+    <div class="screen-wrap">
+      <div class="phone">
+        <div class="home">
+          <div class="home-bar">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:rgba(69,69,69,0.55);">Marginalia</div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#454545" stroke-width="1.1" fill="none"/><path d="M4 22 C4 17 7.5 15 12 15 C16.5 15 20 17 20 22" stroke="#454545" stroke-width="1.1" stroke-linecap="round" fill="none"/></svg>
+          </div>
+          <div class="home-body">
+            <!-- Lendo agora -->
+            <div style="font-family:'Jost',sans-serif;font-size:7px;font-weight:400;letter-spacing:0.16em;color:#AE8F7D;margin-bottom:10px;">LENDO AGORA</div>
+            <div style="border-left:2px solid rgba(189,171,156,0.4);padding-left:12px;margin-bottom:14px;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:#3D3D3D;margin-bottom:2px;">A Hora da Estrela</div>
+              <div style="font-family:'Jost',sans-serif;font-size:7.5px;font-weight:300;color:rgba(69,69,69,0.45);letter-spacing:0.08em;margin-bottom:8px;">CLARICE LISPECTOR · PÁG. 87</div>
+              <div class="pg-bar"><div class="pg-fill" style="width:60%;"></div></div>
+              <div class="pg-label"><span>60%</span><span>52 anotações</span></div>
+            </div>
+            <!-- Em alta -->
+            <div style="font-family:'Jost',sans-serif;font-size:7px;font-weight:400;letter-spacing:0.16em;color:rgba(69,69,69,0.4);margin-bottom:10px;">EM ALTA</div>
+            <div style="display:flex;gap:8px;margin-bottom:14px;">
+              <div style="flex:1;background:rgba(189,171,156,0.1);border-radius:8px;padding:10px;border:0.5px solid rgba(189,171,156,0.2);">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:12px;color:#3D3D3D;margin-bottom:3px;">Grande Sertão</div>
+                <div style="font-family:'Jost',sans-serif;font-size:6.5px;font-weight:300;color:rgba(69,69,69,0.4);">243 leit.</div>
+              </div>
+              <div style="flex:1;background:rgba(189,171,156,0.1);border-radius:8px;padding:10px;border:0.5px solid rgba(189,171,156,0.2);">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:12px;color:#3D3D3D;margin-bottom:3px;">Cem Anos</div>
+                <div style="font-family:'Jost',sans-serif;font-size:6.5px;font-weight:300;color:rgba(69,69,69,0.4);">198 leit.</div>
+              </div>
+            </div>
+            <!-- Feed snippet -->
+            <div style="font-family:'Jost',sans-serif;font-size:7px;font-weight:400;letter-spacing:0.16em;color:rgba(69,69,69,0.4);margin-bottom:10px;">A HORA DA ESTRELA · PP. 80–95</div>
+            <div style="background:rgba(189,171,156,0.08);border-radius:8px;padding:12px;border:0.5px solid rgba(189,171,156,0.15);position:relative;overflow:hidden;">
+              <!-- Dog-ear corner on card -->
+              <div style="position:absolute;top:0;right:0;opacity:0.25;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><polygon points="0,0 20,0 20,20" fill="#AE8F7D"/></svg>
+              </div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:11.5px;font-style:italic;color:#3D3D3D;line-height:1.65;margin-bottom:6px;">"Macabéa era tão discreta que nem ela mesma sabia que existia."</div>
+              <div style="font-family:'Jost',sans-serif;font-size:6.5px;font-weight:300;color:#AE8F7D;margin-bottom:5px;">3 PESSOAS ANOTARAM</div>
+              <div style="display:flex;gap:5px;">
+                <div style="font-family:'Jost',sans-serif;font-size:6px;color:rgba(69,69,69,0.4);background:rgba(69,69,69,0.05);border:0.5px solid rgba(69,69,69,0.08);padding:2px 6px;border-radius:20px;">PÁG. 82 · EMOÇÃO</div>
+                <div style="font-family:'Jost',sans-serif;font-size:6px;color:rgba(69,69,69,0.4);background:rgba(69,69,69,0.05);border:0.5px solid rgba(69,69,69,0.08);padding:2px 6px;border-radius:20px;">PÁG. 88 · REFLEXÃO</div>
+              </div>
+            </div>
+          </div>
+          <div class="home-nav">
+            <div class="nav-i"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 2 L4 22 L18 22 L18 8 L12 2 Z" stroke="#AE8F7D" stroke-width="1.1" stroke-linejoin="round" fill="none"/><path d="M12 2 L18 8 L12 8" stroke="#AE8F7D" stroke-width="1.1" stroke-linejoin="round" fill="none"/></svg><div class="nav-lbl-a">Ler</div></div>
+            <div class="nav-i"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="rgba(69,69,69,0.3)" stroke-width="1.1" fill="none"/><line x1="15.5" y1="15.5" x2="21" y2="21" stroke="rgba(69,69,69,0.3)" stroke-width="1.4" stroke-linecap="round"/></svg><div class="nav-lbl">Buscar</div></div>
+            <div class="nav-i"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="rgba(69,69,69,0.3)" stroke-width="1.1" fill="none"/><path d="M4 22 C4 17 7.5 15 12 15 C16.5 15 20 17 20 22" stroke="rgba(69,69,69,0.3)" stroke-width="1.1" stroke-linecap="round" fill="none"/></svg><div class="nav-lbl">Perfil</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-lbl">Home</div>
+    </div>
+
+    <!-- ANNOTATIONS -->
+    <div class="screen-wrap">
+      <div class="phone">
+        <div class="annot">
+          <div class="annot-bar">
+            <div style="font-family:'Jost',sans-serif;font-size:8px;font-weight:300;color:rgba(69,69,69,0.35);letter-spacing:0.06em;">← voltar</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:12px;font-style:italic;color:rgba(69,69,69,0.55);">trecho</div>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 3 L5 21 L12 17 L19 21 L19 3 Z" stroke="rgba(69,69,69,0.3)" stroke-width="1.1" stroke-linejoin="round" fill="none"/><path d="M14 3 L19 3 L19 8" stroke="#AE8F7D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="annot-body">
+            <div class="reader-chapter">A Hora da Estrela · Clarice Lispector</div>
+            <div class="reader-text">Macabéa era tão <span class="r-hl">discreta que nem ela mesma sabia que existia.</span> Ela não reivindicava nada do mundo.</div>
+            <div class="an-panel">
+              <div class="an-trecho">"discreta que nem ela mesma sabia que existia."</div>
+              <div class="an-note">A invisibilidade como forma de existência. Clarice encontra a solidão mais absoluta — não ser visto por si mesmo.</div>
+              <div class="an-meta">@LEITORA_ANA · HOJE</div>
+              <div class="an-reacts">
+                <div class="ar-a">Genial · 3</div>
+                <div class="ar">Me identifico</div>
+                <div class="ar">Pensar mais</div>
+              </div>
+            </div>
+            <div class="thread-sep"></div>
+            <div class="thread-entry">
+              <div class="th-dot" style="background:rgba(174,143,125,0.2);">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#AE8F7D" stroke-width="1.5" fill="none"/></svg>
+              </div>
+              <div>
+                <div class="th-meta">RAFAEL M. · 2H</div>
+                <div class="th-text">Ser invisível até para si. Isso é existir na ausência completa de ego.</div>
+              </div>
+            </div>
+            <div class="thread-entry">
+              <div class="th-dot" style="background:rgba(105,121,98,0.15);">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#697962" stroke-width="1.5" fill="none"/></svg>
+              </div>
+              <div>
+                <div class="th-meta">MARTA C. · ONTEM</div>
+                <div class="th-text">Ou a consciência mais pura — sem o peso de se observar.</div>
+              </div>
+            </div>
+          </div>
+          <div class="input-bar">
+            <div class="input-text">Escreva uma anotação...</div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 2 L4 22 L18 22 L18 8 L12 2 Z" stroke="#AE8F7D" stroke-width="1.2" stroke-linejoin="round" fill="none"/><line x1="7" y1="13" x2="15" y2="13" stroke="#AE8F7D" stroke-width="1" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="screen-lbl">Anotações</div>
+    </div>
+  </div>
+
+  <!-- SOCIAL ASSETS -->
+  <div class="section-label">07 — Social Assets · Cards & Componentes</div>
+
+  <div class="social-grid">
+    <!-- QUOTE CARD -->
+    <div class="qc">
+      <div class="qc-corner">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><polygon points="0,0 44,0 44,44" fill="rgba(174,143,125,0.08)"/><line x1="20" y1="0" x2="44" y2="24" stroke="rgba(174,143,125,0.2)" stroke-width="0.5"/></svg>
+      </div>
+      <div>
+        <div class="qc-logo">Marginalia</div>
+        <div class="qc-quote">"Macabéa era tão <span class="qc-hl">discreta que nem ela mesma sabia que existia.</span>"</div>
+      </div>
+      <div>
+        <div class="qc-sep"></div>
+        <div class="qc-book">A Hora da Estrela</div>
+        <div class="qc-author">Clarice Lispector</div>
+        <div class="qc-foot">
+          <div class="qc-user">anotado por @leitora_ana</div>
+          <div class="qc-count">847 leitores</div>
+        </div>
+      </div>
+    </div>
+    <!-- PROGRESS CARD -->
+    <div class="pc">
+      <div class="pc-header">
+        <div>
+          <div class="pc-title">A Hora<br>da Estrela</div>
+          <div class="pc-author">CLARICE LISPECTOR</div>
+        </div>
+        <div style="opacity:0.08;">
+          <svg width="28" height="34" viewBox="0 0 72 86" fill="none">
+            <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#3D3D3D"/>
+            <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3"/>
+          </svg>
+        </div>
+      </div>
+      <div style="font-family:'Jost',sans-serif;font-size:7px;font-weight:300;letter-spacing:0.12em;color:#AE8F7D;margin-bottom:6px;">MINHA LEITURA</div>
+      <div class="pc-bar-bg"><div class="pc-bar-fill" style="width:60%;"></div></div>
+      <div class="pc-pct"><span>Página 87</span><span>60%</span></div>
+      <div class="pc-stats">
+        <div class="pc-stat"><div class="pc-num">52</div><div class="pc-label">Notas</div></div>
+        <div class="pc-stat"><div class="pc-num" style="color:#AE8F7D;">18</div><div class="pc-label">Hl.</div></div>
+        <div class="pc-stat"><div class="pc-num" style="color:#697962;">7</div><div class="pc-label">Debates</div></div>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:10px;font-style:italic;color:rgba(69,69,69,0.3);margin-top:12px;text-align:right;">Marginalia</div>
+    </div>
+  </div>
+
+  <div class="social-bottom">
+    <!-- BUTTONS -->
+    <div class="btn-card">
+      <div class="sub-label" style="margin-top:0;margin-bottom:12px;">Botões & Estados</div>
+      <div class="btn-list">
+        <div class="btn-p">Anotar</div>
+        <div class="btn-h">Adicionar destaque</div>
+        <div class="btn-v">Confirmado ✓</div>
+        <div class="btn-s">Ver biblioteca</div>
+        <div class="btn-g">Em leitura...</div>
+      </div>
+    </div>
+    <!-- REACTIONS -->
+    <div class="rc-card">
+      <div class="sub-label" style="margin-top:0;margin-bottom:12px;">Reações Inteligentes</div>
+      <div class="rc-list">
+        <div class="rc rc1"><span class="rc-t">Isso mudou minha visão</span><span class="rc-n">847</span></div>
+        <div class="rc rc2"><span class="rc-t">Preciso pensar mais</span><span class="rc-n">312</span></div>
+        <div class="rc rc3"><span class="rc-t">Genial</span><span class="rc-n">1.2k</span></div>
+        <div class="rc rc4"><span class="rc-t">Discordo completamente</span><span class="rc-n">204</span></div>
+        <div class="rc rc3"><span class="rc-t">Me identifico</span><span class="rc-n">98</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

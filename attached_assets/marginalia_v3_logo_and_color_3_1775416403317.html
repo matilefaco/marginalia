@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: transparent; font-family: 'Jost', sans-serif; }
+
+  :root {
+    --albescent: #FAF8F3;
+    --albescent-2: #EBE6DB;
+    --heather: #AE8F7D;
+    --doeskin: #BDAB9C;
+    --old-vine: #697962;
+    --metal: #454545;
+    --body-text: #3D3D3D;
+  }
+
+  .section-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 9px; font-weight: 400; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--color-text-tertiary);
+    margin-bottom: 20px; padding-bottom: 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; margin-bottom: 3px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+
+  .logo-cell {
+    padding: 36px 24px 28px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 160px; position: relative;
+    border-radius: 6px;
+  }
+  .logo-lbl {
+    position: absolute; bottom: 10px; left: 0; right: 0;
+    text-align: center; font-family: 'Jost', sans-serif;
+    font-size: 8px; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+
+  .bg-albescent { background: var(--albescent); border: 0.5px solid rgba(174,143,125,0.15); }
+  .bg-albescent .logo-lbl { color: rgba(69,69,69,0.35); }
+  .bg-metal { background: var(--metal); }
+  .bg-metal .logo-lbl { color: rgba(250,248,243,0.3); }
+  .bg-doeskin { background: var(--doeskin); }
+  .bg-doeskin .logo-lbl { color: rgba(250,248,243,0.45); }
+  .bg-albescent2 { background: var(--albescent-2); border: 0.5px solid rgba(174,143,125,0.15); }
+  .bg-albescent2 .logo-lbl { color: rgba(69,69,69,0.35); }
+  .bg-vine { background: var(--old-vine); }
+  .bg-vine .logo-lbl { color: rgba(250,248,243,0.4); }
+
+  /* Symbol SVG shorthand — define once, reference via sizes */
+  .mark-svg { display: block; }
+
+  /* COLOR SYSTEM */
+  .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-bottom: 3px; }
+  .color-cell { border-radius: 6px; }
+  .color-swatch { border-radius: 6px 6px 0 0; }
+  .color-meta {
+    padding: 10px 10px 12px;
+    border-radius: 0 0 6px 6px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary); border-top: none;
+  }
+  .cm-name { font-family: 'Jost', sans-serif; font-size: 8.5px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-primary); margin-bottom: 2px; }
+  .cm-hex { font-family: 'Jost', sans-serif; font-size: 8px; font-weight: 300; color: var(--color-text-tertiary); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+  .cm-role { font-family: 'Jost', sans-serif; font-size: 8px; font-weight: 300; color: var(--color-text-secondary); margin-top: 5px; line-height: 1.5; }
+
+  /* Usage rules */
+  .usage-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 3px;
+  }
+  .usage-card {
+    background: var(--color-background-secondary);
+    border-radius: 8px; padding: 16px;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .uc-head { font-family: 'Jost', sans-serif; font-size: 8px; font-weight: 400; letter-spacing: 0.16em; text-transform: uppercase; color: var(--heather); margin-bottom: 8px; }
+  .uc-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic; color: var(--color-text-primary); margin-bottom: 6px; }
+  .uc-body { font-family: 'Jost', sans-serif; font-size: 10.5px; font-weight: 300; color: var(--color-text-secondary); line-height: 1.65; }
+
+  /* contrast demo -->*/
+  .contrast-band {
+    margin-top: 3px; border-radius: 8px; overflow: hidden;
+    border: 0.5px solid rgba(174,143,125,0.2);
+  }
+  .cb-row { display: flex; align-items: center; padding: 14px 20px; gap: 16px; }
+  .cb-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .cb-text { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 300; flex: 1; }
+  .cb-ratio { font-family: 'Jost', sans-serif; font-size: 9px; font-weight: 400; letter-spacing: 0.06em; }
+  .cb-pass { color: var(--old-vine); }
+  .cb-note { font-family: 'Jost', sans-serif; font-size: 8px; font-weight: 300; color: rgba(69,69,69,0.5); }
+</style>
+</head>
+<body>
+<div style="padding:0 0 2rem;">
+
+  <!-- LOGO SYSTEM -->
+  <div class="section-label">01 — Logo System · Variações da Marca</div>
+
+  <div class="grid-3">
+    <!-- PRIMARY: Albescent bg, metal text -->
+    <div class="logo-cell bg-albescent">
+      <svg width="144" height="60" viewBox="0 0 144 60" fill="none">
+        <!-- Mark -->
+        <path d="M4,4 L4,50 L28,50 L28,18 L16,4 Z" fill="#BDAB9C" opacity="0.9"/>
+        <line x1="9" y1="4" x2="9" y2="50" stroke="rgba(250,248,243,0.35)" stroke-width="0.6"/>
+        <path d="M16,4 L28,18 L16,18 Z" fill="#FAF8F3" opacity="0.55"/>
+        <circle cx="9" cy="38" r="2.8" fill="#697962" opacity="0.85"/>
+        <!-- Wordmark -->
+        <text x="38" y="26" font-family="Cormorant Garamond,serif" font-size="22" fill="#454545" font-weight="400" font-style="italic" letter-spacing="0.02em">Marginalia</text>
+        <text x="39" y="43" font-family="Jost,sans-serif" font-size="6.5" fill="#AE8F7D" font-weight="300" letter-spacing="0.24em">LEIA JUNTO · SINTA JUNTO</text>
+      </svg>
+      <div class="logo-lbl">Primário</div>
+    </div>
+
+    <!-- DARK: Metal bg -->
+    <div class="logo-cell bg-metal">
+      <svg width="144" height="60" viewBox="0 0 144 60" fill="none">
+        <path d="M4,4 L4,50 L28,50 L28,18 L16,4 Z" fill="#BDAB9C" opacity="0.85"/>
+        <line x1="9" y1="4" x2="9" y2="50" stroke="rgba(250,248,243,0.25)" stroke-width="0.6"/>
+        <path d="M16,4 L28,18 L16,18 Z" fill="#FAF8F3" opacity="0.5"/>
+        <circle cx="9" cy="38" r="2.8" fill="#697962" opacity="0.8"/>
+        <text x="38" y="26" font-family="Cormorant Garamond,serif" font-size="22" fill="#FAF8F3" font-weight="400" font-style="italic" letter-spacing="0.02em">Marginalia</text>
+        <text x="39" y="43" font-family="Jost,sans-serif" font-size="6.5" fill="#AE8F7D" font-weight="300" letter-spacing="0.24em">LEIA JUNTO · SINTA JUNTO</text>
+      </svg>
+      <div class="logo-lbl">Fundo escuro</div>
+    </div>
+
+    <!-- SYMBOL ONLY -->
+    <div class="logo-cell bg-albescent">
+      <svg width="56" height="68" viewBox="0 0 56 68" fill="none">
+        <path d="M4,4 L4,62 L46,62 L46,24 L26,4 Z" fill="#BDAB9C" opacity="0.9"/>
+        <line x1="13" y1="4" x2="13" y2="62" stroke="rgba(250,248,243,0.3)" stroke-width="0.7"/>
+        <line x1="17" y1="34" x2="40" y2="34" stroke="rgba(250,248,243,0.35)" stroke-width="0.9" stroke-linecap="round"/>
+        <line x1="17" y1="42" x2="40" y2="42" stroke="rgba(250,248,243,0.3)" stroke-width="0.9" stroke-linecap="round"/>
+        <line x1="17" y1="50" x2="33" y2="50" stroke="rgba(250,248,243,0.2)" stroke-width="0.9" stroke-linecap="round"/>
+        <path d="M26,4 L46,24 L26,24 Z" fill="#FAF8F3" opacity="0.55"/>
+        <circle cx="13" cy="54" r="4.5" fill="#697962" opacity="0.85"/>
+      </svg>
+      <div class="logo-lbl">Símbolo</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <!-- HORIZONTAL -->
+    <div class="logo-cell bg-albescent2" style="min-height:120px;">
+      <svg width="180" height="46" viewBox="0 0 180 46" fill="none">
+        <path d="M3,3 L3,38 L19,38 L19,14 L11,3 Z" fill="#BDAB9C" opacity="0.9"/>
+        <line x1="7" y1="3" x2="7" y2="38" stroke="rgba(250,248,243,0.3)" stroke-width="0.6"/>
+        <path d="M11,3 L19,14 L11,14 Z" fill="#FAF8F3" opacity="0.55"/>
+        <circle cx="7" cy="30" r="2.2" fill="#697962" opacity="0.85"/>
+        <text x="27" y="18" font-family="Cormorant Garamond,serif" font-size="20" fill="#454545" font-weight="300" font-style="italic" letter-spacing="0.02em">Marginalia</text>
+        <line x1="27" y1="24" x2="175" y2="24" stroke="rgba(69,69,69,0.12)" stroke-width="0.5"/>
+        <text x="28" y="36" font-family="Jost,sans-serif" font-size="6" fill="#697962" font-weight="300" letter-spacing="0.2em">SOCIAL READING PLATFORM</text>
+      </svg>
+      <div class="logo-lbl">Horizontal · plataforma</div>
+    </div>
+
+    <!-- DOESKIN variant -->
+    <div class="logo-cell bg-doeskin">
+      <svg width="144" height="60" viewBox="0 0 144 60" fill="none">
+        <path d="M4,4 L4,50 L28,50 L28,18 L16,4 Z" fill="rgba(250,248,243,0.3)"/>
+        <line x1="9" y1="4" x2="9" y2="50" stroke="rgba(250,248,243,0.2)" stroke-width="0.6"/>
+        <path d="M16,4 L28,18 L16,18 Z" fill="#FAF8F3" opacity="0.45"/>
+        <circle cx="9" cy="38" r="2.8" fill="#697962" opacity="0.7"/>
+        <text x="38" y="26" font-family="Cormorant Garamond,serif" font-size="22" fill="#FAF8F3" font-weight="400" font-style="italic" letter-spacing="0.02em">Marginalia</text>
+        <text x="39" y="43" font-family="Jost,sans-serif" font-size="6.5" fill="rgba(250,248,243,0.55)" font-weight="300" letter-spacing="0.24em">LEIA JUNTO · SINTA JUNTO</text>
+      </svg>
+      <div class="logo-lbl">Doeskin</div>
+    </div>
+
+    <!-- OLD VINE variant -->
+    <div class="logo-cell bg-vine">
+      <svg width="144" height="60" viewBox="0 0 144 60" fill="none">
+        <path d="M4,4 L4,50 L28,50 L28,18 L16,4 Z" fill="#BDAB9C" opacity="0.7"/>
+        <line x1="9" y1="4" x2="9" y2="50" stroke="rgba(250,248,243,0.2)" stroke-width="0.6"/>
+        <path d="M16,4 L28,18 L16,18 Z" fill="#FAF8F3" opacity="0.45"/>
+        <circle cx="9" cy="38" r="2.8" fill="#FAF8F3" opacity="0.7"/>
+        <text x="38" y="26" font-family="Cormorant Garamond,serif" font-size="22" fill="#FAF8F3" font-weight="400" font-style="italic" letter-spacing="0.02em">Marginalia</text>
+        <text x="39" y="43" font-family="Jost,sans-serif" font-size="6.5" fill="rgba(250,248,243,0.5)" font-weight="300" letter-spacing="0.24em">LEIA JUNTO · SINTA JUNTO</text>
+      </svg>
+      <div class="logo-lbl">Old Vine</div>
+    </div>
+  </div>
+
+  <!-- COLOR SYSTEM -->
+  <div class="section-label" style="margin-top:28px;">03 — Color System · Paleta Ajustada para Leitura</div>
+
+  <div class="color-grid">
+    <div class="color-cell">
+      <div class="color-swatch" style="height:80px;background:#FAF8F3;border:0.5px solid rgba(174,143,125,0.2);border-radius:6px 6px 0 0;display:flex;align-items:flex-end;padding:10px;">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:10px;font-style:italic;color:rgba(69,69,69,0.4);">Base</span>
+      </div>
+      <div class="color-meta">
+        <div class="cm-name">Albescent White</div>
+        <div class="cm-hex">#FAF8F3</div>
+        <div class="cm-role">Fundo universal · papel real · nunca branco frio</div>
+      </div>
+    </div>
+    <div class="color-cell">
+      <div class="color-swatch" style="height:80px;background:#AE8F7D;border-radius:6px 6px 0 0;display:flex;align-items:flex-end;padding:10px;">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:10px;font-style:italic;color:rgba(250,248,243,0.6);">Gesto</span>
+      </div>
+      <div class="color-meta">
+        <div class="cm-name">Heather Rose</div>
+        <div class="cm-hex">#AE8F7D</div>
+        <div class="cm-role">A dobra · destaques · emoção · intervenção</div>
+      </div>
+    </div>
+    <div class="color-cell">
+      <div class="color-swatch" style="height:80px;background:#697962;border-radius:6px 6px 0 0;display:flex;align-items:flex-end;padding:10px;">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:10px;font-style:italic;color:rgba(250,248,243,0.6);">Leitor</span>
+      </div>
+      <div class="color-meta">
+        <div class="cm-name">Old Vine</div>
+        <div class="cm-hex">#697962</div>
+        <div class="cm-role">Presença humana · o ponto na margem · confirmação</div>
+      </div>
+    </div>
+    <div class="color-cell">
+      <div class="color-swatch" style="height:80px;background:#454545;border-radius:6px 6px 0 0;display:flex;align-items:flex-end;padding:10px;">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:10px;font-style:italic;color:rgba(250,248,243,0.5);">Texto</span>
+      </div>
+      <div class="color-meta">
+        <div class="cm-name">Machine Gun Metal</div>
+        <div class="cm-hex">#454545</div>
+        <div class="cm-role">Texto principal · estrutura · nunca preto puro</div>
+      </div>
+    </div>
+    <div class="color-cell">
+      <div class="color-swatch" style="height:80px;background:#BDAB9C;border-radius:6px 6px 0 0;display:flex;align-items:flex-end;padding:10px;">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:10px;font-style:italic;color:rgba(250,248,243,0.6);">Meta</span>
+      </div>
+      <div class="color-meta">
+        <div class="cm-name">Old Doeskin</div>
+        <div class="cm-hex">#BDAB9C</div>
+        <div class="cm-role">Símbolo · metadados · elementos secundários</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usage rules -->
+  <div class="usage-row">
+    <div class="usage-card">
+      <div class="uc-head">Base</div>
+      <div class="uc-title">Albescent White é o silêncio.</div>
+      <div class="uc-body">Creme quente — nunca branco frio. Ocupa 80% da interface. A sensação de papel real, físico, que já foi tocado.</div>
+    </div>
+    <div class="usage-card">
+      <div class="uc-head">Gesto</div>
+      <div class="uc-title">Heather Rose é a intervenção.</div>
+      <div class="uc-body">Para a dobra, os destaques, as reações emocionais. Usada com contenção — 10–15%. Cor que significa, não decora.</div>
+    </div>
+    <div class="usage-card">
+      <div class="uc-head">Estrutura</div>
+      <div class="uc-title">Metal sustenta. Old Vine ancora.</div>
+      <div class="uc-body">Metal (#454545) para todo texto e UI — contraste 7:1 sobre Albescent. Old Vine para confirmações e presença humana.</div>
+    </div>
+  </div>
+
+  <!-- Contrast compliance -->
+  <div class="contrast-band">
+    <div style="padding:12px 20px 8px;border-bottom:0.5px solid rgba(174,143,125,0.12);">
+      <div style="font-family:'Jost',sans-serif;font-size:8px;font-weight:300;letter-spacing:0.18em;color:rgba(69,69,69,0.4);text-transform:uppercase;">Contraste ajustado para leitura — todos os pares essenciais</div>
+    </div>
+    <div class="cb-row" style="background:#FAF8F3;border-bottom:0.5px solid rgba(174,143,125,0.1);">
+      <div class="cb-dot" style="background:#454545;"></div>
+      <div class="cb-text" style="color:#454545;">#454545 Metal sobre Albescent White — corpo de texto, títulos, UI</div>
+      <div class="cb-ratio cb-pass">7.1:1 ✓</div>
+    </div>
+    <div class="cb-row" style="background:#FAF8F3;border-bottom:0.5px solid rgba(174,143,125,0.1);">
+      <div class="cb-dot" style="background:#697962;"></div>
+      <div class="cb-text" style="color:#697962;">#697962 Old Vine sobre Albescent — links, confirmações</div>
+      <div class="cb-ratio cb-pass">4.6:1 ✓</div>
+    </div>
+    <div class="cb-row" style="background:#FAF8F3;">
+      <div class="cb-dot" style="background:#AE8F7D;"></div>
+      <div class="cb-text" style="color:#AE8F7D;">#AE8F7D Heather sobre Albescent — metadata, labels decorativos</div>
+      <div class="cb-ratio" style="color:rgba(69,69,69,0.4);">3.1:1 · apenas para acento</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

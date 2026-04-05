@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@200;300;400;500;600&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: transparent; font-family: 'Jost', sans-serif; }
+
+  :root {
+    --albescent: #FAF8F3;
+    --heather: #AE8F7D;
+    --doeskin: #BDAB9C;
+    --old-vine: #697962;
+    --metal: #454545;
+    --body-text: #3D3D3D;
+  }
+
+  .section-label {
+    font-size: 9px; font-weight: 400; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--color-text-tertiary);
+    margin-bottom: 20px; padding-bottom: 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  /* TYPOGRAPHY */
+  .type-block {
+    background: var(--color-background-secondary);
+    border-radius: 10px; padding: 28px 28px;
+    border: 0.5px solid var(--color-border-tertiary);
+    margin-bottom: 3px;
+  }
+  .font-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
+  .font-name-label { font-size: 8.5px; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; color: var(--heather); }
+  .font-use-label { font-size: 8px; font-weight: 300; color: var(--color-text-tertiary); letter-spacing: 0.06em; }
+
+  .specimen-cormorant { font-family: 'Cormorant Garamond', serif; font-size: 52px; font-style: italic; font-weight: 300; color: var(--color-text-primary); line-height: 1.0; margin-bottom: 6px; }
+  .specimen-cormorant-q { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-style: italic; font-weight: 400; color: var(--heather); line-height: 1.3; margin-bottom: 16px; }
+  .alphabet { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--color-text-tertiary); letter-spacing: 0.08em; line-height: 2; margin-bottom: 4px; }
+  .alphabet-i { font-family: 'Cormorant Garamond', serif; font-size: 13px; font-style: italic; color: var(--color-text-tertiary); letter-spacing: 0.08em; line-height: 2; }
+
+  .specimen-jost { font-family: 'Jost', sans-serif; font-size: 36px; font-weight: 200; letter-spacing: 0.18em; color: var(--color-text-primary); margin-bottom: 4px; }
+  .specimen-jost-b { font-family: 'Jost', sans-serif; font-size: 36px; font-weight: 500; letter-spacing: 0.08em; color: var(--color-text-primary); margin-bottom: 16px; }
+  .alphabet-jost { font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 300; color: var(--color-text-tertiary); letter-spacing: 0.1em; line-height: 2; }
+
+  /* Weight specimens -->*/
+  .weights-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 14px; }
+  .wt { }
+  .wt-label { font-size: 7.5px; font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-tertiary); margin-bottom: 3px; }
+  .wt-c { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--color-text-primary); }
+  .wt-j { font-family: 'Jost', sans-serif; font-size: 18px; color: var(--color-text-primary); }
+
+  /* Type scale -->*/
+  .scale-block {
+    background: var(--albescent);
+    border-radius: 10px;
+    border: 0.5px solid rgba(174,143,125,0.18);
+    overflow: hidden;
+    margin-bottom: 3px;
+  }
+  .scale-row { display: flex; align-items: baseline; gap: 0; border-bottom: 0.5px solid rgba(69,69,69,0.06); }
+  .scale-row:last-child { border-bottom: none; }
+  .scale-tag { font-family: 'Jost', sans-serif; font-size: 8px; font-weight: 400; letter-spacing: 0.14em; color: var(--heather); width: 56px; padding: 12px 0 12px 20px; flex-shrink: 0; }
+  .scale-divider { width: 0.5px; background: rgba(69,69,69,0.08); align-self: stretch; flex-shrink: 0; }
+  .scale-specimen { padding: 10px 20px; flex: 1; }
+  .scale-spec-label { font-family: 'Jost', sans-serif; font-size: 8px; font-weight: 300; color: rgba(69,69,69,0.4); padding: 12px 20px 12px 0; width: 220px; flex-shrink: 0; text-align: right; letter-spacing: 0.04em; }
+
+  .ts-h1 { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 400; font-style: italic; color: #3D3D3D; line-height: 1.0; }
+  .ts-h2 { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; color: #3D3D3D; line-height: 1.15; }
+  .ts-h3 { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-style: italic; color: #AE8F7D; line-height: 1.2; }
+  .ts-body { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: #3D3D3D; line-height: 1.8; }
+  .ts-ui { font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 400; color: #3D3D3D; letter-spacing: 0.01em; }
+  .ts-caption { font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 300; color: #697962; letter-spacing: 0.04em; }
+  .ts-label { font-family: 'Jost', sans-serif; font-size: 9px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: #AE8F7D; }
+
+  /* ICONS -->*/
+  .icon-section { margin-top: 28px; }
+  .app-icon-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+  .ai-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .ai-lbl { font-size: 7.5px; font-weight: 300; color: var(--color-text-tertiary); text-align: center; letter-spacing: 0.06em; line-height: 1.4; }
+  .ai-box { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
+  .icon-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-top: 3px; }
+  .icon-cell {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; padding: 16px 4px 12px;
+    background: var(--albescent);
+    border-radius: 6px;
+    border: 0.5px solid rgba(174,143,125,0.12);
+  }
+  .icon-cell-lbl { font-size: 7.5px; font-weight: 300; color: rgba(69,69,69,0.45); text-align: center; letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+<div style="padding:0 0 2rem;">
+
+  <!-- TYPOGRAPHY -->
+  <div class="section-label">04 — Typography · Cormorant + Jost</div>
+
+  <!-- Cormorant -->
+  <div class="type-block">
+    <div class="font-header">
+      <div class="font-name-label">Display · Cormorant Garamond Italic</div>
+      <div class="font-use-label">Títulos · citações · corpo de leitura · editorial</div>
+    </div>
+    <div class="specimen-cormorant">Aa Bb</div>
+    <div class="specimen-cormorant-q">"Dobro esta página.<br>Preciso voltar aqui."</div>
+    <div class="alphabet">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</div>
+    <div class="alphabet">a b c d e f g h i j k l m n o p q r s t u v w x y z · 0 1 2 3 4 5 6 7 8 9 &amp; — " " ×</div>
+    <div class="alphabet-i" style="margin-top:2px;">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z — a b c d e f g h i j k l m n o p q r s t u v w x y z</div>
+    <div class="weights-row">
+      <div class="wt"><div class="wt-label">Light 300</div><div class="wt-c" style="font-weight:300;">Ler é habitar</div></div>
+      <div class="wt"><div class="wt-label">Regular 400</div><div class="wt-c" style="font-weight:400;">Ler é habitar</div></div>
+      <div class="wt"><div class="wt-label">Italic 300</div><div class="wt-c" style="font-style:italic;font-weight:300;">Ler é habitar</div></div>
+      <div class="wt"><div class="wt-label">Italic 400</div><div class="wt-c" style="font-style:italic;">Ler é habitar</div></div>
+      <div class="wt"><div class="wt-label">Italic 500</div><div class="wt-c" style="font-style:italic;font-weight:500;">Ler é habitar</div></div>
+    </div>
+  </div>
+
+  <!-- Jost -->
+  <div class="type-block">
+    <div class="font-header">
+      <div class="font-name-label">Interface · Jost</div>
+      <div class="font-use-label">UI · metadados · labels · navegação · aéreo</div>
+    </div>
+    <div class="specimen-jost">MARGINALIA</div>
+    <div class="specimen-jost-b">Marginalia</div>
+    <div class="alphabet-jost">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</div>
+    <div class="alphabet-jost">a b c d e f g h i j k l m n o p q r s t u v w x y z · 0 1 2 3 4 5 6 7 8 9</div>
+    <div class="weights-row">
+      <div class="wt"><div class="wt-label">ExtraLight 200</div><div class="wt-j" style="font-weight:200;">Anotar</div></div>
+      <div class="wt"><div class="wt-label">Light 300</div><div class="wt-j" style="font-weight:300;">Anotar</div></div>
+      <div class="wt"><div class="wt-label">Regular 400</div><div class="wt-j" style="font-weight:400;">Anotar</div></div>
+      <div class="wt"><div class="wt-label">Medium 500</div><div class="wt-j" style="font-weight:500;">Anotar</div></div>
+    </div>
+  </div>
+
+  <!-- Type scale -->
+  <div class="scale-block">
+    <div class="scale-row">
+      <div class="scale-tag">H1</div><div class="scale-divider"></div>
+      <div class="scale-specimen"><div class="ts-h1">Marginalia</div></div>
+      <div class="scale-spec-label">Cormorant · 38px · italic 400</div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-tag">H2</div><div class="scale-divider"></div>
+      <div class="scale-specimen"><div class="ts-h2">Capítulos desta semana</div></div>
+      <div class="scale-spec-label">Cormorant · 26px · regular 400</div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-tag">H3</div><div class="scale-divider"></div>
+      <div class="scale-specimen"><div class="ts-h3">nota à margem · pág. 47</div></div>
+      <div class="scale-spec-label">Cormorant · 19px · italic · Heather</div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-tag">Body</div><div class="scale-divider"></div>
+      <div class="scale-specimen"><div class="ts-body">O leitor que anota não apenas lê — ele responde ao texto.</div></div>
+      <div class="scale-spec-label">Cormorant · 16px · regular · lh 1.8</div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-tag">UI</div><div class="scale-divider"></div>
+      <div class="scale-specimen"><div class="ts-ui">Biblioteca · Anotações · Perfil</div></div>
+      <div class="scale-spec-label">Jost · 13px · regular 400</div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-tag">Caption</div><div class="scale-divider"></div>
+      <div class="scale-specimen"><div class="ts-caption">12 leitores marcaram este trecho</div></div>
+      <div class="scale-spec-label">Jost · 11px · light 300 · Old Vine</div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-tag">Label</div><div class="scale-divider"></div>
+      <div class="scale-specimen"><div class="ts-label">Metadados · Tag · Capítulo</div></div>
+      <div class="scale-spec-label">Jost · 9px · 400 · ls 0.2 · Heather</div>
+    </div>
+  </div>
+
+  <!-- ICONS -->
+  <div class="section-label" style="margin-top:28px;">05 — App Icons · Interface</div>
+
+  <div class="app-icon-row" style="margin-bottom:16px;">
+    <!-- App Store 1024 -->
+    <div class="ai-wrap">
+      <div class="ai-box" style="width:76px;height:76px;border-radius:17px;background:#FAF8F3;border:0.5px solid rgba(174,143,125,0.2);">
+        <svg width="48" height="58" viewBox="0 0 72 86" fill="none">
+          <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.9"/>
+          <line x1="13" y1="4" x2="13" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="0.8"/>
+          <line x1="17" y1="40" x2="52" y2="40" stroke="rgba(250,248,243,0.38)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="17" y1="50" x2="52" y2="50" stroke="rgba(250,248,243,0.32)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="17" y1="60" x2="40" y2="60" stroke="rgba(250,248,243,0.22)" stroke-width="1" stroke-linecap="round"/>
+          <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.55"/>
+          <circle cx="13" cy="68" r="5.5" fill="#697962" opacity="0.85"/>
+        </svg>
+      </div>
+      <div class="ai-lbl">App Store<br>1024px</div>
+    </div>
+    <!-- iOS 60pt -->
+    <div class="ai-wrap">
+      <div class="ai-box" style="width:52px;height:52px;border-radius:12px;background:#FAF8F3;border:0.5px solid rgba(174,143,125,0.2);">
+        <svg width="33" height="40" viewBox="0 0 72 86" fill="none">
+          <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.9"/>
+          <line x1="13" y1="4" x2="13" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="1"/>
+          <line x1="17" y1="42" x2="52" y2="42" stroke="rgba(250,248,243,0.38)" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="17" y1="54" x2="42" y2="54" stroke="rgba(250,248,243,0.25)" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.55"/>
+          <circle cx="13" cy="68" r="6" fill="#697962" opacity="0.85"/>
+        </svg>
+      </div>
+      <div class="ai-lbl">iOS<br>60pt</div>
+    </div>
+    <!-- Android -->
+    <div class="ai-wrap">
+      <div class="ai-box" style="width:52px;height:52px;border-radius:50%;background:#FAF8F3;border:0.5px solid rgba(174,143,125,0.2);">
+        <svg width="33" height="40" viewBox="0 0 72 86" fill="none">
+          <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.9"/>
+          <line x1="13" y1="4" x2="13" y2="82" stroke="rgba(250,248,243,0.3)" stroke-width="1"/>
+          <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.55"/>
+          <circle cx="13" cy="68" r="6" fill="#697962" opacity="0.85"/>
+        </svg>
+      </div>
+      <div class="ai-lbl">Android<br>circular</div>
+    </div>
+    <!-- Metal Dark -->
+    <div class="ai-wrap">
+      <div class="ai-box" style="width:52px;height:52px;border-radius:12px;background:#454545;">
+        <svg width="33" height="40" viewBox="0 0 72 86" fill="none">
+          <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.85"/>
+          <line x1="13" y1="4" x2="13" y2="82" stroke="rgba(250,248,243,0.2)" stroke-width="1"/>
+          <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.45"/>
+          <circle cx="13" cy="68" r="6" fill="#697962" opacity="0.8"/>
+        </svg>
+      </div>
+      <div class="ai-lbl">Metal<br>dark</div>
+    </div>
+    <!-- Old Vine -->
+    <div class="ai-wrap">
+      <div class="ai-box" style="width:52px;height:52px;border-radius:12px;background:#697962;">
+        <svg width="33" height="40" viewBox="0 0 72 86" fill="none">
+          <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.7"/>
+          <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.5"/>
+          <circle cx="13" cy="68" r="6" fill="#FAF8F3" opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="ai-lbl">Old Vine<br>variant</div>
+    </div>
+    <!-- 40pt -->
+    <div class="ai-wrap">
+      <div class="ai-box" style="width:36px;height:36px;border-radius:8px;background:#FAF8F3;border:0.5px solid rgba(174,143,125,0.2);">
+        <svg width="22" height="27" viewBox="0 0 72 86" fill="none">
+          <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.9"/>
+          <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.55"/>
+          <circle cx="13" cy="68" r="7" fill="#697962" opacity="0.85"/>
+        </svg>
+      </div>
+      <div class="ai-lbl">Spotlight<br>40pt</div>
+    </div>
+    <!-- 20pt -->
+    <div class="ai-wrap">
+      <div class="ai-box" style="width:20px;height:20px;border-radius:5px;background:#FAF8F3;border:0.5px solid rgba(174,143,125,0.2);">
+        <svg width="13" height="16" viewBox="0 0 72 86" fill="none">
+          <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.9"/>
+          <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.6"/>
+          <circle cx="13" cy="68" r="8" fill="#697962"/>
+        </svg>
+      </div>
+      <div class="ai-lbl">Notif<br>20pt</div>
+    </div>
+  </div>
+
+  <!-- Interface icons: 14 with consistent 1.1px stroke + brand marks -->
+  <div class="icon-grid">
+    <!-- Salvar -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M5 3 L5 21 L12 17 L19 21 L19 3 Z" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <path d="M14 3 L19 3 L19 8" stroke="#AE8F7D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="icon-cell-lbl">Salvar</div>
+    </div>
+    <!-- Anotar -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M4 2 L4 22 L18 22 L18 8 L12 2 Z" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <path d="M12 2 L18 8 L12 8" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <line x1="7" y1="13" x2="15" y2="13" stroke="#AE8F7D" stroke-width="1" stroke-linecap="round"/>
+        <line x1="7" y1="16.5" x2="12" y2="16.5" stroke="#AE8F7D" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+      <div class="icon-cell-lbl">Anotar</div>
+    </div>
+    <!-- Reagir -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 20 C12 20 3 14 3 8.5 C3 6 5 4 7.5 4 C9.5 4 11 5.5 12 7 C13 5.5 14.5 4 16.5 4 C19 4 21 6 21 8.5 C21 14 12 20 12 20Z" stroke="#AE8F7D" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <div class="icon-cell-lbl">Reagir</div>
+    </div>
+    <!-- Comentar -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M3 5 Q3 3 5 3 L19 3 Q21 3 21 5 L21 14 Q21 16 19 16 L9 16 L4 21 L4 16 Q3 16 3 14 Z" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <line x1="7" y1="8" x2="17" y2="8" stroke="#454545" stroke-width="0.8" stroke-linecap="round" opacity="0.3"/>
+        <line x1="7" y1="11.5" x2="14" y2="11.5" stroke="#454545" stroke-width="0.8" stroke-linecap="round" opacity="0.3"/>
+      </svg>
+      <div class="icon-cell-lbl">Comentar</div>
+    </div>
+    <!-- Partilhar -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="18" cy="5" r="2.3" stroke="#454545" stroke-width="1.1" fill="none"/>
+        <circle cx="6" cy="12" r="2.3" stroke="#454545" stroke-width="1.1" fill="none"/>
+        <circle cx="18" cy="19" r="2.3" stroke="#454545" stroke-width="1.1" fill="none"/>
+        <line x1="8.1" y1="10.9" x2="15.9" y2="6.1" stroke="#454545" stroke-width="1" stroke-linecap="round"/>
+        <line x1="8.1" y1="13.1" x2="15.9" y2="17.9" stroke="#454545" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+      <div class="icon-cell-lbl">Partilhar</div>
+    </div>
+    <!-- Biblioteca -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="4" width="4" height="16" rx="1" stroke="#454545" stroke-width="1.1" fill="none"/>
+        <rect x="9" y="6" width="4" height="14" rx="1" stroke="#454545" stroke-width="1.1" fill="none"/>
+        <path d="M15 3 L15 20 L21 20 L21 3 Z" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <path d="M17.5 3 L21 3 L21 6.5" stroke="#AE8F7D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="3" y1="20" x2="21" y2="20" stroke="#454545" stroke-width="1.1" stroke-linecap="round"/>
+      </svg>
+      <div class="icon-cell-lbl">Biblioteca</div>
+    </div>
+    <!-- Buscar -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="10.5" cy="10.5" r="6.5" stroke="#454545" stroke-width="1.1" fill="none"/>
+        <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="#454545" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="8" y1="10" x2="13" y2="10" stroke="#454545" stroke-width="0.8" stroke-linecap="round" opacity="0.3"/>
+        <line x1="8" y1="12.5" x2="11" y2="12.5" stroke="#454545" stroke-width="0.8" stroke-linecap="round" opacity="0.3"/>
+      </svg>
+      <div class="icon-cell-lbl">Buscar</div>
+    </div>
+    <!-- Perfil -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="8" r="4" stroke="#454545" stroke-width="1.1" fill="none"/>
+        <path d="M4 22 C4 17 7.5 15 12 15 C16.5 15 20 17 20 22" stroke="#454545" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+      </svg>
+      <div class="icon-cell-lbl">Perfil</div>
+    </div>
+    <!-- Heatmap -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M4 2 L4 22 L18 22 L18 8 L12 2 Z" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <path d="M12 2 L18 8 L12 8" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <line x1="7" y1="13" x2="15" y2="13" stroke="#AE8F7D" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+        <line x1="7" y1="15.5" x2="15" y2="15.5" stroke="#AE8F7D" stroke-width="1.8" stroke-linecap="round" opacity="0.45"/>
+        <line x1="7" y1="18" x2="12" y2="18" stroke="#AE8F7D" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+      </svg>
+      <div class="icon-cell-lbl">Heatmap</div>
+    </div>
+    <!-- Notificação -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M12 3 C12 3 6 6 6 13 L6 17 L18 17 L18 13 C18 6 12 3 12 3 Z" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <path d="M9.5 17 C9.5 18.5 14.5 18.5 14.5 17" stroke="#454545" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+        <line x1="12" y1="3" x2="12" y2="1.5" stroke="#454545" stroke-width="1.1" stroke-linecap="round"/>
+        <circle cx="18" cy="5" r="2.5" fill="#AE8F7D"/>
+      </svg>
+      <div class="icon-cell-lbl">Notif.</div>
+    </div>
+    <!-- Página -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M7 5 L7 21 L19 21 L19 5 Z" stroke="#454545" stroke-width="0.9" stroke-linejoin="round" fill="none" opacity="0.2"/>
+        <path d="M5 4 L5 20 L17 20 L17 4 Z" stroke="#454545" stroke-width="0.9" stroke-linejoin="round" fill="none" opacity="0.4"/>
+        <path d="M3 2 L3 19 L14 19 L14 8 L9 2 Z" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <path d="M9 2 L14 8 L9 8" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <div class="icon-cell-lbl">Página</div>
+    </div>
+    <!-- Destaque -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <polygon points="12,2 15,9 22,9 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9 9,9" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <div class="icon-cell-lbl">Destaque</div>
+    </div>
+    <!-- Tag -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M3 3 L13 3 L21 12 L13 21 L3 21 Z" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <circle cx="8" cy="8" r="1.6" fill="#454545" opacity="0.4"/>
+        <line x1="8" y1="14" x2="15" y2="14" stroke="#AE8F7D" stroke-width="0.9" stroke-linecap="round" opacity="0.6"/>
+        <line x1="8" y1="17" x2="12" y2="17" stroke="#AE8F7D" stroke-width="0.9" stroke-linecap="round" opacity="0.35"/>
+      </svg>
+      <div class="icon-cell-lbl">Tag</div>
+    </div>
+    <!-- Em leitura -->
+    <div class="icon-cell">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M2 4 C2 4 7 3 12 6 C17 3 22 4 22 4 L22 20 C22 20 17 19 12 22 C7 19 2 20 2 20 Z" stroke="#454545" stroke-width="1.1" stroke-linejoin="round" fill="none"/>
+        <line x1="12" y1="6" x2="12" y2="22" stroke="#454545" stroke-width="0.8" stroke-linecap="round" opacity="0.3"/>
+        <circle cx="17" cy="5.5" r="2.5" fill="#697962" opacity="0.75"/>
+      </svg>
+      <div class="icon-cell-lbl">Em leitura</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
