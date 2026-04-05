@@ -1,0 +1,307 @@
+Quero evoluir o MARGINALIA para um nível de produto mais avançado, mantendo o design atual, mas melhorando profundidade, inteligência, fluidez e experiência.
+
+NÃO alterar a identidade visual.
+Apenas melhorar produto, sistema e UX.
+
+OBJETIVO:
+- deixar o app mais intuitivo
+- menos cansativo
+- mais dinâmico
+- mais inteligente
+- mais prazeroso de usar
+- mais “vivo”
+
+---
+
+1. PÁGINA DO LIVRO — EXPANSÃO COMPLETA
+
+Adicionar uma nova seção dentro da página de cada livro:
+
+SEÇÃO: SOBRE O LIVRO
+
+Incluir:
+- sinopse
+- autor
+- ano
+- gênero
+- número de páginas (se disponível)
+
+---
+
+2. MAPA DE EMOÇÕES DO LIVRO (FEATURE FORTE)
+
+Criar uma nova feature chamada:
+
+👉 “Mapa de Ecos”
+
+Descrição:
+Um gráfico visual que mostra onde os leitores mais reagiram ao longo do livro.
+
+Funcionamento:
+- eixo horizontal → progresso do livro (% ou capítulos)
+- eixo vertical → intensidade de interações
+
+Mostrar:
+- picos de reação
+- momentos mais comentados
+- trechos mais marcantes
+
+UI:
+- linha suave ou barras elegantes
+- minimalista
+- integrado ao design do app
+
+Texto:
+“Veja onde os leitores mais sentiram este livro.”
+
+---
+
+3. PERFIL — CORRIGIR DADOS
+
+Hoje:
+dados não refletem corretamente o cadastro
+
+Corrigir:
+mostrar exatamente:
+- nome + sobrenome
+- username
+- cidade
+- bio
+
+Adicionar:
+edição de perfil
+
+---
+
+4. PERSONALIZAÇÃO VISUAL DO USUÁRIO
+
+Permitir que o usuário escolha:
+👉 cor da bolinha do avatar
+
+Opções:
+- verde (default)
+- terracota
+- bege escuro
+- vinho
+- cinza
+
+Salvar no perfil e usar em:
+- avatar
+- comentários
+- presença visual
+
+---
+
+5. LOGIN MELHORADO
+
+Permitir login com:
+- email
+OU
+- username
+
+Corrigir fluxo:
+- login → vai direto para HOME
+
+---
+
+6. ATUALIZAÇÃO DE PROGRESSO MAIS INTELIGENTE
+
+Remover dependência de %
+
+Permitir:
+- inserir página
+OU
+- inserir capítulo
+
+Sistema calcula automaticamente a %
+
+Mostrar sempre:
+- página
+- capítulo
+- %
+
+---
+
+7. ASSINATURA DE LEITURA MAIS FORTE
+
+Melhorar geração da assinatura:
+
+Hoje:
+genérica
+
+Novo:
+mais específica, mais emocional, mais única
+
+Exemplo:
+“Você se demora onde outros passam — você lê como quem escuta.”
+
+Gerar com base em:
+- tipos de margem
+- frequência
+- emoções
+
+---
+
+8. REMOVER GÊNEROS DO PERFIL
+
+Não exibir gêneros favoritos no perfil
+
+Isso polui visualmente e reduz sofisticação
+
+---
+
+9. FEED MENOS MAÇANTE (CRÍTICO)
+
+Problema:
+feed muito uniforme → cansa
+
+SOLUÇÃO:
+
+Criar VARIAÇÃO VISUAL ENTRE CARDS
+
+Implementar:
+
+1. Diferenciação por livro
+- cada livro tem uma cor sutil própria (base neutra)
+- borda ou detalhe muda levemente
+
+2. Tipos de cards diferentes
+- Insight → layout A
+- Teoria → layout B
+- Citação → layout mais elegante
+- Pergunta → mais chamativa
+
+3. Quebra de ritmo
+Inserir entre os cards:
+
+- “Momento do livro”
+- “Trecho que parou leitores hoje”
+- “Você pode gostar disso”
+
+---
+
+10. SISTEMA DE RESPIRAÇÃO DO FEED
+
+A cada 3–4 margens:
+
+Inserir:
+- bloco editorial leve
+- sugestão de livro
+- destaque emocional
+
+Isso evita cansaço.
+
+---
+
+11. MELHORAR HIERARQUIA DE TEXTO
+
+Aplicar:
+
+- trechos → mais contraste
+- comentários → levemente mais escuros
+- meta info → mais discreta
+
+Aumentar legibilidade geral.
+
+---
+
+12. NOVA MARGEM — MELHORAR EXPERIÊNCIA
+
+Já está boa, mas:
+
+- destacar mais o campo de trecho
+- aumentar contraste do campo
+- melhorar foco visual
+
+---
+
+13. BOTÃO PUBLICAR
+
+Hoje:
+fraco visualmente
+
+Melhorar:
+- mais contraste
+- mais destaque
+- parecer ação importante
+
+---
+
+14. EXPLORE — REFINAMENTO
+
+Manter nova estrutura, mas melhorar:
+
+Adicionar:
+
+- “Leitores parecidos com você”
+- “Livros que estão gerando debates”
+- “Descobertas silenciosas”
+
+---
+
+15. SENSAÇÃO DE VIDA NO APP
+
+Adicionar micro-feedbacks:
+
+- animações leves ao reagir
+- micro-transições suaves
+- feedback ao publicar margem
+
+---
+
+16. COPY (LINGUAGEM)
+
+Tornar mais humano e literário:
+
+Exemplos:
+- “Isso ficou com você por um motivo.”
+- “Guarde antes que se perca.”
+- “Outros leitores pararam aqui também.”
+
+---
+
+17. COMPARTILHAMENTO
+
+Melhorar cards para compartilhamento:
+
+Criar versão:
+- mais contrastada
+- mais legível
+- foco no trecho
+
+Deve parecer:
+“postável”
+
+---
+
+18. PERFORMANCE DE EXPERIÊNCIA
+
+Objetivo final:
+
+O app deve:
+- não cansar
+- não parecer repetitivo
+- não parecer lento
+- não parecer vazio
+
+---
+
+RESULTADO FINAL ESPERADO
+
+O MARGINALIA deve parecer:
+
+- mais dinâmico
+- mais inteligente
+- mais envolvente
+- mais leve de usar
+- mais intuitivo
+- mais sofisticado
+
+Sem perder:
+- estética editorial
+- elegância
+- identidade
+
+FOCO FINAL:
+
+Transformar o app de “bonito” para “viciante de usar”.

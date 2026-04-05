@@ -45,14 +45,14 @@ export function LoginScreen({ onLogin, onBack }: Props) {
       <div className="space-y-6 mb-8">
         <div>
           <label className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] block mb-2">
-            E-mail
+            E-mail ou @username
           </label>
           <input
             data-testid="input-login-email"
-            type="email"
+            type="text"
             value={email}
             onChange={(e) => { setEmail(e.target.value); setError(""); }}
-            placeholder="seu@email.com"
+            placeholder="seu@email.com ou @seunome"
             className="w-full font-serif italic text-[16px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent border-b border-[#454545]/15 pb-2.5 outline-none focus:border-[#AE8F7D]/60 transition-colors"
           />
         </div>

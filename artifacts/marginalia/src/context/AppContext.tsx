@@ -26,7 +26,7 @@ interface AppState {
 interface AppActions {
   updateSpoilerPreference: (pref: SpoilerPreference) => void;
   updatePreferredGenres: (genres: string[]) => void;
-  updateProfile: (data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string }) => void;
+  updateProfile: (data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string; avatarColor?: string }) => void;
   updateBookProgress: (bookId: number, updates: Partial<BookProgress>) => void;
   addMargin: (margin: Omit<Margin, "id" | "createdAt" | "reactions" | "commentsCount" | "userName" | "userInitials">) => void;
   addReaction: (marginId: number, reaction: string) => void;
@@ -57,7 +57,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCurrentUser((u) => ({ ...u, preferredGenres: genres }));
   };
 
-  const updateProfile = (data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string }) => {
+  const updateProfile = (data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string; avatarColor?: string }) => {
     setCurrentUser((u) => {
       const firstName = data.firstName ?? u.firstName;
       const lastName = data.lastName ?? u.lastName;

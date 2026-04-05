@@ -1,0 +1,187 @@
+Quero adicionar uma nova feature no MARGINALIA chamada:
+
+👉 MOMENTO DO LIVRO HOJE
+
+Essa feature deve trazer sensação de tempo real, comunidade e descoberta.
+
+OBJETIVO:
+- mostrar o que leitores estão sentindo AGORA
+- criar motivo para abrir o app diariamente
+- dar sensação de leitura coletiva
+
+---
+
+CONCEITO
+
+“MOMENTO DO LIVRO HOJE” mostra:
+
+👉 quais livros estão gerando mais reação HOJE  
+👉 em que parte do livro as pessoas estão reagindo  
+👉 quais trechos estão “parando leitores agora”
+
+---
+
+ONDE APARECE
+
+1. HOME (principal)
+Inserir seção logo após “Continue de onde você parou”
+
+Título:
+“MOMENTO DO LIVRO HOJE”
+
+Subtítulo:
+“Onde leitores estão parando agora”
+
+---
+
+ESTRUTURA DA SEÇÃO
+
+Cada item deve mostrar:
+
+- nome do livro
+- autor
+- trecho (se possível)
+OU descrição curta
+
+- referência:
+  capítulo / página / %
+
+- número de leitores ativos nesse ponto
+
+Exemplo:
+
+“Hoje, leitores pararam em Dom Casmurro — capítulo 72”
+
+Ou:
+
+“37 leitores reagiram aqui nas últimas horas”
+
+---
+
+TIPOS DE CARDS
+
+Criar variações:
+
+1. MOMENTO FORTE
+- trecho + comentário
+- destaque visual maior
+
+2. PICO DE REAÇÃO
+- gráfico pequeno ou indicador
+- “pico de ecos”
+
+3. TRECHO DO DIA
+- destaque editorial
+- mais bonito, mais clean
+
+---
+
+LÓGICA (IMPORTANTE)
+
+Calcular com base em:
+
+- número de margens criadas nas últimas 24h
+- número de reações
+- número de comentários
+
+Agrupar por:
+- livro
+- ponto do livro (capítulo/página/%)
+
+Selecionar:
+- os mais relevantes do dia
+
+---
+
+ANTI-SPOILER (OBRIGATÓRIO)
+
+Respeitar progresso do usuário:
+
+Se o conteúdo estiver além do progresso:
+
+👉 NÃO mostrar o trecho
+
+Mostrar card alternativo:
+
+“TRECHO OCULTADO PARA PRESERVAR SUA LEITURA”
+
+Texto:
+“Leitores estão reagindo intensamente neste ponto.”
+
+Botões:
+- Atualizar progresso
+- Ver mesmo assim
+
+---
+
+INTERAÇÃO
+
+Cada card deve permitir:
+
+- ver o trecho completo
+- abrir página do livro naquele ponto
+- reagir
+- salvar
+
+---
+
+MICROCOPY (IMPORTANTE)
+
+Usar linguagem viva:
+
+- “Leitores pararam aqui hoje”
+- “Esse trecho está reverberando agora”
+- “Algo está acontecendo aqui”
+
+Evitar linguagem fria.
+
+---
+
+FREQUÊNCIA
+
+Atualizar:
+- a cada sessão
+OU
+- a cada refresh
+
+Simular “tempo real” mesmo com dados mockados
+
+---
+
+OBJETIVO FINAL
+
+Essa seção deve parecer:
+
+- viva
+- atual
+- imprevisível
+- coletiva
+
+O usuário deve sentir:
+
+👉 “tem gente lendo junto comigo agora”
+
+---
+
+NÃO QUEBRAR O DESIGN
+
+Manter:
+- estética minimalista
+- tons suaves
+- tipografia elegante
+
+Mas:
+- dar destaque suficiente para chamar atenção
+
+---
+
+RESULTADO ESPERADO
+
+O app deve ganhar:
+
+- sensação de tempo real
+- mais engajamento
+- mais retorno diário
+- mais conexão entre leitores
+
+Essa feature é essencial para tornar o MARGINALIA um app vivo.
