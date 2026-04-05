@@ -43,9 +43,9 @@ A Portuguese-language literary social network where users annotate book passages
 ### Architecture — Post-Refactor
 **Frontend runs off AppContext + mock data** (not API-dependent for UI). The API server still exists but the React app uses an in-memory data layer for all UI operations.
 
-- **AppContext** (`src/context/AppContext.tsx`) — global state with currentUser, books, margins, progress, notifications + actions
-- **Mock data** (`src/data/mockData.ts`) — 7 books, 8 margins, 5 users, progress, notifications, collections
-- **Constants** (`src/data/constants.ts`) — GENRES, SPOILER_PREFERENCES, MARGIN_TYPES, SPOILER_LEVELS, REACTION_TYPES, etc.
+- **AppContext** (`src/context/AppContext.tsx`) — global state with currentUser, books, margins, progress, notifications + actions; `updateProfile` supports firstName, lastName, bio, username, city, avatarColor, readerType, instagram, tiktok
+- **Mock data** (`src/data/mockData.ts`) — 7 books (each with `bookColor`), 8 margins, 5 users (each with `readerType`, `instagram`, `tiktok`, `readingSignature`), progress, notifications, collections
+- **Constants** (`src/data/constants.ts`) — GENRES, SPOILER_PREFERENCES, MARGIN_TYPES, SPOILER_LEVELS, REACTION_TYPES (13 including "Isso me quebrou" etc.), READER_ARCHETYPES (10 archetypes: Analista, Detetive, Rebelde, Intenso, Interpretador, Observador, Questionador, Imersivo, Editor Mental, Teórico)
 - **Utils**: `spoiler.ts` (anti-spoiler filter logic), `formatting.ts` (timeAgo, formatReference, etc.)
 
 ### Onboarding Flow
@@ -62,13 +62,13 @@ A Portuguese-language literary social network where users annotate book passages
 3. **Nova Margem** (`/nova-margem`) — 7-step wizard: book → excerpt → reference → type → commentary → spoiler → visibility → publish
 4. **Library** (`/library`) — Status filters (Todos/Lendo/Concluídos/Quero ler/Abandonados/Favoritos), book cards with progress
 5. **Book Detail** (`/book/:id`) — Community hub (NOT reader); progress editor, community stats, tabs (Ecos/Teorias/Críticas/Perguntas/Meus registros), anti-spoiler banner
-6. **Profile** (`/profile`) — Reading signature, 4-stat grid, genre chips, my margins, compatible readers
+6. **Profile** (`/profile`) — Reader archetype (ex: "O Analista") + description, reading signature card with "Compartilhar meu perfil de leitura" share button, Instagram/TikTok social links (view + inline edit), avatar color picker, 4-stat grid, my margins. NO "leitores compatíveis" section.
 7. **Notifications** (`/notifications`) — Typed notification list with unread dots
 8. **Settings** (`/settings`) — Ritmo da leitura preference + genre toggles
 9. **Thread** (`/thread/:id`) — Margin detail with reactions (8 types), reply input
 
 ### Key Components
-- `MarginCard` — Shows margin OR SpoilerShieldCard if blocked by anti-spoiler rules
+- `MarginCard` — Shows margin with book-color tinting (each book has a `bookColor`, cards get a subtle palette-matched background). 4 differentiated layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. OR SpoilerShieldCard if blocked.
 - `LogoMark` — SVG book logo
 - `Navbar` — 5-item bottom nav with elevated center "+" button for /nova-margem
 - `SpoilerShieldCard` — Elegant blocked content card with update progress / unlock actions

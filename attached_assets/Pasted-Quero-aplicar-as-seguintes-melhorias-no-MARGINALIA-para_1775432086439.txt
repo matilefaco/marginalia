@@ -1,0 +1,346 @@
+Quero aplicar as seguintes melhorias no MARGINALIA para deixar o app mais vivo, compartilhável e intuitivo.
+
+---
+
+1) REDES SOCIAIS NO PERFIL
+
+Adicionar no perfil do leitor:
+
+- campo: Instagram (@username)
+- campo: TikTok (@username)
+
+Exibir no perfil:
+
+- ícones discretos
+- clicáveis (abrir link externo)
+
+Exemplo:
+instagram.com/usuario  
+tiktok.com/@usuario  
+
+Se não preenchido → não mostrar
+
+---
+
+2) MAIS VIDA NO FEED (AUMENTAR ECOS E INTERAÇÕES)
+
+Problema atual:
+O feed parece vazio e pouco dinâmico
+
+Solução:
+
+Aumentar densidade de interação:
+
+Cada margem deve mostrar:
+
+- número de ecos (já existe)
+- número de leitores que salvaram
+- número de leitores que chegaram nesse trecho
+
+Adicionar micro-interações:
+
+Exemplo:
+“12 leitores pararam aqui”
+“5 leitores voltaram esse trecho”
+“3 leitores mudaram de opinião aqui”
+
+---
+
+Adicionar novas reações:
+
+- “Isso me quebrou”
+- “Voltei pra reler”
+- “Me deixou desconfortável”
+- “Não entendi”
+- “Isso é genial”
+
+---
+
+3) REFORMULAR TOTALMENTE O MAPA DE ECOS (FEATURE MUITO IMPORTANTE)
+
+Novo nome:
+
+👉 MAPA DE EXPERIÊNCIA DO LIVRO  
+(ou)
+👉 RITMO DE LEITURA COLETIVO
+
+---
+
+OBJETIVO:
+
+- gerar curiosidade
+- criar tensão
+- fazer o leitor querer chegar em certos pontos
+
+---
+
+NOVA LÓGICA:
+
+Dividir o livro em faixas:
+
+0–10%  
+10–20%  
+20–30%  
+... até 100%
+
+Para cada faixa:
+
+- quantidade de ecos
+- intensidade emocional
+- tipo dominante (teoria, choque, reflexão)
+
+---
+
+VISUAL:
+
+- barras (como já existe)
+- MAS com destaque progressivo
+
+Adicionar:
+
+- picos destacados
+- zonas silenciosas
+- zonas intensas
+
+---
+
+TEXTOS DINÂMICOS (ESSENCIAL)
+
+Gerar frases automáticas:
+
+Exemplo:
+
+“Leitores começam a desacelerar aqui”
+“Primeiro grande impacto emocional”
+“Zona de tensão crescente”
+“Algo muda aqui”
+“Pico de reflexão coletiva”
+“Muitos leitores param nesse ponto”
+
+---
+
+GATILHO PSICOLÓGICO (IMPORTANTE)
+
+Adicionar:
+
+👉 “Você ainda não chegou aqui”
+
+👉 “Esse é um dos pontos mais marcantes do livro”
+
+👉 “85% dos leitores reagiram nesse trecho”
+
+---
+
+RESULTADO:
+
+O leitor sente:
+
+“eu preciso chegar nisso”
+
+---
+
+4) ASSINATURA DE LEITURA (REFORMULAÇÃO TOTAL)
+
+Problema atual:
+Está genérico e pouco compartilhável
+
+---
+
+Nova lógica:
+
+Gerar assinatura baseada em:
+
+- tipo de margem mais usada
+- tom das reações
+- gêneros lidos
+- ritmo de leitura
+
+---
+
+Exemplos novos:
+
+“Você lê como quem desmonta silêncios.”
+“Você procura sentido onde ninguém olha.”
+“Você lê devagar — mas nunca sai igual.”
+“Você transforma leitura em interpretação.”
+“Você lê como quem sente primeiro e entende depois.”
+
+---
+
+TORNAR COMPARTILHÁVEL:
+
+Adicionar botão:
+
+“Compartilhar assinatura”
+
+Gerar card visual bonito (estilo story)
+
+---
+
+5) REMOVER “LEITORES COMPATÍVEIS”
+
+Remover completamente essa seção do perfil
+
+---
+
+6) PROGRESSO INICIAL DO USUÁRIO
+
+Ao criar conta:
+
+- nenhum livro iniciado
+- progresso = 0%
+- nenhuma margem
+- nenhum eco
+
+Garantir estado limpo inicial
+
+---
+
+7) WISHLIST DE LEITURA
+
+Adicionar:
+
+👉 “Quero ler”
+
+Funcionalidade:
+
+- usuário salva livros
+- aparece na biblioteca
+
+Seções:
+
+- Lendo
+- Concluídos
+- Quero ler
+
+---
+
+Na HOME:
+
+Adicionar:
+
+“Da sua lista para ler”
+
+---
+
+8) CAPAS DOS LIVROS
+
+Adicionar capa real dos livros:
+
+- nas listas
+- nos cards
+- na página do livro
+
+Se não houver imagem:
+
+usar placeholder elegante
+
+---
+
+9) DEIXAR O FEED MENOS CANSATIVO (MUITO IMPORTANTE)
+
+Problema:
+Tudo parece igual → leitura pesada
+
+---
+
+SOLUÇÃO:
+
+Diferenciar visualmente por livro:
+
+- cada livro recebe um “tom suave” próprio
+(ex: bege quente, verde acinzentado, areia, etc)
+
+Cards do mesmo livro compartilham leve identidade
+
+---
+
+VARIAÇÃO DE CARDS:
+
+Misturar no feed:
+
+1. trecho longo
+2. trecho curto
+3. só insight
+4. só reação
+5. card minimalista
+6. card destaque
+
+---
+
+Inserir pausas:
+
+- blocos editoriais
+- “Momento do livro hoje”
+- recomendações
+
+---
+
+10) MELHORAR INTUITIVIDADE
+
+- reduzir cliques
+- deixar tudo editável na mesma tela
+- evitar fluxos longos
+
+---
+
+11) MICROCOPY (LINGUAGEM)
+
+Substituir linguagem fria por:
+
+- mais sensorial
+- mais humano
+- mais literário
+
+Exemplo:
+
+ANTES:
+“Adicionar margem”
+
+DEPOIS:
+“Registrar o que esse trecho fez com você”
+
+---
+
+12) SISTEMA DE LOGIN
+
+Corrigir:
+
+- “já tenho conta” deve ir para login
+- não criar conta novamente
+
+Permitir login com:
+
+- e-mail
+- nome de usuário
+
+---
+
+13) PEQUENOS DETALHES QUE ELEVAM MUITO
+
+Adicionar:
+
+- animação leve ao reagir
+- feedback visual ao salvar
+- carregamento suave
+
+---
+
+OBJETIVO FINAL
+
+O app deve parecer:
+
+- vivo
+- pessoal
+- coletivo
+- emocional
+
+O usuário deve sentir:
+
+👉 “eu não estou lendo sozinho”
+
+👉 “tem algo acontecendo dentro dos livros”
+
+---
+
+Essas mudanças devem ser implementadas respeitando o design atual, mas aumentando profundidade, dinamismo e engajamento.

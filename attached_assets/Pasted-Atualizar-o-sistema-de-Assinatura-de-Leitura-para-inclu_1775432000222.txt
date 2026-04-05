@@ -1,0 +1,223 @@
+Atualizar o sistema de “Assinatura de Leitura” para incluir:
+
+1) ASSINATURAS MAIS OUSADAS (COM ATITUDE)
+2) ARQUÉTIPOS DE LEITOR (IDENTIDADE)
+
+---
+
+1) ASSINATURAS OUSADAS (NÍVEL MAIS FORTE)
+
+Essas assinaturas devem aparecer para usuários mais ativos.
+
+TOM:
+
+- provocativo
+- moderno
+- com personalidade
+- levemente “perigoso”, mas elegante
+
+---
+
+EXEMPLOS:
+
+“Você lê e não acredita em metade.”
+
+“Você não deixa a história te controlar.”
+
+“Você lê já desconfiando.”
+
+“Você lê e desmonta tudo.”
+
+“Você não aceita a versão oficial.”
+
+“Você lê e já muda o sentido.”
+
+“Você lê e bagunça o texto.”
+
+“Você não lê — você interfere.”
+
+“Você lê e já puxa outra interpretação.”
+
+“Você não deixa a história intacta.”
+
+“Você lê como quem testa o livro.”
+
+“Você lê e já encontra falha.”
+
+“Você não entra na história — você confronta ela.”
+
+“Você lê e já vira contra.”
+
+“Você não lê passivo.”
+
+---
+
+VARIAÇÃO MAIS OUSADA AINDA (usar com cuidado):
+
+“Você lê e quase estraga a história (no melhor sentido).”
+
+“Você lê e não respeita muito o texto.”
+
+“Você lê como quem quer provar que o livro tá errado.”
+
+“Você lê e complica tudo — de propósito.”
+
+---
+
+IMPORTANTE:
+
+Nunca ser agressivo demais — manter elegância.
+
+---
+
+2) SISTEMA DE ARQUÉTIPOS DE LEITOR
+
+Adicionar uma nova camada no perfil:
+
+👉 “Seu tipo de leitor”
+
+---
+
+Cada usuário recebe um arquétipo baseado no comportamento.
+
+---
+
+EXEMPLOS DE ARQUÉTIPOS:
+
+---
+
+O ANALISTA
+
+“Você desmonta tudo antes de aceitar qualquer coisa.”
+
+---
+
+O DETETIVE
+
+“Você lê procurando o que ninguém explicou direito.”
+
+---
+
+O REBELDE
+
+“Você não aceita a história do jeito que ela foi escrita.”
+
+---
+
+O INTENSO
+
+“Quando você lê, você sente tudo mais forte.”
+
+---
+
+O INTERPRETADOR
+
+“Você sempre encontra um significado além do óbvio.”
+
+---
+
+O OBSERVADOR
+
+“Você percebe coisas que passam despercebidas.”
+
+---
+
+O QUESTIONADOR
+
+“Você não lê sem duvidar.”
+
+---
+
+O IMERSIVO
+
+“Você entra no livro e demora pra sair.”
+
+---
+
+O EDITOR MENTAL
+
+“Você lê como se estivesse reescrevendo.”
+
+---
+
+O TEÓRICO
+
+“Você transforma tudo em hipótese.”
+
+---
+
+COMO FUNCIONA:
+
+Basear em:
+
+- tipo de margem
+- frequência de escrita
+- tipo de reação
+- comportamento no app
+
+---
+
+EXIBIÇÃO NO PERFIL:
+
+Nome + arquétipo abaixo
+
+Exemplo:
+
+Matile Facó  
+“O Rebelde”
+
+---
+
+COMBINAÇÃO PODEROSA:
+
+Mostrar:
+
+ARQUÉTIPO + ASSINATURA
+
+Exemplo:
+
+“O Rebelde”  
+“Você lê e não aceita a versão oficial.”
+
+---
+
+3) COMPARTILHAMENTO (MUITO IMPORTANTE)
+
+Adicionar botão:
+
+“Compartilhar meu perfil de leitura”
+
+---
+
+Gerar card com:
+
+- nome
+- arquétipo
+- assinatura
+- estética forte
+
+---
+
+4) SENSAÇÃO DE EVOLUÇÃO
+
+Adicionar:
+
+👉 “Seu perfil de leitura evolui conforme você lê”
+
+---
+
+OBJETIVO FINAL:
+
+O usuário deve sentir:
+
+👉 identidade  
+👉 pertencimento  
+👉 vontade de mostrar  
+👉 curiosidade sobre si mesmo  
+
+---
+
+Isso transforma o Marginalia em:
+
+- produto emocional
+- não só funcional

@@ -78,9 +78,79 @@ export const REACTION_TYPES = [
   "Quero reler esse trecho",
   "Discordo, mas amei ler",
   "Isso abriu uma teoria",
+  "Isso me quebrou",
+  "Voltei pra reler",
+  "Me deixou desconfortável",
+  "Não entendi",
+  "Isso é genial",
 ] as const;
 
 export type ReactionType = typeof REACTION_TYPES[number];
+
+export const READER_ARCHETYPES = [
+  {
+    id: "analista",
+    label: "O Analista",
+    description: "Você desmonta tudo antes de aceitar qualquer coisa.",
+    marginTypes: ["critique", "theory"],
+  },
+  {
+    id: "detetive",
+    label: "O Detetive",
+    description: "Você lê procurando o que ninguém explicou direito.",
+    marginTypes: ["question", "insight"],
+  },
+  {
+    id: "rebelde",
+    label: "O Rebelde",
+    description: "Você não aceita a história do jeito que ela foi escrita.",
+    marginTypes: ["critique"],
+  },
+  {
+    id: "intenso",
+    label: "O Intenso",
+    description: "Quando você lê, você sente tudo mais forte.",
+    marginTypes: ["reaction", "personal_connection"],
+  },
+  {
+    id: "interpretador",
+    label: "O Interpretador",
+    description: "Você sempre encontra um significado além do óbvio.",
+    marginTypes: ["symbolic_reading", "insight"],
+  },
+  {
+    id: "observador",
+    label: "O Observador",
+    description: "Você percebe coisas que passam despercebidas.",
+    marginTypes: ["personal_connection", "favorite_quote"],
+  },
+  {
+    id: "questionador",
+    label: "O Questionador",
+    description: "Você não lê sem duvidar.",
+    marginTypes: ["question"],
+  },
+  {
+    id: "imersivo",
+    label: "O Imersivo",
+    description: "Você entra no livro e demora pra sair.",
+    marginTypes: ["favorite_quote", "reaction"],
+  },
+  {
+    id: "editor",
+    label: "O Editor Mental",
+    description: "Você lê como se estivesse reescrevendo.",
+    marginTypes: ["symbolic_reading", "theory"],
+  },
+  {
+    id: "teorico",
+    label: "O Teórico",
+    description: "Você transforma tudo em hipótese.",
+    marginTypes: ["theory"],
+  },
+] as const;
+
+export type ReaderArchetypeId = typeof READER_ARCHETYPES[number]["id"];
 
 export const LIBRARY_STATUSES = [
   { id: "all", label: "Todos" },

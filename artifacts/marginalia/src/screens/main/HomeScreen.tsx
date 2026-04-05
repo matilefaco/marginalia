@@ -158,6 +158,51 @@ function FeedBreak({ index }: { index: number }) {
   );
 }
 
+function WishlistSection() {
+  const { progress } = useApp();
+  const wishlistProgress = progress.filter((p) => p.userId === "user_me" && p.status === "wishlist");
+  if (wishlistProgress.length === 0) return null;
+  const wishlistBooks = wishlistProgress
+    .map((p) => ({ prog: p, book: MOCK_BOOKS.find((b) => b.id === p.bookId) }))
+    .filter((x) => x.book);
+
+  return (
+    <section data-testid="section-wishlist">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+          Da sua lista para ler
+        </span>
+        <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+      </div>
+      <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+        Quando chegar a hora, estará aqui
+      </p>
+      <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5">
+        {wishlistBooks.map(({ book }) =>
+          book ? (
+            <Link key={book.id} href={`/book/${book.id}`} className="flex-shrink-0">
+              <div className="w-[120px] bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[12px] overflow-hidden hover:border-[#AE8F7D]/35 transition-colors">
+                <div
+                  className="h-[72px] w-full"
+                  style={{ backgroundColor: book.bookColor }}
+                />
+                <div className="p-2.5">
+                  <p className="font-serif italic text-[11px] text-[#3D3D3D] leading-tight line-clamp-2 mb-0.5">
+                    {book.title}
+                  </p>
+                  <p className="font-sans font-light text-[7px] text-[#454545]/40 truncate">
+                    {book.author}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ) : null
+        )}
+      </div>
+    </section>
+  );
+}
+
 export function HomeScreen() {
   const { currentUser, margins, notifications, progress } = useApp();
 
@@ -288,6 +333,9 @@ export function HomeScreen() {
 
         {/* Momento do Livro Hoje */}
         <MomentosSection />
+
+        {/* Da sua lista para ler */}
+        <WishlistSection />
 
         {/* Today's Feed with editorial breaks */}
         <section data-testid="section-today-feed">

@@ -11,6 +11,9 @@ export interface User {
   bio: string;
   initials: string;
   avatarColor: string;
+  readerType?: string;
+  instagram?: string;
+  tiktok?: string;
   preferredGenres: string[];
   spoilerPreference: SpoilerPreference;
   favoriteAuthors: string[];
@@ -34,6 +37,7 @@ export interface Book {
   publishYear: number;
   description: string;
   sinopse: string;
+  bookColor: string;
   communityStats: {
     activeReaders: number;
     totalMargins: number;
@@ -116,6 +120,7 @@ export const MOCK_BOOKS: Book[] = [
     publishYear: 1977,
     description: "A história de Macabéa, uma nordestina ingênua que tenta sobreviver no Rio de Janeiro.",
     sinopse: "Rodrigo S.M., um narrador perturbado pela existência de Macabéa, conta a história de uma moça nordestina, ingênua e pobre, que tenta sobreviver no Rio de Janeiro. Um dos livros mais tocantes da literatura brasileira — sobre invisibilidade, solidão e o direito de existir.",
+    bookColor: "#F5EDE8",
     communityStats: { activeReaders: 347, totalMargins: 892, debates: 64, savedBy: 1203 },
     trendingScore: 0.95,
   },
@@ -129,6 +134,7 @@ export const MOCK_BOOKS: Book[] = [
     publishYear: 1956,
     description: "O monólogo de Riobaldo, um ex-jagunço que reflete sobre sua vida e sobre um pacto com o diabo.",
     sinopse: "Riobaldo, um ex-jagunço, narra sua vida inteira a um interlocutor silencioso. Na vastidão do sertão, a linguagem de Rosa cria um mundo próprio — entre o sagrado e o profano, o amor e a violência, a dúvida sobre o diabo e sobre si mesmo.",
+    bookColor: "#EAF0E6",
     communityStats: { activeReaders: 189, totalMargins: 543, debates: 91, savedBy: 876 },
     trendingScore: 0.88,
   },
@@ -142,6 +148,7 @@ export const MOCK_BOOKS: Book[] = [
     publishYear: 1871,
     description: "Um retrato magistral de uma cidade inglesa do século XIX.",
     sinopse: "Considerado por muitos o maior romance em língua inglesa, Middlemarch acompanha a vida de Dorothea Brooke e outros habitantes de uma cidadezinha inglesa na era vitoriana. George Eliot disseca a ambição, o amor, a política e os limites impostos às mulheres com uma profundidade sem igual.",
+    bookColor: "#E8EDF5",
     communityStats: { activeReaders: 213, totalMargins: 1104, debates: 87, savedBy: 2341 },
     trendingScore: 0.82,
   },
@@ -155,6 +162,7 @@ export const MOCK_BOOKS: Book[] = [
     publishYear: 1925,
     description: "Josef K. é preso numa manhã sem razão aparente.",
     sinopse: "Josef K. acorda certa manhã e é informado de que está preso — mas ninguém lhe diz por quê. Kafka cria um pesadelo burocrático onde a lógica não existe e a culpa é um dado adquirido. Um dos livros mais perturbadores e atuais já escritos.",
+    bookColor: "#EDEAE8",
     communityStats: { activeReaders: 156, totalMargins: 421, debates: 55, savedBy: 987 },
     trendingScore: 0.79,
   },
@@ -168,6 +176,7 @@ export const MOCK_BOOKS: Book[] = [
     publishYear: 1881,
     description: "Narrado por um defunto autor, Brás Cubas conta sua vida sem piedade.",
     sinopse: "Um defunto escreve suas memórias. Brás Cubas, que morreu rico e infeliz, narra sua vida com ironia, cinismo e uma liberdade que só a morte permite. Machado inventa aqui uma nova forma de fazer romance — e de ver o Brasil.",
+    bookColor: "#F0E8E8",
     communityStats: { activeReaders: 278, totalMargins: 763, debates: 72, savedBy: 1567 },
     trendingScore: 0.91,
   },
@@ -181,6 +190,7 @@ export const MOCK_BOOKS: Book[] = [
     publishYear: 1899,
     description: "Bentinho e Capitu: uma história de amor e ciúme.",
     sinopse: "Bento Santiago, o Dom Casmurro, tenta reconstituir o passado e provar que Capitu o traiu. Mas quem conta a história controla a verdade — e Machado de Assis soube criar a maior e mais debatida ambiguidade da literatura brasileira.",
+    bookColor: "#EDE8E0",
     communityStats: { activeReaders: 412, totalMargins: 1089, debates: 134, savedBy: 2890 },
     trendingScore: 0.97,
   },
@@ -194,6 +204,7 @@ export const MOCK_BOOKS: Book[] = [
     publishYear: 1973,
     description: "Um texto poético e experimental sobre o instante vivo.",
     sinopse: "Clarice abandona qualquer pretensão de narrativa convencional. Água Viva é um stream de consciência radical — uma pintora escreve para um amante e mergulha no presente absoluto, no instante que é a vida. Leitura que muda a percepção.",
+    bookColor: "#E8F0EA",
     communityStats: { activeReaders: 98, totalMargins: 287, debates: 19, savedBy: 543 },
     trendingScore: 0.71,
   },
@@ -426,10 +437,13 @@ export const MOCK_USERS: User[] = [
     bio: "Leitor compulsivo de margens e anotações.",
     initials: "LT",
     avatarColor: "#697962",
+    readerType: "observador",
+    instagram: "",
+    tiktok: "",
     preferredGenres: ["Romance literário", "Literatura brasileira", "Filosofia"],
     spoilerPreference: "progress_only",
     favoriteAuthors: ["Clarice Lispector", "João Guimarães Rosa"],
-    readingSignature: "Você marca mais momentos de silêncio e perda.",
+    readingSignature: "Você presta atenção no que parece detalhe.",
     stats: { booksRead: 12, totalMargins: 37, totalHighlights: 18, debates: 9 },
   },
   {
@@ -443,10 +457,13 @@ export const MOCK_USERS: User[] = [
     bio: "Leitora de Clarice, Neruda e qualquer coisa que me faça chorar no metrô.",
     initials: "AC",
     avatarColor: "#AE8F7D",
+    readerType: "imersivo",
+    instagram: "@anaclaraleitora",
+    tiktok: "",
     preferredGenres: ["Romance literário", "Poesia", "Filosofia"],
     spoilerPreference: "progress_only",
     favoriteAuthors: ["Clarice Lispector", "Pablo Neruda"],
-    readingSignature: "Você submerge nos personagens e raramente emerge.",
+    readingSignature: "Tem coisas que você lê e decide não esquecer.",
     compatibilityScore: 87,
     stats: { booksRead: 34, totalMargins: 156, totalHighlights: 89, debates: 23 },
   },
@@ -461,10 +478,13 @@ export const MOCK_USERS: User[] = [
     bio: "Teoria literária e café. Não necessariamente nessa ordem.",
     initials: "RM",
     avatarColor: "#454545",
+    readerType: "analista",
+    instagram: "",
+    tiktok: "@rafaelteoriza",
     preferredGenres: ["Clássicos", "Ficção contemporânea", "Ensaios"],
     spoilerPreference: "all",
     favoriteAuthors: ["Machado de Assis", "James Joyce"],
-    readingSignature: "Você lê para argumentar. E isso é lindo.",
+    readingSignature: "Você nem sempre acredita no que está lendo.",
     compatibilityScore: 74,
     stats: { booksRead: 89, totalMargins: 312, totalHighlights: 201, debates: 78 },
   },
@@ -479,10 +499,13 @@ export const MOCK_USERS: User[] = [
     bio: "Ainda estou processando Middlemarch. E provavelmente sempre estarei.",
     initials: "JS",
     avatarColor: "#6B3A3A",
+    readerType: "imersivo",
+    instagram: "@juliasiqueira_livros",
+    tiktok: "",
     preferredGenres: ["Romance literário", "Clássicos", "Literatura estrangeira"],
     spoilerPreference: "protected",
     favoriteAuthors: ["George Eliot", "Virginia Woolf"],
-    readingSignature: "Você lê devagar, com reverência.",
+    readingSignature: "Algumas partes você lê mais devagar do que o resto.",
     compatibilityScore: 91,
     stats: { booksRead: 21, totalMargins: 87, totalHighlights: 54, debates: 11 },
   },
@@ -497,10 +520,13 @@ export const MOCK_USERS: User[] = [
     bio: "Leitora entre gêneros. Machado me criou e Clarice me desfez.",
     initials: "BS",
     avatarColor: "#BDAB9C",
+    readerType: "rebelde",
+    instagram: "@biancasantos.lê",
+    tiktok: "@biancabooks",
     preferredGenres: ["Literatura brasileira", "Clássicos", "Feminismo"],
     spoilerPreference: "progress_only",
     favoriteAuthors: ["Machado de Assis", "Carolina Maria de Jesus"],
-    readingSignature: "Você subverte enquanto lê.",
+    readingSignature: "Você nem sempre aceita o texto do jeito que ele vem.",
     compatibilityScore: 82,
     stats: { booksRead: 56, totalMargins: 189, totalHighlights: 112, debates: 34 },
   },

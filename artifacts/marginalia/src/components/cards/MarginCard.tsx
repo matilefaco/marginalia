@@ -5,6 +5,7 @@ import { useApp } from "@/context/AppContext";
 import { canUserSeeMargin, getBlockedReason } from "@/utils/spoiler";
 import { formatReference, marginTypeLabel, timeAgo } from "@/utils/formatting";
 import type { Margin } from "@/data/mockData";
+import { MOCK_BOOKS } from "@/data/mockData";
 import { Shield } from "lucide-react";
 import { MARGIN_TYPES } from "@/data/constants";
 
@@ -12,6 +13,7 @@ interface Props {
   margin: Margin;
   showBook?: boolean;
   linkToThread?: boolean;
+  bookColor?: string;
 }
 
 function ShareButton({ margin }: { margin: Margin }) {
@@ -44,13 +46,14 @@ function ShareButton({ margin }: { margin: Margin }) {
 }
 
 // Quote card — more elegant, centered around the excerpt
-function QuoteCard({ margin, showBook, linkToThread }: Props) {
+function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const { addReaction } = useApp();
   const ref = formatReference(margin);
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="bg-[#EBE6DB]/30 border border-[#AE8F7D]/18 rounded-[14px] p-5 hover:border-[#AE8F7D]/35 transition-colors"
+      className="border border-[#AE8F7D]/18 rounded-[14px] p-5 hover:border-[#AE8F7D]/35 transition-colors"
+      style={{ backgroundColor: bookColor ? `${bookColor}CC` : "#EBE6DB4D" }}
     >
       <div className="flex items-center justify-between mb-3">
         <span className="font-sans text-[7px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">✦ Citação favorita</span>
@@ -82,13 +85,14 @@ function QuoteCard({ margin, showBook, linkToThread }: Props) {
 }
 
 // Question card — dashed accent, inviting interaction
-function QuestionCard({ margin, showBook, linkToThread }: Props) {
+function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const { addReaction } = useApp();
   const ref = formatReference(margin);
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="bg-[#FAF8F3] border border-dashed border-[#AE8F7D]/30 rounded-[14px] p-4 hover:border-[#AE8F7D]/50 transition-colors"
+      className="border border-dashed border-[#AE8F7D]/30 rounded-[14px] p-4 hover:border-[#AE8F7D]/50 transition-colors"
+      style={{ backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3" }}
     >
       <div className="flex items-center gap-2 mb-2.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase text-[#BDAB9C]">❓ Pergunta</span>
@@ -120,13 +124,14 @@ function QuestionCard({ margin, showBook, linkToThread }: Props) {
 }
 
 // Theory card — more structured, academic feel
-function TheoryCard({ margin, showBook, linkToThread }: Props) {
+function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const ref = formatReference(margin);
   const totalReactions = Object.values(margin.reactions).reduce((a, b) => a + b, 0);
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="bg-[#FAF8F3] border-l-4 border-[#697962]/50 rounded-r-[14px] rounded-l-none p-4 hover:border-l-[#697962]/80 transition-all shadow-sm"
+      className="border-l-4 border-[#697962]/50 rounded-r-[14px] rounded-l-none p-4 hover:border-l-[#697962]/80 transition-all shadow-sm"
+      style={{ backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3" }}
     >
       <div className="flex items-center gap-2 mb-2.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase text-[#697962]">🔭 Teoria</span>
@@ -156,7 +161,7 @@ function TheoryCard({ margin, showBook, linkToThread }: Props) {
 }
 
 // Standard card for insight, reaction, critique, personal_connection, symbolic_reading
-function StandardCard({ margin, showBook, linkToThread }: Props) {
+function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const { addReaction } = useApp();
   const ref = formatReference(margin);
   const totalReactions = Object.values(margin.reactions).reduce((a, b) => a + b, 0);
@@ -174,7 +179,8 @@ function StandardCard({ margin, showBook, linkToThread }: Props) {
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="bg-[#FAF8F3] rounded-[14px] border border-[#AE8F7D]/15 p-4 hover:border-[#AE8F7D]/30 transition-colors"
+      className="rounded-[14px] border border-[#AE8F7D]/15 p-4 hover:border-[#AE8F7D]/30 transition-colors"
+      style={{ backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3" }}
     >
       <div className="flex items-center gap-2 mb-3">
         <span className={`font-sans text-[8px] font-light tracking-[0.18em] uppercase ${typeColor} flex items-center gap-1`}>
@@ -234,6 +240,9 @@ export function MarginCard({ margin, showBook = false, linkToThread = true }: Pr
   const progress = getProgressForBook(margin.bookId);
   const canSee = canUserSeeMargin(margin, currentUser.spoilerPreference, progress);
 
+  const book = MOCK_BOOKS.find((b) => b.id === margin.bookId);
+  const bookColor = book?.bookColor;
+
   if (!canSee) {
     return (
       <SpoilerShieldCard
@@ -244,15 +253,15 @@ export function MarginCard({ margin, showBook = false, linkToThread = true }: Pr
   }
 
   if (margin.postType === "favorite_quote") {
-    return <QuoteCard margin={margin} showBook={showBook} linkToThread={linkToThread} />;
+    return <QuoteCard margin={margin} showBook={showBook} linkToThread={linkToThread} bookColor={bookColor} />;
   }
   if (margin.postType === "question") {
-    return <QuestionCard margin={margin} showBook={showBook} linkToThread={linkToThread} />;
+    return <QuestionCard margin={margin} showBook={showBook} linkToThread={linkToThread} bookColor={bookColor} />;
   }
   if (margin.postType === "theory") {
-    return <TheoryCard margin={margin} showBook={showBook} linkToThread={linkToThread} />;
+    return <TheoryCard margin={margin} showBook={showBook} linkToThread={linkToThread} bookColor={bookColor} />;
   }
-  return <StandardCard margin={margin} showBook={showBook} linkToThread={linkToThread} />;
+  return <StandardCard margin={margin} showBook={showBook} linkToThread={linkToThread} bookColor={bookColor} />;
 }
 
 function SpoilerShieldCard({ margin, reason }: { margin: Margin; reason: string }) {

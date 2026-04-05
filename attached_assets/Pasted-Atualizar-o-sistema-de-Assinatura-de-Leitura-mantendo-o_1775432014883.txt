@@ -1,0 +1,150 @@
+Atualizar o sistema de “Assinatura de Leitura” mantendo os arquétipos existentes, mas reformulando completamente o estilo das assinaturas.
+
+---
+
+NOVA DIREÇÃO DAS ASSINATURAS
+
+As assinaturas devem:
+
+- variar de tom (não parecerem geradas por um único estilo)
+- soar naturais (como uma observação real, não uma frase construída)
+- ter personalidade
+- ser memoráveis
+- não serem repetitivas
+
+Misturar:
+
+- leve ironia
+- observação comportamental
+- pequenos insights
+- humor sutil
+- melancolia leve
+- ousadia elegante
+
+---
+
+EXEMPLOS NOVOS (VARIADOS)
+
+“Você costuma parar mais do que continuar.”
+
+“Tem coisa que você lê duas vezes — mesmo sem perceber.”
+
+“Você nem sempre acredita no que está lendo.”
+
+“Você presta atenção no que parece detalhe.”
+
+“Você lê no seu tempo — e ele não é rápido.”
+
+“Alguns trechos ficam com você mais do que deveriam.”
+
+“Você não lê tudo do mesmo jeito.”
+
+“Tem livros que você termina… e ainda continua pensando.”
+
+“Você raramente passa direto por algo interessante.”
+
+“Você volta em partes que ninguém comenta.”
+
+“Nem tudo você concorda — e tudo bem.”
+
+“Você lê e guarda mais do que mostra.”
+
+“Tem coisa que você lê e decide não esquecer.”
+
+“Você percebe quando algo muda — mesmo que seja sutil.”
+
+“Você não lê só pela história.”
+
+“Tem trechos que você lê quase em silêncio.”
+
+“Você presta atenção quando o texto desacelera.”
+
+“Você nem sempre reage — mas quando reage, marca.”
+
+“Você não lê correndo.”
+
+“Você lê melhor quando algo te incomoda um pouco.”
+
+---
+
+VARIAÇÕES COM HUMOR LEVE
+
+“Você lê e pensa: isso aqui daria uma boa conversa.”
+
+“Você finge que vai passar rápido… e não passa.”
+
+“Você começa lendo normal e termina analisando tudo.”
+
+“Você lê e já imagina alguém discordando.”
+
+---
+
+VARIAÇÕES MAIS MELANCÓLICAS
+
+“Algumas partes você lê mais devagar do que o resto.”
+
+“Tem coisas que você lê e prefere não comentar.”
+
+“Você nem sempre explica o que sentiu lendo.”
+
+---
+
+VARIAÇÕES MAIS OUSADAS (MAS ELEGANTES)
+
+“Você nem sempre aceita o texto do jeito que ele vem.”
+
+“Você lê e já ajusta o sentido na sua cabeça.”
+
+“Você lê com um certo nível de desconfiança.”
+
+---
+
+IMPORTANTE
+
+- Evitar repetir estruturas iguais
+- Evitar frases com o mesmo ritmo
+- Evitar excesso de “você lê e…”
+
+---
+
+LÓGICA DE GERAÇÃO
+
+Basear em:
+
+- comportamento do usuário
+- tipo de margem
+- frequência de interação
+- intensidade de leitura
+
+---
+
+ATUALIZAÇÃO DINÂMICA
+
+Mostrar:
+
+“Isso muda conforme você lê”
+
+---
+
+COMBINAÇÃO FINAL (MANTER)
+
+Arquétipo + Assinatura
+
+Exemplo:
+
+“O Observador”  
+“Você presta atenção no que parece detalhe.”
+
+---
+
+OBJETIVO
+
+O usuário deve sentir:
+
+👉 “isso é específico de um jeito estranho”  
+👉 “isso me descreve sem ser óbvio”  
+👉 “isso parece real”  
+
+---
+
+Remover completamente assinaturas anteriores (poéticas, agressivas ou repetitivas).
