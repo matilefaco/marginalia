@@ -26,6 +26,7 @@ interface AppState {
 interface AppActions {
   updateSpoilerPreference: (pref: SpoilerPreference) => void;
   updatePreferredGenres: (genres: string[]) => void;
+  updateProfile: (data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string }) => void;
   updateBookProgress: (bookId: number, updates: Partial<BookProgress>) => void;
   addMargin: (margin: Omit<Margin, "id" | "createdAt" | "reactions" | "commentsCount" | "userName" | "userInitials">) => void;
   addReaction: (marginId: number, reaction: string) => void;
@@ -54,6 +55,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const updatePreferredGenres = (genres: string[]) => {
     setCurrentUser((u) => ({ ...u, preferredGenres: genres }));
+  };
+
+  const updateProfile = (data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string }) => {
+    setCurrentUser((u) => {
+      const firstName = data.firstName ?? u.firstName;
+      const lastName = data.lastName ?? u.lastName;
+      const name = lastName ? `${firstName} ${lastName}` : firstName;
+      const initials = (firstName.charAt(0) + (lastName?.charAt(0) || "")).toUpperCase();
+      return { ...u, ...data, firstName, lastName, name, initials };
+    });
   };
 
   const updateBookProgress = (bookId: number, updates: Partial<BookProgress>) => {
@@ -134,6 +145,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         onboardingStep,
         updateSpoilerPreference,
         updatePreferredGenres,
+        updateProfile,
         updateBookProgress,
         addMargin,
         addReaction,

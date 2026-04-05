@@ -2,6 +2,8 @@ import type { SpoilerPreference, MarginType, SpoilerLevel, Visibility } from "./
 
 export interface User {
   id: string;
+  firstName: string;
+  lastName: string;
   name: string;
   username: string;
   city: string;
@@ -398,6 +400,8 @@ export const MOCK_MARGINS: Margin[] = [
 export const MOCK_USERS: User[] = [
   {
     id: "user_me",
+    firstName: "Leitor",
+    lastName: "",
     name: "Leitor",
     username: "@leitor",
     city: "São Paulo",
@@ -412,11 +416,13 @@ export const MOCK_USERS: User[] = [
   },
   {
     id: "user_ana",
+    firstName: "Ana",
+    lastName: "Clara",
     name: "Ana Clara",
     username: "@anaclara",
     city: "Rio de Janeiro",
     email: "ana@example.com",
-    bio: "Leitora de Clarice, neruda e qualquer coisa que me faça chorar no metrô.",
+    bio: "Leitora de Clarice, Neruda e qualquer coisa que me faça chorar no metrô.",
     initials: "AC",
     preferredGenres: ["Romance literário", "Poesia", "Filosofia"],
     spoilerPreference: "progress_only",
@@ -427,7 +433,9 @@ export const MOCK_USERS: User[] = [
   },
   {
     id: "user_rafael",
-    name: "Rafael M.",
+    firstName: "Rafael",
+    lastName: "Mourão",
+    name: "Rafael Mourão",
     username: "@rafaelm",
     city: "Belo Horizonte",
     email: "rafael@example.com",
@@ -442,11 +450,13 @@ export const MOCK_USERS: User[] = [
   },
   {
     id: "user_julia",
-    name: "Julia S.",
+    firstName: "Julia",
+    lastName: "Siqueira",
+    name: "Julia Siqueira",
     username: "@julias",
     city: "São Paulo",
     email: "julia@example.com",
-    bio: "Ainda estou processando Middlemarch.",
+    bio: "Ainda estou processando Middlemarch. E provavelmente sempre estarei.",
     initials: "JS",
     preferredGenres: ["Romance literário", "Clássicos", "Literatura estrangeira"],
     spoilerPreference: "protected",
@@ -457,11 +467,13 @@ export const MOCK_USERS: User[] = [
   },
   {
     id: "user_bianca",
-    name: "Bianca S.",
+    firstName: "Bianca",
+    lastName: "Santos",
+    name: "Bianca Santos",
     username: "@biancas",
     city: "Curitiba",
     email: "bianca@example.com",
-    bio: "Leitora entre gêneros. Machado me criou.",
+    bio: "Leitora entre gêneros. Machado me criou e Clarice me desfez.",
     initials: "BS",
     preferredGenres: ["Literatura brasileira", "Clássicos", "Feminismo"],
     spoilerPreference: "progress_only",

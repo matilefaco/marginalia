@@ -12,6 +12,7 @@ import { OnboardingGenresScreen } from "@/screens/onboarding/OnboardingGenresScr
 import { OnboardingSpoilerScreen } from "@/screens/onboarding/OnboardingSpoilerScreen";
 import { OnboardingBooksScreen } from "@/screens/onboarding/OnboardingBooksScreen";
 import { SignUpScreen } from "@/screens/auth/SignUpScreen";
+import { LoginScreen } from "@/screens/auth/LoginScreen";
 
 import { HomeScreen } from "@/screens/main/HomeScreen";
 import { ExploreScreen } from "@/screens/main/ExploreScreen";
@@ -28,16 +29,21 @@ import type { SpoilerPreference } from "@/data/constants";
 
 const queryClient = new QueryClient();
 
-function Splash() {
+function Splash({ onDone }: { onDone: () => void }) {
+  setTimeout(onDone, 2000);
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#FAF8F3]"
-      style={{ backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)", backgroundSize: "5px 5px" }}
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#FAF8F3]"
+      style={{
+        backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
+        backgroundSize: "5px 5px",
+      }}
     >
       <div className="flex flex-col items-center animate-in fade-in zoom-in duration-700">
         <div className="w-16 h-20 mb-6">
           <LogoMark />
         </div>
-        <h1 className="font-serif italic text-[38px] text-[#454545] mb-3">Marginalia</h1>
+        <h1 className="font-serif italic text-[38px] text-[#3D3D3D] mb-2">Marginalia</h1>
         <p className="font-sans font-light tracking-[0.22em] uppercase text-[10px] text-[#AE8F7D]">
           Leia junto. Sinta junto.
         </p>
@@ -46,19 +52,33 @@ function Splash() {
   );
 }
 
-type OnboardingStep = "welcome" | "genres" | "spoiler" | "signup" | "books" | "done";
+type OnboardingStep = "welcome" | "genres" | "spoiler" | "login" | "signup" | "books";
 
-function OnboardingFlow() {
-  const { updatePreferredGenres, updateSpoilerPreference, completeOnboarding, currentUser } = useApp();
+function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
+  const { updatePreferredGenres, updateSpoilerPreference, updateProfile, completeOnboarding, currentUser } = useApp();
   const [step, setStep] = useState<OnboardingStep>("welcome");
   const [pendingGenres, setPendingGenres] = useState<string[]>(currentUser.preferredGenres);
   const [pendingSpoiler, setPendingSpoiler] = useState<SpoilerPreference>(currentUser.spoilerPreference);
+
+  const finish = () => {
+    completeOnboarding();
+    onComplete();
+  };
 
   if (step === "welcome") {
     return (
       <OnboardingWelcomeScreen
         onStart={() => setStep("genres")}
-        onLogin={() => setStep("signup")}
+        onLogin={() => setStep("login")}
+      />
+    );
+  }
+
+  if (step === "login") {
+    return (
+      <LoginScreen
+        onLogin={finish}
+        onBack={() => setStep("welcome")}
       />
     );
   }
@@ -92,20 +112,17 @@ function OnboardingFlow() {
   if (step === "signup") {
     return (
       <SignUpScreen
-        onComplete={() => setStep("books")}
+        onComplete={(data) => {
+          updateProfile(data);
+          setStep("books");
+        }}
         onBack={() => setStep("spoiler")}
       />
     );
   }
 
   if (step === "books") {
-    return (
-      <OnboardingBooksScreen
-        onComplete={() => {
-          completeOnboarding();
-        }}
-      />
-    );
+    return <OnboardingBooksScreen onComplete={finish} />;
   }
 
   return null;
@@ -115,9 +132,7 @@ const NO_NAVBAR_PATHS = ["/nova-margem", "/notifications", "/settings"];
 
 function MainApp() {
   const [location] = useLocation();
-  const hideNavbar =
-    NO_NAVBAR_PATHS.includes(location) ||
-    location.startsWith("/thread/");
+  const hideNavbar = NO_NAVBAR_PATHS.includes(location) || location.startsWith("/thread/");
 
   return (
     <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto relative bg-[#FAF8F3] shadow-2xl">
@@ -142,17 +157,17 @@ function MainApp() {
 
 function AppContent() {
   const { onboardingCompleted } = useApp();
-  const [showSplash, setShowSplash] = useState(true);
+  const [splashDone, setSplashDone] = useState(false);
+  const [onboardingDone, setOnboardingDone] = useState(false);
 
-  if (showSplash) {
-    setTimeout(() => setShowSplash(false), 2200);
-    return <Splash />;
+  if (!splashDone) {
+    return <Splash onDone={() => setSplashDone(true)} />;
   }
 
-  if (!onboardingCompleted) {
+  if (!onboardingCompleted && !onboardingDone) {
     return (
       <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto bg-[#FAF8F3] shadow-2xl">
-        <OnboardingFlow />
+        <OnboardingFlow onComplete={() => setOnboardingDone(true)} />
       </div>
     );
   }

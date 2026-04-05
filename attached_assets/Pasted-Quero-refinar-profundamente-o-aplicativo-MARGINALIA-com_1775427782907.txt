@@ -1,0 +1,313 @@
+Quero refinar profundamente o aplicativo MARGINALIA com foco em corrigir fluxos, melhorar usabilidade, fortalecer o sistema de produto e elevar a qualidade da experiência para nível premium real.
+
+NÃO QUERO REFAZER DO ZERO.
+Quero EVOLUIR o que já existe, mantendo a identidade visual, mas corrigindo lógica, clareza, legibilidade e comportamento.
+
+PRINCÍPIO
+O app já está visualmente muito bom.
+Agora o foco é:
+- corrigir falhas de fluxo
+- tornar o app realmente utilizável
+- melhorar legibilidade
+- tornar o sistema de spoiler inteligente
+- aumentar retenção
+- melhorar compartilhamento
+
+AJUSTES OBRIGATÓRIOS
+
+1. CORREÇÃO DO LOGIN
+Hoje:
+“Já tenho uma conta” leva para criar conta.
+
+Corrigir:
+- “Já tenho conta” → tela de login real
+- login com:
+  - email
+  - senha
+- após login:
+  → ir direto para HOME
+
+2. CADASTRO MELHORADO
+Adicionar campos:
+- nome
+- sobrenome
+- username
+- cidade
+- email
+- senha
+- bio (campo opcional)
+
+Salvar no user:
+firstName
+lastName
+bio
+
+Exibir no perfil:
+- nome completo
+- bio abaixo do nome
+
+3. SISTEMA DE PROGRESSO MAIS INTELIGENTE
+Problema atual:
+Usuário não sabe como definir %.
+
+Corrigir:
+Ao adicionar livro ou atualizar progresso:
+
+Permitir:
+- escolher capítulo atual
+- ou página
+- ou %
+
+Se o livro tiver total de páginas:
+→ calcular automaticamente %
+
+Exemplo:
+Página 87 de 144 → 60%
+
+Exibir:
+- capítulo atual
+- página
+- %
+sempre juntos
+
+4. ANTI-SPOILER REAL (MUITO IMPORTANTE)
+
+Implementar corretamente:
+
+Se usuário escolher:
+“Modo protegido”
+
+Então:
+NÃO mostrar nenhum conteúdo que:
+- esteja além do progresso
+- tenha spoiler leve, importante ou final
+
+Regra:
+- mostrar SOMENTE conteúdo sem spoiler OU dentro do progresso
+
+Se conteúdo bloqueado:
+mostrar SpoilerShieldCard com:
+
+Título:
+“Trecho ocultado para preservar sua leitura”
+
+Texto:
+“Esse conteúdo pode avançar além do seu ponto atual.”
+
+Botões:
+- Atualizar progresso
+- Ver mesmo assim
+
+IMPORTANTE:
+Esse bloqueio deve acontecer no FEED, HOME, LIVRO e EXPLORE.
+
+5. NOVA MARGEM — UMA TELA SÓ
+
+Remover fluxo em etapas.
+
+Criar tela única com:
+
+- seleção de livro
+- campo de trecho
+placeholder:
+“Digite ou cole o trecho que você marcou”
+
+- referência:
+  - página
+  - capítulo
+  - %
+
+- tipo de margem
+- comentário
+- spoiler
+- visibilidade
+
+Botão final:
+“Publicar margem”
+
+Sem botão “continuar”.
+
+Tudo direto.
+
+6. MELHORAR TEXTO DO COMPOSER
+
+Trocar:
+“Digite aqui”
+
+Por:
+“Digite ou cole o trecho que ficou com você”
+
+E no comentário:
+“O que isso abriu em você?”
+
+7. PERFIL MELHORADO
+
+Adicionar:
+- nome completo
+- bio
+- assinatura de leitura mais destacada
+
+Adicionar seção:
+“Leitores compatíveis” (já existe, melhorar visual)
+
+Melhorar hierarquia:
+- nome mais forte
+- username menor
+- cidade mais discreta
+
+8. EXPLORE — REFAZER LÓGICA
+
+Hoje está fraco.
+
+Trocar por:
+
+Seções:
+
+1. “Para você”
+- sugestões baseadas em gosto
+
+2. “Livros mais discutidos”
+- ranking real
+
+3. “Gêneros em alta”
+
+4. “Descubra novos livros”
+- baseado em comportamento
+
+5. “Leitores parecidos com você”
+
+REMOVER excesso de “coleções decorativas”
+
+Deixar mais útil.
+
+9. CARDS MAIS COMPARTILHÁVEIS
+
+Melhorar MarginCard:
+
+Adicionar botão:
+“Compartilhar”
+
+Criar versão visual especial do card:
+
+- fundo mais contrastado
+- tipografia mais forte
+- foco no trecho
+- nome do livro + autor
+- branding discreto
+
+Esse card deve parecer:
+algo que a pessoa QUER postar no story
+
+10. MELHORAR LEGIBILIDADE (URGENTE)
+
+Aplicar:
+
+- aumentar contraste do texto principal
+- escurecer texto
+- aumentar tamanho mínimo de fonte
+- melhorar line-height
+- aumentar peso dos títulos
+- deixar botões mais visíveis
+
+PROBLEMA ATUAL:
+interface está linda, mas levemente “lavada”
+
+Objetivo:
+manter elegância, mas melhorar leitura
+
+11. BOTÃO CENTRAL
+
+Manter botão + no centro
+
+Mas garantir:
+→ sempre abre Nova Margem
+
+12. HOME — MELHORIAS
+
+Já está boa, mas ajustar:
+
+- tornar “Ver ecos liberados” mais visível
+- reforçar CTA principal
+- melhorar espaçamento
+- melhorar contraste dos textos pequenos
+
+13. FEED — REGRAS
+
+Aplicar sempre:
+- respeitar anti-spoiler
+- priorizar conteúdo relevante
+- evitar mostrar coisas aleatórias
+
+14. MICROCOPY (IMPORTANTE)
+
+Melhorar linguagem:
+
+Usar frases como:
+- “Seu ritmo está protegido”
+- “Novos ecos disponíveis”
+- “O que esse trecho abriu em você?”
+- “Guardar como margem”
+
+Evitar linguagem genérica.
+
+15. UX GERAL
+
+Objetivos:
+- menos cliques
+- menos etapas
+- mais fluidez
+- mais clareza
+
+Sempre perguntar:
+“isso está fácil ou está bonito demais pra funcionar?”
+
+16. DESIGN
+
+Manter:
+- estética editorial
+- elegância
+- suavidade
+
+Mas melhorar:
+- contraste
+- hierarquia
+- clareza
+
+17. SISTEMA DE SPOILER COMO DIFERENCIAL
+
+Tornar isso visível no app:
+
+Adicionar texto em lugares estratégicos:
+“O Marginalia respeita o seu ritmo de leitura.”
+
+Isso vira marca do produto.
+
+PEDIDO FINAL
+
+Quero que você:
+- não destrua o design atual
+- apenas refine
+- melhore usabilidade
+- corrija lógica
+- implemente anti-spoiler corretamente
+- simplifique fluxos
+- melhore legibilidade
+- deixe o app com cara de produto real
+
+RESULTADO ESPERADO
+
+O app deve parecer:
+- mais fácil de usar
+- mais claro
+- mais útil
+- mais inteligente
+- mais compartilhável
+- mais vivo
+
+Sem perder:
+- elegância
+- identidade
+- estética literária
+
+FOCO:
+transformar um app bonito em um app que funciona de verdade.

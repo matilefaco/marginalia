@@ -1,28 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useLocation } from "wouter";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { ChevronLeft, Check, ChevronDown, ChevronUp } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { MOCK_BOOKS } from "@/data/mockData";
-import { MARGIN_TYPES, SPOILER_LEVELS, VISIBILITY_OPTIONS, REFERENCE_TYPES } from "@/data/constants";
+import { MARGIN_TYPES, SPOILER_LEVELS, VISIBILITY_OPTIONS } from "@/data/constants";
 import type { MarginType, SpoilerLevel, Visibility } from "@/data/constants";
-
-const STEPS = [
-  "Livro",
-  "Trecho",
-  "Referência",
-  "Tipo",
-  "Comentário",
-  "Spoiler",
-  "Visibilidade",
-];
 
 export function NewMarginScreen() {
   const [, navigate] = useLocation();
   const { addMargin, progress } = useApp();
 
-  const [step, setStep] = useState(0);
   const [bookId, setBookId] = useState<number | null>(null);
   const [bookSearch, setBookSearch] = useState("");
+  const [showBookSearch, setShowBookSearch] = useState(false);
   const [excerpt, setExcerpt] = useState("");
   const [referenceType, setReferenceType] = useState<"page" | "chapter" | "percent" | "none">("none");
   const [refValue, setRefValue] = useState("");
@@ -31,31 +21,28 @@ export function NewMarginScreen() {
   const [spoilerLevel, setSpoilerLevel] = useState<SpoilerLevel>("none");
   const [visibility, setVisibility] = useState<Visibility>("public");
   const [published, setPublished] = useState(false);
+  const excerptRef = useRef<HTMLTextAreaElement>(null);
 
-  const myBooks = progress.filter((p) => p.userId === "user_me").map((p) => ({
-    ...MOCK_BOOKS.find((b) => b.id === p.bookId)!,
-    prog: p,
-  })).filter(Boolean);
+  const myBooks = progress
+    .filter((p) => p.userId === "user_me" && p.status !== "wishlist")
+    .map((p) => MOCK_BOOKS.find((b) => b.id === p.bookId))
+    .filter(Boolean) as typeof MOCK_BOOKS;
 
-  const allBooks = MOCK_BOOKS.filter(
-    (b) =>
-      !bookSearch ||
-      b.title.toLowerCase().includes(bookSearch.toLowerCase()) ||
-      b.author.toLowerCase().includes(bookSearch.toLowerCase())
-  );
+  const searchResults = bookSearch.trim()
+    ? MOCK_BOOKS.filter(
+        (b) =>
+          b.title.toLowerCase().includes(bookSearch.toLowerCase()) ||
+          b.author.toLowerCase().includes(bookSearch.toLowerCase())
+      ).slice(0, 5)
+    : [];
 
   const selectedBook = MOCK_BOOKS.find((b) => b.id === bookId);
-
-  const canNext = (() => {
-    if (step === 0) return bookId !== null;
-    if (step === 1) return excerpt.trim().length > 0;
-    return true;
-  })();
+  const canPublish = bookId !== null && excerpt.trim().length > 0;
 
   const handlePublish = () => {
-    if (!bookId || !selectedBook) return;
+    if (!canPublish || !selectedBook) return;
     addMargin({
-      bookId,
+      bookId: selectedBook.id,
       bookTitle: selectedBook.title,
       bookAuthor: selectedBook.author,
       excerpt: excerpt.trim(),
@@ -74,121 +61,106 @@ export function NewMarginScreen() {
 
   if (published) {
     return (
-      <div className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col items-center justify-center px-8 text-center"
-        style={{ backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)", backgroundSize: "5px 5px" }}
+      <div
+        className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col items-center justify-center px-8 text-center"
+        style={{
+          backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
+          backgroundSize: "5px 5px",
+        }}
       >
         <div className="w-16 h-16 rounded-full bg-[#697962]/15 flex items-center justify-center mb-6 animate-in zoom-in duration-500">
           <Check className="w-8 h-8 text-[#697962]" />
         </div>
-        <h2 className="font-serif italic text-[24px] text-[#454545] mb-2">Margem publicada</h2>
-        <p className="font-sans font-light text-[11px] text-[#454545]/45 tracking-[0.08em]">
-          Guardada para sempre no seu livro.
+        <h2 className="font-serif italic text-[26px] text-[#454545] mb-2">Margem publicada</h2>
+        <p className="font-sans font-light text-[11px] text-[#454545]/40 tracking-[0.08em]">
+          Guardada no seu livro para sempre.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col"
-      style={{ backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)", backgroundSize: "5px 5px" }}
+    <div
+      className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col"
+      style={{
+        backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
+        backgroundSize: "5px 5px",
+      }}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-5 pt-8 pb-4">
-        {step > 0 ? (
-          <button onClick={() => setStep((s) => s - 1)} className="text-[#454545]/40">
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-        ) : (
-          <button onClick={() => navigate("/")} className="text-[#454545]/40">
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-        )}
-        <div className="flex-1">
+      <div className="flex items-center gap-3 px-5 pt-10 pb-4 border-b border-[#AE8F7D]/10">
+        <button onClick={() => navigate("/")} className="text-[#454545]/40 hover:text-[#454545]/70 transition-colors">
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <div>
           <h1 className="font-serif italic text-[20px] text-[#454545]">Nova Margem</h1>
-          <p className="font-sans font-light text-[9px] tracking-[0.12em] uppercase text-[#AE8F7D]">
-            {STEPS[step]} · {step + 1}/{STEPS.length}
+          <p className="font-sans font-light text-[9px] tracking-[0.14em] uppercase text-[#AE8F7D]">
+            Guardar esse trecho para sempre
           </p>
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="px-5 mb-6">
-        <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full">
-          <div
-            className="h-full bg-[#AE8F7D] rounded-full transition-all duration-300"
-            style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
-          />
-        </div>
-      </div>
+      {/* Scrollable Form */}
+      <div className="flex-1 overflow-auto px-5 py-6 space-y-7">
 
-      {/* Step Content */}
-      <div className="flex-1 overflow-auto px-5 pb-6">
-        {/* STEP 0: Book */}
-        {step === 0 && (
-          <div className="space-y-4" data-testid="step-book">
-            <p className="font-serif italic text-[16px] text-[#454545]/60">
-              Que trecho ficou com você?
-            </p>
+        {/* 1. Book selector */}
+        <div>
+          <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+            Livro
+          </p>
 
-            {myBooks.length > 0 && (
-              <div>
-                <p className="font-sans text-[9px] font-light tracking-[0.14em] uppercase text-[#AE8F7D] mb-2">
-                  Sua biblioteca
+          {selectedBook ? (
+            <button
+              data-testid="selected-book-display"
+              onClick={() => { setBookId(null); setShowBookSearch(true); }}
+              className="w-full flex items-center gap-3 p-3.5 rounded-[10px] border border-[#AE8F7D]/30 bg-[#AE8F7D]/4 text-left"
+            >
+              <div className="w-8 h-11 rounded-[4px] bg-[#EBE6DB] flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="font-serif text-[14px] text-[#454545] truncate">{selectedBook.title}</p>
+                <p className="font-sans font-light text-[9px] tracking-[0.06em] uppercase text-[#454545]/40">
+                  {selectedBook.author}
                 </p>
-                <div className="space-y-2">
-                  {myBooks.filter(Boolean).map((item) => (
+              </div>
+              <span className="font-sans text-[9px] text-[#454545]/30">trocar</span>
+            </button>
+          ) : (
+            <div>
+              {myBooks.length > 0 && (
+                <div className="mb-2 flex flex-wrap gap-1.5">
+                  {myBooks.slice(0, 4).map((b) => (
                     <button
-                      key={item.id}
-                      data-testid={`select-book-${item.id}`}
-                      onClick={() => setBookId(item.id)}
-                      className={`w-full flex items-center gap-3 p-3.5 rounded-[10px] border text-left transition-all ${
-                        bookId === item.id
-                          ? "border-[#AE8F7D]/50 bg-[#AE8F7D]/5"
-                          : "border-[#454545]/8 hover:border-[#AE8F7D]/25"
-                      }`}
+                      key={b.id}
+                      data-testid={`quick-select-book-${b.id}`}
+                      onClick={() => { setBookId(b.id); setShowBookSearch(false); }}
+                      className="font-sans text-[9px] font-light px-3 py-1.5 rounded-full border border-[#454545]/10 text-[#454545]/55 hover:border-[#AE8F7D]/40 hover:text-[#454545] transition-all bg-[#FAF8F3]"
                     >
-                      <div className="w-8 h-11 rounded-[4px] bg-[#EBE6DB] flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-serif text-[13px] text-[#454545] truncate">{item.title}</p>
-                        <p className="font-sans font-light text-[9px] tracking-[0.06em] uppercase text-[#454545]/40">
-                          {item.author}
-                        </p>
-                      </div>
-                      {bookId === item.id && (
-                        <div className="w-5 h-5 rounded-full bg-[#AE8F7D] flex items-center justify-center flex-shrink-0">
-                          <div className="w-2 h-2 rounded-full bg-[#FAF8F3]" />
-                        </div>
-                      )}
+                      {b.title.length > 20 ? b.title.slice(0, 20) + "…" : b.title}
                     </button>
                   ))}
                 </div>
-              </div>
-            )}
-
-            <div>
-              <p className="font-sans text-[9px] font-light tracking-[0.14em] uppercase text-[#AE8F7D] mb-2">
-                Buscar outro livro
-              </p>
-              <div className="flex items-center gap-2 bg-[#EBE6DB]/60 rounded-[8px] px-3 py-2 mb-2 border border-[#AE8F7D]/10">
+              )}
+              <div className="flex items-center gap-2 bg-[#EBE6DB]/60 rounded-[10px] px-4 py-3 border border-[#AE8F7D]/10">
                 <input
+                  data-testid="input-book-search"
                   value={bookSearch}
-                  onChange={(e) => setBookSearch(e.target.value)}
-                  placeholder="Título ou autor..."
+                  onChange={(e) => { setBookSearch(e.target.value); setShowBookSearch(true); }}
+                  onFocus={() => setShowBookSearch(true)}
+                  placeholder="Buscar outro livro..."
                   className="flex-1 bg-transparent font-sans font-light text-[12px] text-[#454545] placeholder:text-[#454545]/30 outline-none"
                 />
               </div>
-              {bookSearch && (
-                <div className="space-y-1.5">
-                  {allBooks.map((book) => (
+              {showBookSearch && searchResults.length > 0 && (
+                <div className="mt-1 space-y-1">
+                  {searchResults.map((book) => (
                     <button
                       key={book.id}
-                      onClick={() => { setBookId(book.id); setBookSearch(""); }}
-                      className={`w-full flex items-center gap-3 p-3 rounded-[8px] border text-left transition-all ${
-                        bookId === book.id ? "border-[#AE8F7D]/50 bg-[#AE8F7D]/5" : "border-[#454545]/6 hover:border-[#AE8F7D]/20"
-                      }`}
+                      data-testid={`select-book-${book.id}`}
+                      onClick={() => { setBookId(book.id); setBookSearch(""); setShowBookSearch(false); }}
+                      className="w-full flex items-center gap-3 p-3 rounded-[8px] border border-[#454545]/8 text-left hover:border-[#AE8F7D]/30 transition-colors bg-[#FAF8F3]"
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="font-serif text-[12px] text-[#454545] truncate">{book.title}</p>
+                        <p className="font-serif text-[13px] text-[#454545] truncate">{book.title}</p>
                         <p className="font-sans font-light text-[9px] text-[#454545]/40">{book.author}</p>
                       </div>
                     </button>
@@ -196,203 +168,200 @@ export function NewMarginScreen() {
                 </div>
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* STEP 1: Excerpt */}
-        {step === 1 && (
-          <div data-testid="step-excerpt">
-            <p className="font-serif italic text-[15px] text-[#454545]/60 mb-4">
-              Digite aqui o trecho que você marcou no livro.
-            </p>
-            <textarea
-              data-testid="input-excerpt"
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
-              placeholder='"...'
-              className="w-full font-serif italic text-[16px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent border-none outline-none resize-none min-h-[200px] leading-relaxed"
+        {/* 2. Excerpt */}
+        <div>
+          <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+            Trecho
+          </p>
+          <textarea
+            ref={excerptRef}
+            data-testid="input-excerpt"
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            placeholder="Digite ou cole o trecho que ficou com você"
+            className="w-full font-serif italic text-[16px] text-[#3D3D3D] placeholder:text-[#454545]/22 bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[10px] p-4 outline-none focus:border-[#AE8F7D]/40 transition-colors resize-none leading-relaxed min-h-[110px]"
+            rows={4}
+          />
+          <p className="font-sans font-light text-[8px] text-[#454545]/25 mt-1 text-right">
+            {excerpt.length} caracteres · respeite direitos autorais
+          </p>
+        </div>
+
+        {/* 3. Reference */}
+        <div>
+          <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+            Referência <span className="text-[#454545]/25 normal-case tracking-normal">· ajuda outros leitores a evitar spoilers</span>
+          </p>
+          <div className="grid grid-cols-4 gap-1.5 mb-3">
+            {[
+              { id: "none", label: "Sem ref." },
+              { id: "page", label: "Página" },
+              { id: "chapter", label: "Capítulo" },
+              { id: "percent", label: "%" },
+            ].map((rt) => (
+              <button
+                key={rt.id}
+                data-testid={`ref-type-${rt.id}`}
+                onClick={() => setReferenceType(rt.id as typeof referenceType)}
+                className={`py-2.5 rounded-[8px] border font-sans text-[9px] font-light tracking-[0.06em] transition-all ${
+                  referenceType === rt.id
+                    ? "bg-[#454545] text-[#FAF8F3] border-transparent"
+                    : "bg-transparent text-[#454545]/50 border-[#454545]/10 hover:border-[#AE8F7D]/30"
+                }`}
+              >
+                {rt.label}
+              </button>
+            ))}
+          </div>
+          {referenceType !== "none" && (
+            <input
+              data-testid="input-ref-value"
+              value={refValue}
+              onChange={(e) => setRefValue(e.target.value)}
+              placeholder={
+                referenceType === "page" ? "Ex: 87" :
+                referenceType === "chapter" ? "Ex: IX ou 5" : "Ex: 60"
+              }
+              className="w-full font-serif italic text-[18px] text-[#454545] placeholder:text-[#454545]/20 bg-transparent border-b border-[#454545]/12 pb-2 outline-none focus:border-[#AE8F7D]/60 transition-colors"
             />
-            <p className="font-sans font-light text-[9px] text-[#454545]/30 mt-2">
-              Compartilhe apenas trechos curtos · {excerpt.length} caracteres
-            </p>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* STEP 2: Reference */}
-        {step === 2 && (
-          <div data-testid="step-reference" className="space-y-4">
-            <p className="font-serif italic text-[15px] text-[#454545]/60">
-              Marque o ponto do livro para respeitar o ritmo dos outros leitores.
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {REFERENCE_TYPES.map((rt) => (
-                <button
-                  key={rt.id}
-                  data-testid={`ref-type-${rt.id}`}
-                  onClick={() => setReferenceType(rt.id as typeof referenceType)}
-                  className={`py-3 rounded-[10px] border font-sans text-[11px] font-light transition-all ${
-                    referenceType === rt.id
-                      ? "bg-[#454545] text-[#FAF8F3] border-transparent"
-                      : "bg-transparent text-[#454545]/55 border-[#454545]/10 hover:border-[#AE8F7D]/30"
-                  }`}
-                >
-                  {rt.label}
-                </button>
-              ))}
-            </div>
-            {referenceType !== "none" && (
-              <div>
-                <input
-                  data-testid="input-ref-value"
-                  value={refValue}
-                  onChange={(e) => setRefValue(e.target.value)}
-                  placeholder={
-                    referenceType === "page" ? "Ex: 87" :
-                    referenceType === "chapter" ? "Ex: IX" : "Ex: 60"
-                  }
-                  className="w-full font-serif italic text-[20px] text-[#454545] placeholder:text-[#454545]/20 bg-transparent border-b border-[#454545]/12 pb-2 outline-none focus:border-[#AE8F7D]/60 transition-colors text-center"
-                />
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* STEP 3: Type */}
-        {step === 3 && (
-          <div data-testid="step-type" className="space-y-2">
-            <p className="font-serif italic text-[15px] text-[#454545]/60 mb-4">
-              Como você quer classificar esta margem?
-            </p>
+        {/* 4. Type */}
+        <div>
+          <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+            Tipo de margem
+          </p>
+          <div className="flex flex-wrap gap-1.5">
             {MARGIN_TYPES.map((type) => (
               <button
                 key={type.id}
                 data-testid={`margin-type-${type.id}`}
                 onClick={() => setPostType(type.id)}
-                className={`w-full flex items-center gap-4 p-4 rounded-[12px] border text-left transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-full border font-sans text-[10px] font-light transition-all ${
                   postType === type.id
-                    ? "border-[#AE8F7D]/50 bg-[#AE8F7D]/5"
-                    : "border-[#454545]/8 hover:border-[#AE8F7D]/25"
+                    ? "bg-[#454545] text-[#FAF8F3] border-transparent"
+                    : "bg-transparent text-[#454545]/55 border-[#454545]/10 hover:border-[#AE8F7D]/30"
                 }`}
               >
-                <span className="text-[18px] flex-shrink-0">{type.icon}</span>
-                <span className="font-sans font-light text-[13px] text-[#454545]">{type.label}</span>
-                {postType === type.id && (
-                  <div className="ml-auto w-4 h-4 rounded-full bg-[#AE8F7D] flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#FAF8F3]" />
-                  </div>
-                )}
+                <span className="text-[11px]">{type.icon}</span>
+                {type.label}
               </button>
             ))}
           </div>
-        )}
+        </div>
 
-        {/* STEP 4: Commentary */}
-        {step === 4 && (
-          <div data-testid="step-commentary">
-            <p className="font-serif italic text-[15px] text-[#454545]/60 mb-4">
-              O que esse trecho abriu em você?
+        {/* 5. Commentary */}
+        <div>
+          <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+            Sua margem
+          </p>
+          <textarea
+            data-testid="input-commentary"
+            value={commentary}
+            onChange={(e) => setCommentary(e.target.value)}
+            placeholder="O que esse trecho abriu em você?"
+            className="w-full font-serif text-[15px] text-[#3D3D3D] placeholder:text-[#454545]/22 bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[10px] p-4 outline-none focus:border-[#AE8F7D]/40 transition-colors resize-none leading-relaxed"
+            rows={3}
+          />
+        </div>
+
+        {/* 6. Spoiler + Visibility — side by side */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+              Spoiler
             </p>
-            <textarea
-              data-testid="input-commentary"
-              value={commentary}
-              onChange={(e) => setCommentary(e.target.value)}
-              placeholder="Escreva sua interpretação, sentimento ou teoria..."
-              className="w-full font-serif text-[15px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent border-none outline-none resize-none min-h-[180px] leading-relaxed"
-            />
+            <div className="space-y-1.5">
+              {SPOILER_LEVELS.map((level) => (
+                <button
+                  key={level.id}
+                  data-testid={`spoiler-level-${level.id}`}
+                  onClick={() => setSpoilerLevel(level.id as SpoilerLevel)}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-[8px] border text-left transition-all ${
+                    spoilerLevel === level.id
+                      ? "border-[#AE8F7D]/40 bg-[#AE8F7D]/5"
+                      : "border-[#454545]/8 hover:border-[#AE8F7D]/20"
+                  }`}
+                >
+                  <div
+                    className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                      spoilerLevel === level.id ? "bg-[#AE8F7D]" : "bg-[#454545]/15"
+                    }`}
+                  />
+                  <span className={`font-sans font-light text-[10px] leading-tight ${spoilerLevel === level.id ? "text-[#454545]" : "text-[#454545]/50"}`}>
+                    {level.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+              Visibilidade
+            </p>
+            <div className="space-y-1.5">
+              {VISIBILITY_OPTIONS.map((vis) => (
+                <button
+                  key={vis.id}
+                  data-testid={`visibility-${vis.id}`}
+                  onClick={() => setVisibility(vis.id as Visibility)}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-[8px] border text-left transition-all ${
+                    visibility === vis.id
+                      ? "border-[#AE8F7D]/40 bg-[#AE8F7D]/5"
+                      : "border-[#454545]/8 hover:border-[#AE8F7D]/20"
+                  }`}
+                >
+                  <div
+                    className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                      visibility === vis.id ? "bg-[#AE8F7D]" : "bg-[#454545]/15"
+                    }`}
+                  />
+                  <span className={`font-sans font-light text-[10px] ${visibility === vis.id ? "text-[#454545]" : "text-[#454545]/50"}`}>
+                    {vis.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Preview */}
+        {selectedBook && excerpt.trim() && (
+          <div className="p-4 rounded-[12px] border border-[#AE8F7D]/15 bg-[#EBE6DB]/20">
+            <p className="font-sans text-[7px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+              Preview · como vai aparecer no feed
+            </p>
+            <p className="font-serif italic text-[13px] text-[#3D3D3D] border-l-2 border-[#AE8F7D]/45 pl-3 mb-2 leading-relaxed">
+              &ldquo;{excerpt.slice(0, 120)}{excerpt.length > 120 ? "…" : ""}&rdquo;
+            </p>
+            <p className="font-sans font-light text-[9px] text-[#454545]/40">
+              {selectedBook.title} · {MARGIN_TYPES.find((t) => t.id === postType)?.label}
+            </p>
           </div>
         )}
 
-        {/* STEP 5: Spoiler */}
-        {step === 5 && (
-          <div data-testid="step-spoiler" className="space-y-3">
-            <p className="font-serif italic text-[15px] text-[#454545]/60 mb-4">
-              Este trecho revela algo importante da obra?
-            </p>
-            {SPOILER_LEVELS.map((level) => (
-              <button
-                key={level.id}
-                data-testid={`spoiler-level-${level.id}`}
-                onClick={() => setSpoilerLevel(level.id as SpoilerLevel)}
-                className={`w-full flex items-center gap-4 p-4 rounded-[12px] border text-left transition-all ${
-                  spoilerLevel === level.id
-                    ? "border-[#AE8F7D]/50 bg-[#AE8F7D]/5"
-                    : "border-[#454545]/8 hover:border-[#AE8F7D]/25"
-                }`}
-              >
-                <span className="font-sans font-light text-[13px] text-[#454545] flex-1">{level.label}</span>
-                {spoilerLevel === level.id && (
-                  <div className="w-4 h-4 rounded-full bg-[#AE8F7D] flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#FAF8F3]" />
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* STEP 6: Visibility */}
-        {step === 6 && (
-          <div data-testid="step-visibility" className="space-y-3">
-            <p className="font-serif italic text-[15px] text-[#454545]/60 mb-4">
-              Quer guardar isso só para você ou compartilhar?
-            </p>
-            {VISIBILITY_OPTIONS.map((vis) => (
-              <button
-                key={vis.id}
-                data-testid={`visibility-${vis.id}`}
-                onClick={() => setVisibility(vis.id as Visibility)}
-                className={`w-full flex items-center gap-4 p-4 rounded-[12px] border text-left transition-all ${
-                  visibility === vis.id
-                    ? "border-[#AE8F7D]/50 bg-[#AE8F7D]/5"
-                    : "border-[#454545]/8 hover:border-[#AE8F7D]/25"
-                }`}
-              >
-                <span className="font-sans font-light text-[13px] text-[#454545] flex-1">{vis.label}</span>
-                {visibility === vis.id && (
-                  <div className="w-4 h-4 rounded-full bg-[#AE8F7D] flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#FAF8F3]" />
-                  </div>
-                )}
-              </button>
-            ))}
-
-            {/* Preview */}
-            {selectedBook && excerpt && (
-              <div className="mt-6 p-4 rounded-[12px] border border-[#AE8F7D]/20 bg-[#EBE6DB]/20">
-                <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D] mb-3">Preview da margem</p>
-                <p className="font-serif italic text-[12px] text-[#3D3D3D] border-l-2 border-[#AE8F7D]/40 pl-2 mb-2">
-                  &ldquo;{excerpt.slice(0, 100)}{excerpt.length > 100 ? "..." : ""}&rdquo;
-                </p>
-                <p className="font-sans font-light text-[9px] text-[#454545]/40">
-                  {selectedBook.title} · {MARGIN_TYPES.find((t) => t.id === postType)?.label}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
+        <div className="pb-4" />
       </div>
 
-      {/* Navigation */}
-      <div className="px-5 py-5 border-t border-[#AE8F7D]/10">
-        {step < STEPS.length - 1 ? (
-          <button
-            data-testid="button-next-step"
-            onClick={() => setStep((s) => s + 1)}
-            disabled={!canNext}
-            className="w-full flex items-center justify-center gap-2 bg-[#AE8F7D] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.12em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#AE8F7D]/90 transition-colors"
-          >
-            Continuar
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        ) : (
-          <button
-            data-testid="button-publish-margin"
-            onClick={handlePublish}
-            className="w-full bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.12em] uppercase py-4 rounded-[10px] hover:bg-[#454545]/90 transition-colors"
-          >
-            Publicar margem
-          </button>
+      {/* Sticky publish button */}
+      <div className="px-5 py-4 border-t border-[#AE8F7D]/10 bg-[#FAF8F3]/95 backdrop-blur-sm">
+        {!canPublish && (
+          <p className="font-sans font-light text-[9px] text-center text-[#454545]/30 mb-2">
+            {!bookId ? "Selecione um livro para continuar" : "Digite o trecho para publicar"}
+          </p>
         )}
+        <button
+          data-testid="button-publish-margin"
+          onClick={handlePublish}
+          disabled={!canPublish}
+          className="w-full bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-25 hover:bg-[#454545]/90 active:scale-[0.99] transition-all"
+        >
+          Publicar margem
+        </button>
       </div>
     </div>
   );
