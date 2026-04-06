@@ -51,33 +51,60 @@ function getCategory(dominantEmoji: string | null): EmojiReactionCategory | "def
   return r.category as EmojiReactionCategory;
 }
 
-function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }) {
-  const allMargins = MOCK_MARGINS.filter((m) => m.bookId === bookId && m.percent !== undefined);
+function getMarginPct(m: (typeof MOCK_MARGINS)[0], book: (typeof MOCK_BOOKS)[0] | undefined): number | null {
+  if (m.percent !== undefined) return m.percent;
+  if (m.page && book?.totalPages) return Math.min(99, Math.round((m.page / book.totalPages) * 100));
+  if (m.chapter && book?.totalChapters) {
+    const n = parseInt(String(m.chapter));
+    if (!isNaN(n)) return Math.min(99, Math.round((n / book.totalChapters) * 100));
+  }
+  return null;
+}
 
-  const buckets = Array.from({ length: 10 }, (_, i) => {
+function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }) {
+  const [activeTab, setActiveTab] = useState<"emocional" | "social">("emocional");
+  const [selectedBucket, setSelectedBucket] = useState<number | null>(null);
+
+  const book = MOCK_BOOKS.find((b) => b.id === bookId);
+  const bookMargins = MOCK_MARGINS.filter((m) => m.bookId === bookId);
+  const allMargins = bookMargins
+    .map((m) => ({ ...m, computedPct: getMarginPct(m, book) }))
+    .filter((m) => m.computedPct !== null);
+
+  const emoBuckets = Array.from({ length: 10 }, (_, i) => {
     const lo = i * 10;
     const hi = lo + 10;
-    const marginsInBucket = allMargins.filter((m) => (m.percent ?? 0) >= lo && (m.percent ?? 0) < hi);
-    const count = marginsInBucket.length;
-
+    const inBucket = allMargins.filter((m) => (m.computedPct ?? 0) >= lo && (m.computedPct ?? 0) < hi);
     const emojiTotals: Record<string, number> = {};
-    marginsInBucket.forEach((m) => {
+    inBucket.forEach((m) => {
       Object.entries(m.reactions as Record<string, number>).forEach(([emoji, cnt]) => {
         emojiTotals[emoji] = (emojiTotals[emoji] || 0) + cnt;
       });
     });
     const dominant = Object.entries(emojiTotals).sort(([, a], [, b]) => b - a)[0]?.[0] ?? null;
+    const totalReactions = Object.values(emojiTotals).reduce((a, b) => a + b, 0);
     const category = getCategory(dominant);
-
-    return { lo, hi, count, zoneIdx: i, dominant, category };
+    return { lo, hi, count: inBucket.length, totalReactions, dominant, category, zoneIdx: i, comments: inBucket.reduce((s, m) => s + m.commentsCount, 0) };
   });
 
-  const max = Math.max(...buckets.map((b) => b.count), 1);
-  const totalReaders = allMargins.length;
-  const peakBucket = buckets.reduce((acc, b) => (b.count > acc.count ? b : acc), buckets[0]);
-  const peakPercent = totalReaders > 0 ? Math.round((peakBucket.count / totalReaders) * 100) : 0;
+  const socBuckets = Array.from({ length: 10 }, (_, i) => {
+    const lo = i * 10;
+    const hi = lo + 10;
+    const inBucket = allMargins.filter((m) => (m.computedPct ?? 0) >= lo && (m.computedPct ?? 0) < hi);
+    return { lo, hi, ecos: inBucket.length, comments: inBucket.reduce((s, m) => s + m.commentsCount, 0) };
+  });
 
-  const categoriesPresent = [...new Set(buckets.filter((b) => b.count > 0 && b.category !== "default").map((b) => b.category))] as EmojiReactionCategory[];
+  const emoMax = Math.max(...emoBuckets.map((b) => b.totalReactions), 1);
+  const socMax = Math.max(...socBuckets.map((b) => b.ecos + b.comments), 1);
+  const totalReaders = allMargins.length;
+
+  const peakEmoBucket = emoBuckets.reduce((acc, b) => (b.totalReactions > acc.totalReactions ? b : acc), emoBuckets[0]);
+  const peakSocBucket = socBuckets.reduce((acc, b) => ((b.ecos + b.comments) > (acc.ecos + acc.comments) ? b : acc), socBuckets[0]);
+  const mostCommentedBucket = socBuckets.reduce((acc, b) => (b.comments > acc.comments ? b : acc), socBuckets[0]);
+  const mostEcoadoBucket = socBuckets.reduce((acc, b) => (b.ecos > acc.ecos ? b : acc), socBuckets[0]);
+
+  const selBucket = selectedBucket !== null ? emoBuckets[selectedBucket] : null;
+  const selSocBucket = selectedBucket !== null ? socBuckets[selectedBucket] : null;
 
   return (
     <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[14px] p-5">
@@ -91,87 +118,207 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
         Veja onde os leitores mais sentiram este livro
       </p>
 
-      <div className="flex items-end gap-[3px] h-20 mb-1">
-        {buckets.map((b, i) => {
-          const height = b.count > 0 ? Math.max((b.count / max) * 100, 10) : 4;
-          const isPeak = b.count === max && b.count > 0;
-          const isReached = b.lo < userPercent;
-          const isCurrent = userPercent >= b.lo && userPercent < b.hi;
-          const isSilent = b.count === 0;
-          const cfg = REACTION_CATEGORY_CONFIG[b.category];
-          const barColor = isSilent
-            ? "#EBE6DB"
-            : isCurrent
-            ? "#697962"
-            : isReached
-            ? cfg.color
-            : `${cfg.color}88`;
-
-          return (
-            <div key={i} className="flex-1 flex flex-col items-center justify-end" style={{ height: "100%" }}>
-              {isPeak && b.dominant && (
-                <div className="mb-0.5">
-                  <span className="text-[11px] leading-none">{b.dominant}</span>
-                </div>
-              )}
-              {isCurrent && !isPeak && (
-                <div className="mb-0.5">
-                  <span className="font-sans text-[6px] text-[#697962] whitespace-nowrap">você</span>
-                </div>
-              )}
-              <div
-                className="w-full rounded-t-[3px] transition-all"
-                style={{
-                  height: `${height}%`,
-                  backgroundColor: barColor,
-                  minHeight: isSilent ? "3px" : "6px",
-                }}
-                title={`${ZONE_LABELS[i]}: ${b.count} margens${b.dominant ? ` · ${b.dominant}` : ""}`}
-              />
-            </div>
-          );
-        })}
+      {/* Tab switcher */}
+      <div className="flex gap-1 mb-4 bg-[#EBE6DB]/50 rounded-[10px] p-1">
+        {([["emocional", "Emocional"], ["social", "Social"]] as const).map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => { setActiveTab(id); setSelectedBucket(null); }}
+            className={`flex-1 font-sans text-[9px] font-light tracking-[0.08em] py-1.5 rounded-[8px] transition-all ${
+              activeTab === id
+                ? "bg-[#FAF8F3] text-[#454545] shadow-sm"
+                : "text-[#454545]/45 hover:text-[#454545]/70"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      <div className="flex justify-between mb-4">
-        <span className="font-sans font-light text-[7px] text-[#454545]/25">início</span>
-        <span className="font-sans font-light text-[7px] text-[#454545]/25">final</span>
-      </div>
+      {/* Emocional chart */}
+      {activeTab === "emocional" && (
+        <>
+          <div className="flex items-end gap-[3px] h-20 mb-1">
+            {emoBuckets.map((b, i) => {
+              const height = b.totalReactions > 0 ? Math.max((b.totalReactions / emoMax) * 100, 8) : 3;
+              const isPeak = b.totalReactions === peakEmoBucket.totalReactions && b.totalReactions > 0;
+              const isReached = b.lo < userPercent;
+              const isCurrent = userPercent >= b.lo && userPercent < b.hi;
+              const isSilent = b.totalReactions === 0;
+              const isSelected = selectedBucket === i;
+              const cfg = REACTION_CATEGORY_CONFIG[b.category];
+              const barColor = isSilent ? "#EBE6DB" : isCurrent ? "#697962" : isReached ? cfg.color : `${cfg.color}70`;
 
-      {/* Legend */}
-      {categoriesPresent.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {categoriesPresent.map((cat) => {
-            const cfg = REACTION_CATEGORY_CONFIG[cat];
-            return (
-              <div key={cat} className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
-                <span className="font-sans font-light text-[7.5px] text-[#454545]/50">{cfg.label}</span>
+              return (
+                <button
+                  key={i}
+                  className="flex-1 flex flex-col items-center justify-end h-full"
+                  onClick={() => setSelectedBucket(selectedBucket === i ? null : i)}
+                >
+                  {isPeak && b.dominant && !isSelected && (
+                    <div className="mb-0.5"><span className="text-[11px] leading-none">{b.dominant}</span></div>
+                  )}
+                  {isCurrent && !isPeak && !isSelected && (
+                    <div className="mb-0.5"><span className="font-sans text-[6px] text-[#697962] whitespace-nowrap">você</span></div>
+                  )}
+                  {isSelected && b.dominant && (
+                    <div className="mb-0.5"><span className="text-[11px] leading-none">{b.dominant}</span></div>
+                  )}
+                  <div
+                    className="w-full rounded-t-[3px] transition-all"
+                    style={{
+                      height: `${height}%`,
+                      backgroundColor: isSelected ? "#AE8F7D" : barColor,
+                      minHeight: isSilent ? "3px" : "6px",
+                      outline: isSelected ? "2px solid #AE8F7D" : "none",
+                      outlineOffset: "1px",
+                    }}
+                  />
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex justify-between mb-3">
+            <span className="font-sans font-light text-[7px] text-[#454545]/25">início</span>
+            <span className="font-sans font-light text-[7px] text-[#454545]/25">final</span>
+          </div>
+
+          {/* Tooltip for selected bucket */}
+          {selBucket && selSocBucket && (
+            <div className="bg-[#454545] rounded-[10px] px-4 py-3 mb-3 text-[#FAF8F3]">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-sans text-[8px] font-light tracking-[0.12em] uppercase text-[#FAF8F3]/60">
+                  {selBucket.lo}–{selBucket.hi}% · {ZONE_LABELS[selBucket.zoneIdx]}
+                </span>
+                {selBucket.dominant && <span className="text-[16px]">{selBucket.dominant}</span>}
               </div>
-            );
-          })}
-        </div>
+              <div className="flex gap-4 text-[#FAF8F3]/80">
+                <div>
+                  <span className="font-serif italic text-[13px]">{selSocBucket.ecos}</span>
+                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">ecos</span>
+                </div>
+                <div>
+                  <span className="font-serif italic text-[13px]">{selSocBucket.comments}</span>
+                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">comentários</span>
+                </div>
+                <div>
+                  <span className="font-serif italic text-[13px]">{selBucket.totalReactions}</span>
+                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">reações</span>
+                </div>
+              </div>
+            </div>
+          )}
+          {!selBucket && (
+            <p className="font-sans font-light text-[8px] text-[#454545]/25 text-center mb-3">
+              Toque em uma barra para ver detalhes
+            </p>
+          )}
+        </>
       )}
 
-      {/* Insights */}
-      <div className="space-y-2">
-        {peakBucket.count > 0 && (
+      {/* Social chart */}
+      {activeTab === "social" && (
+        <>
+          <div className="flex items-end gap-[3px] h-20 mb-1">
+            {socBuckets.map((b, i) => {
+              const total = b.ecos + b.comments;
+              const height = total > 0 ? Math.max((total / socMax) * 100, 8) : 3;
+              const isCurrent = userPercent >= b.lo && userPercent < b.hi;
+              const isSelected = selectedBucket === i;
+              const isSilent = total === 0;
+              const barColor = isSilent ? "#EBE6DB" : isCurrent ? "#697962" : "#AE8F7D";
+
+              return (
+                <button
+                  key={i}
+                  className="flex-1 flex flex-col items-center justify-end h-full"
+                  onClick={() => setSelectedBucket(selectedBucket === i ? null : i)}
+                >
+                  {isCurrent && !isSelected && (
+                    <div className="mb-0.5"><span className="font-sans text-[6px] text-[#697962] whitespace-nowrap">você</span></div>
+                  )}
+                  <div
+                    className="w-full rounded-t-[3px] transition-all"
+                    style={{
+                      height: `${height}%`,
+                      backgroundColor: isSelected ? "#454545" : `${barColor}${isSilent ? "" : "AA"}`,
+                      minHeight: isSilent ? "3px" : "6px",
+                    }}
+                  />
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex justify-between mb-3">
+            <span className="font-sans font-light text-[7px] text-[#454545]/25">início</span>
+            <span className="font-sans font-light text-[7px] text-[#454545]/25">final</span>
+          </div>
+
+          {/* Social tooltip */}
+          {selectedBucket !== null && selSocBucket && (
+            <div className="bg-[#454545] rounded-[10px] px-4 py-3 mb-3 text-[#FAF8F3]">
+              <span className="font-sans text-[8px] font-light tracking-[0.12em] uppercase text-[#FAF8F3]/60 block mb-1">
+                {selSocBucket.lo}–{selSocBucket.hi}% · {ZONE_LABELS[selectedBucket]}
+              </span>
+              <div className="flex gap-4 text-[#FAF8F3]/80">
+                <div>
+                  <span className="font-serif italic text-[13px]">{selSocBucket.ecos}</span>
+                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">ecos</span>
+                </div>
+                <div>
+                  <span className="font-serif italic text-[13px]">{selSocBucket.comments}</span>
+                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">comentários</span>
+                </div>
+              </div>
+            </div>
+          )}
+          {selectedBucket === null && (
+            <p className="font-sans font-light text-[8px] text-[#454545]/25 text-center mb-3">
+              Toque em uma barra para ver detalhes
+            </p>
+          )}
+        </>
+      )}
+
+      {/* Insights automáticos */}
+      <div className="space-y-2 mt-1">
+        {peakEmoBucket.totalReactions > 0 && (
           <div
             className="rounded-[10px] px-3.5 py-2.5"
-            style={{ backgroundColor: `${REACTION_CATEGORY_CONFIG[peakBucket.category].color}15` }}
+            style={{ backgroundColor: `${REACTION_CATEGORY_CONFIG[peakEmoBucket.category].color}18` }}
           >
-            <p className="font-sans font-light text-[9px] text-[#454545]/65 leading-relaxed">
-              {peakBucket.dominant && <span className="mr-1 text-[11px]">{peakBucket.dominant}</span>}
-              <strong>{peakPercent}% dos leitores</strong> sentiram mais forte entre{" "}
-              {peakBucket.lo}–{peakBucket.hi}% — {ZONE_INSIGHTS[peakBucket.zoneIdx]}
+            <p className="font-sans font-light text-[9px] text-[#454545]/70 leading-relaxed">
+              <span className="mr-1">🔥</span>
+              <strong>Pico emocional</strong>{" "}
+              {peakEmoBucket.dominant && <span className="mx-0.5">{peakEmoBucket.dominant}</span>}
+              entre {peakEmoBucket.lo}–{peakEmoBucket.hi}% — {ZONE_INSIGHTS[peakEmoBucket.zoneIdx]}
             </p>
           </div>
         )}
-
-        {userPercent < peakBucket.hi && peakBucket.count > 0 && (
-          <div className="bg-[#EBE6DB]/40 border border-[#AE8F7D]/10 rounded-[10px] px-3.5 py-2.5">
+        {mostCommentedBucket.comments > 0 && (
+          <div className="bg-[#EBE6DB]/50 rounded-[10px] px-3.5 py-2.5">
+            <p className="font-sans font-light text-[9px] text-[#454545]/70 leading-relaxed">
+              <span className="mr-1">💬</span>
+              <strong>Mais comentado</strong> entre {mostCommentedBucket.lo}–{mostCommentedBucket.hi}%
+              {" "}· {mostCommentedBucket.comments} comentários
+            </p>
+          </div>
+        )}
+        {mostEcoadoBucket.ecos > 0 && mostEcoadoBucket.lo !== mostCommentedBucket.lo && (
+          <div className="bg-[#EBE6DB]/50 rounded-[10px] px-3.5 py-2.5">
+            <p className="font-sans font-light text-[9px] text-[#454545]/70 leading-relaxed">
+              <span className="mr-1">✍</span>
+              <strong>Mais ecoado</strong> entre {mostEcoadoBucket.lo}–{mostEcoadoBucket.hi}%
+              {" "}· {mostEcoadoBucket.ecos} ecos
+            </p>
+          </div>
+        )}
+        {userPercent > 0 && peakSocBucket.ecos > 0 && userPercent < peakSocBucket.lo && (
+          <div className="bg-[#EBE6DB]/30 border border-[#AE8F7D]/10 rounded-[10px] px-3.5 py-2.5">
             <p className="font-sans font-light text-[9px] text-[#454545]/55 leading-relaxed">
-              Você ainda não chegou aqui — um dos pontos mais marcantes deste livro está pela frente.
+              <span className="mr-1">👤</span>
+              Você está em {userPercent}% — o pico de atividade é em {peakSocBucket.lo}–{peakSocBucket.hi}%.
+              Ainda há muito pela frente.
             </p>
           </div>
         )}

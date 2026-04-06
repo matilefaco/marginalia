@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "wouter";
 import { Share2, Check, MessageCircle, Bookmark, BookmarkCheck } from "lucide-react";
 import { useApp } from "@/context/AppContext";
@@ -70,60 +70,139 @@ function SaveButton({ margin }: { margin: Margin }) {
   );
 }
 
-function EmojiReactionBar({ margin, compact = false }: { margin: Margin; compact?: boolean }) {
+function EmojiReactionBar({ margin }: { margin: Margin }) {
   const { addReaction, userReactions } = useApp();
-  const [justReacted, setJustReacted] = useState<string | null>(null);
   const myEmoji = userReactions[margin.id];
-  const reactions = margin.reactions as Record<string, number>;
-  const topReactions = Object.entries(reactions)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, compact ? 4 : 8);
-  const notReacted = EMOJI_REACTIONS.filter((r) => !(r.emoji in reactions));
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [justPopped, setJustPopped] = useState<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleReact = (e: React.MouseEvent, emoji: string) => {
+  const reactions = margin.reactions as Record<string, number>;
+  const top3 = Object.entries(reactions).sort(([, a], [, b]) => b - a).slice(0, 3);
+  const extraCount = Math.max(0, Object.keys(reactions).length - 3);
+
+  useEffect(() => {
+    if (!pickerOpen) return;
+    const close = (e: MouseEvent | TouchEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setPickerOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("touchstart", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("touchstart", close);
+    };
+  }, [pickerOpen]);
+
+  const selectEmoji = (emoji: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addReaction(margin.id, emoji);
-    setJustReacted(emoji);
-    setTimeout(() => setJustReacted(null), 600);
+    setJustPopped(emoji);
+    setTimeout(() => setJustPopped(null), 500);
+    setPickerOpen(false);
+  };
+
+  const startPress = (e: React.PointerEvent) => {
+    e.stopPropagation();
+    timerRef.current = setTimeout(() => setPickerOpen(true), 380);
+  };
+
+  const endPress = (e: React.PointerEvent) => {
+    e.stopPropagation();
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+      if (!pickerOpen) {
+        if (myEmoji) {
+          addReaction(margin.id, myEmoji);
+          setJustPopped(myEmoji);
+          setTimeout(() => setJustPopped(null), 500);
+        } else {
+          setPickerOpen(true);
+        }
+      }
+    }
+  };
+
+  const cancelPress = () => {
+    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
-      {topReactions.map(([emoji, count]) => {
+    <div className="flex items-center gap-1.5 flex-wrap">
+      {top3.map(([emoji, count]) => {
         const isMine = myEmoji === emoji;
         return (
-          <button
+          <span
             key={emoji}
-            data-testid={`chip-reaction-${margin.id}-${emoji}`}
-            onClick={(e) => handleReact(e, emoji)}
-            style={{ transition: "transform 0.15s ease, background 0.15s" }}
-            className={`flex items-center gap-1 text-[14px] leading-none px-2 py-1 rounded-full border transition-colors active:scale-90 ${
-              justReacted === emoji
-                ? "scale-125 bg-[#AE8F7D]/20 border-[#AE8F7D]/50"
-                : isMine
-                ? "bg-[#AE8F7D]/18 border-[#AE8F7D]/45 shadow-sm"
-                : "bg-[#EBE6DB]/70 border-[#AE8F7D]/12 hover:bg-[#AE8F7D]/10 hover:border-[#AE8F7D]/30"
+            className={`flex items-center gap-0.5 text-[13px] leading-none px-2 py-1 rounded-full border ${
+              isMine
+                ? "bg-[#AE8F7D]/18 border-[#AE8F7D]/40"
+                : "bg-[#EBE6DB]/70 border-[#AE8F7D]/10"
             }`}
           >
-            <span>{emoji}</span>
-            <span className={`font-sans font-light text-[9px] ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/55"}`}>
+            {emoji}
+            <span className={`font-sans font-light text-[8px] ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/55"}`}>
               {count}
             </span>
-          </button>
+          </span>
         );
       })}
-      {!compact && notReacted.slice(0, 2).map((r) => (
+      {extraCount > 0 && (
+        <span className="font-sans font-light text-[8px] text-[#454545]/30">+{extraCount}</span>
+      )}
+      {top3.length === 0 && (
+        <span className="font-sans font-light text-[8px] text-[#454545]/25 italic">sem reações ainda</span>
+      )}
+
+      <div
+        ref={containerRef}
+        className="relative ml-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {pickerOpen && (
+          <div
+            className="absolute bottom-full right-0 mb-2 bg-[#2A2A2A] rounded-[20px] px-3 py-2.5 flex gap-2.5 shadow-2xl z-50"
+            style={{ animation: "fadeScaleUp 0.15s ease" }}
+          >
+            {EMOJI_REACTIONS.map((r) => (
+              <button
+                key={r.emoji}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => selectEmoji(r.emoji, e)}
+                className={`text-[22px] leading-none transition-transform hover:scale-125 active:scale-110 ${
+                  r.emoji === myEmoji ? "scale-125 drop-shadow-sm" : ""
+                }`}
+                title={r.label}
+              >
+                {r.emoji}
+              </button>
+            ))}
+          </div>
+        )}
         <button
-          key={r.emoji}
-          data-testid={`button-add-emoji-${margin.id}-${r.emoji}`}
-          onClick={(e) => handleReact(e, r.emoji)}
-          className="text-[14px] leading-none px-2 py-1 rounded-full border border-dashed border-[#454545]/10 opacity-40 hover:opacity-70 hover:border-[#AE8F7D]/30 transition-all active:scale-90"
-          title={r.label}
+          onPointerDown={startPress}
+          onPointerUp={endPress}
+          onPointerLeave={cancelPress}
+          onPointerCancel={cancelPress}
+          style={{ userSelect: "none", WebkitUserSelect: "none", touchAction: "none" }}
+          data-testid={`button-react-${margin.id}`}
+          className={`text-[14px] leading-none px-2 py-1 rounded-full border transition-all select-none ${
+            justPopped
+              ? "scale-125"
+              : myEmoji
+              ? "bg-[#AE8F7D]/12 border-[#AE8F7D]/35"
+              : "border-dashed border-[#454545]/15 hover:border-[#AE8F7D]/30 text-[#454545]/35"
+          }`}
+          title={myEmoji ? "Toque para remover · segure para trocar" : "Segure para reagir"}
         >
-          {r.emoji}
+          {myEmoji ?? <span className="font-sans text-[11px]">＋</span>}
         </button>
-      ))}
+      </div>
     </div>
   );
 }
@@ -143,7 +222,7 @@ function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarPro
       className="flex items-center gap-1.5 font-sans text-[8.5px] font-light tracking-[0.1em] text-[#454545]/45 hover:text-[#AE8F7D] transition-colors"
     >
       <MessageCircle className="w-3 h-3" />
-      <span>Responder</span>
+      <span>Comente</span>
       {margin.commentsCount > 0 && (
         <span className="text-[#454545]/28">· {margin.commentsCount}</span>
       )}
@@ -198,7 +277,7 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
         </p>
       )}
       <div className="mb-2.5">
-        <EmojiReactionBar margin={margin} compact />
+        <EmojiReactionBar margin={margin} />
       </div>
       <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#697962" />
     </div>
@@ -229,7 +308,7 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <p className="font-serif text-[13px] text-[#454545]/72 leading-[1.7] mb-3">{margin.commentary}</p>
       )}
       <div className="mb-2">
-        <EmojiReactionBar margin={margin} compact />
+        <EmojiReactionBar margin={margin} />
       </div>
       <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#BDAB9C" />
     </div>
@@ -240,7 +319,6 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
 
 function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
-  const ref = formatReference(margin);
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
@@ -259,7 +337,7 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <p className="font-serif text-[14px] text-[#2A2A2A]/80 leading-[1.7] mb-3">{margin.commentary}</p>
       )}
       <div className="mb-2">
-        <EmojiReactionBar margin={margin} compact />
+        <EmojiReactionBar margin={margin} />
       </div>
       {totalReactions > 0 && (
         <p className="font-sans font-light text-[8px] text-[#697962]/55 mb-2">{totalReactions} leitores ecoaram isso</p>

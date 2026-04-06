@@ -14,7 +14,7 @@ export function NewMarginScreen() {
   const [bookSearch, setBookSearch] = useState("");
   const [showBookSearch, setShowBookSearch] = useState(false);
   const [excerpt, setExcerpt] = useState("");
-  const [referenceType, setReferenceType] = useState<"page" | "chapter" | "percent" | "none">("none");
+  const [referenceType, setReferenceType] = useState<"page" | "chapter" | "free_text" | "none">("none");
   const [refValue, setRefValue] = useState("");
   const [postType, setPostType] = useState<MarginType>("insight");
   const [commentary, setCommentary] = useState("");
@@ -46,10 +46,9 @@ export function NewMarginScreen() {
       bookTitle: selectedBook.title,
       bookAuthor: selectedBook.author,
       excerpt: excerpt.trim(),
-      referenceType,
+      referenceType: referenceType === "free_text" ? "none" : referenceType,
       ...(referenceType === "page" ? { page: parseInt(refValue) || 0 } : {}),
       ...(referenceType === "chapter" ? { chapter: refValue } : {}),
-      ...(referenceType === "percent" ? { percent: parseInt(refValue) || 0 } : {}),
       postType,
       commentary: commentary.trim(),
       spoilerLevel,
@@ -200,7 +199,7 @@ export function NewMarginScreen() {
               { id: "none", label: "Sem ref." },
               { id: "page", label: "Página" },
               { id: "chapter", label: "Capítulo" },
-              { id: "percent", label: "%" },
+              { id: "free_text", label: "Trecho livre" },
             ].map((rt) => (
               <button
                 key={rt.id}
@@ -221,9 +220,11 @@ export function NewMarginScreen() {
               data-testid="input-ref-value"
               value={refValue}
               onChange={(e) => setRefValue(e.target.value)}
+              type={referenceType === "page" ? "number" : "text"}
               placeholder={
                 referenceType === "page" ? "Ex: 87" :
-                referenceType === "chapter" ? "Ex: IX ou 5" : "Ex: 60"
+                referenceType === "chapter" ? "Ex: IX ou 5" :
+                "Ex: 'O sonho dela' ou 'Capítulo do rio'"
               }
               className="w-full font-serif italic text-[18px] text-[#454545] placeholder:text-[#454545]/20 bg-transparent border-b border-[#454545]/12 pb-2 outline-none focus:border-[#AE8F7D]/60 transition-colors"
             />

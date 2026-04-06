@@ -278,7 +278,7 @@ export const MOCK_MARGINS: Margin[] = [
     commentary: "A invisibilidade como forma de existência. Clarice encontra a solidão mais absoluta — e faz dela arte.",
     spoilerLevel: "none",
     visibility: "public",
-    reactions: { "🖤": 12, "🔥": 4, "😮": 3 },
+    reactions: { "🤍": 12, "🔥": 4, "😮": 3 },
     commentsCount: 5,
     createdAt: "2026-04-04T10:30:00Z",
     userName: "Ana Clara",
@@ -358,7 +358,7 @@ export const MOCK_MARGINS: Margin[] = [
     commentary: "Rosa trata o passado como presente. O narrador existe num eterno gerúndio.",
     spoilerLevel: "none",
     visibility: "public",
-    reactions: { "✨": 3, "🖤": 7 },
+    reactions: { "✨": 3, "🤍": 7 },
     commentsCount: 2,
     createdAt: "2026-04-01T11:00:00Z",
     userName: "Leitor",
@@ -377,7 +377,7 @@ export const MOCK_MARGINS: Margin[] = [
     commentary: "George Eliot define aqui a missão da grande literatura. Essa frase me acompanha.",
     spoilerLevel: "none",
     visibility: "public",
-    reactions: { "✨": 11, "🔥": 4, "📌": 6 },
+    reactions: { "✨": 11, "🔥": 4, "🤍": 6 },
     commentsCount: 8,
     createdAt: "2026-04-03T09:00:00Z",
     userName: "Julia S.",
@@ -615,18 +615,18 @@ export interface Reply {
 
 export const MOCK_REPLIES: Record<number, Reply[]> = {
   1: [
-    { id: 101, userId: "user_ana", userName: "Ana Clara", userInitials: "AC", avatarColor: "#AE8F7D", text: "Clarice faz isso o tempo todo — a invisibilidade não é ausência, é resistência. Macabéa existe justamente por não caber.", createdAt: "2026-04-04T12:00:00Z", reactions: { "🖤": 3 } },
+    { id: 101, userId: "user_ana", userName: "Ana Clara", userInitials: "AC", avatarColor: "#AE8F7D", text: "Clarice faz isso o tempo todo — a invisibilidade não é ausência, é resistência. Macabéa existe justamente por não caber.", createdAt: "2026-04-04T12:00:00Z", reactions: { "🤍": 3 } },
     { id: 102, userId: "user_bianca", userName: "Bianca S.", userInitials: "BS", avatarColor: "#697962", text: "Me lembrou de Simone de Beauvoir — a mulher invisível que observa tudo sem que ninguém a veja de volta.", createdAt: "2026-04-04T14:00:00Z", reactions: { "🤔": 2 } },
-    { id: 103, userId: "user_rafael", userName: "Rafael M.", userInitials: "RM", avatarColor: "#BDAB9C", text: "O mais impactante: Macabéa não percebe que é invisível. Ela simplesmente é. Sem rancor, sem tragédia consciente.", createdAt: "2026-04-05T09:00:00Z", reactions: { "😢": 4, "🔥": 1 } },
+    { id: 103, userId: "user_rafael", userName: "Rafael M.", userInitials: "RM", avatarColor: "#BDAB9C", text: "O mais impactante: Macabéa não percebe que é invisível. Ela simplesmente é. Sem rancor, sem tragédia consciente.", createdAt: "2026-04-05T09:00:00Z", reactions: { "😭": 4, "🔥": 1 } },
   ],
   6: [
     { id: 201, userId: "user_julia", userName: "Julia S.", userInitials: "JS", avatarColor: "#AE8F7D", text: "George Eliot escreveu isso e depois viveu uma vida inteira provando exatamente esse ponto.", createdAt: "2026-04-03T10:00:00Z", reactions: { "✨": 5 } },
-    { id: 202, userId: "user_ana", userName: "Ana Clara", userInitials: "AC", avatarColor: "#6A7D8A", text: "Cada vez que releio sinto que a literatura tem uma missão. E que a maioria dos autores ignora.", createdAt: "2026-04-03T13:00:00Z", reactions: { "🖤": 2, "🔥": 1 } },
+    { id: 202, userId: "user_ana", userName: "Ana Clara", userInitials: "AC", avatarColor: "#6A7D8A", text: "Cada vez que releio sinto que a literatura tem uma missão. E que a maioria dos autores ignora.", createdAt: "2026-04-03T13:00:00Z", reactions: { "🤍": 2, "🔥": 1 } },
   ],
   7: [
     { id: 301, userId: "user_bianca", userName: "Bianca S.", userInitials: "BS", avatarColor: "#697962", text: "O narrador não confiável mais estudado da literatura brasileira, sem dúvida. E com razão.", createdAt: "2026-04-05T09:00:00Z", reactions: { "🤔": 6, "🔥": 3 } },
     { id: 302, userId: "user_rafael", userName: "Rafael M.", userInitials: "RM", avatarColor: "#AE8F7D", text: "Machado nega ao leitor a certeza. Isso era revolucionário na época — e ainda é.", createdAt: "2026-04-05T10:30:00Z", reactions: { "😮": 2 } },
-    { id: 303, userId: "user_julia", userName: "Julia S.", userInitials: "JS", avatarColor: "#BDAB9C", text: "Ainda mais perturbador: Bentinho sabe que está construindo uma narrativa. Ele manipula o leitor com plena consciência.", createdAt: "2026-04-05T11:00:00Z", reactions: { "😢": 1, "🔥": 4 } },
+    { id: 303, userId: "user_julia", userName: "Julia S.", userInitials: "JS", avatarColor: "#BDAB9C", text: "Ainda mais perturbador: Bentinho sabe que está construindo uma narrativa. Ele manipula o leitor com plena consciência.", createdAt: "2026-04-05T11:00:00Z", reactions: { "😭": 1, "🔥": 4 } },
   ],
   4: [
     { id: 401, userId: "user_rafael", userName: "Rafael M.", userInitials: "RM", avatarColor: "#697962", text: "Rosa usa 'nonada' como se a palavra mais importante pudesse ser dita de passagem. É exatamente esse o truque.", createdAt: "2026-04-04T15:00:00Z", reactions: { "🤔": 3 } },

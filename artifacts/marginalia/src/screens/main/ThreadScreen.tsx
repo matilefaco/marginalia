@@ -32,6 +32,8 @@ export function ThreadScreen() {
   const isSaved = savedMargins.includes(margin.id);
   const mockReplies = MOCK_REPLIES[margin.id] || [];
   const totalVoices = mockReplies.length + localReplies.length;
+  const [showAllReplies, setShowAllReplies] = useState(false);
+  const visibleMockReplies = showAllReplies ? mockReplies : mockReplies.slice(0, 2);
 
   const handleReply = () => {
     if (!replyText.trim()) return;
@@ -210,7 +212,7 @@ export function ThreadScreen() {
           )}
 
           {/* Mock replies from other readers */}
-          {mockReplies.map((reply) => (
+          {visibleMockReplies.map((reply) => (
             <div key={reply.id} className="flex gap-3">
               <div
                 className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -240,6 +242,16 @@ export function ThreadScreen() {
               </div>
             </div>
           ))}
+
+          {/* Show all button */}
+          {!showAllReplies && mockReplies.length > 2 && (
+            <button
+              onClick={() => setShowAllReplies(true)}
+              className="w-full font-sans font-light text-[9px] tracking-[0.12em] uppercase text-[#AE8F7D]/70 hover:text-[#AE8F7D] border border-[#AE8F7D]/15 rounded-[10px] py-2.5 transition-colors"
+            >
+              Mostrar todos os comentários · {mockReplies.length}
+            </button>
+          )}
 
           {/* User's own replies */}
           {localReplies.map((reply, i) => (
@@ -276,7 +288,7 @@ export function ThreadScreen() {
           value={replyText}
           onChange={(e) => setReplyText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleReply()}
-          placeholder="O que isso abriu em você?"
+          placeholder="Escreva um comentário…"
           className="flex-1 font-serif italic text-[14px] text-[#2A2A2A] placeholder:text-[#454545]/28 bg-transparent outline-none"
         />
         <button

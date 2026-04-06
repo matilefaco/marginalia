@@ -5,7 +5,7 @@ import { MarginCard } from "@/components/cards/MarginCard";
 import { BookCover } from "@/components/BookCover";
 import { Settings, Pencil, Check, X, Share2, Instagram, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
-import { READER_ARCHETYPES } from "@/data/constants";
+import { READER_ARCHETYPES, EMOJI_REACTIONS, MARGIN_TYPES } from "@/data/constants";
 
 const AVATAR_COLORS = [
   { id: "verde", label: "Verde", value: "#697962" },
@@ -24,7 +24,7 @@ function TikTokIcon({ className }: { className?: string }) {
 }
 
 export function ProfileScreen() {
-  const { currentUser, progress, updateProfile, savedMargins, margins } = useApp();
+  const { currentUser, progress, updateProfile, savedMargins, margins, userReactions } = useApp();
 
   const [editing, setEditing] = useState(false);
   const [editFirstName, setEditFirstName] = useState(currentUser.firstName);
@@ -51,6 +51,43 @@ export function ProfileScreen() {
   const fullName = currentUser.lastName
     ? `${currentUser.firstName} ${currentUser.lastName}`
     : currentUser.firstName || currentUser.name;
+
+  const ARCHETYPE_PATTERNS: Record<string, string> = {
+    analista: "Lê devagar, desmontando cada ideia",
+    detetive: "Lê em camadas — volta, relê, questiona",
+    rebelde: "Lê em estado de alerta constante",
+    intenso: "Lê em rajadas. Quando começa, não para",
+    interpretador: "Pausas longas entre páginas, pensando",
+    observador: "Lê de forma contemplativa, absorvendo",
+  };
+
+  const dominantEmojiEntry = (() => {
+    const counts: Record<string, number> = {};
+    Object.values(userReactions).forEach((emoji) => {
+      counts[emoji] = (counts[emoji] || 0) + 1;
+    });
+    const top = Object.entries(counts).sort(([, a], [, b]) => b - a)[0];
+    if (!top) return null;
+    return EMOJI_REACTIONS.find((e) => e.emoji === top[0]) ?? null;
+  })();
+
+  const dominantMarginType = (() => {
+    const counts: Record<string, number> = {};
+    myMargins.forEach((m) => { counts[m.type] = (counts[m.type] || 0) + 1; });
+    const top = Object.entries(counts).sort(([, a], [, b]) => b - a)[0];
+    if (!top) return null;
+    return MARGIN_TYPES.find((t) => t.id === top[0]) ?? null;
+  })();
+
+  const topAnnotatedBook = (() => {
+    const counts: Record<number, number> = {};
+    myMargins.forEach((m) => { counts[m.bookId] = (counts[m.bookId] || 0) + 1; });
+    const top = Object.entries(counts).sort(([, a], [, b]) => b - a)[0];
+    if (!top) return null;
+    return MOCK_BOOKS.find((b) => b.id === Number(top[0])) ?? null;
+  })();
+
+  const readingPattern = ARCHETYPE_PATTERNS[archetype.id] ?? "Ritmo único e inconfundível";
 
   const avatarColor = editing ? editAvatarColor : (currentUser.avatarColor || "#697962");
 
@@ -347,6 +384,60 @@ export function ProfileScreen() {
             </button>
           </div>
         </div>
+
+        {/* Perfil Literário */}
+        {(dominantEmojiEntry || dominantMarginType || topAnnotatedBook) && (
+          <div className="border border-[#AE8F7D]/15 rounded-[16px] p-5 mb-5 space-y-3.5">
+            <p className="font-sans text-[7px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              Perfil Literário
+            </p>
+
+            <div className="space-y-3">
+              {/* Padrão de leitura */}
+              <div className="flex items-start gap-3">
+                <span className="text-[14px] mt-0.5 flex-shrink-0">📖</span>
+                <div>
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35 mb-0.5">Padrão de leitura</p>
+                  <p className="font-serif italic text-[13px] text-[#3D3D3D] leading-snug">{readingPattern}</p>
+                </div>
+              </div>
+
+              {/* Reação favorita */}
+              {dominantEmojiEntry && (
+                <div className="flex items-start gap-3">
+                  <span className="text-[14px] mt-0.5 flex-shrink-0">{dominantEmojiEntry.emoji}</span>
+                  <div>
+                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35 mb-0.5">Reação mais usada</p>
+                    <p className="font-serif italic text-[13px] text-[#3D3D3D] leading-snug capitalize">{dominantEmojiEntry.label}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Tipo de margem dominante */}
+              {dominantMarginType && (
+                <div className="flex items-start gap-3">
+                  <span className="text-[14px] mt-0.5 flex-shrink-0">{dominantMarginType.icon}</span>
+                  <div>
+                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35 mb-0.5">Tipo de margem dominante</p>
+                    <p className="font-serif italic text-[13px] text-[#3D3D3D] leading-snug">{dominantMarginType.label}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Livro com mais ecos */}
+              {topAnnotatedBook && (
+                <div className="flex items-start gap-3">
+                  <span className="text-[14px] mt-0.5 flex-shrink-0">✍</span>
+                  <div>
+                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35 mb-0.5">Livro mais anotado</p>
+                    <p className="font-serif italic text-[13px] text-[#3D3D3D] leading-snug">{topAnnotatedBook.title}</p>
+                    <p className="font-sans font-light text-[9px] text-[#454545]/40">{topAnnotatedBook.author}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-4 gap-2 mb-7">

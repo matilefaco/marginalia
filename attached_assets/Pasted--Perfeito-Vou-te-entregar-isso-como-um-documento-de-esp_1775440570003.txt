@@ -1,0 +1,318 @@
+
+
+Perfeito. Vou te entregar isso como um documento de especificação pronto pra colar no Replit / Lovable / Cursor, direto, claro e implementável.
+
+⸻
+
+📘 MARGINALIA — ESPECIFICAÇÃO DE MELHORIAS (REAÇÕES, COMENTÁRIOS E GRÁFICO)
+
+🎯 Objetivo
+
+Refinar a experiência social do app, tornando:
+	•	reações mais naturais e elegantes
+	•	comentários mais integrados e acessíveis
+	•	gráfico mais legível, útil e informativo
+
+Sem perder a estética minimalista e sensível do produto.
+
+⸻
+
+1. 🔥 SISTEMA DE REAÇÕES (REWORK COMPLETO)
+
+1.1 Interação principal
+
+Substituir o modelo atual (emojis sempre visíveis) por:
+
+✅ Comportamento
+	•	Toque simples → aplica o último emoji usado pelo usuário
+	•	Toque e segure (long press) → abre menu de reações
+	•	Ao segurar:
+	•	usuário pode deslizar o dedo até o emoji desejado
+	•	ao soltar → reação é enviada
+
+⸻
+
+1.2 Animação e feedback
+
+Ao ativar o long press:
+	•	emojis aparecem com:
+	•	opacity: 0 → 1
+	•	scale: 0.95 → 1
+	•	duração: ~150–200ms
+	•	leve “lift” no card (scale ~1.01)
+	•	emoji sob o dedo recebe:
+	•	highlight suave
+	•	leve aumento de escala
+
+Ao selecionar:
+	•	emoji dá um micro “pop”
+	•	contador incrementa com animação suave
+
+⸻
+
+1.3 Conjunto de emojis (fixo e curado)
+
+Usar apenas:
+	•	🤍 (tocou)
+	•	😭 (doeu)
+	•	🤔 (reflexivo)
+	•	🔥 (intenso)
+	•	✨ (belo / brilhante)
+
+Opcional:
+	•	😮 (surpresa)
+
+⚠️ Não adicionar mais emojis — manter elegância e consistência.
+
+⸻
+
+1.4 Regras de uso
+	•	usuário pode ter apenas 1 reação por eco
+	•	tocar no mesmo emoji novamente → remove reação
+	•	selecionar outro → substitui o anterior
+	•	destacar visualmente a reação do usuário
+
+⸻
+
+1.5 Exibição no card
+	•	mostrar apenas os 3 emojis mais usados
+	•	mostrar contagem ao lado
+	•	botão opcional: “+” para ver todos
+	•	reação do usuário deve estar destacada
+
+⸻
+
+2. 💬 COMENTÁRIOS (SUBSTITUIÇÃO DE “RESPONDER”)
+
+2.1 Texto
+
+Substituir em todos os ecos:
+	•	❌ “Responder”
+	•	✅ “Comente”
+
+⸻
+
+2.2 Com contagem
+
+Quando houver comentários:
+	•	“Comente · 4”
+ou
+	•	“Comentários · 4”
+
+⸻
+
+3. 🧠 EXIBIÇÃO DE COMENTÁRIOS NO ECO
+
+3.1 Tela de detalhe do eco
+
+Ao clicar em um eco:
+
+Estrutura obrigatória:
+	1.	Conteúdo do eco
+	2.	Reações
+	3.	Seção de comentários (imediatamente visível)
+
+⸻
+
+3.2 Comportamento
+	•	mostrar automaticamente:
+	•	os 2 primeiros comentários
+	•	botão:
+	•	“Mostrar todos os comentários”
+
+⸻
+
+3.3 Campo de comentário
+
+Fixar no final:
+	•	placeholder: “Escreva um comentário…”
+	•	envio rápido
+	•	sem fricção
+
+⸻
+
+3.4 Regras
+	•	comentários aceitam:
+	•	texto
+	•	1 reação por comentário
+	•	ordenação:
+	•	padrão: mais relevantes
+	•	opcional: mais recentes
+
+⸻
+
+3.5 Hierarquia visual
+	•	eco principal → destaque maior
+	•	comentários:
+	•	leve recuo
+	•	menor contraste
+	•	mais leves visualmente
+
+⸻
+
+4. 📊 GRÁFICO — MAPA DO LIVRO (REWORK COMPLETO)
+
+4.1 Separar em duas camadas
+
+A. Mapa emocional (reações)
+
+B. Mapa social (ecos/comentários)
+
+⚠️ Não misturar os dois.
+
+⸻
+
+4.2 🧠 MAPA EMOCIONAL
+
+Estrutura
+
+Dividir o livro em faixas:
+	•	0–10%
+	•	10–20%
+	•	20–30%
+	•	…
+
+Cada faixa mostra:
+	•	emoji dominante
+	•	intensidade (altura da barra)
+
+⸻
+
+Regras
+	•	mostrar apenas 1 emoji por faixa
+	•	não repetir emojis visualmente sem necessidade
+	•	evitar poluição visual
+
+⸻
+
+Interação
+
+Ao tocar em uma faixa:
+
+Mostrar tooltip:
+
+20–30% do livro
+
+Emoji dominante: ✨
+33% dos leitores reagiram aqui
+12 ecos
+28 comentários
+Trecho mais ecoado: “...”
+
+
+⸻
+
+4.3 🔥 MAPA SOCIAL
+
+Separado do emocional.
+
+Mostrar:
+	•	número de ecos por faixa
+	•	número de comentários
+	•	atividade geral
+
+⸻
+
+4.4 📌 DESTAQUES AUTOMÁTICOS (OBRIGATÓRIO)
+
+Abaixo do gráfico, exibir insights:
+
+Exemplos:
+	•	🔥 Pico emocional
+→ 😭 entre 62–68%
+	•	💬 Mais comentado
+→ 33–40%
+	•	✍️ Mais ecoado
+→ 20–30%
+	•	👤 Você vs coletivo
+→ você está em 6%, pico em 30–40%
+
+⸻
+
+5. 🚫 PROBLEMAS A CORRIGIR
+
+5.1 Emojis repetidos no gráfico
+	•	eliminar duplicação visual
+	•	sempre usar emoji dominante único por faixa
+
+⸻
+
+5.2 Falta de clareza do gráfico
+	•	adicionar labels claros
+	•	adicionar tooltip
+	•	separar emoção vs atividade
+
+⸻
+
+6. ✍️ CRIAÇÃO DE MARGEM (AJUSTES)
+
+6.1 Referência
+
+Substituir:
+	•	❌ %
+	•	❌ lógica confusa atual
+
+Por:
+	•	✅ Página
+	•	✅ Capítulo
+	•	✅ Trecho livre
+	•	✅ Sem referência
+
+⚠️ porcentagem deve ser calculada automaticamente pelo sistema
+
+⸻
+
+7. 🧑‍💻 PERFIL (REFINAMENTO)
+
+Adicionar:
+	•	emoji mais usado pelo usuário
+	•	tipo de margem dominante
+	•	padrão de leitura
+	•	livros com mais ecos do usuário
+
+⸻
+
+8. ✨ REFINOS GERAIS
+
+Ecos
+	•	deixar mais claro o tipo:
+	•	Insight
+	•	Reação
+	•	Citação favorita
+	•	Leitura simbólica
+
+⸻
+
+Reações
+	•	reduzir ruído visual
+	•	manter consistência
+	•	destacar sempre a do usuário
+
+⸻
+
+9. 🧩 RESUMO EXECUTIVO (PARA IMPLEMENTAÇÃO)
+
+Reações
+	•	long press → abre menu
+	•	swipe → seleciona
+	•	1 reação por usuário
+	•	animações suaves
+
+Comentários
+	•	“Responder” → “Comente”
+	•	exibir comentários direto no eco
+	•	campo fixo de input
+
+Gráfico
+	•	separar emocional vs social
+	•	emoji dominante por faixa
+	•	remover duplicações
+	•	adicionar insights automáticos
+
+UX geral
+	•	menos ruído
+	•	mais hierarquia
+	•	mais clareza
+	•	mais fluidez
+
+⸻

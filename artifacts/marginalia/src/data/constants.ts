@@ -70,14 +70,12 @@ export const VISIBILITY_OPTIONS = [
 export type Visibility = "public" | "friends" | "private";
 
 export const EMOJI_REACTIONS = [
-  { emoji: "😢", label: "comoveu", category: "sensível" },
-  { emoji: "🔥", label: "muito forte", category: "emocional" },
-  { emoji: "🤔", label: "me fez pensar", category: "reflexivo" },
-  { emoji: "😮", label: "me pegou de surpresa", category: "emocional" },
-  { emoji: "🖤", label: "me tocou", category: "sensível" },
-  { emoji: "✨", label: "lindo", category: "sensível" },
-  { emoji: "📌", label: "quero guardar", category: "memorável" },
-  { emoji: "😡", label: "me revoltou", category: "emocional" },
+  { emoji: "🤍", label: "tocou", category: "sensível" },
+  { emoji: "😭", label: "doeu", category: "emocional" },
+  { emoji: "🤔", label: "reflexivo", category: "reflexivo" },
+  { emoji: "🔥", label: "intenso", category: "emocional" },
+  { emoji: "✨", label: "belo", category: "sensível" },
+  { emoji: "😮", label: "surpresa", category: "emocional" },
 ] as const;
 
 export const REACTION_TYPES = EMOJI_REACTIONS.map((r) => r.emoji) as unknown as readonly string[];
@@ -87,7 +85,7 @@ export type EmojiReactionCategory = "sensível" | "emocional" | "reflexivo" | "m
 export const REACTION_CATEGORY_CONFIG: Record<EmojiReactionCategory | "default", { color: string; label: string }> = {
   emocional: { color: "#B85450", label: "🔥 Pico emocional" },
   reflexivo: { color: "#697962", label: "💭 Pico reflexivo" },
-  sensível:  { color: "#AE8F7D", label: "🖤 Pico sensível" },
+  sensível:  { color: "#AE8F7D", label: "🤍 Pico sensível" },
   memorável: { color: "#5A5A5A", label: "📌 Pico memorável" },
   default:   { color: "#BDAB9C", label: "" },
 };
