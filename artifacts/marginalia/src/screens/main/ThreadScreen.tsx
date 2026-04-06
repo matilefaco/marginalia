@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, Link } from "wouter";
-import { ArrowLeft, Send, Bookmark } from "lucide-react";
+import { ArrowLeft, Send, Bookmark, VolumeX } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { MOCK_MARGINS } from "@/data/mockData";
 import { REACTION_TYPES } from "@/data/constants";
@@ -23,7 +23,9 @@ export function ThreadScreen() {
   const { addReaction, currentUser } = useApp();
 
   const [replyText, setReplyText] = useState("");
-  const [localReplies, setLocalReplies] = useState<{ text: string; createdAt: string }[]>([]);
+  const [localReplies, setLocalReplies] = useState<{ text: string; createdAt: string; silent?: boolean }[]>([]);
+  const [silentEchoAdded, setSilentEchoAdded] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const margin = MOCK_MARGINS.find((m) => m.id === id);
 
@@ -47,6 +49,16 @@ export function ThreadScreen() {
     setReplyText("");
   };
 
+  const handleSilentEcho = () => {
+    setSilentEchoAdded(true);
+    setTimeout(() => setSilentEchoAdded(false), 2500);
+  };
+
+  const focusInput = () => {
+    inputRef.current?.focus();
+    inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   return (
     <div className="min-h-full bg-[#FAF8F3] flex flex-col">
       {/* Header */}
@@ -66,7 +78,7 @@ export function ThreadScreen() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto pb-24 px-5 pt-5">
+      <div className="flex-1 overflow-auto pb-28 px-5 pt-5">
         {/* Main Margin */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
@@ -140,13 +152,32 @@ export function ThreadScreen() {
         {/* Replies */}
         <div className="space-y-4">
           {localReplies.length === 0 && (
-            <div className="text-center py-6">
-              <p className="font-serif italic text-[13px] text-[#454545]/35 mb-1">
+            <div className="text-center py-5">
+              <p className="font-serif italic text-[14px] text-[#454545]/35 mb-2">
                 O que isso te causou?
               </p>
-              <p className="font-sans font-light text-[9px] text-[#454545]/25">
-                Você pode ecoar isso
-              </p>
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  data-testid="button-ecoar-main"
+                  onClick={focusInput}
+                  className="font-sans font-light text-[9px] tracking-[0.14em] uppercase bg-[#454545] text-[#FAF8F3] px-4 py-2 rounded-[8px] hover:bg-[#454545]/90 transition-colors active:scale-95"
+                >
+                  Ecoar
+                </button>
+                <button
+                  data-testid="button-ecoar-silencioso"
+                  onClick={handleSilentEcho}
+                  className="flex items-center gap-1.5 font-sans font-light text-[9px] tracking-[0.10em] uppercase text-[#454545]/35 border border-[#454545]/10 px-3 py-2 rounded-[8px] hover:border-[#AE8F7D]/30 hover:text-[#454545]/55 transition-colors"
+                >
+                  <VolumeX className="w-3 h-3" />
+                  Ecoar silenciosamente
+                </button>
+              </div>
+              {silentEchoAdded && (
+                <p className="font-sans font-light text-[8px] text-[#697962] mt-2 animate-pulse">
+                  Eco silencioso registrado ✦
+                </p>
+              )}
             </div>
           )}
           {localReplies.map((reply, i) => (
@@ -158,6 +189,11 @@ export function ThreadScreen() {
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-sans font-light text-[10px] text-[#AE8F7D]">{currentUser.name}</span>
                   <span className="font-sans font-light text-[8px] text-[#454545]/25">· agora</span>
+                  {reply.silent && (
+                    <span className="font-sans font-light text-[7px] text-[#454545]/25 flex items-center gap-0.5">
+                      <VolumeX className="w-2.5 h-2.5" /> silencioso
+                    </span>
+                  )}
                 </div>
                 <p className="font-serif text-[13px] text-[#454545]/70 leading-relaxed">{reply.text}</p>
               </div>
@@ -167,23 +203,42 @@ export function ThreadScreen() {
       </div>
 
       {/* Input */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#FAF8F3]/95 backdrop-blur-md border-t border-[#AE8F7D]/15 px-5 py-3 flex items-center gap-3 max-w-md mx-auto">
-        <input
-          data-testid="input-thread-reply"
-          value={replyText}
-          onChange={(e) => setReplyText(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleReply()}
-          placeholder="Escreva seu eco…"
-          className="flex-1 font-serif italic text-[13px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent outline-none"
-        />
-        <button
-          data-testid="button-send-reply"
-          onClick={handleReply}
-          disabled={!replyText.trim()}
-          className="text-[#AE8F7D] disabled:text-[#AE8F7D]/25 transition-colors"
-        >
-          <Send className="w-4 h-4" />
-        </button>
+      <div className="fixed bottom-0 left-0 right-0 bg-[#FAF8F3]/95 backdrop-blur-md border-t border-[#AE8F7D]/15 px-5 py-3 max-w-md mx-auto">
+        <div className="flex items-center gap-3">
+          <input
+            ref={inputRef}
+            data-testid="input-thread-reply"
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleReply()}
+            placeholder="Escreva seu eco…"
+            className="flex-1 font-serif italic text-[13px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent outline-none"
+          />
+          {replyText.trim() && (
+            <button
+              data-testid="button-ecoar-silencioso-inline"
+              onClick={() => {
+                setLocalReplies((prev) => [
+                  ...prev,
+                  { text: replyText.trim(), createdAt: new Date().toISOString(), silent: true },
+                ]);
+                setReplyText("");
+              }}
+              className="flex items-center gap-1 font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#454545]/30 hover:text-[#454545]/55 transition-colors"
+              title="Ecoar silenciosamente"
+            >
+              <VolumeX className="w-3.5 h-3.5" />
+            </button>
+          )}
+          <button
+            data-testid="button-send-reply"
+            onClick={handleReply}
+            disabled={!replyText.trim()}
+            className="text-[#AE8F7D] disabled:text-[#AE8F7D]/25 transition-colors"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

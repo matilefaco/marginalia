@@ -57,7 +57,7 @@ A Portuguese-language literary social network where users annotate book passages
 6. **Books** — search + select initial books, set status + progress %
 
 ### Main Screens (13 total)
-1. **Home** (`/`) — Continue reading card (with BookCover), "Hoje para você" feed (anti-spoiler filtered) with 5 editorial FeedBreak types (including "Trechos que estão fazendo leitores parar", "Pouca gente percebeu isso"), WishlistSection (horizontal book covers), "Em alta", "Sua atividade"
+1. **Home** (`/`) — "Lendo agora" horizontal carousel (all reading-status books with BookCover + progress + ecos), "Hoje para você" feed (anti-spoiler filtered) with 5 editorial FeedBreak types (including "Trechos que estão fazendo leitores parar", "Pouca gente percebeu isso"), "Em alta", "Sua atividade". WishlistSection moved to ProfileScreen.
 2. **Explore** (`/explore`) — Search, editorial collections, trending margins, books in debate, compatible readers
 3. **Nova Margem** (`/nova-margem`) — 7-step wizard: book → excerpt → reference → type → commentary → spoiler → visibility → publish
 4. **Library** (`/library`) — Status filters (Todos/Lendo/Concluídos/Quero ler/Abandonados/Favoritos), book cards with progress
@@ -69,7 +69,7 @@ A Portuguese-language literary social network where users annotate book passages
 
 ### Key Components
 - `MarginCard` — Shows margin with book-color tinting. 4 layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. Each has an "Ecoar" CTA button (links to thread), activity badges (🔥 if totalReactions ≥ 6, 🟢 if commentsCount ≥ 5), and ShareButton with "marginalia — leia junto" tagline. OR SpoilerShieldCard if blocked.
-- `BookCover` — Reusable colored book cover placeholder using bookColor + italic first-letter initial + paper texture + spine shadow. Sizes: xs/sm/md/lg. Used in LibraryScreen, HomeScreen, BookDetailScreen, and WishlistSection.
+- `BookCover` — Reusable colored book cover placeholder using bookColor + italic first-letter initial + paper texture + spine shadow. Sizes: xs/sm/md/lg. Used in LibraryScreen, HomeScreen, BookDetailScreen, ProfileScreen (wishlist), and WishlistSection.
 - `LogoMark` — SVG book logo
 - `Navbar` — 5-item bottom nav with elevated center "+" button for /nova-margem
 - `SpoilerShieldCard` — Elegant blocked content card with update progress / unlock actions

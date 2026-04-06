@@ -1,14 +1,24 @@
 import { useState } from "react";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check } from "lucide-react";
+
+const AVATAR_COLORS = [
+  { id: "verde", label: "Verde musgo", value: "#697962" },
+  { id: "terracota", label: "Terracota", value: "#AE8F7D" },
+  { id: "bege", label: "Bege", value: "#BDAB9C" },
+  { id: "vinho", label: "Vinho", value: "#6B3A3A" },
+  { id: "azul", label: "Azul acinzentado", value: "#6A7D8A" },
+  { id: "marrom", label: "Marrom suave", value: "#8B6F5E" },
+  { id: "cinza", label: "Cinza", value: "#7A7A7A" },
+];
 
 interface Props {
   onComplete: (data: {
     firstName: string;
     lastName: string;
     username: string;
-    city: string;
     email: string;
     bio: string;
+    avatarColor: string;
   }) => void;
   onBack: () => void;
 }
@@ -17,10 +27,10 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [city, setCity] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [bio, setBio] = useState("");
+  const [avatarColor, setAvatarColor] = useState("#697962");
 
   const valid = firstName.trim() && email.trim() && password.trim().length >= 6;
 
@@ -52,6 +62,7 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
       </div>
 
       <div className="flex-1 space-y-5 overflow-auto pb-2">
+        {/* Name fields */}
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="font-sans text-[9px] font-light tracking-[0.16em] uppercase text-[#AE8F7D] block mb-1.5">
@@ -81,9 +92,52 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
           </div>
         </div>
 
+        {/* Avatar Color Picker */}
+        <div className="bg-[#EBE6DB]/40 border border-[#AE8F7D]/12 rounded-[12px] p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300"
+              style={{ backgroundColor: avatarColor }}
+            >
+              <span className="font-serif italic text-[14px] text-[#FAF8F3]">
+                {firstName ? firstName.charAt(0).toUpperCase() : "A"}
+              </span>
+            </div>
+            <div>
+              <p className="font-sans text-[9px] font-light tracking-[0.16em] uppercase text-[#AE8F7D]">
+                Escolha um tom para sua presença
+              </p>
+              <p className="font-sans font-light text-[8px] text-[#454545]/35 mt-0.5">
+                Aparece no seu perfil e nos seus ecos
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2.5 flex-wrap">
+            {AVATAR_COLORS.map((color) => (
+              <button
+                key={color.id}
+                data-testid={`signup-color-${color.id}`}
+                onClick={() => setAvatarColor(color.value)}
+                className="relative w-8 h-8 rounded-full transition-all hover:scale-110 active:scale-95"
+                style={{
+                  backgroundColor: color.value,
+                  boxShadow: avatarColor === color.value ? `0 0 0 2px #FAF8F3, 0 0 0 3.5px ${color.value}` : "none",
+                }}
+                title={color.label}
+              >
+                {avatarColor === color.value && (
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <Check className="w-3.5 h-3.5 text-[#FAF8F3]" />
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Other fields */}
         {[
           { label: "@username", value: username, set: setUsername, placeholder: "@seunome", testid: "input-username" },
-          { label: "Cidade", value: city, set: setCity, placeholder: "Onde você lê?", testid: "input-city" },
           { label: "E-mail", value: email, set: setEmail, placeholder: "seu@email.com", testid: "input-email", type: "email" },
           { label: "Senha", value: password, set: setPassword, placeholder: "Mínimo 6 caracteres", testid: "input-password", type: "password" },
         ].map(({ label, value, set, placeholder, testid, type }) => (
@@ -138,7 +192,7 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
       <div className="pt-5">
         <button
           data-testid="button-create-account"
-          onClick={() => valid && onComplete({ firstName, lastName, username, city, email, bio })}
+          onClick={() => valid && onComplete({ firstName, lastName, username, email, bio, avatarColor })}
           disabled={!valid}
           className="w-full flex items-center justify-center gap-2 bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#454545]/90 active:scale-[0.99] transition-all"
         >

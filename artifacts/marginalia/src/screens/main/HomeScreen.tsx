@@ -240,12 +240,13 @@ export function HomeScreen() {
     progress.filter((p) => p.userId === "user_me").map((p) => [p.bookId, p])
   );
 
-  const currentReading = progress.find(
-    (p) => p.userId === "user_me" && p.status === "reading"
-  );
-  const currentBook = currentReading
-    ? MOCK_BOOKS.find((b) => b.id === currentReading.bookId)
-    : null;
+  const readingBooks = progress
+    .filter((p) => p.userId === "user_me" && p.status === "reading")
+    .map((p) => ({ prog: p, book: MOCK_BOOKS.find((b) => b.id === p.bookId) }))
+    .filter((x): x is { prog: (typeof progress)[0]; book: (typeof MOCK_BOOKS)[0] } => !!x.book);
+
+  const currentReading = readingBooks[0]?.prog ?? null;
+  const currentBook = readingBooks[0]?.book ?? null;
 
   const unread = notifications.filter((n) => !n.isRead).length;
   const subtitle = SUBTITLES[new Date().getHours() % SUBTITLES.length];
@@ -306,66 +307,80 @@ export function HomeScreen() {
       )}
 
       <div className="px-5 pb-8 space-y-8">
-        {/* Continue Reading */}
-        {currentBook && currentReading && (
+        {/* Continue Reading — carrossel */}
+        {readingBooks.length > 0 && (
           <section data-testid="section-continue-reading">
             <div className="flex items-center gap-2 mb-3">
               <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-                Continue de onde você parou
+                Lendo agora
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-            </div>
-            <div className="bg-[#FAF8F3] border border-[#AE8F7D]/20 rounded-[16px] p-5 shadow-sm">
-              <div className="flex items-start gap-4 mb-4">
-                <BookCover title={currentBook.title} bookColor={currentBook.bookColor} size="md" className="rounded-[8px] shadow-sm" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-sans font-light text-[8px] tracking-[0.14em] uppercase text-[#AE8F7D] mb-1">Lendo agora</p>
-                  <h2 className="font-serif italic text-[18px] text-[#3D3D3D] leading-tight mb-0.5">{currentBook.title}</h2>
-                  <p className="font-sans font-light text-[9px] tracking-[0.1em] uppercase text-[#454545]/45 mb-3">{currentBook.author}</p>
-                  <div className="w-full h-[3px] bg-[#EBE6DB] rounded-full overflow-hidden mb-1.5">
-                    <div
-                      className="h-full bg-[#AE8F7D] rounded-full transition-all duration-500"
-                      style={{ width: `${currentReading.currentPercent}%` }}
-                    />
-                  </div>
-                  <span className="font-sans font-light text-[9px] text-[#454545]/40">
-                    {progressLabel(currentReading)}
-                    {currentReading.currentPage > 0 && currentBook.totalPages > 0
-                      ? ` · p. ${currentReading.currentPage} de ${currentBook.totalPages}`
-                      : ""}
-                  </span>
-                </div>
-              </div>
-
-              {newEchos > 0 && (
-                <div className="bg-[#697962]/10 border border-[#697962]/15 rounded-[10px] px-4 py-2.5 mb-4">
-                  <p className="font-sans font-light text-[10px] text-[#697962] font-medium">
-                    {newEchos} ecos liberados dentro do seu progresso
-                  </p>
-                </div>
+              {readingBooks.length > 1 && (
+                <span className="font-sans font-light text-[8px] text-[#454545]/30">{readingBooks.length} livros</span>
               )}
-
-              <div className="flex gap-2">
-                <Link href={`/book/${currentBook.id}`} data-testid="button-ver-ecos" className="flex-1">
-                  <button className="w-full bg-[#454545] text-[#FAF8F3] font-sans text-[10px] font-light tracking-[0.12em] uppercase py-3.5 rounded-[10px] hover:bg-[#454545]/90 transition-colors">
-                    Ver ecos liberados
-                  </button>
-                </Link>
-                <Link href="/nova-margem" className="flex-1">
-                  <button className="w-full border border-[#454545]/15 text-[#454545]/60 font-sans text-[10px] font-light tracking-[0.12em] uppercase py-3.5 rounded-[10px] hover:border-[#AE8F7D]/40 hover:text-[#454545]/80 transition-colors">
-                    Adicionar margem
-                  </button>
-                </Link>
-              </div>
             </div>
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
+              {readingBooks.map(({ book, prog }) => {
+                const bookEchos = margins.filter((m) => m.bookId === book.id && m.userId !== "user_me").length;
+                return (
+                  <div
+                    key={book.id}
+                    className="flex-shrink-0 w-[280px] bg-[#FAF8F3] border border-[#AE8F7D]/20 rounded-[16px] p-4 shadow-sm"
+                  >
+                    <div className="flex items-start gap-3 mb-3">
+                      <BookCover title={book.title} bookColor={book.bookColor} size="sm" className="shadow-sm" />
+                      <div className="flex-1 min-w-0">
+                        <h2 className="font-serif italic text-[15px] text-[#3D3D3D] leading-tight mb-0.5 line-clamp-2">{book.title}</h2>
+                        <p className="font-sans font-light text-[8px] tracking-[0.1em] uppercase text-[#454545]/45 mb-2">{book.author}</p>
+                        <div className="w-full h-[2.5px] bg-[#EBE6DB] rounded-full overflow-hidden mb-1">
+                          <div
+                            className="h-full bg-[#AE8F7D] rounded-full transition-all duration-500"
+                            style={{ width: `${prog.currentPercent}%` }}
+                          />
+                        </div>
+                        <span className="font-sans font-light text-[8px] text-[#454545]/40">
+                          {progressLabel(prog)}
+                          {prog.currentPage > 0 && book.totalPages > 0
+                            ? ` · p. ${prog.currentPage} de ${book.totalPages}`
+                            : ""}
+                        </span>
+                      </div>
+                    </div>
+                    {bookEchos > 0 && (
+                      <p className="font-sans font-light text-[8px] text-[#697962] mb-3">
+                        {bookEchos} {bookEchos === 1 ? "eco liberado" : "ecos liberados"} dentro do seu progresso
+                      </p>
+                    )}
+                    <div className="flex gap-2">
+                      <Link href={`/book/${book.id}`} data-testid="button-ver-ecos" className="flex-1">
+                        <button className="w-full bg-[#454545] text-[#FAF8F3] font-sans text-[9px] font-light tracking-[0.1em] uppercase py-2.5 rounded-[8px] hover:bg-[#454545]/90 transition-colors">
+                          Ver ecos
+                        </button>
+                      </Link>
+                      <Link href="/nova-margem" className="flex-1">
+                        <button className="w-full border border-[#454545]/15 text-[#454545]/55 font-sans text-[9px] font-light tracking-[0.1em] uppercase py-2.5 rounded-[8px] hover:border-[#AE8F7D]/40 transition-colors">
+                          + Margem
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {readingBooks.length > 1 && (
+              <div className="flex justify-center gap-1 mt-2">
+                {readingBooks.map((_, i) => (
+                  <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 0 ? "bg-[#AE8F7D]" : "bg-[#AE8F7D]/25"}`} />
+                ))}
+              </div>
+            )}
           </section>
         )}
 
         {/* Momento do Livro Hoje */}
         <MomentosSection />
 
-        {/* Da sua lista para ler */}
-        <WishlistSection />
+        {/* Wishlist moved to Profile screen */}
 
         {/* Today's Feed with editorial breaks */}
         <section data-testid="section-today-feed">

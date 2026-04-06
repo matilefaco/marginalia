@@ -156,10 +156,9 @@ export function BookDetailScreen() {
 
   const [activeTab, setActiveTab] = useState("ecos");
   const [editingProgress, setEditingProgress] = useState(false);
-  const [progressMode, setProgressMode] = useState<"page" | "chapter" | "percent">("percent");
+  const [progressMode, setProgressMode] = useState<"page" | "chapter">("page");
   const [pageInput, setPageInput] = useState(String(prog?.currentPage || ""));
   const [chapterInput, setChapterInput] = useState(prog?.currentChapter || "");
-  const [percentInput, setPercentInput] = useState(String(Math.round(prog?.currentPercent || 0)));
 
   if (!book) return null;
 
@@ -186,10 +185,7 @@ export function BookDetailScreen() {
     let percent = prog?.currentPercent || 0;
     let page = prog?.currentPage || 0;
 
-    if (progressMode === "percent") {
-      percent = Math.min(100, Math.max(0, parseInt(percentInput) || 0));
-      page = book.totalPages ? Math.round((percent / 100) * book.totalPages) : page;
-    } else if (progressMode === "page" && book.totalPages) {
+    if (progressMode === "page" && book.totalPages) {
       page = Math.min(book.totalPages, Math.max(0, parseInt(pageInput) || 0));
       percent = Math.round((page / book.totalPages) * 100);
     } else if (progressMode === "chapter" && book.totalChapters) {
@@ -273,11 +269,10 @@ export function BookDetailScreen() {
                 <>
                   <div>
                     <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D] mb-2">
-                      Informar progresso por
+                      Você está em:
                     </p>
-                    <div className="grid grid-cols-3 gap-1.5 mb-3">
+                    <div className="grid grid-cols-2 gap-1.5 mb-3">
                       {[
-                        { id: "percent", label: "%" },
                         { id: "page", label: book.totalPages > 0 ? `Página (de ${book.totalPages})` : "Página" },
                         { id: "chapter", label: book.totalChapters > 0 ? `Capítulo (de ${book.totalChapters})` : "Capítulo" },
                       ].map((m) => (
@@ -295,30 +290,6 @@ export function BookDetailScreen() {
                         </button>
                       ))}
                     </div>
-
-                    {progressMode === "percent" && (
-                      <div>
-                        <input
-                          data-testid="input-progress-percent"
-                          type="range"
-                          min={0}
-                          max={100}
-                          value={parseInt(percentInput) || 0}
-                          onChange={(e) => setPercentInput(e.target.value)}
-                          className="w-full accent-[#AE8F7D] mb-1"
-                        />
-                        <div className="flex justify-between">
-                          <span className="font-sans font-light text-[8px] text-[#454545]/30">0%</span>
-                          <span className="font-sans font-light text-[10px] text-[#AE8F7D] font-medium">{percentInput}%</span>
-                          <span className="font-sans font-light text-[8px] text-[#454545]/30">100%</span>
-                        </div>
-                        {book.totalPages > 0 && (
-                          <p className="font-sans font-light text-[8px] text-[#454545]/35 mt-1 text-center">
-                            ≈ p. {Math.round((parseInt(percentInput) / 100) * book.totalPages)} de {book.totalPages}
-                          </p>
-                        )}
-                      </div>
-                    )}
 
                     {progressMode === "page" && (
                       <div>

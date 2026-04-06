@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useApp } from "@/context/AppContext";
-import { MOCK_MARGINS } from "@/data/mockData";
+import { MOCK_MARGINS, MOCK_BOOKS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
-import { Settings, Pencil, Check, X, Share2, Instagram } from "lucide-react";
+import { BookCover } from "@/components/BookCover";
+import { Settings, Pencil, Check, X, Share2, Instagram, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import { READER_ARCHETYPES } from "@/data/constants";
 
@@ -29,13 +30,17 @@ export function ProfileScreen() {
   const [editFirstName, setEditFirstName] = useState(currentUser.firstName);
   const [editLastName, setEditLastName] = useState(currentUser.lastName);
   const [editBio, setEditBio] = useState(currentUser.bio);
-  const [editCity, setEditCity] = useState(currentUser.city);
   const [editUsername, setEditUsername] = useState(currentUser.username);
   const [editAvatarColor, setEditAvatarColor] = useState(currentUser.avatarColor || "#697962");
   const [editInstagram, setEditInstagram] = useState(currentUser.instagram || "");
   const [editTikTok, setEditTikTok] = useState(currentUser.tiktok || "");
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [shared, setShared] = useState(false);
+
+  const wishlistBooks = progress
+    .filter((p) => p.userId === "user_me" && p.status === "wishlist")
+    .map((p) => MOCK_BOOKS.find((b) => b.id === p.bookId))
+    .filter(Boolean) as typeof MOCK_BOOKS;
 
   const myMargins = MOCK_MARGINS.filter((m) => m.userId === "user_me");
   const myBooks = progress.filter((p) => p.userId === "user_me");
@@ -54,7 +59,6 @@ export function ProfileScreen() {
       firstName: editFirstName.trim() || currentUser.firstName,
       lastName: editLastName.trim(),
       bio: editBio.trim(),
-      city: editCity.trim(),
       username: editUsername.trim(),
       avatarColor: editAvatarColor,
       instagram: editInstagram.trim(),
@@ -68,7 +72,6 @@ export function ProfileScreen() {
     setEditFirstName(currentUser.firstName);
     setEditLastName(currentUser.lastName);
     setEditBio(currentUser.bio);
-    setEditCity(currentUser.city);
     setEditUsername(currentUser.username);
     setEditAvatarColor(currentUser.avatarColor || "#697962");
     setEditInstagram(currentUser.instagram || "");
@@ -164,12 +167,6 @@ export function ProfileScreen() {
                   placeholder="@username"
                   className="w-full font-sans font-light text-[11px] text-[#AE8F7D] bg-transparent border-b border-[#AE8F7D]/20 outline-none pb-0.5"
                 />
-                <input
-                  value={editCity}
-                  onChange={(e) => setEditCity(e.target.value)}
-                  placeholder="Cidade"
-                  className="w-full font-sans font-light text-[10px] text-[#454545]/45 bg-transparent border-b border-[#454545]/10 outline-none pb-0.5"
-                />
               </div>
             ) : (
               <>
@@ -179,9 +176,6 @@ export function ProfileScreen() {
                 <p className="font-sans font-light text-[10px] text-[#AE8F7D] mt-0.5" data-testid="text-username">
                   {currentUser.username}
                 </p>
-                {currentUser.city && (
-                  <p className="font-sans font-light text-[9px] text-[#454545]/30 mt-0.5">{currentUser.city}</p>
-                )}
               </>
             )}
           </div>
@@ -235,53 +229,69 @@ export function ProfileScreen() {
 
         {/* Social Links — edit mode */}
         {editing && (
-          <div className="space-y-2 mb-5 bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[12px] p-4">
-            <p className="font-sans text-[8px] font-light tracking-[0.16em] uppercase text-[#AE8F7D] mb-2">Redes sociais</p>
-            <div className="flex items-center gap-2">
-              <Instagram className="w-3.5 h-3.5 text-[#454545]/30 flex-shrink-0" />
-              <input
-                value={editInstagram}
-                onChange={(e) => setEditInstagram(e.target.value)}
-                placeholder="@seu.instagram"
-                className="flex-1 font-sans font-light text-[11px] text-[#454545]/65 bg-transparent border-b border-[#454545]/10 outline-none pb-0.5"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <TikTokIcon className="w-3 h-3 text-[#454545]/30 flex-shrink-0" />
-              <input
-                value={editTikTok}
-                onChange={(e) => setEditTikTok(e.target.value)}
-                placeholder="@seu.tiktok"
-                className="flex-1 font-sans font-light text-[11px] text-[#454545]/65 bg-transparent border-b border-[#454545]/10 outline-none pb-0.5"
-              />
+          <div className="mb-5 border border-[#AE8F7D]/20 rounded-[14px] p-4">
+            <p className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D] mb-3">Onde te encontrar</p>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 bg-[#EBE6DB]/40 rounded-[10px] px-3 py-2.5">
+                <Instagram className="w-4 h-4 text-[#454545]/40 flex-shrink-0" />
+                <input
+                  value={editInstagram}
+                  onChange={(e) => setEditInstagram(e.target.value)}
+                  placeholder="@seuusuario"
+                  className="flex-1 font-sans font-light text-[12px] text-[#454545]/70 bg-transparent outline-none placeholder:text-[#454545]/25"
+                />
+              </div>
+              <div className="flex items-center gap-3 bg-[#EBE6DB]/40 rounded-[10px] px-3 py-2.5">
+                <TikTokIcon className="w-4 h-4 text-[#454545]/40 flex-shrink-0" />
+                <input
+                  value={editTikTok}
+                  onChange={(e) => setEditTikTok(e.target.value)}
+                  placeholder="@seuusuario"
+                  className="flex-1 font-sans font-light text-[12px] text-[#454545]/70 bg-transparent outline-none placeholder:text-[#454545]/25"
+                />
+              </div>
             </div>
           </div>
         )}
 
         {/* Social Links — view mode */}
-        {!editing && (currentUser.instagram || currentUser.tiktok) && (
-          <div className="flex gap-4 mb-5">
-            {currentUser.instagram && (
-              <a
-                href={`https://instagram.com/${currentUser.instagram.replace("@", "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-[#454545]/40 hover:text-[#AE8F7D] transition-colors"
-              >
-                <Instagram className="w-3.5 h-3.5" />
-                <span className="font-sans font-light text-[9px]">{currentUser.instagram}</span>
-              </a>
-            )}
-            {currentUser.tiktok && (
-              <a
-                href={`https://tiktok.com/@${currentUser.tiktok.replace("@", "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-[#454545]/40 hover:text-[#AE8F7D] transition-colors"
-              >
-                <TikTokIcon className="w-3 h-3" />
-                <span className="font-sans font-light text-[9px]">{currentUser.tiktok}</span>
-              </a>
+        {!editing && (
+          <div className="mb-5">
+            {(currentUser.instagram || currentUser.tiktok) ? (
+              <div className="border border-[#AE8F7D]/15 rounded-[14px] p-4">
+                <p className="font-sans text-[7px] font-light tracking-[0.22em] uppercase text-[#AE8F7D] mb-3">Onde me encontrar</p>
+                <div className="flex gap-3">
+                  {currentUser.instagram && (
+                    <a
+                      href={`https://instagram.com/${currentUser.instagram.replace("@", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 bg-[#EBE6DB]/60 rounded-[10px] px-3.5 py-2.5 hover:bg-[#AE8F7D]/10 transition-colors group"
+                    >
+                      <Instagram className="w-4 h-4 text-[#454545]/50 group-hover:text-[#AE8F7D] transition-colors" />
+                      <span className="font-sans font-light text-[11px] text-[#454545]/60 group-hover:text-[#454545]/80">{currentUser.instagram}</span>
+                      <ExternalLink className="w-2.5 h-2.5 text-[#454545]/20 group-hover:text-[#AE8F7D]/60" />
+                    </a>
+                  )}
+                  {currentUser.tiktok && (
+                    <a
+                      href={`https://tiktok.com/@${currentUser.tiktok.replace("@", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 bg-[#EBE6DB]/60 rounded-[10px] px-3.5 py-2.5 hover:bg-[#AE8F7D]/10 transition-colors group"
+                    >
+                      <TikTokIcon className="w-4 h-4 text-[#454545]/50 group-hover:text-[#AE8F7D] transition-colors" />
+                      <span className="font-sans font-light text-[11px] text-[#454545]/60 group-hover:text-[#454545]/80">{currentUser.tiktok}</span>
+                      <ExternalLink className="w-2.5 h-2.5 text-[#454545]/20 group-hover:text-[#AE8F7D]/60" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => setEditing(true)} className="w-full border border-dashed border-[#AE8F7D]/20 rounded-[14px] p-4 text-left hover:border-[#AE8F7D]/40 transition-colors group">
+                <p className="font-sans text-[7px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]/60 mb-1">Onde te encontrar</p>
+                <p className="font-serif italic text-[12px] text-[#454545]/30 group-hover:text-[#454545]/50 transition-colors">Adicionar Instagram ou TikTok…</p>
+              </button>
             )}
           </div>
         )}
@@ -352,6 +362,54 @@ export function ProfileScreen() {
             </div>
           ))}
         </div>
+
+        {/* Quero Ler — Wishlist */}
+        {wishlistBooks.length > 0 && (
+          <section className="mb-7">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Quero ler</span>
+              <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+              <span className="font-sans font-light text-[8px] text-[#454545]/30">{wishlistBooks.length}</span>
+            </div>
+            <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+              Livros que ainda te esperam
+            </p>
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
+              {wishlistBooks.map((book) => (
+                <Link key={book.id} href={`/book/${book.id}`} className="flex-shrink-0">
+                  <div className="w-[120px] bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[12px] overflow-hidden hover:border-[#AE8F7D]/35 transition-colors">
+                    <div
+                      className="h-[80px] w-full flex items-center justify-center relative"
+                      style={{ backgroundColor: book.bookColor }}
+                    >
+                      <span className="font-serif italic text-[36px] text-[#3D3D3D]/30 select-none leading-none">
+                        {book.title.charAt(0)}
+                      </span>
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: "linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 100%)",
+                        }}
+                      />
+                      <div
+                        className="absolute left-0 top-0 bottom-0 w-[3px]"
+                        style={{ backgroundColor: "rgba(0,0,0,0.15)" }}
+                      />
+                    </div>
+                    <div className="p-2.5">
+                      <p className="font-serif italic text-[11px] text-[#3D3D3D] leading-tight line-clamp-2 mb-0.5">
+                        {book.title}
+                      </p>
+                      <p className="font-sans font-light text-[7px] text-[#454545]/40 truncate">
+                        {book.author}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* My Margins */}
         {myMargins.length > 0 && (

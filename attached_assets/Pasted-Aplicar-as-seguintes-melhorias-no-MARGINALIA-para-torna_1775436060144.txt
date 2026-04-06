@@ -1,0 +1,323 @@
+Aplicar as seguintes melhorias no MARGINALIA para tornar o app mais intuitivo, dinâmico e viciante.
+
+---
+
+1) CADASTRO — SIMPLIFICAÇÃO + PERSONALIDADE
+
+REMOVER:
+- Campo “Cidade”
+
+---
+
+ADICIONAR:
+
+SELETOR DE COR DA IDENTIDADE (bolinha do perfil)
+
+Implementação:
+
+- Exibir pequenas opções circulares (6–8 cores elegantes)
+- Exemplo:
+  - verde musgo
+  - bege
+  - vinho
+  - azul acinzentado
+  - marrom claro
+  - cinza suave
+
+Microcopy:
+
+“Escolha um tom para sua presença”
+
+Comportamento:
+
+- seleção sutil (sem exagero visual)
+- borda leve ao selecionar
+
+---
+
+2) REDES SOCIAIS — MAIS VISÍVEL
+
+Problema atual:
+Está discreto demais
+
+---
+
+MELHORAR:
+
+Na edição de perfil:
+
+Adicionar título mais claro:
+
+“ONDE TE ENCONTRAR”
+
+---
+
+Adicionar ícones mais visíveis:
+
+- Instagram
+- TikTok
+
+---
+
+Placeholder:
+
+“@seuusuario”
+
+---
+
+Se preenchido:
+
+- transformar em link clicável
+- abrir direto no app
+
+---
+
+3) PROGRESSO DE LEITURA — CORREÇÃO CRÍTICA
+
+REMOVER:
+
+- input por porcentagem no cadastro
+- input por porcentagem ao atualizar progresso
+
+---
+
+SUBSTITUIR POR:
+
+Modo padrão:
+
+- Página
+- Capítulo
+
+---
+
+INTERFACE:
+
+“Você está em:”
+
+( ) Página ___ de ___  
+( ) Capítulo ___ de ___  
+
+---
+
+COMPORTAMENTO:
+
+- app calcula automaticamente a porcentagem
+- mostrar abaixo:
+
+“≈ 28% do livro”
+
+---
+
+4) REAÇÕES NOS ECOS (ENGAJAMENTO)
+
+Adicionar reações rápidas em cada eco:
+
+Exemplos:
+
+- 👍 concordo
+- 🤔 pensei nisso também
+- 💥 forte
+- 🖤 me pegou
+- 😵 confuso (positivo)
+- 📌 guardar isso
+
+---
+
+COMPORTAMENTO:
+
+- toque rápido adiciona reação
+- mostrar contagem
+
+---
+
+ADICIONAR:
+
+⭐ Favoritar eco
+
+- ícone de estrela
+- salva em “Ecos salvos” no perfil
+
+---
+
+5) MELHORAR O SISTEMA DE ECOAR
+
+Adicionar botão claro:
+
+“Ecoar”
+
+---
+
+Ao clicar:
+
+- abrir input direto
+- foco automático
+
+---
+
+Placeholder:
+
+“O que isso te causou?”
+
+---
+
+Adicionar opção:
+
+“Ecoar silenciosamente”
+(só contabiliza interação)
+
+---
+
+6) WISHLIST — MOVER E EVOLUIR
+
+REMOVER da home
+
+---
+
+ADICIONAR no perfil:
+
+Seção:
+
+“Quero ler”
+
+---
+
+TORNAR VICIANTE:
+
+- mostrar capas grandes
+- layout em grade ou carrossel
+
+---
+
+INTERAÇÕES:
+
+- arrastar para reordenar
+- marcar como “começar agora”
+- swipe → remover
+
+---
+
+Microcopy:
+
+“Livros que ainda te esperam”
+
+---
+
+7) LENDO AGORA — CARROSSEL
+
+Transformar em:
+
+carrossel horizontal
+
+---
+
+COMPORTAMENTO:
+
+- deslizar para ver outros livros
+- cada card:
+
+  - capa
+  - título
+  - progresso
+  - ecos liberados
+
+---
+
+Adicionar:
+
+indicador de múltiplos livros
+
+---
+
+8) REMOVER
+
+- seção “leitores parecidos com você”
+
+Motivo:
+não agrega valor central
+
+---
+
+9) MELHORAR ECO (TELA DETALHADA)
+
+Adicionar:
+
+- botão fixo “Ecoar”
+- reações visíveis
+- favoritos
+
+---
+
+Substituir:
+
+“Seja o primeiro a ecoar esta margem”
+
+Por:
+
+“Você pode ecoar isso”
+
+---
+
+10) MELHORAR SENSAÇÃO DE VIDA
+
+Adicionar:
+
+- “12 pessoas ecoaram isso”
+- “3 voltaram aqui depois”
+- “crescendo agora”
+
+---
+
+11) MICROINTERAÇÕES
+
+Adicionar:
+
+- leve animação ao reagir
+- feedback ao favoritar
+- transição suave entre telas
+
+---
+
+12) IDENTIDADE MAIS FORTE
+
+Reforçar Marginalia:
+
+- nos compartilhamentos
+- nos cards
+- nos detalhes
+
+---
+
+Adicionar frases sutis:
+
+“leituras deixam marcas”
+“isso ficou em alguém”
+“você não leu sozinho”
+
+---
+
+13) MELHORIAS EXTRAS (RECOMENDADAS)
+
+- adicionar skeleton loading (evita sensação de app vazio)
+- garantir estados vazios elegantes
+- melhorar tempo de resposta das interações
+
+---
+
+14) OBJETIVO FINAL
+
+O app deve parecer:
+
+- fluido
+- íntimo
+- coletivo
+- vivo
+
+---
+
+O usuário deve sentir:
+
+“eu estou lendo com outras pessoas agora”
+
+---
+
+Essas melhorias devem ser implementadas mantendo a estética atual, mas elevando a experiência e o engajamento.

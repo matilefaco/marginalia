@@ -1,0 +1,288 @@
+IMPLEMENTAR SISTEMA AVANÇADO DE ENGAJAMENTO — MARGINALIA
+
+Objetivo: transformar o app em uma experiência contínua, viva e impossível de abandonar, mantendo elegância e sutileza.
+
+---
+
+1) NOTIFICAÇÕES INTELIGENTES (SEM SER CHATO)
+
+Criar sistema de notificações baseado em comportamento real.
+
+---
+
+TIPOS:
+
+1. Eco no seu eco:
+
+“Alguém ecoou algo seu”
+“Isso tocou outra pessoa”
+
+---
+
+2. Movimento no livro:
+
+“Leitores chegaram onde você está”
+“Esse trecho começou a aparecer mais”
+
+---
+
+3. Momento do livro:
+
+“Algo está acontecendo em [nome do livro]”
+“Esse ponto está vivo agora”
+
+---
+
+4. Retorno:
+
+“Você parou aqui…”
+“Quer voltar?”
+
+---
+
+REGRAS:
+
+- no máximo 2–3 por dia
+- nunca repetitivas
+- sempre contextuais
+
+---
+
+2) FEED VIVO (ANTI-MONÓTONO)
+
+Problema atual:
+feed cansativo / uniforme
+
+---
+
+SOLUÇÃO:
+
+ALTERNAR TIPOS DE CARDS:
+
+- eco curto
+- eco profundo
+- citação pura
+- reação rápida
+- momento do livro
+- pico emocional
+- trecho polêmico
+
+---
+
+INSERIR INTERRUPÇÕES:
+
+A cada 4–6 itens:
+
+“⚡ Isso está crescendo agora”
+“📍 Muitos pararam aqui”
+“🖤 trecho que mais pegou hoje”
+
+---
+
+RESULTADO:
+
+menos fadiga  
+mais curiosidade  
+
+---
+
+3) MAPA DE ECOS — EVOLUIR PARA “PULSO DO LIVRO”
+
+Renomear:
+
+MAPA DE ECOS → PULSO DO LIVRO
+
+---
+
+NOVA LÓGICA:
+
+Mostrar:
+
+- zonas quentes (mais emoção)
+- zonas silenciosas (menos reação)
+
+---
+
+GATILHO PSICOLÓGICO:
+
+Adicionar mensagens como:
+
+“Você ainda não chegou aqui”
+“Esse ponto mudou muita gente”
+“Algo acontece depois daqui”
+
+---
+
+MODO EXPLORAÇÃO:
+
+- tocar em um ponto → ver ecos daquele momento
+- mostrar intensidade emocional
+
+---
+
+RESULTADO:
+
+usuário quer avançar na leitura
+
+---
+
+4) GAMIFICAÇÃO INVISÍVEL
+
+SEM pontos, SEM ranking explícito
+
+---
+
+ADICIONAR:
+
+ESTADOS INTERNOS:
+
+- “em fluxo”
+- “em pausa”
+- “retornando”
+- “aprofundando”
+
+---
+
+FEEDBACKS SUTIS:
+
+- “você está lendo com consistência”
+- “seu ritmo está bonito”
+- “você voltou”
+
+---
+
+MICRO RECOMPENSAS:
+
+- liberar ecos conforme progresso
+- desbloquear momentos do livro
+- mostrar “você chegou onde poucos chegaram”
+
+---
+
+5) SISTEMA DE DESBLOQUEIO
+
+Ao avançar no livro:
+
+- liberar ecos de outros leitores
+- liberar zonas do Pulso do Livro
+
+---
+
+MENSAGENS:
+
+“3 ecos te esperam aqui”
+“Você desbloqueou este trecho”
+
+---
+
+6) COMPARTILHAMENTO EVOLUÍDO
+
+Ao compartilhar eco:
+
+Adicionar automaticamente:
+
+- nome do usuário (@username)
+- nome do livro
+- selo “Marginalia”
+
+---
+
+FORMATO:
+
+cartão bonito, pronto pra story
+
+---
+
+7) SISTEMA DE RETORNO
+
+Se usuário parar de ler:
+
+Depois de 1–2 dias:
+
+“Você deixou algo em aberto”
+“Aquela página ainda está te esperando”
+
+---
+
+Se voltar:
+
+“Você voltou”
+“Vamos continuar”
+
+---
+
+8) ESTADOS VAZIOS INTELIGENTES
+
+Nunca deixar tela vazia
+
+---
+
+Exemplos:
+
+“ninguém ecoou ainda — você pode começar”
+“isso ainda não ganhou voz”
+“esse trecho está em silêncio”
+
+---
+
+9) RITMO VISUAL
+
+Adicionar variação no feed:
+
+- tamanhos diferentes de cards
+- espaçamento dinâmico
+- destaque ocasional
+
+---
+
+10) MICROCOPY — IDENTIDADE
+
+Substituir textos genéricos por:
+
+- “isso ficou em alguém”
+- “isso ecoou”
+- “isso abriu algo”
+- “isso continua”
+
+---
+
+11) WISHLIST VICIANTE
+
+Adicionar:
+
+- botão “começar agora”
+- indicador de interesse coletivo:
+
+“23 pessoas estão lendo isso”
+
+---
+
+12) OBJETIVO FINAL
+
+O app deve gerar:
+
+- curiosidade contínua
+- sensação de presença coletiva
+- vontade de voltar
+
+---
+
+O usuário não deve sentir:
+
+“vou usar”
+
+Mas sim:
+
+“quero ver o que aconteceu”
+
+---
+
+RESULTADO ESPERADO:
+
+- aumento de retenção
+- aumento de interações
+- sensação de app vivo
+
+---
+
+Implementar mantendo o minimalismo, mas aumentando profundamente o comportamento do usuário.
