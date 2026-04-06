@@ -170,50 +170,92 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── signIn: accepts e-mail OR @username ────────────────────────────────────
-  const signIn = async (identifier: string, password: string) => {
-    let loginEmail = identifier.trim();
+  // ─── resolveEmail: username → email via server-side index ───────────────────
+  const resolveEmailFromUsername = async (username: string): Promise<string | null> => {
+    const clean = username.toLowerCase().replace(/^@/, "").trim();
 
-    const isEmail = /\S+@\S+\.\S+/.test(loginEmail);
+    // 1. Try server-side index (authoritative, works across devices)
+    try {
+      const res = await fetch("/api/auth/resolve-username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: clean }),
+      });
+      if (res.ok) {
+        const data = await res.json() as { email?: string };
+        if (data.email) return data.email;
+      }
+    } catch {
+      // network error — fall through to fallbacks
+    }
+
+    // 2. Fallback: try Supabase profiles table (email column, if it exists)
+    try {
+      const { data: row } = await supabase
+        .from("profiles")
+        .select("id, email")
+        .eq("username", clean)
+        .maybeSingle();
+      if (row?.email) {
+        // Backfill to server index so future logins on any device work
+        fetch("/api/auth/register-username", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: clean, email: row.email, userId: row.id }),
+        }).catch(() => {});
+        return row.email as string;
+      }
+    } catch {
+      // profiles.email column might not exist
+    }
+
+    // 3. Last resort: localStorage cache (same device only)
+    const cached = lsGet(`mg_username_email_${clean}`);
+    if (cached) {
+      // Backfill to server index if we have a userId cached too
+      const userId = lsGet(`mg_userid_${clean}`);
+      if (userId) {
+        fetch("/api/auth/register-username", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: clean, email: cached, userId }),
+        }).catch(() => {});
+      }
+    }
+    return cached ?? null;
+  };
+
+  // ─── signIn: accepts e-mail OR username ──────────────────────────────────────
+  const signIn = async (identifier: string, password: string) => {
+    const trimmed = identifier.trim();
+    const isEmail = /\S+@\S+\.\S+/.test(trimmed);
+
+    let loginEmail = trimmed;
 
     if (!isEmail) {
-      // Username lookup — try the profiles table first
-      const cleanUsername = loginEmail.replace(/^@/, "");
-      const { data: profileRow } = await supabase
-        .from("profiles")
-        .select("email")
-        .eq("username", cleanUsername)
-        .maybeSingle();
-
-      if (profileRow?.email) {
-        loginEmail = profileRow.email;
-      } else {
-        // Email column may not exist yet — check localStorage by scanning keys
-        const localEmail = lsGet(`mg_username_email_${cleanUsername}`);
-        if (localEmail) {
-          loginEmail = localEmail;
-        } else {
-          return {
-            error:
-              "Usuário não encontrado. Tente entrar com seu e-mail diretamente.",
-          };
-        }
+      const resolved = await resolveEmailFromUsername(trimmed);
+      if (!resolved) {
+        return {
+          error:
+            "Usuário não encontrado. Verifique o nome de usuário ou use seu e-mail.",
+        };
       }
+      loginEmail = resolved;
     }
 
     const { error } = await supabase.auth.signInWithPassword({
       email: loginEmail,
       password,
     });
+
     if (error) {
-      if (
-        error.message.toLowerCase().includes("invalid") ||
-        error.message.toLowerCase().includes("credentials")
-      ) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("invalid") || msg.includes("credentials") || msg.includes("email not confirmed")) {
         return { error: "E-mail/usuário ou senha incorretos. Tente novamente." };
       }
       return { error: error.message };
     }
+
     return { error: null };
   };
 
@@ -238,11 +280,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (data.user) {
       const userId = data.user.id;
 
-      // Save username→email mapping in localStorage so username-login works
-      // even before the email column exists in the DB
-      lsSet(`mg_username_email_${username}`, email);
+      // ── Persist username→email to server-side index (works across all devices) ──
+      lsSet(`mg_username_email_${username}`, email); // localStorage fallback
+      lsSet(`mg_userid_${username.toLowerCase()}`, userId); // for backfill during login
       lsSet(`mg_email_${userId}`, email);
       if (avatarColor) lsSet(`mg_avatar_color_${userId}`, avatarColor);
+
+      // Server-side persistent mapping (fire and forget — does not block signup)
+      fetch("/api/auth/register-username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username.toLowerCase(), email, userId }),
+      }).catch((e) => console.warn("[signUp] register-username failed:", e));
 
       await upsertProfileSafe(userId, {
         username,

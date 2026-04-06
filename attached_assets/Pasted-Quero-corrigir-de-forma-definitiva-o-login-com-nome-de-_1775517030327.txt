@@ -1,0 +1,175 @@
+Quero corrigir de forma definitiva o login com nome de usuário.
+
+Hoje o campo já mostra “E-mail ou nome de usuário”, mas na prática o sistema ainda não está aceitando login por username corretamente.
+
+Isso precisa funcionar de verdade.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Hoje o usuário pode digitar:
+- e-mail
+ou
+- nome de usuário
+
+Mas o login só funciona corretamente com e-mail.
+
+Quando o usuário digita o username, o sistema não autentica como deveria.
+
+Quero corrigir isso de forma real, não apenas visual.
+
+==================================================
+2. COMPORTAMENTO CORRETO DESEJADO
+==================================================
+
+O campo de login deve aceitar dois formatos:
+
+### Opção A
+- e-mail
+
+### Opção B
+- nome de usuário (username)
+
+Se o usuário digitar e-mail:
+- fazer login normalmente com e-mail + senha
+
+Se o usuário digitar username:
+- localizar o usuário correspondente
+- descobrir o e-mail da conta associado àquele username
+- fazer login com esse e-mail e a senha informada
+- tudo isso de forma transparente para o usuário
+
+==================================================
+3. FLUXO QUE QUERO IMPLEMENTAR
+==================================================
+
+### Etapa 1
+Ler o valor digitado no campo “E-mail ou nome de usuário”
+
+### Etapa 2
+Detectar automaticamente:
+- se o valor contém formato de e-mail
+ou
+- se é um username
+
+### Etapa 3A — se for e-mail
+- chamar o login normal do Supabase Auth com email + password
+
+### Etapa 3B — se for username
+- buscar na tabela `profiles` o registro com aquele `username`
+- encontrar o identificador do usuário
+- usar uma estratégia correta para autenticar esse usuário com a senha informada
+
+==================================================
+4. PONTO IMPORTANTE DE ARQUITETURA
+==================================================
+
+Como o Supabase Auth autentica por e-mail/telefone e não diretamente por username, quero que você implemente o login por username da forma correta e segura.
+
+A solução precisa ser funcional e alinhada ao Supabase.
+
+### O que eu quero que você faça:
+- revisar a arquitetura atual de login
+- identificar a melhor forma de suportar username
+- implementar essa solução de verdade
+
+### Se necessário:
+- criar uma função server-side segura
+- ou um endpoint próprio que resolva username -> e-mail de forma segura
+- ou ajustar o fluxo atual para suportar esse comportamento sem expor dados de forma indevida
+
+==================================================
+5. REGRAS IMPORTANTES
+==================================================
+
+### 5.1
+O username continua sendo único no sistema.
+
+### 5.2
+O login por username não pode quebrar o login por e-mail.
+
+### 5.3
+O usuário deve poder usar qualquer um dos dois no mesmo campo.
+
+### 5.4
+A experiência precisa ser simples:
+- usuário digita
+- senha
+- entra
+- sem precisar saber qual método está sendo usado internamente
+
+### 5.5
+As mensagens de erro devem continuar claras:
+- usuário não encontrado
+- senha incorreta
+- credenciais inválidas
+- etc.
+
+==================================================
+6. O QUE REVISAR NO CÓDIGO
+==================================================
+
+Quero que você revise e corrija:
+
+- a função de sign in
+- a detecção de input como e-mail ou username
+- a busca por username na tabela `profiles`
+- a integração com Supabase Auth
+- o tratamento de erros
+- a persistência da sessão após login
+- a navegação após login bem sucedido
+
+==================================================
+7. O QUE PRECISA FUNCIONAR DEPOIS
+==================================================
+
+Depois da correção, quero poder fazer login de ambas as formas:
+
+### Exemplo 1
+- matilefaco@hotmail.com
+- senha
+- entrar normalmente
+
+### Exemplo 2
+- matilefaco
+- senha
+- entrar normalmente
+
+Nos dois casos, o resultado final precisa ser o mesmo:
+- usuário autenticado
+- sessão ativa
+- dados do perfil carregados
+- navegação normal no app
+
+==================================================
+8. IMPORTANTE SOBRE SEGURANÇA
+==================================================
+
+A implementação não pode comprometer a segurança da autenticação.
+
+Quero uma solução segura e compatível com as boas práticas do Supabase.
+
+Não quero gambiarra no frontend que exponha dados sensíveis.
+Se a melhor solução envolver backend/server function, faça dessa forma.
+
+==================================================
+9. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessa correção:
+
+- o campo “E-mail ou nome de usuário” deve funcionar de verdade
+- login com e-mail deve continuar funcionando
+- login com username deve passar a funcionar corretamente
+- a sessão deve ser criada normalmente
+- o perfil do usuário deve carregar normalmente após o login
+
+==================================================
+10. PRIORIDADE
+==================================================
+
+Isso é prioridade alta.
+
+Implemente essa correção no código e no fluxo de autenticação.
+Não apenas ajuste a interface ou o texto do campo.

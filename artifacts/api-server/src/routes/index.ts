@@ -7,6 +7,7 @@ import usersRouter from "./users";
 import communityRouter from "./community";
 import userBooksRouter from "./user-books";
 import userMarginsRouter from "./user-margins";
+import authRouter from "./auth";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(usersRouter);
 router.use(communityRouter);
 router.use("/user-books", userBooksRouter);
 router.use("/user-margins", userMarginsRouter);
+router.use("/auth", authRouter);
 
 export default router;

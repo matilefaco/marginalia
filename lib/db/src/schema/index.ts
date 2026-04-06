@@ -7,3 +7,4 @@ export * from "./community_margins";
 export * from "./community_replies";
 export * from "./user_books";
 export * from "./user_margins";
+export * from "./username_index";
