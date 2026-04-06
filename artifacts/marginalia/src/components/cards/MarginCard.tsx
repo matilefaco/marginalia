@@ -248,12 +248,13 @@ interface EcoarBarProps {
 
 function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarProps) {
   const [, navigate] = useLocation();
+  const { currentUser } = useApp();
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
 
   const handleAuthorClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (margin.userId !== "user_me") {
+    if (margin.userId !== currentUser.id) {
       navigate(`/user/${margin.userId}`);
     }
   };
@@ -278,7 +279,7 @@ function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarPro
         <button
           type="button"
           onClick={handleAuthorClick}
-          className={`flex items-center gap-2.5 ${margin.userId !== "user_me" ? "hover:opacity-75 transition-opacity active:opacity-60" : ""}`}
+          className={`flex items-center gap-2.5 ${margin.userId !== currentUser.id ? "hover:opacity-75 transition-opacity active:opacity-60" : ""}`}
         >
           <div
             className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"

@@ -4,6 +4,7 @@ import { MOCK_USERS, MOCK_MARGINS, MOCK_BOOKS } from "@/data/mockData";
 import { READER_ARCHETYPES } from "@/data/constants";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { timeAgo } from "@/utils/formatting";
+import { useApp } from "@/context/AppContext";
 
 function TikTokIcon({ className }: { className?: string }) {
   return (
@@ -16,9 +17,10 @@ function TikTokIcon({ className }: { className?: string }) {
 export function UserProfileScreen() {
   const params = useParams<{ id: string }>();
   const userId = params.id;
+  const { currentUser } = useApp();
 
   const user = MOCK_USERS.find((u) => u.id === userId);
-  if (!user || userId === "user_me") {
+  if (!user || userId === currentUser.id) {
     return (
       <div className="min-h-full flex items-center justify-center screen-enter">
         <p className="font-serif italic text-[#454545]/40">Perfil não encontrado.</p>

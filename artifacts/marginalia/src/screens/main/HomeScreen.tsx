@@ -44,7 +44,7 @@ function MomentosSection() {
   const { currentUser, margins, progress } = useApp();
 
   const progressMap = Object.fromEntries(
-    progress.filter((p) => p.userId === "user_me").map((p) => [p.bookId, p])
+    progress.filter((p) => p.userId === currentUser.id).map((p) => [p.bookId, p])
   );
 
   const momentos = getMomentosDeHoje(margins);
@@ -177,8 +177,8 @@ function FeedBreak({ index }: { index: number }) {
 }
 
 function WishlistSection() {
-  const { progress } = useApp();
-  const wishlistProgress = progress.filter((p) => p.userId === "user_me" && p.status === "wishlist");
+  const { currentUser, progress } = useApp();
+  const wishlistProgress = progress.filter((p) => p.userId === currentUser.id && p.status === "wishlist");
   if (wishlistProgress.length === 0) return null;
   const wishlistBooks = wishlistProgress
     .map((p) => ({ prog: p, book: MOCK_BOOKS.find((b) => b.id === p.bookId) }))
@@ -237,11 +237,11 @@ export function HomeScreen() {
   const { currentUser, margins, notifications, progress } = useApp();
 
   const progressMap = Object.fromEntries(
-    progress.filter((p) => p.userId === "user_me").map((p) => [p.bookId, p])
+    progress.filter((p) => p.userId === currentUser.id).map((p) => [p.bookId, p])
   );
 
   const readingBooks = progress
-    .filter((p) => p.userId === "user_me" && p.status === "reading")
+    .filter((p) => p.userId === currentUser.id && p.status === "reading")
     .map((p) => ({ prog: p, book: MOCK_BOOKS.find((b) => b.id === p.bookId) }))
     .filter((x): x is { prog: (typeof progress)[0]; book: (typeof MOCK_BOOKS)[0] } => !!x.book);
 
@@ -252,14 +252,14 @@ export function HomeScreen() {
   const subtitle = SUBTITLES[new Date().getHours() % SUBTITLES.length];
 
   const visibleMargins = filterMarginsForUser(
-    margins.filter((m) => m.userId !== "user_me"),
+    margins.filter((m) => m.userId !== currentUser.id),
     currentUser.spoilerPreference,
     progressMap
   );
 
   const feedMargins = visibleMargins.slice(0, 6);
   const newEchos = currentReading
-    ? margins.filter((m) => m.bookId === currentReading.bookId && m.userId !== "user_me").length
+    ? margins.filter((m) => m.bookId === currentReading.bookId && m.userId !== currentUser.id).length
     : 0;
   const isProtected = currentUser.spoilerPreference !== "all";
 
@@ -321,7 +321,7 @@ export function HomeScreen() {
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
               {readingBooks.map(({ book, prog }) => {
-                const bookEchos = margins.filter((m) => m.bookId === book.id && m.userId !== "user_me").length;
+                const bookEchos = margins.filter((m) => m.bookId === book.id && m.userId !== currentUser.id).length;
                 return (
                   <div
                     key={book.id}

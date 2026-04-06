@@ -308,7 +308,7 @@ export function BookDetailScreen() {
   const { currentUser, progress, updateBookProgress } = useApp();
 
   const book = MOCK_BOOKS.find((b) => b.id === bookId);
-  const prog = progress.find((p) => p.bookId === bookId && p.userId === "user_me");
+  const prog = progress.find((p) => p.bookId === bookId && p.userId === currentUser.id);
   const bookMargins = MOCK_MARGINS.filter((m) => m.bookId === bookId);
 
   const [activeTab, setActiveTab] = useState("todos");

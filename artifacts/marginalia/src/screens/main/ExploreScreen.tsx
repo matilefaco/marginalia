@@ -37,6 +37,20 @@ export function ExploreScreen() {
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [genreBooksLimit, setGenreBooksLimit] = useState(8);
   const [showAllGenres, setShowAllGenres] = useState(false);
+  const [genreFocused, setGenreFocused] = useState(false);
+
+  const selectGenre = (label: string) => {
+    setSelectedGenre(label);
+    setGenreBooksLimit(8);
+    setGenreFocused(true);
+    setShowAllGenres(false);
+  };
+
+  const exitGenreFocus = () => {
+    setGenreFocused(false);
+    setSelectedGenre(null);
+    setGenreBooksLimit(8);
+  };
 
   const searchResults = query.trim()
     ? MOCK_BOOKS.filter(
@@ -67,7 +81,7 @@ export function ExploreScreen() {
     )
     .slice(0, 3);
 
-  const compatibleReaders = MOCK_USERS.filter((u) => u.id !== "user_me")
+  const compatibleReaders = MOCK_USERS.filter((u) => u.id !== currentUser.id)
     .sort((a, b) => (b.compatibilityScore || 0) - (a.compatibilityScore || 0));
 
   return (
@@ -189,8 +203,106 @@ export function ExploreScreen() {
           </section>
         )}
 
-        {/* Principais gêneros */}
-        {!query && (
+        {/* Principais gêneros — focused mode */}
+        {!query && genreFocused && selectedGenre && (() => {
+          const allGenreBooks = MOCK_BOOKS.filter((b) =>
+            b.genres.some((g) =>
+              g.toLowerCase().includes(selectedGenre.toLowerCase()) ||
+              selectedGenre.toLowerCase().includes(g.toLowerCase())
+            )
+          );
+          const visibleBooks = allGenreBooks.slice(0, genreBooksLimit);
+          const hasMore = allGenreBooks.length > genreBooksLimit;
+          return (
+            <section data-testid="section-genres-trending" className="feed-enter">
+              {/* Genre header in focus mode */}
+              <div className="flex items-center gap-2 mb-3">
+                <button
+                  onClick={exitGenreFocus}
+                  className="text-[#454545]/40 hover:text-[#AE8F7D] transition-colors flex-shrink-0"
+                  aria-label="Voltar aos gêneros"
+                >
+                  ←
+                </button>
+                <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D] flex-1">
+                  Principais gêneros
+                </span>
+              </div>
+
+              {/* Selected genre chip */}
+              <div className="flex items-center justify-between bg-[#AE8F7D]/10 border border-[#AE8F7D]/30 rounded-[10px] py-3 px-4 mb-4">
+                <span className="font-sans font-light text-[14px] text-[#3D3D3D]">{selectedGenre}</span>
+                <button
+                  onClick={exitGenreFocus}
+                  className="font-sans text-[8px] font-light text-[#AE8F7D]/70 hover:text-[#AE8F7D] transition-colors border border-[#AE8F7D]/30 rounded-full px-2.5 py-1"
+                >
+                  Trocar gênero
+                </button>
+              </div>
+
+              {/* Books list */}
+              <div className="flex items-center justify-between mb-3">
+                <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D]">
+                  Livros em {selectedGenre}
+                </p>
+                <p className="font-sans font-light text-[8px] text-[#454545]/30">
+                  {allGenreBooks.length} {allGenreBooks.length === 1 ? "livro" : "livros"}
+                </p>
+              </div>
+
+              {allGenreBooks.length === 0 ? (
+                <p className="font-serif italic text-[13px] text-[#454545]/35 text-center py-6">
+                  Nenhum livro encontrado neste gênero ainda.
+                </p>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    {visibleBooks.map((book) => (
+                      <Link key={book.id} href={`/book/${book.id}`}>
+                        <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 transition-colors">
+                          <div
+                            className="w-10 h-14 rounded-[5px] flex-shrink-0"
+                            style={{ backgroundColor: book.bookColor }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
+                            <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
+                            <div className="flex items-center gap-2">
+                              <span className="font-sans font-light text-[8px] text-[#697962]">
+                                {book.communityStats.activeReaders} leitores
+                              </span>
+                              <span className="text-[#AE8F7D]/25">·</span>
+                              <span className="font-sans font-light text-[8px] text-[#454545]/35">
+                                {book.communityStats.totalMargins} margens
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  {hasMore && (
+                    <button
+                      type="button"
+                      onClick={() => setGenreBooksLimit((l) => l + 8)}
+                      className="w-full mt-3 py-2.5 border border-dashed border-[#AE8F7D]/30 rounded-[10px] font-sans font-light text-[10px] tracking-[0.1em] text-[#AE8F7D] hover:bg-[#AE8F7D]/5 transition-colors"
+                    >
+                      Carregar mais · {allGenreBooks.length - genreBooksLimit} restantes
+                    </button>
+                  )}
+                  {!hasMore && allGenreBooks.length > 0 && (
+                    <p className="font-sans font-light text-[9px] text-[#454545]/30 text-center mt-3">
+                      Todos os livros deste gênero
+                    </p>
+                  )}
+                </>
+              )}
+            </section>
+          );
+        })()}
+
+        {/* Principais gêneros — browse mode */}
+        {!query && !genreFocused && (
           <section data-testid="section-genres-trending">
             <div className="flex items-center gap-2 mb-3">
               <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
@@ -198,106 +310,25 @@ export function ExploreScreen() {
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
               <button
-                onClick={() => {
-                  setShowAllGenres((v) => !v);
-                  if (selectedGenre && !GENRE_MAIN.includes(selectedGenre)) setSelectedGenre(null);
-                }}
+                onClick={() => setShowAllGenres((v) => !v)}
                 className="font-sans text-[8px] font-light text-[#454545]/40 hover:text-[#AE8F7D] transition-colors"
               >
                 {showAllGenres ? "Ver menos" : "Ver todos"}
               </button>
             </div>
             <div className="space-y-0.5">
-              {(showAllGenres ? GENRE_ALL : GENRE_MAIN).map((label) => {
-                const isSelected = selectedGenre === label;
-                return (
-                  <button
-                    type="button"
-                    key={label}
-                    onClick={() => {
-                      const next = isSelected ? null : label;
-                      setSelectedGenre(next);
-                      setGenreBooksLimit(8);
-                    }}
-                    className={`w-full flex items-center justify-between py-2.5 px-3 rounded-[10px] border transition-all text-left ${
-                      isSelected
-                        ? "bg-[#AE8F7D]/10 border-[#AE8F7D]/30"
-                        : "border-transparent hover:bg-[#EBE6DB]/60 hover:border-[#AE8F7D]/10"
-                    }`}
-                  >
-                    <span className={`font-sans font-light text-[13px] transition-colors ${
-                      isSelected ? "text-[#3D3D3D]" : "text-[#454545]/70"
-                    }`}>{label}</span>
-                    {isSelected && (
-                      <span className="font-sans font-light text-[8px] text-[#AE8F7D]/60">Selecionado</span>
-                    )}
-                  </button>
-                );
-              })}
+              {(showAllGenres ? GENRE_ALL : GENRE_MAIN).map((label) => (
+                <button
+                  type="button"
+                  key={label}
+                  onClick={() => selectGenre(label)}
+                  className="w-full flex items-center justify-between py-2.5 px-3 rounded-[10px] border border-transparent hover:bg-[#EBE6DB]/60 hover:border-[#AE8F7D]/10 transition-all text-left"
+                >
+                  <span className="font-sans font-light text-[13px] text-[#454545]/70">{label}</span>
+                  <span className="text-[#454545]/20 text-[10px]">›</span>
+                </button>
+              ))}
             </div>
-
-            {/* Books by selected genre */}
-            {selectedGenre && (() => {
-              const allGenreBooks = MOCK_BOOKS.filter((b) =>
-                b.genres.some((g) => g.toLowerCase().includes(selectedGenre.toLowerCase()) || selectedGenre.toLowerCase().includes(g.toLowerCase()))
-              );
-              const visibleBooks = allGenreBooks.slice(0, genreBooksLimit);
-              const hasMore = allGenreBooks.length > genreBooksLimit;
-              return (
-                <div className="mt-4 feed-enter">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D]">
-                      Livros em {selectedGenre}
-                    </p>
-                    <p className="font-sans font-light text-[8px] text-[#454545]/30">
-                      {allGenreBooks.length} {allGenreBooks.length === 1 ? "livro" : "livros"}
-                    </p>
-                  </div>
-                  {allGenreBooks.length === 0 ? (
-                    <p className="font-serif italic text-[13px] text-[#454545]/35 text-center py-4">
-                      Nenhum livro encontrado neste gênero ainda.
-                    </p>
-                  ) : (
-                    <>
-                      <div className="space-y-2">
-                        {visibleBooks.map((book) => (
-                          <Link key={book.id} href={`/book/${book.id}`}>
-                            <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 transition-colors">
-                              <div
-                                className="w-10 h-14 rounded-[5px] flex-shrink-0"
-                                style={{ backgroundColor: book.bookColor }}
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                                <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
-                                <div className="flex items-center gap-2">
-                                  <span className="font-sans font-light text-[8px] text-[#697962]">
-                                    {book.communityStats.activeReaders} leitores
-                                  </span>
-                                  <span className="text-[#AE8F7D]/25">·</span>
-                                  <span className="font-sans font-light text-[8px] text-[#454545]/35">
-                                    {book.communityStats.totalMargins} margens
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                      {hasMore && (
-                        <button
-                          type="button"
-                          onClick={() => setGenreBooksLimit((l) => l + 8)}
-                          className="w-full mt-3 py-2.5 border border-dashed border-[#AE8F7D]/30 rounded-[10px] font-sans font-light text-[10px] tracking-[0.1em] text-[#AE8F7D] hover:bg-[#AE8F7D]/5 transition-colors"
-                        >
-                          Carregar mais · {allGenreBooks.length - genreBooksLimit} restantes
-                        </button>
-                      )}
-                    </>
-                  )}
-                </div>
-              );
-            })()}
           </section>
         )}
 

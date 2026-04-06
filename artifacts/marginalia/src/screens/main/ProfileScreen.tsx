@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { MOCK_MARGINS, MOCK_BOOKS } from "@/data/mockData";
@@ -40,13 +40,25 @@ export function ProfileScreen() {
   const [shared, setShared] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
 
+  useEffect(() => {
+    if (!editing) {
+      setEditFirstName(currentUser.firstName);
+      setEditLastName(currentUser.lastName);
+      setEditBio(currentUser.bio || "");
+      setEditUsername(currentUser.username || "");
+      setEditAvatarColor(currentUser.avatarColor || "#697962");
+      setEditInstagram(currentUser.instagram || "");
+      setEditTikTok(currentUser.tiktok || "");
+    }
+  }, [currentUser, editing]);
+
   const wishlistBooks = progress
-    .filter((p) => p.userId === "user_me" && p.status === "wishlist")
+    .filter((p) => p.userId === currentUser.id && p.status === "wishlist")
     .map((p) => MOCK_BOOKS.find((b) => b.id === p.bookId))
     .filter(Boolean) as typeof MOCK_BOOKS;
 
-  const myMargins = MOCK_MARGINS.filter((m) => m.userId === "user_me");
-  const myBooks = progress.filter((p) => p.userId === "user_me");
+  const myMargins = margins.filter((m) => m.userId === currentUser.id);
+  const myBooks = progress.filter((p) => p.userId === currentUser.id);
 
   const archetype = READER_ARCHETYPES.find((a) => a.id === currentUser.readerType)
     ?? READER_ARCHETYPES.find((a) => a.id === "observador")!;
@@ -55,8 +67,8 @@ export function ProfileScreen() {
     ? `${currentUser.firstName} ${currentUser.lastName}`
     : currentUser.firstName || currentUser.name;
 
-  const leituraCount = progress.filter((p) => p.userId === "user_me" && p.status === "reading").length;
-  const lidosCount = progress.filter((p) => p.userId === "user_me" && p.status === "finished").length;
+  const leituraCount = myBooks.filter((p) => p.status === "reading").length;
+  const lidosCount = myBooks.filter((p) => p.status === "completed" || p.status === "finished" as string).length;
   const reacoesRecebidas = myMargins.reduce((sum, m) => sum + Object.values(m.reactions as Record<string, number>).reduce((a, b) => a + b, 0), 0);
 
   const dominantEmojiEntry = (() => {

@@ -114,20 +114,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const updateProfile = (_data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string; avatarColor?: string; readerType?: string; instagram?: string; tiktok?: string }) => {};
 
   const updateBookProgress = (bookId: number, updates: Partial<BookProgress>) => {
+    const uid = currentUser.id;
     setProgress((prev) => {
       const existing = prev.find(
-        (p) => p.bookId === bookId && p.userId === "user_me"
+        (p) => p.bookId === bookId && p.userId === uid
       );
       if (existing) {
         return prev.map((p) =>
-          p.bookId === bookId && p.userId === "user_me" ? { ...p, ...updates } : p
+          p.bookId === bookId && p.userId === uid ? { ...p, ...updates } : p
         );
       }
       return [
         ...prev,
         {
           id: `p_${bookId}`,
-          userId: "user_me",
+          userId: uid,
           bookId,
           status: "reading",
           currentPage: 0,
@@ -203,7 +204,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const getProgressForBook = (bookId: number) =>
-    progress.find((p) => p.bookId === bookId && p.userId === "user_me");
+    progress.find((p) => p.bookId === bookId && p.userId === currentUser.id);
 
   const markNotificationRead = (id: number) => {
     setNotifications((prev) =>

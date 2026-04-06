@@ -10,16 +10,16 @@ import { BookCover } from "@/components/BookCover";
 type FilterId = typeof LIBRARY_STATUSES[number]["id"];
 
 export function LibraryScreen() {
-  const { progress, margins } = useApp();
+  const { progress, margins, currentUser } = useApp();
   const [activeFilter, setActiveFilter] = useState<FilterId>("all");
 
-  const myProgress = progress.filter((p) => p.userId === "user_me");
+  const myProgress = progress.filter((p) => p.userId === currentUser.id);
 
   const booksWithProgress = myProgress
     .map((p) => {
       const book = MOCK_BOOKS.find((b) => b.id === p.bookId);
       if (!book) return null;
-      const myMargins = margins.filter((m) => m.bookId === p.bookId && m.userId === "user_me").length;
+      const myMargins = margins.filter((m) => m.bookId === p.bookId && m.userId === currentUser.id).length;
       return { ...book, prog: p, myMargins };
     })
     .filter(Boolean) as Array<ReturnType<typeof MOCK_BOOKS.find> & { prog: typeof myProgress[0]; myMargins: number }>;

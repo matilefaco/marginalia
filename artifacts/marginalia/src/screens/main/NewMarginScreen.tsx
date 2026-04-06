@@ -8,7 +8,7 @@ import type { MarginType, SpoilerLevel, Visibility } from "@/data/constants";
 
 export function NewMarginScreen() {
   const [, navigate] = useLocation();
-  const { addMargin, progress } = useApp();
+  const { addMargin, progress, currentUser } = useApp();
 
   const [bookId, setBookId] = useState<number | null>(null);
   const [bookSearch, setBookSearch] = useState("");
@@ -24,7 +24,7 @@ export function NewMarginScreen() {
   const excerptRef = useRef<HTMLTextAreaElement>(null);
 
   const myBooks = progress
-    .filter((p) => p.userId === "user_me" && p.status !== "wishlist")
+    .filter((p) => p.userId === currentUser.id && p.status !== "wishlist")
     .map((p) => MOCK_BOOKS.find((b) => b.id === p.bookId))
     .filter(Boolean) as typeof MOCK_BOOKS;
 

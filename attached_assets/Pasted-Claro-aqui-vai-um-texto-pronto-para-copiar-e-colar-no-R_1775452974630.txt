@@ -1,0 +1,187 @@
+Claro — aqui vai um texto pronto para copiar e colar no Replit, já incluindo essas correções novas de forma bem clara:
+
+⸻
+
+Quero corrigir mais alguns pontos importantes relacionados à criação do perfil e ao estado inicial do usuário no app.
+
+1. Corrigir persistência das preferências escolhidas na criação do perfil
+
+Atualmente, quando o usuário cria o perfil e escolhe:
+	•	a cor da bolinha/avatar
+	•	a bio
+
+essas preferências não ficam salvas corretamente no perfil do usuário. Isso precisa ser corrigido.
+
+Comportamento correto desejado:
+
+Quando o usuário definir essas informações durante a criação/edição do perfil:
+	•	a cor da bolinha/avatar deve ser salva no banco de dados
+	•	a bio deve ser salva no banco de dados
+	•	ao abrir o perfil depois, essas informações devem continuar lá
+	•	ao recarregar a página, essas preferências não podem sumir
+	•	essas informações devem aparecer tanto no perfil do próprio usuário quanto na visualização pública do perfil dele, quando aplicável
+
+O que revisar tecnicamente:
+	•	garantir que o formulário de criação/edição do perfil envie também os campos de bio e cor do avatar
+	•	garantir que esses campos estejam presentes no update e no insert da tabela profiles
+	•	garantir que, após salvar, o frontend recarregue os dados reais do Supabase
+	•	remover qualquer valor estático/mockado que esteja sobrescrevendo o valor salvo
+	•	se ainda não existir, adicionar um campo para armazenar a cor da bolinha/avatar na tabela profiles, por exemplo avatar_color
+
+Campos que precisam persistir corretamente:
+	•	bio
+	•	avatar_color
+	•	instagram_handle
+	•	tiktok_handle
+	•	username
+	•	full_name
+	•	outros campos editáveis do perfil
+
+⸻
+
+2. Mostrar essas preferências corretamente no perfil
+
+Não basta salvar. Também precisa renderizar corretamente.
+
+Quero que:
+	•	a bolinha/avatar use a cor real escolhida pelo usuário
+	•	a bio real apareça no perfil
+	•	se o usuário não tiver preenchido bio, aí sim mostrar placeholder
+	•	se o usuário não tiver escolhido cor, usar cor padrão elegante
+	•	o perfil público também respeite esses dados reais
+
+⸻
+
+3. Estado inicial do usuário deve começar zerado
+
+Quando um usuário faz cadastro no app, ele precisa começar com a experiência limpa e zerada.
+
+Isso significa:
+
+No momento do cadastro, o usuário NÃO deve aparecer com:
+	•	livros em andamento
+	•	progresso de leitura
+	•	citações
+	•	ecos
+	•	comentários
+	•	reações
+	•	estatísticas falsas
+	•	histórico fictício
+	•	qualquer atividade pré-preenchida
+
+O estado inicial correto deve ser:
+	•	zero livros em leitura
+	•	zero livros concluídos
+	•	zero ecos
+	•	zero comentários
+	•	zero reações
+	•	zero progresso
+	•	zero margens/citações
+	•	zero atividade social
+
+Ou seja: o perfil e a experiência dele devem começar vazios, e só devem ser preenchidos à medida que ele usar o app de forma real e natural.
+
+⸻
+
+4. Atualização progressiva da experiência com uso real
+
+A partir do momento em que o usuário realmente usar o app, aí sim o sistema deve atualizar seus dados e sua experiência.
+
+Exemplos:
+	•	quando ele adicionar um livro → atualizar livros em andamento
+	•	quando ele concluir um livro → atualizar livros concluídos
+	•	quando ele criar uma citação/eco → atualizar contadores e histórico
+	•	quando ele comentar → atualizar atividade
+	•	quando ele reagir → atualizar engajamento
+	•	quando ele salvar algo → atualizar métricas relacionadas
+	•	quando ele avançar em páginas/capítulos → atualizar progresso real
+
+Regra principal:
+
+Nada deve aparecer no perfil ou nas estatísticas antes que o usuário realmente execute essas ações.
+
+⸻
+
+5. Ajustar criação automática do perfil no cadastro
+
+Hoje já existe criação automática do perfil via Supabase/trigger. Quero revisar isso para que o perfil inicial seja criado do jeito certo.
+
+O perfil inicial deve ser criado com:
+	•	id do usuário autenticado
+	•	username
+	•	full_name
+	•	created_at
+	•	updated_at
+
+E deve começar sem dados fictícios:
+	•	sem bio preenchida automaticamente, exceto se o usuário informar
+	•	sem avatar_color definida, exceto se o usuário escolher
+	•	sem estatísticas falsas
+	•	sem progresso inventado
+	•	sem atividade fake
+
+⸻
+
+6. Ajustar estatísticas iniciais do usuário
+
+Se existir tabela de estatísticas como user_reading_stats, quero que ela seja criada zerada.
+
+Exemplo de estado inicial:
+	•	books_currently_reading = 0
+	•	books_finished = 0
+	•	total_ecos = 0
+	•	total_reactions_received = 0
+	•	total_comments_received = 0
+	•	total_saved_posts = 0
+	•	favorite_genre_id = null
+	•	most_used_reaction = null
+
+Importante:
+
+Esses campos só devem ser atualizados conforme o uso real do usuário.
+
+⸻
+
+7. Revisar frontend para não mostrar dados fictícios por padrão
+
+Também quero revisar a interface para garantir que, para usuários novos:
+	•	não apareçam livros “já em andamento” por default
+	•	não apareçam contadores com números artificiais
+	•	não apareçam citações do usuário que ele nunca fez
+	•	não apareçam estatísticas inventadas
+	•	não apareça experiência simulada como se já houvesse uso anterior
+
+Em vez disso:
+
+Para usuários novos, mostrar:
+	•	estados vazios elegantes
+	•	mensagens de onboarding sutis
+	•	convites para começar a usar o app de forma natural
+
+Exemplos:
+	•	“Você ainda não começou nenhum livro”
+	•	“Sua primeira margem vai aparecer aqui”
+	•	“Seu perfil literário será moldado conforme você lê”
+
+⸻
+
+8. Resultado final esperado
+
+Depois dessas mudanças, quero que:
+	•	a bio escolhida pelo usuário fique salva de verdade
+	•	a cor da bolinha/avatar fique salva de verdade
+	•	essas preferências apareçam corretamente no perfil
+	•	o usuário novo comece com tudo zerado
+	•	nenhuma atividade falsa apareça no perfil inicial
+	•	o app só atualize progresso, estatísticas e histórico com base em uso real
+	•	o perfil vá sendo construído organicamente conforme a pessoa usa o app
+
+9. Prioridade
+
+Prioridade máxima para:
+	1.	corrigir persistência da bio
+	2.	corrigir persistência da cor da bolinha/avatar
+	3.	garantir que usuários novos comecem com experiência zerada
+	4.	impedir qualquer preenchimento fictício automático no perfil/estatísticas
+
+Implemente isso no código e na integração com Supabase, não apenas descreva.

@@ -163,7 +163,7 @@ export function ThreadScreen() {
   const handleAuthorClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (margin.userId !== "user_me") {
+    if (margin.userId !== currentUser.id) {
       navigate(`/user/${margin.userId}`);
     }
   };
@@ -225,7 +225,7 @@ export function ThreadScreen() {
           <button
             type="button"
             onClick={handleAuthorClick}
-            className={`flex items-center gap-2 mb-5 ${margin.userId !== "user_me" ? "hover:opacity-75 transition-opacity" : ""}`}
+            className={`flex items-center gap-2 mb-5 ${margin.userId !== currentUser.id ? "hover:opacity-75 transition-opacity" : ""}`}
           >
             <div
               className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
@@ -404,7 +404,7 @@ export function ThreadScreen() {
               <div key={reply.id} className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => { if (reply.userId !== "user_me") navigate(`/user/${reply.userId}`); }}
+                  onClick={() => { if (reply.userId !== currentUser.id) navigate(`/user/${reply.userId}`); }}
                   className="flex-shrink-0 mt-0.5"
                 >
                   <div
@@ -418,7 +418,7 @@ export function ThreadScreen() {
                   <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
                     <button
                       type="button"
-                      onClick={() => { if (reply.userId !== "user_me") navigate(`/user/${reply.userId}`); }}
+                      onClick={() => { if (reply.userId !== currentUser.id) navigate(`/user/${reply.userId}`); }}
                       className="font-sans font-light text-[10.5px] text-[#AE8F7D] hover:opacity-70 transition-opacity"
                     >
                       {reply.userName}
@@ -455,8 +455,8 @@ export function ThreadScreen() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <span className="font-sans font-light text-[10.5px] text-[#AE8F7D]">{currentUser.name}</span>
-                  {USER_USERNAME_MAP["user_me"] && (
-                    <span className="font-sans font-light text-[8.5px] text-[#454545]/28">{USER_USERNAME_MAP["user_me"]}</span>
+                  {currentUser.username && (
+                    <span className="font-sans font-light text-[8.5px] text-[#454545]/28">@{currentUser.username}</span>
                   )}
                   <span className="font-sans font-light text-[8px] text-[#454545]/25">· agora</span>
                 </div>

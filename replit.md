@@ -45,8 +45,8 @@ A Portuguese-language literary social network where users annotate book passages
 
 - **AuthContext** (`src/context/AuthContext.tsx`) — Supabase session, profile from `public.profiles`, signIn/signUp/signOut/updateProfile. `useAuth()` hook.
 - **Supabase client** (`src/lib/supabase.ts`) — singleton client; URL/key baked in via vite.config.ts `define` from `SUPABASE_URL` / `SUPABASE_ANON_KEY` secrets.
-- **AppContext** (`src/context/AppContext.tsx`) — reads `profile` from AuthContext to derive `currentUser` (real user data shown in profile/avatar everywhere). Manages books, margins, progress, notifications + actions; `updateProfile` is now a no-op (real saves go through AuthContext.updateProfile)
-- **Mock data** (`src/data/mockData.ts`) — 7 books (each with `bookColor`), 8 margins, 5 users (each with `readerType`, `instagram`, `tiktok`, `readingSignature`), progress, notifications, collections
+- **AppContext** (`src/context/AppContext.tsx`) — reads `profile` from AuthContext to derive `currentUser` (real user data shown in profile/avatar everywhere). Manages books, margins, progress, notifications + actions; `updateProfile` is now a no-op (real saves go through AuthContext.updateProfile). All filtering by current user uses `currentUser.id` (never hardcoded `"user_me"`).
+- **Mock data** (`src/data/mockData.ts`) — 7 books (each with `bookColor`), 8 margins, 5 users (each with `readerType`, `instagram`, `tiktok`, `readingSignature`), progress, notifications, collections. Mock entries use `userId: "user_me"` — real authenticated users get empty states since their Supabase UUID won't match.
 - **Constants** (`src/data/constants.ts`) — GENRES, SPOILER_PREFERENCES, MARGIN_TYPES, SPOILER_LEVELS, REACTION_TYPES (13 including "Isso me quebrou" etc.), READER_ARCHETYPES (10 archetypes: Analista, Detetive, Rebelde, Intenso, Interpretador, Observador, Questionador, Imersivo, Editor Mental, Teórico)
 - **Utils**: `spoiler.ts` (anti-spoiler filter logic), `formatting.ts` (timeAgo, formatReference, etc.)
 

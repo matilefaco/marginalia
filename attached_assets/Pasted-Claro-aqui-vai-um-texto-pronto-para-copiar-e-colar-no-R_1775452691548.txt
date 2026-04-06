@@ -1,0 +1,168 @@
+Claro — aqui vai um texto pronto para copiar e colar no Replit, bem detalhado e objetivo:
+
+⸻
+
+Quero fazer alguns ajustes e correções no app agora que a integração deu certo.
+
+1. Corrigir salvamento do perfil do usuário
+
+Atualmente, quando o usuário edita informações do perfil, por exemplo o Instagram, e clica para salvar, a alteração não está persistindo. A tela volta ao estado anterior e o dado não fica salvo.
+
+Quero corrigir isso de forma completa.
+
+O que precisa acontecer:
+	•	quando o usuário editar qualquer campo do perfil e clicar em salvar, os dados devem ser atualizados de verdade no Supabase, na tabela profiles
+	•	depois do salvamento, a interface deve refletir imediatamente os novos dados
+	•	ao atualizar/reabrir a página, os dados salvos devem continuar lá
+	•	não pode mais voltar para o valor anterior após salvar
+
+Campos que precisam salvar corretamente:
+	•	full_name ou equivalente do nome
+	•	sobrenome, se estiver separado na UI
+	•	username
+	•	bio
+	•	instagram_handle
+	•	tiktok_handle
+	•	city
+	•	reader_type_title
+	•	reader_type_description
+	•	reading_signature
+	•	cor escolhida para a “bolinha”/avatar do usuário
+
+O que revisar tecnicamente:
+	•	conferir se a ação de salvar está realmente chamando update na tabela profiles
+	•	conferir se está usando o id do usuário autenticado corretamente
+	•	conferir se o payload enviado para o update contém todos os campos editáveis
+	•	conferir se depois do update o frontend está recarregando o perfil atualizado
+	•	remover qualquer estado mockado/local que esteja sobrescrevendo os dados reais do Supabase
+	•	garantir que o formulário esteja populado com os dados vindos do banco e não de valores fixos
+
+⸻
+
+2. Mostrar a bio do usuário no perfil
+
+Hoje o usuário pode escrever a bio, mas isso não está aparecendo corretamente no perfil.
+
+Quero que a bio apareça no perfil do usuário de forma visível e elegante.
+
+Regras:
+	•	se o usuário tiver preenchido a bio, mostrar a bio real salva no banco
+	•	se estiver vazia, mostrar o placeholder atual ou equivalente
+	•	a bio precisa aparecer tanto no perfil do próprio usuário quanto no perfil público dele para outros usuários, se o perfil for público
+
+⸻
+
+3. Mostrar a cor da “bolinha” escolhida pelo usuário
+
+Hoje o usuário escolhe a cor da bolinha/avatar, mas isso não está refletindo corretamente no perfil.
+
+Quero corrigir isso.
+
+O que precisa acontecer:
+	•	a cor selecionada pelo usuário deve ser salva na tabela profiles
+	•	ao carregar o perfil, a cor real escolhida deve aparecer na bolinha/avatar
+	•	isso deve valer tanto para o próprio perfil quanto para a visualização pública do perfil por outros usuários
+	•	se não houver cor salva, usar uma cor padrão elegante
+
+Implementação:
+	•	adicionar um campo na tabela profiles para a cor do avatar, se ainda não existir, algo como avatar_color
+	•	persistir esse valor no Supabase ao salvar o perfil
+	•	usar esse valor ao renderizar a bolinha/avatar
+
+⸻
+
+4. Melhorar o fluxo do filtro de gêneros/livros
+
+O filtro de gêneros precisa ficar mais prático e claro.
+
+Comportamento atual que quero mudar:
+
+Hoje, quando o leitor clica em “ver todos”, a lista de gêneros continua toda aberta, e isso deixa a interface menos prática.
+
+Novo comportamento desejado:
+
+Depois que o leitor clicar em “ver todos” e selecionar um gênero:
+	•	todos os outros gêneros devem desaparecer momentaneamente
+	•	apenas o gênero escolhido deve ficar visível e em destaque
+	•	abaixo dele devem aparecer os livros daquele gênero
+	•	os livros precisam continuar sendo exibidos naquele esquema de 8 em 8, divididos por páginas
+	•	deve haver uma forma clara de voltar para a lista de todos os gêneros depois, por exemplo:
+	•	botão “ver todos novamente”
+	•	botão “trocar gênero”
+	•	ou um botão de voltar discreto
+
+Objetivo de UX:
+	•	deixar a navegação mais limpa
+	•	reduzir poluição visual
+	•	fazer o usuário focar no gênero selecionado
+	•	deixar a experiência mais editorial e menos confusa
+
+Fluxo esperado:
+	1.	usuário vê “Principais gêneros”
+	2.	clica em “ver todos”
+	3.	vê a lista expandida de gêneros
+	4.	escolhe um gênero
+	5.	a lista dos outros gêneros some
+	6.	o gênero selecionado fica em destaque
+	7.	aparecem os livros referentes àquele gênero
+	8.	os livros são paginados de 8 em 8
+	9.	usuário pode navegar entre as páginas
+	10.	usuário pode clicar em uma ação discreta para voltar e escolher outro gênero
+
+⸻
+
+5. Comportamento visual do gênero selecionado
+
+Quero que o gênero escolhido fique bem claro visualmente.
+
+Isso significa:
+	•	manter apenas o gênero selecionado visível
+	•	destacar esse gênero com o mesmo estilo elegante já usado
+	•	mostrar os livros logo abaixo dele
+	•	manter harmonia visual com o resto do app
+	•	evitar deixar a tela carregada com muitos gêneros ao mesmo tempo
+
+⸻
+
+6. Paginação dos livros por gênero
+
+Quero manter exatamente esta lógica:
+	•	exibir 8 livros por página
+	•	permitir navegar entre páginas
+	•	ao trocar de gênero, resetar para a página 1
+	•	a troca de página deve ser suave, sem quebrar o layout
+	•	se não houver mais livros, mostrar isso de forma discreta
+
+⸻
+
+7. O que quero que você revise tecnicamente no filtro
+	•	revisar o estado de selectedGenre
+	•	revisar o estado que controla “ver todos”
+	•	quando um gênero for escolhido dentro da lista completa, alterar a UI para modo focado
+	•	renderizar apenas o gênero selecionado nesse modo
+	•	renderizar a lista de livros paginada associada ao gênero selecionado
+	•	adicionar ação para sair do modo focado e voltar para a lista de gêneros
+
+⸻
+
+8. Resultado final esperado
+
+Depois dessas mudanças, quero que:
+	•	o perfil salve corretamente todas as alterações feitas pelo usuário
+	•	Instagram, TikTok, bio e demais campos persistam de verdade
+	•	a cor da bolinha/avatar seja salva e exibida corretamente
+	•	a bio apareça no perfil
+	•	o filtro de gêneros fique muito mais prático
+	•	ao selecionar um gênero, os outros desapareçam temporariamente
+	•	apenas o gênero escolhido fique em destaque
+	•	os livros daquele gênero apareçam paginados de 8 em 8
+	•	exista uma forma elegante de voltar e escolher outro gênero
+
+9. Prioridade
+
+Prioridade máxima para:
+	1.	corrigir o salvamento do perfil
+	2.	mostrar bio e cor da bolinha corretamente
+	3.	melhorar o fluxo do filtro de gêneros com foco no gênero selecionado
+
+Implemente essas mudanças no código, não apenas descreva.
