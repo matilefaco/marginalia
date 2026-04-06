@@ -1,0 +1,205 @@
+Quero corrigir de forma definitiva o fluxo da tela de compartilhamento dos cards, porque atualmente existe um bug grave:
+
+- quando o usuário aperta no botão **Baixar**
+- ou quando aperta no botão **Compartilhar**
+
+o app buga e volta para a **Biblioteca**, em vez de executar a ação correta.
+
+Isso precisa ser corrigido imediatamente.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Hoje, na tela de compartilhamento do card:
+- o usuário escolhe o formato (Stories 9:16 ou Feed 1:1)
+- vê a prévia do card
+- mas ao tocar em **Baixar** ou **Compartilhar**, o fluxo quebra
+- o app sai da tela e volta para a Biblioteca
+
+Isso está errado.
+
+Nem o botão de baixar nem o botão de compartilhar devem redirecionar o usuário para a Biblioteca.
+
+==================================================
+2. COMPORTAMENTO CORRETO DO BOTÃO “BAIXAR”
+==================================================
+
+Quando o usuário tocar em **Baixar**, quero que o app:
+
+### 2.1
+Gere/exporte a imagem final do card exatamente no formato selecionado.
+
+### 2.2
+Baixe/salve a imagem do card no dispositivo do usuário.
+
+### 2.3
+Permaneça no contexto correto sem redirecionar para outra tela.
+
+### 2.4
+Mostre feedback claro de sucesso, por exemplo:
+- “Imagem salva”
+- ou um toast discreto
+- ou feedback visual equivalente
+
+## Regras importantes
+- se estiver em **Stories 9:16**, baixar a imagem nesse formato
+- se estiver em **Feed 1:1**, baixar a imagem nesse formato
+- o botão precisa respeitar o formato escolhido no seletor
+- o usuário não pode perder a tela atual ao baixar
+
+==================================================
+3. COMPORTAMENTO CORRETO DO BOTÃO “COMPARTILHAR”
+==================================================
+
+Quando o usuário tocar em **Compartilhar**, quero que o app:
+
+### 3.1
+Use o formato atualmente selecionado:
+- Stories 9:16
+ou
+- Feed 1:1
+
+### 3.2
+Gere a imagem do card corretamente nesse formato.
+
+### 3.3
+Abra o fluxo real de compartilhamento, e não navegue para outra tela do app.
+
+### 3.4
+Permita que o usuário compartilhe para:
+- story do Instagram
+- feed do Instagram
+- ou outras opções nativas do dispositivo, quando necessário
+
+==================================================
+4. FLUXO DE COMPARTILHAMENTO DESEJADO
+==================================================
+
+## Caso 1 — Stories 9:16
+Se o usuário selecionar **Stories 9:16** e tocar em **Compartilhar**:
+
+- a imagem precisa ser gerada no formato story
+- o app deve abrir o compartilhamento do dispositivo
+- e, quando possível, facilitar o envio para Instagram Stories
+
+## Caso 2 — Feed 1:1
+Se o usuário selecionar **Feed 1:1** e tocar em **Compartilhar**:
+
+- a imagem precisa ser gerada no formato quadrado
+- o app deve abrir o compartilhamento do dispositivo
+- e, quando possível, facilitar o envio para o feed do Instagram
+
+==================================================
+5. IMPORTANTE SOBRE INTEGRAÇÃO COM INSTAGRAM
+==================================================
+
+Quero que você implemente da melhor forma possível dentro das limitações do ambiente atual.
+
+## O mínimo obrigatório é:
+- gerar a arte corretamente
+- acionar o share nativo real
+- nunca redirecionar para Biblioteca
+- nunca quebrar a navegação
+- usar o formato escolhido
+
+## Se a integração direta com Instagram Story/Feed não for plenamente suportada no ambiente atual:
+- usar o share sheet nativo como fallback real
+- mantendo o arquivo/imagem pronto no formato certo
+- e permitindo que o usuário envie para Instagram manualmente
+
+## Mas o comportamento final precisa ser:
+- coerente
+- funcional
+- confiável
+- sem “bugar” ou trocar de tela indevidamente
+
+==================================================
+6. O QUE REVISAR NO CÓDIGO
+==================================================
+
+Quero que você revise especificamente:
+
+### 6.1. Eventos dos botões
+- conferir se os botões “Baixar” e “Compartilhar” estão disparando navegação errada
+- conferir se existe algum `Link`, `navigate()`, `href` ou `onClick` herdado causando redirecionamento para Biblioteca
+- garantir `preventDefault` e `stopPropagation` se necessário
+
+### 6.2. Fluxo de exportação
+- revisar a geração da imagem do card
+- revisar o formato exportado
+- revisar se a imagem está sendo gerada antes da ação
+
+### 6.3. Fluxo de download
+- implementar download/salvamento real do arquivo
+- sem mudar de rota
+- sem fechar a tela indevidamente
+
+### 6.4. Fluxo de compartilhamento
+- implementar share real usando a imagem gerada
+- abrir o compartilhamento do sistema
+- manter a navegação correta
+
+### 6.5. Estado do formato selecionado
+- garantir que “Stories 9:16” e “Feed 1:1” mudem de verdade o arquivo gerado
+- o botão compartilhar deve sempre respeitar a opção ativa
+
+==================================================
+7. UX / FEEDBACK
+==================================================
+
+Quero também melhorar a experiência:
+
+### Ao baixar:
+- feedback de sucesso
+- sem sumir da tela
+- sem travar
+
+### Ao compartilhar:
+- sensação clara de que o app está preparando a mídia
+- pode ter loading curto elegante, se necessário
+- depois abrir o share real
+
+### Se der erro:
+- mostrar mensagem clara
+- não mudar de tela
+- não mandar para Biblioteca
+
+==================================================
+8. O QUE NÃO PODE MAIS ACONTECER
+==================================================
+
+Quero eliminar definitivamente estes comportamentos:
+
+- tocar em baixar e voltar para Biblioteca
+- tocar em compartilhar e voltar para Biblioteca
+- perder a tela de compartilhamento
+- ignorar o formato selecionado
+- parecer que o botão funciona quando na prática só navega errado
+
+==================================================
+9. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois da correção:
+
+### Botão Baixar
+- baixa/salva a foto do card no dispositivo
+- respeita o formato selecionado
+- não muda de tela indevidamente
+
+### Botão Compartilhar
+- compartilha o card de verdade
+- usa o formato selecionado
+- abre o compartilhamento real/nativo
+- permite envio para stories ou feed do Instagram conforme o formato escolhido, ou via share sheet quando necessário
+- não redireciona para Biblioteca
+
+==================================================
+10. PRIORIDADE
+==================================================
+
+Isso é prioridade alta.
+
+Implemente a correção no código e no fluxo real de exportação/compartilhamento.
+Não quero apenas ajuste visual ou mudança superficial.

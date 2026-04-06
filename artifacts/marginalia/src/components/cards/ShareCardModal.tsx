@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import { X, Download, Share2, Loader2 } from "lucide-react";
+import { createPortal } from "react-dom";
+import { X, Download, Share2, Loader2, CheckCircle } from "lucide-react";
 import type { Margin } from "@/data/mockData";
 import { MOCK_USERS } from "@/data/mockData";
 import { MARGIN_TYPES } from "@/data/constants";
@@ -366,6 +367,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
   const [feedTpl, setFeedTpl] = useState<FeedTpl>("reaction");
   const [exporting, setExporting] = useState(false);
   const [shared, setShared] = useState(false);
+  const [downloaded, setDownloaded] = useState(false);
   const [previewScale, setPreviewScale] = useState(1);
 
   const progress = getProgressForBook(margin.bookId);
@@ -408,24 +410,42 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     });
   }, [isStories, cardW, cardH]);
 
+  /* ── Shared download helper (no guard — called from both handlers) ── */
+  const doDownload = useCallback(async () => {
+    const canvas = await captureCanvas();
+    if (!canvas) throw new Error("Capture failed");
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/png")
+    );
+    if (!blob) throw new Error("Blob failed");
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `marginalia-${isStories ? "stories" : "feed"}-${margin.id}.png`;
+    a.rel = "noopener";
+    /* Append to body so all browsers trigger the download, then immediately remove */
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    /* Revoke async so the file is still available during save dialog */
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+
+    setDownloaded(true);
+    setTimeout(() => setDownloaded(false), 2500);
+  }, [captureCanvas, isStories, margin.id]);
+
   const handleDownload = useCallback(async () => {
     if (exporting) return;
     setExporting(true);
     try {
-      const canvas = await captureCanvas();
-      if (!canvas) return;
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `marginalia-${isStories ? "stories" : "feed"}-${margin.id}.png`;
-      a.click();
-      URL.revokeObjectURL(url);
+      await doDownload();
+    } catch (e) {
+      console.error("[ShareCard] download error:", e);
     } finally {
       setExporting(false);
     }
-  }, [exporting, isStories, margin.id, captureCanvas]);
+  }, [exporting, doDownload]);
 
   const handleShare = useCallback(async () => {
     if (exporting) return;
@@ -433,9 +453,14 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     try {
       const canvas = await captureCanvas();
       if (!canvas) return;
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/png")
+      );
       if (!blob) return;
-      const file = new File([blob], `marginalia-${margin.id}.png`, { type: "image/png" });
+
+      const filename = `marginalia-${isStories ? "stories" : "feed"}-${margin.id}.png`;
+      const file = new File([blob], filename, { type: "image/png" });
+
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           files: [file],
@@ -445,22 +470,28 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
         setShared(true);
         setTimeout(() => setShared(false), 2500);
       } else {
-        /* fallback: download the image */
-        await handleDownload();
+        /* Native share unavailable — fall back to download */
+        await doDownload();
       }
-    } catch {
-      /* user cancelled or share unavailable — fallback silently */
-      await handleDownload();
+    } catch (err) {
+      /* AbortError = user dismissed the share sheet — not an error */
+      if ((err as Error)?.name !== "AbortError") {
+        await doDownload();
+      }
     } finally {
       setExporting(false);
     }
-  }, [exporting, margin, handleDownload, captureCanvas]);
+  }, [exporting, captureCanvas, isStories, margin, doDownload]);
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex flex-col"
+      className="fixed inset-0 z-[9999] flex flex-col"
       style={{ background: "rgba(26,22,20,0.96)", backdropFilter: "blur(10px)" }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={(e) => {
+        /* Stop all clicks inside the portal from bubbling to parent Link elements */
+        e.stopPropagation();
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-5 pt-safe-top pb-3 flex-shrink-0 pt-5">
@@ -608,15 +639,25 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
         style={{ paddingBottom: "max(32px, env(safe-area-inset-bottom, 16px) + 16px)" }}
       >
         <button
-          onClick={handleDownload}
+          onClick={(e) => { e.stopPropagation(); handleDownload(); }}
           disabled={exporting}
-          className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-[12px] border border-[#FAF7F2]/15 text-[#FAF7F2]/60 hover:border-[#FAF7F2]/30 hover:text-[#FAF7F2]/85 active:scale-95 transition-all duration-150 font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-35"
+          className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-[12px] transition-all duration-150 font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-35 active:scale-95 ${
+            downloaded
+              ? "border border-[#8A9E8C]/60 text-[#8A9E8C]"
+              : "border border-[#FAF7F2]/15 text-[#FAF7F2]/60 hover:border-[#FAF7F2]/30 hover:text-[#FAF7F2]/85"
+          }`}
         >
-          {exporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-          Baixar
+          {exporting && !shared ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : downloaded ? (
+            <CheckCircle className="w-3.5 h-3.5" />
+          ) : (
+            <Download className="w-3.5 h-3.5" />
+          )}
+          {downloaded ? "Salvo!" : "Baixar"}
         </button>
         <button
-          onClick={handleShare}
+          onClick={(e) => { e.stopPropagation(); handleShare(); }}
           disabled={exporting}
           className="flex-[2] flex items-center justify-center gap-2 py-3.5 rounded-[12px] bg-[#C9A99A] text-[#2A2420] hover:bg-[#D4B5A8] active:scale-95 active:bg-[#BFA090] transition-all duration-150 font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-35 font-medium shadow-lg"
         >
@@ -624,6 +665,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
           {shared ? "Compartilhado!" : "Compartilhar"}
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
