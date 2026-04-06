@@ -305,25 +305,31 @@ export function NewMarginScreen() {
               Visibilidade
             </p>
             <div className="space-y-1.5">
-              {VISIBILITY_OPTIONS.map((vis) => (
+              {([
+                { id: "public", label: "Pública", sub: "Visível para todos os leitores" },
+                { id: "private", label: "Privada", sub: "Só você pode ver" },
+              ] as const).map((vis) => (
                 <button
                   key={vis.id}
                   data-testid={`visibility-${vis.id}`}
                   onClick={() => setVisibility(vis.id as Visibility)}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-[8px] border text-left transition-all ${
+                  className={`w-full flex items-start gap-2 px-3 py-2 rounded-[8px] border text-left transition-all ${
                     visibility === vis.id
                       ? "border-[#AE8F7D]/40 bg-[#AE8F7D]/5"
                       : "border-[#454545]/8 hover:border-[#AE8F7D]/20"
                   }`}
                 >
                   <div
-                    className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                    className={`w-2 h-2 rounded-full flex-shrink-0 mt-1 ${
                       visibility === vis.id ? "bg-[#AE8F7D]" : "bg-[#454545]/15"
                     }`}
                   />
-                  <span className={`font-sans font-light text-[10px] ${visibility === vis.id ? "text-[#454545]" : "text-[#454545]/50"}`}>
-                    {vis.label}
-                  </span>
+                  <div>
+                    <span className={`font-sans font-light text-[10px] block ${visibility === vis.id ? "text-[#454545]" : "text-[#454545]/50"}`}>
+                      {vis.label}
+                    </span>
+                    <span className="font-sans font-light text-[8px] text-[#454545]/30">{vis.sub}</span>
+                  </div>
                 </button>
               ))}
             </div>

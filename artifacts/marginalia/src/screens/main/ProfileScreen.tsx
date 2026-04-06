@@ -52,14 +52,9 @@ export function ProfileScreen() {
     ? `${currentUser.firstName} ${currentUser.lastName}`
     : currentUser.firstName || currentUser.name;
 
-  const ARCHETYPE_PATTERNS: Record<string, string> = {
-    analista: "Lê devagar, desmontando cada ideia",
-    detetive: "Lê em camadas — volta, relê, questiona",
-    rebelde: "Lê em estado de alerta constante",
-    intenso: "Lê em rajadas. Quando começa, não para",
-    interpretador: "Pausas longas entre páginas, pensando",
-    observador: "Lê de forma contemplativa, absorvendo",
-  };
+  const leituraCount = progress.filter((p) => p.userId === "user_me" && p.status === "reading").length;
+  const lidosCount = progress.filter((p) => p.userId === "user_me" && p.status === "finished").length;
+  const reacoesRecebidas = myMargins.reduce((sum, m) => sum + Object.values(m.reactions as Record<string, number>).reduce((a, b) => a + b, 0), 0);
 
   const dominantEmojiEntry = (() => {
     const counts: Record<string, number> = {};
@@ -87,7 +82,11 @@ export function ProfileScreen() {
     return MOCK_BOOKS.find((b) => b.id === Number(top[0])) ?? null;
   })();
 
-  const readingPattern = ARCHETYPE_PATTERNS[archetype.id] ?? "Ritmo único e inconfundível";
+  const topEco = myMargins.reduce<(typeof myMargins)[0] | null>((best, m) => {
+    const total = Object.values(m.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
+    const bestTotal = best ? Object.values(best.reactions as Record<string, number>).reduce((a, b) => a + b, 0) : -1;
+    return total > bestTotal ? m : best;
+  }, null);
 
   const avatarColor = editing ? editAvatarColor : (currentUser.avatarColor || "#697962");
 
@@ -385,73 +384,79 @@ export function ProfileScreen() {
           </div>
         </div>
 
-        {/* Perfil Literário */}
-        {(dominantEmojiEntry || dominantMarginType || topAnnotatedBook) && (
-          <div className="border border-[#AE8F7D]/15 rounded-[16px] p-5 mb-5 space-y-3.5">
-            <p className="font-sans text-[7px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-              Perfil Literário
-            </p>
+        {/* Estatísticas de leitura */}
+        <div className="mb-7">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Estatísticas de leitura</span>
+            <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+          </div>
 
-            <div className="space-y-3">
-              {/* Padrão de leitura */}
-              <div className="flex items-start gap-3">
-                <span className="text-[14px] mt-0.5 flex-shrink-0">📖</span>
-                <div>
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35 mb-0.5">Padrão de leitura</p>
-                  <p className="font-serif italic text-[13px] text-[#3D3D3D] leading-snug">{readingPattern}</p>
+          {/* Quick numbers grid */}
+          <div className="grid grid-cols-4 gap-2 mb-4">
+            {[
+              { label: "Lendo", value: leituraCount, icon: "📖" },
+              { label: "Lidos", value: lidosCount, icon: "📚" },
+              { label: "Margens", value: currentUser.stats.totalMargins, icon: "✍" },
+              { label: "Reações", value: reacoesRecebidas, icon: "🔥" },
+            ].map((stat) => (
+              <div key={stat.label} data-testid={`stat-${stat.label.toLowerCase()}`} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] py-3 text-center">
+                <div className="text-[13px] mb-0.5">{stat.icon}</div>
+                <div className="font-serif text-[20px] text-[#3D3D3D] leading-none mb-0.5">{stat.value}</div>
+                <div className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#454545]/35">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Behavioral stats */}
+          <div className="border border-[#AE8F7D]/15 rounded-[14px] divide-y divide-[#AE8F7D]/8">
+            {dominantEmojiEntry && (
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className="text-[15px] flex-shrink-0">{dominantEmojiEntry.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Reação mais usada</p>
+                  <p className="font-serif italic text-[13px] text-[#3D3D3D] capitalize">{dominantEmojiEntry.label}</p>
                 </div>
               </div>
-
-              {/* Reação favorita */}
-              {dominantEmojiEntry && (
-                <div className="flex items-start gap-3">
-                  <span className="text-[14px] mt-0.5 flex-shrink-0">{dominantEmojiEntry.emoji}</span>
-                  <div>
-                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35 mb-0.5">Reação mais usada</p>
-                    <p className="font-serif italic text-[13px] text-[#3D3D3D] leading-snug capitalize">{dominantEmojiEntry.label}</p>
+            )}
+            {dominantMarginType && (
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className="text-[15px] flex-shrink-0">{dominantMarginType.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Tipo de margem dominante</p>
+                  <p className="font-serif italic text-[13px] text-[#3D3D3D]">{dominantMarginType.label}</p>
+                </div>
+              </div>
+            )}
+            {topEco && (() => {
+              const total = Object.values(topEco.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
+              return total > 0 ? (
+                <div className="flex items-start gap-3 px-4 py-3">
+                  <span className="text-[15px] flex-shrink-0 mt-0.5">✨</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Eco mais popular · {total} reações</p>
+                    <p className="font-serif italic text-[12px] text-[#3D3D3D] leading-snug line-clamp-2">
+                      &ldquo;{topEco.excerpt.slice(0, 80)}{topEco.excerpt.length > 80 ? "…" : ""}&rdquo;
+                    </p>
                   </div>
                 </div>
-              )}
-
-              {/* Tipo de margem dominante */}
-              {dominantMarginType && (
-                <div className="flex items-start gap-3">
-                  <span className="text-[14px] mt-0.5 flex-shrink-0">{dominantMarginType.icon}</span>
-                  <div>
-                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35 mb-0.5">Tipo de margem dominante</p>
-                    <p className="font-serif italic text-[13px] text-[#3D3D3D] leading-snug">{dominantMarginType.label}</p>
-                  </div>
+              ) : null;
+            })()}
+            {topAnnotatedBook && (
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className="text-[15px] flex-shrink-0">📖</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Livro mais anotado</p>
+                  <p className="font-serif italic text-[13px] text-[#3D3D3D] truncate">{topAnnotatedBook.title}</p>
+                  <p className="font-sans font-light text-[9px] text-[#454545]/40">{topAnnotatedBook.author}</p>
                 </div>
-              )}
-
-              {/* Livro com mais ecos */}
-              {topAnnotatedBook && (
-                <div className="flex items-start gap-3">
-                  <span className="text-[14px] mt-0.5 flex-shrink-0">✍</span>
-                  <div>
-                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35 mb-0.5">Livro mais anotado</p>
-                    <p className="font-serif italic text-[13px] text-[#3D3D3D] leading-snug">{topAnnotatedBook.title}</p>
-                    <p className="font-sans font-light text-[9px] text-[#454545]/40">{topAnnotatedBook.author}</p>
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
+            {!dominantEmojiEntry && !dominantMarginType && !topAnnotatedBook && (
+              <div className="px-4 py-4 text-center">
+                <p className="font-serif italic text-[13px] text-[#454545]/35">As estatísticas aparecem conforme você lê e reage</p>
+              </div>
+            )}
           </div>
-        )}
-
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-2 mb-7">
-          {[
-            { label: "Livros", value: myBooks.filter((p) => p.status !== "wishlist").length },
-            { label: "Margens", value: currentUser.stats.totalMargins },
-            { label: "Destaques", value: currentUser.stats.totalHighlights },
-            { label: "Debates", value: currentUser.stats.debates },
-          ].map((stat) => (
-            <div key={stat.label} data-testid={`stat-${stat.label.toLowerCase()}`} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] py-3 text-center">
-              <div className="font-serif text-[24px] text-[#3D3D3D] leading-none mb-0.5">{stat.value}</div>
-              <div className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#454545]/35">{stat.label}</div>
-            </div>
-          ))}
         </div>
 
         {/* Quero Ler — Wishlist */}

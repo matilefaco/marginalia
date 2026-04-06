@@ -71,7 +71,7 @@ function SaveButton({ margin }: { margin: Margin }) {
 }
 
 function EmojiReactionBar({ margin }: { margin: Margin }) {
-  const { addReaction, userReactions } = useApp();
+  const { addReaction, userReactions, lastUsedReaction } = useApp();
   const myEmoji = userReactions[margin.id];
   const [pickerOpen, setPickerOpen] = useState(false);
   const [justPopped, setJustPopped] = useState<string | null>(null);
@@ -121,6 +121,10 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
           addReaction(margin.id, myEmoji);
           setJustPopped(myEmoji);
           setTimeout(() => setJustPopped(null), 500);
+        } else if (lastUsedReaction) {
+          addReaction(margin.id, lastUsedReaction);
+          setJustPopped(lastUsedReaction);
+          setTimeout(() => setJustPopped(null), 500);
         } else {
           setPickerOpen(true);
         }
@@ -134,39 +138,14 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
 
   return (
     <div className="flex items-center gap-1.5 flex-wrap">
-      {top3.map(([emoji, count]) => {
-        const isMine = myEmoji === emoji;
-        return (
-          <span
-            key={emoji}
-            className={`flex items-center gap-0.5 text-[13px] leading-none px-2 py-1 rounded-full border ${
-              isMine
-                ? "bg-[#AE8F7D]/18 border-[#AE8F7D]/40"
-                : "bg-[#EBE6DB]/70 border-[#AE8F7D]/10"
-            }`}
-          >
-            {emoji}
-            <span className={`font-sans font-light text-[8px] ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/55"}`}>
-              {count}
-            </span>
-          </span>
-        );
-      })}
-      {extraCount > 0 && (
-        <span className="font-sans font-light text-[8px] text-[#454545]/30">+{extraCount}</span>
-      )}
-      {top3.length === 0 && (
-        <span className="font-sans font-light text-[8px] text-[#454545]/25 italic">sem reações ainda</span>
-      )}
-
       <div
         ref={containerRef}
-        className="relative ml-auto"
+        className="relative flex-shrink-0"
         onClick={(e) => e.stopPropagation()}
       >
         {pickerOpen && (
           <div
-            className="absolute bottom-full right-0 mb-2 bg-[#2A2A2A] rounded-[20px] px-3 py-2.5 flex gap-2.5 shadow-2xl z-50"
+            className="absolute bottom-full left-0 mb-2 bg-[#2A2A2A] rounded-[20px] px-3 py-2.5 flex gap-2.5 shadow-2xl z-50"
             style={{ animation: "fadeScaleUp 0.15s ease" }}
           >
             {EMOJI_REACTIONS.map((r) => (
@@ -198,11 +177,42 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
               ? "bg-[#AE8F7D]/12 border-[#AE8F7D]/35"
               : "border-dashed border-[#454545]/15 hover:border-[#AE8F7D]/30 text-[#454545]/35"
           }`}
-          title={myEmoji ? "Toque para remover · segure para trocar" : "Segure para reagir"}
+          title={
+            myEmoji
+              ? "Toque para remover · segure para trocar"
+              : lastUsedReaction
+              ? `Toque para ${lastUsedReaction} · segure para escolher`
+              : "Segure para reagir"
+          }
         >
-          {myEmoji ?? <span className="font-sans text-[11px]">＋</span>}
+          {myEmoji ?? (lastUsedReaction ? lastUsedReaction : <span className="font-sans text-[11px]">＋</span>)}
         </button>
       </div>
+
+      {top3.map(([emoji, count]) => {
+        const isMine = myEmoji === emoji;
+        return (
+          <span
+            key={emoji}
+            className={`flex items-center gap-0.5 text-[13px] leading-none px-2 py-1 rounded-full border ${
+              isMine
+                ? "bg-[#AE8F7D]/18 border-[#AE8F7D]/40"
+                : "bg-[#EBE6DB]/70 border-[#AE8F7D]/10"
+            }`}
+          >
+            {emoji}
+            <span className={`font-sans font-light text-[8px] ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/55"}`}>
+              {count}
+            </span>
+          </span>
+        );
+      })}
+      {extraCount > 0 && (
+        <span className="font-sans font-light text-[8px] text-[#454545]/30">+{extraCount}</span>
+      )}
+      {top3.length === 0 && (
+        <span className="font-sans font-light text-[8px] text-[#454545]/25 italic">sem reações</span>
+      )}
     </div>
   );
 }

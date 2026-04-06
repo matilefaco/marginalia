@@ -18,31 +18,6 @@ const TABS = [
   { id: "mine", label: "Meus" },
 ];
 
-const ZONE_LABELS = [
-  "Abertura",
-  "Primeiros passos",
-  "Aquecendo",
-  "Tensão crescente",
-  "Ponto de virada",
-  "Conflito central",
-  "Zona intensa",
-  "Clímax",
-  "Resolução",
-  "Desfecho",
-];
-
-const ZONE_INSIGHTS: Record<number, string> = {
-  0: "Leitores começam a se orientar",
-  1: "A atmosfera do livro se instala",
-  2: "Algo começa a prender a atenção",
-  3: "Leitores começam a desacelerar aqui",
-  4: "Primeiro grande impacto emocional",
-  5: "Zona de tensão crescente",
-  6: "Algo muda aqui",
-  7: "Pico de reflexão coletiva",
-  8: "Muitos leitores releram esse trecho",
-  9: "Fechamento — mas alguns nunca largaram",
-};
 
 function getCategory(dominantEmoji: string | null): EmojiReactionCategory | "default" {
   if (!dominantEmoji) return "default";
@@ -84,7 +59,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
     const dominant = Object.entries(emojiTotals).sort(([, a], [, b]) => b - a)[0]?.[0] ?? null;
     const totalReactions = Object.values(emojiTotals).reduce((a, b) => a + b, 0);
     const category = getCategory(dominant);
-    return { lo, hi, count: inBucket.length, totalReactions, dominant, category, zoneIdx: i, comments: inBucket.reduce((s, m) => s + m.commentsCount, 0) };
+    return { lo, hi, count: inBucket.length, totalReactions, dominant, category, comments: inBucket.reduce((s, m) => s + m.commentsCount, 0) };
   });
 
   const socBuckets = Array.from({ length: 10 }, (_, i) => {
@@ -188,7 +163,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
             <div className="bg-[#454545] rounded-[10px] px-4 py-3 mb-3 text-[#FAF8F3]">
               <div className="flex items-center justify-between mb-1">
                 <span className="font-sans text-[8px] font-light tracking-[0.12em] uppercase text-[#FAF8F3]/60">
-                  {selBucket.lo}–{selBucket.hi}% · {ZONE_LABELS[selBucket.zoneIdx]}
+                  {selBucket.lo}–{selBucket.hi}% do livro
                 </span>
                 {selBucket.dominant && <span className="text-[16px]">{selBucket.dominant}</span>}
               </div>
@@ -258,7 +233,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
           {selectedBucket !== null && selSocBucket && (
             <div className="bg-[#454545] rounded-[10px] px-4 py-3 mb-3 text-[#FAF8F3]">
               <span className="font-sans text-[8px] font-light tracking-[0.12em] uppercase text-[#FAF8F3]/60 block mb-1">
-                {selSocBucket.lo}–{selSocBucket.hi}% · {ZONE_LABELS[selectedBucket]}
+                {selSocBucket.lo}–{selSocBucket.hi}% do livro
               </span>
               <div className="flex gap-4 text-[#FAF8F3]/80">
                 <div>
@@ -291,7 +266,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
               <span className="mr-1">🔥</span>
               <strong>Pico emocional</strong>{" "}
               {peakEmoBucket.dominant && <span className="mx-0.5">{peakEmoBucket.dominant}</span>}
-              entre {peakEmoBucket.lo}–{peakEmoBucket.hi}% — {ZONE_INSIGHTS[peakEmoBucket.zoneIdx]}
+              entre {peakEmoBucket.lo}–{peakEmoBucket.hi}% do livro
             </p>
           </div>
         )}

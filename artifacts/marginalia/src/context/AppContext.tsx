@@ -22,6 +22,7 @@ interface AppState {
   onboardingCompleted: boolean;
   onboardingStep: number;
   userReactions: Record<number, string>;
+  lastUsedReaction: string | null;
   savedMargins: number[];
 }
 
@@ -52,6 +53,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [userReactions, setUserReactions] = useState<Record<number, string>>({});
+  const [lastUsedReaction, setLastUsedReaction] = useState<string | null>(null);
   const [savedMargins, setSavedMargins] = useState<number[]>([]);
 
   const updateSpoilerPreference = (pref: SpoilerPreference) => {
@@ -129,6 +131,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }));
     } else {
       setUserReactions((prev) => ({ ...prev, [marginId]: emoji }));
+      setLastUsedReaction(emoji);
       setMargins((prev) => prev.map((m) => {
         if (m.id !== marginId) return m;
         const reactions = { ...m.reactions } as Record<string, number>;
@@ -170,6 +173,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         onboardingCompleted,
         onboardingStep,
         userReactions,
+        lastUsedReaction,
         savedMargins,
         updateSpoilerPreference,
         updatePreferredGenres,
