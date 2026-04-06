@@ -398,15 +398,34 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
   /* Capture from the hidden export element — no CSS transform, full natural size */
   const captureCanvas = useCallback(async () => {
     if (!exportCardRef.current) return null;
+
+    /* Wait for fonts to be fully loaded so text renders correctly */
+    await document.fonts.ready;
+    /* Brief pause for any pending layout / paint to settle */
+    await new Promise<void>((r) => setTimeout(r, 200));
+
     const outputScale = isStories ? 4 : 3;
+
     return html2canvas(exportCardRef.current, {
       scale: outputScale,
       useCORS: true,
       allowTaint: true,
-      backgroundColor: null,
+      /* Explicit parchment background — prevents transparent-turns-black issue */
+      backgroundColor: C.parchment,
       logging: false,
       width: cardW,
       height: cardH,
+      scrollX: 0,
+      scrollY: 0,
+      /* Move the clone to 0,0 before capture so html2canvas finds it on-screen */
+      onclone: (_doc, clonedEl) => {
+        const wrapper = clonedEl.parentElement;
+        if (wrapper) {
+          wrapper.style.left = "0px";
+          wrapper.style.top = "0px";
+          wrapper.style.zIndex = "999999";
+        }
+      },
     });
   }, [isStories, cardW, cardH]);
 
@@ -483,12 +502,41 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     }
   }, [exporting, captureCanvas, isStories, margin, doDownload]);
 
-  return createPortal(
+  /* ─────────────────────────────────────────────────────────────
+     Export container is a SEPARATE portal — direct child of body.
+     No dark overlay ancestor, no z-index: -1.
+     This guarantees html2canvas captures the card on a clean background.
+  ───────────────────────────────────────────────────────────── */
+  const exportPortal = createPortal(
+    <div
+      aria-hidden="true"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: "-9999px",
+        width: cardW,
+        height: cardH,
+        overflow: "hidden",
+        pointerEvents: "none",
+        /* No z-index: -1 — the element is off-screen, no overlap risk */
+      }}
+    >
+      <div ref={exportCardRef} style={{ width: cardW, height: cardH }}>
+        {isStories && storyTpl === "quote" && <QuoteStoryCard margin={margin} />}
+        {isStories && storyTpl === "moment" && <MomentStoryCard margin={margin} progressPct={progressPct} />}
+        {!isStories && feedTpl === "reaction" && <ReactionFeedCard margin={margin} />}
+        {!isStories && feedTpl === "symbolic" && <SymbolicFeedCard margin={margin} />}
+      </div>
+    </div>,
+    document.body
+  );
+
+  /* ── Dark overlay modal ── */
+  const modalPortal = createPortal(
     <div
       className="fixed inset-0 z-[9999] flex flex-col"
       style={{ background: "rgba(26,22,20,0.96)", backdropFilter: "blur(10px)" }}
       onClick={(e) => {
-        /* Stop all clicks inside the portal from bubbling to parent Link elements */
         e.stopPropagation();
         if (e.target === e.currentTarget) onClose();
       }}
@@ -568,7 +616,6 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
         ref={previewAreaRef}
         className="flex-1 flex items-center justify-center min-h-0 overflow-hidden px-5"
       >
-        {/* Scaled outer shell — takes up only the visually-scaled footprint */}
         <div
           style={{
             width: cardW * previewScale,
@@ -578,7 +625,6 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
             transition: "width 0.2s ease, height 0.2s ease",
           }}
         >
-          {/* Inner card rendered at natural size, then scaled visually */}
           <div
             ref={previewCardRef}
             style={{
@@ -601,31 +647,6 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
         </div>
       </div>
 
-      {/* ── Hidden full-size export container — no transforms, html2canvas captures this ── */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: "-9999px",
-          width: cardW,
-          height: cardH,
-          overflow: "hidden",
-          pointerEvents: "none",
-          zIndex: -1,
-        }}
-        aria-hidden="true"
-      >
-        <div
-          ref={exportCardRef}
-          style={{ width: cardW, height: cardH }}
-        >
-          {isStories && storyTpl === "quote" && <QuoteStoryCard margin={margin} />}
-          {isStories && storyTpl === "moment" && <MomentStoryCard margin={margin} progressPct={progressPct} />}
-          {!isStories && feedTpl === "reaction" && <ReactionFeedCard margin={margin} />}
-          {!isStories && feedTpl === "symbolic" && <SymbolicFeedCard margin={margin} />}
-        </div>
-      </div>
-
       {/* ── Format label ── */}
       <div className="text-center py-2 flex-shrink-0">
         <span className="font-sans text-[8px] tracking-[0.2em] uppercase text-[#FAF7F2]/20">
@@ -633,7 +654,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
         </span>
       </div>
 
-      {/* ── Action buttons — always pinned above safe area ── */}
+      {/* ── Action buttons ── */}
       <div
         className="flex gap-3 px-5 flex-shrink-0"
         style={{ paddingBottom: "max(32px, env(safe-area-inset-bottom, 16px) + 16px)" }}
@@ -654,7 +675,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
           ) : (
             <Download className="w-3.5 h-3.5" />
           )}
-          {downloaded ? "Salvo!" : "Baixar"}
+          {exporting && !shared ? "Salvando…" : downloaded ? "Imagem salva!" : "Baixar"}
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); handleShare(); }}
@@ -662,10 +683,17 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
           className="flex-[2] flex items-center justify-center gap-2 py-3.5 rounded-[12px] bg-[#C9A99A] text-[#2A2420] hover:bg-[#D4B5A8] active:scale-95 active:bg-[#BFA090] transition-all duration-150 font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-35 font-medium shadow-lg"
         >
           {exporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />}
-          {shared ? "Compartilhado!" : "Compartilhar"}
+          {exporting && !downloaded ? "Preparando arte…" : shared ? "Compartilhado!" : "Compartilhar"}
         </button>
       </div>
     </div>,
     document.body
+  );
+
+  return (
+    <>
+      {exportPortal}
+      {modalPortal}
+    </>
   );
 }

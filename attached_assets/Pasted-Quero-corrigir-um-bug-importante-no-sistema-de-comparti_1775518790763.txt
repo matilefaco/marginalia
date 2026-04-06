@@ -1,0 +1,188 @@
+Quero corrigir um bug importante no sistema de compartilhamento e salvamento dos cards.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Hoje, quando o usuário clica no botão **Compartilhar**, o aplicativo até abre a sugestão de compartilhamento, mas a imagem gerada está errada.
+
+Em vez de aparecer o card real que o usuário escolheu compartilhar, aparece uma imagem preta / card preto / captura incorreta.
+
+Ou seja:
+- o fluxo de share é acionado
+- mas a imagem capturada/exportada está errada
+- não está sendo compartilhado o card visual verdadeiro que aparece na tela
+
+O mesmo cuidado deve valer para o botão **Baixar/Salvar**:
+- ele também precisa capturar a imagem correta do card
+- não pode salvar imagem preta, vazia, cortada ou errada
+
+==================================================
+2. COMPORTAMENTO CORRETO DESEJADO
+==================================================
+
+Quando o usuário clicar em **Compartilhar**:
+- o app deve capturar/renderizar exatamente o card visível na tela
+- com o layout correto
+- com a citação correta
+- com autor correto
+- com reações corretas
+- com estilo correto
+- no formato selecionado (Stories 9:16 ou Feed 1:1)
+
+Depois disso:
+- abrir o share nativo do dispositivo com essa imagem correta
+- nunca compartilhar uma imagem preta
+- nunca compartilhar uma imagem vazia
+- nunca compartilhar uma área errada da tela
+
+Quando o usuário clicar em **Baixar**:
+- salvar no dispositivo exatamente a mesma imagem correta do card
+- respeitando o formato selecionado
+- sem fundo preto
+- sem falha de renderização
+- sem sobreposição errada
+
+==================================================
+3. O QUE PRECISA SER CORRIGIDO
+==================================================
+
+Quero que você revise a lógica de captura/exportação do card.
+
+### Verificar especificamente:
+
+#### 3.1. Captura do elemento correto
+- garantir que o sistema está capturando o container exato do card
+- não a tela toda
+- não o fundo escuro do modal
+- não uma área vazia
+- não o overlay
+- não o container errado
+
+#### 3.2. Tempo de renderização antes da captura
+Pode ser que a imagem esteja sendo capturada antes de o card terminar de renderizar.
+
+Então quero:
+- garantir que o card esteja completamente renderizado antes de chamar a captura
+- esperar fontes, imagens, layout e dimensões finais se necessário
+- evitar capturar prematuramente
+
+#### 3.3. Fundo e canvas/export
+- revisar se o canvas/html-to-image/dom-to-image está preservando corretamente o fundo claro do card
+- revisar se o fundo escuro do modal não está interferindo
+- revisar se há problema de z-index / stacking / opacity / transform
+
+#### 3.4. Imagens e fontes
+- garantir que tipografia, avatares e elementos do card estejam renderizando na exportação
+- garantir que nada essencial suma no momento da captura
+- garantir que imagens remotas, se existirem, estejam prontas antes do export
+
+#### 3.5. Formato selecionado
+- o export precisa respeitar o formato ativo:
+  - Stories 9:16
+  - Feed 1:1
+- não pode exportar uma área errada ou com crop incorreto
+
+==================================================
+4. MESMA CORREÇÃO PARA “BAIXAR” E “COMPARTILHAR”
+==================================================
+
+Quero que os dois botões usem a mesma base correta de exportação.
+
+### Ou seja:
+- primeiro gerar corretamente a imagem do card
+- depois:
+  - botão Baixar → salva essa imagem
+  - botão Compartilhar → compartilha essa imagem
+
+Não quero dois fluxos diferentes e inconsistentes.
+
+Quero um pipeline único e confiável:
+1. montar card
+2. renderizar corretamente
+3. capturar/exportar corretamente
+4. salvar ou compartilhar
+
+==================================================
+5. O QUE NÃO PODE MAIS ACONTECER
+==================================================
+
+Depois da correção, não pode mais acontecer:
+
+- imagem preta
+- card vazio
+- compartilhamento sem conteúdo correto
+- download com arte quebrada
+- export da área errada
+- fundo errado
+- recorte errado
+- share sem o card real
+
+==================================================
+6. UX / FEEDBACK
+==================================================
+
+Quero melhorar também a sensação de funcionamento:
+
+### Ao clicar em compartilhar:
+- mostrar um loading curto elegante tipo “Preparando arte…”
+- só depois abrir o compartilhamento nativo
+
+### Ao clicar em baixar:
+- mostrar “Salvando imagem…”
+- depois feedback de sucesso tipo “Imagem salva”
+
+Isso ajuda a evitar cliques duplos e dá sensação de confiabilidade.
+
+==================================================
+7. TESTES QUE QUERO QUE VOCÊ FAÇA
+==================================================
+
+Depois da correção, testar estes cenários:
+
+### Teste 1
+- selecionar Stories 9:16
+- clicar em Compartilhar
+- verificar se a imagem compartilhada é exatamente o card real
+
+### Teste 2
+- selecionar Feed 1:1
+- clicar em Compartilhar
+- verificar se a imagem compartilhada é exatamente o card real no formato quadrado
+
+### Teste 3
+- selecionar Stories 9:16
+- clicar em Baixar
+- verificar se a imagem salva está correta
+
+### Teste 4
+- selecionar Feed 1:1
+- clicar em Baixar
+- verificar se a imagem salva está correta
+
+### Teste 5
+- verificar se a imagem nunca sai preta
+- verificar se a imagem nunca sai vazia
+- verificar se a área exportada é sempre a do card correto
+
+==================================================
+8. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois da correção:
+
+- o botão Compartilhar deve compartilhar a imagem real do card
+- o botão Baixar deve salvar a imagem real do card
+- o formato selecionado deve ser respeitado
+- a exportação deve ser limpa, correta e confiável
+- o usuário deve ver exatamente o mesmo card da prévia no arquivo final
+
+==================================================
+9. PRIORIDADE
+==================================================
+
+Isso é prioridade alta.
+
+Implemente a correção no fluxo real de captura/exportação.
+Não quero apenas ajuste visual na tela.
+Quero corrigir a geração da imagem em si.
