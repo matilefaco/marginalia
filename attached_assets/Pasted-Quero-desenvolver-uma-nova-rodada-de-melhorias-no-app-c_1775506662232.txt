@@ -1,0 +1,380 @@
+Quero desenvolver uma nova rodada de melhorias no app com foco em:
+- legibilidade
+- redução de fadiga visual
+- hierarquia visual
+- refinamento do feed
+- redução de atrito no fluxo de criação
+- qualidade da biblioteca
+- aprofundamento social do conceito de “margem”
+- maior potencial de compartilhamento do perfil
+
+Essas melhorias devem ser implementadas de forma real no app, mantendo a identidade editorial sofisticada do Marginalia.
+
+==================================================
+1. LEGIBILIDADE E REDUÇÃO DE FADIGA VISUAL
+==================================================
+
+## Problema
+Os cards de margem e outros blocos de conteúdo estão visualmente densos demais. A tipografia é bonita, mas a hierarquia interna ainda não respira o suficiente. Isso aumenta fadiga visual, especialmente em leitura contínua no mobile.
+
+## Objetivo
+Quero melhorar significativamente a legibilidade dos cards, dando mais ar, ritmo e elegância para a leitura.
+
+## Ajustes desejados
+
+### 1.1. Aumentar line-height do corpo dos cards de margem
+Quero que o line-height dos textos principais dos cards de margem fique em torno de:
+- `1.7` a `1.75`
+
+Isso deve ser aplicado especialmente em:
+- texto do comentário/reflexão do leitor
+- bloco de citação
+- cards de eco
+- cards de margem no feed
+- visualização detalhada de eco, quando fizer sentido
+
+### 1.2. Aumentar o tamanho do corpo dos textos no mobile
+Hoje o corpo parece pequeno demais em alguns trechos.
+
+Quero subir o corpo dos textos de margem de aproximadamente:
+- `13px` → para `15px` no app mobile
+
+### 1.3. Criar mais respiro entre quote e comentário
+Quero aumentar o padding interno entre:
+- o blockquote / trecho citado
+- e o comentário/reflexão do leitor
+
+Ou seja:
+o trecho e o comentário não podem parecer colados.
+
+### 1.4. Refinar espaçamento interno dos cards
+Aumentar ligeiramente:
+- padding superior/inferior
+- espaço entre metadados e conteúdo
+- espaço entre conteúdo e reações
+- espaço entre autor e ações
+
+### Resultado esperado
+Os cards devem parecer:
+- mais editoriais
+- mais leves
+- mais confortáveis de ler
+- menos densos
+- mais “premium”
+
+==================================================
+2. FEED PRINCIPAL — DIFERENCIAR MELHOR OS TIPOS DE MARGEM
+==================================================
+
+## Problema
+Hoje o feed mistura tipos de conteúdo como:
+- Reação
+- Citação
+- Leitura simbólica
+- Teoria
+- Pergunta
+- Crítica
+
+Mas a diferenciação visual está fraca demais. Só o ícone não é suficiente, e isso cansa o olho.
+
+## Objetivo
+Quero que cada tipo de margem tenha uma assinatura visual sutil, elegante e consistente, sem perder a unidade do app.
+
+## Implementação desejada
+
+### 2.1. Acento cromático por tipo de margem
+Quero adicionar uma diferenciação sutil através de cor, principalmente na borda esquerda do card ou em outro ponto editorial discreto.
+
+### Sugestão de sistema:
+- **Citação** → Dusty Rose
+- **Leitura Simbólica** → Sage
+- **Teoria / Interpretação** → Ink
+- **Pergunta** → Heather / tom suave complementar
+- **Crítica** → tom mais sóbrio, ligado ao Ink ou um Mid-tone mais escuro
+- **Reação emocional** → tom quente e delicado, sem ficar chamativo
+
+### 2.2. Onde aplicar a cor
+A cor não deve dominar o card. Deve ser aplicada de forma sutil, por exemplo em:
+- borda vertical esquerda
+- filete lateral
+- pequeno marcador superior
+- label/tipo da margem
+
+### 2.3. Regras visuais
+- manter a elegância editorial
+- evitar aparência de app genérico/colorido demais
+- o sistema deve ajudar a “escanear” o feed com mais facilidade
+- a cor deve orientar, não gritar
+
+### Resultado esperado
+O feed deve ficar:
+- mais fácil de ler
+- mais variado sem ficar bagunçado
+- mais reconhecível por tipo de conteúdo
+- menos cansativo visualmente
+
+==================================================
+3. HOME — MELHORAR O “AO VIVO” EM MOMENTO DO LIVRO HOJE
+==================================================
+
+## Problema
+A seção “Momento do Livro Hoje” está bonita, mas o ponto verde de “ao vivo” passa despercebido.
+
+## Objetivo
+Quero que a sensação de tempo real fique mais clara, sem ficar agressiva.
+
+## Implementação desejada
+
+### 3.1. Fazer o ponto verde pulsar
+Adicionar uma animação simples e elegante no ponto verde de “ao vivo”.
+
+### Regras da animação
+- pulsação suave
+- nada exagerado
+- efeito contínuo, refinado, com baixa intensidade
+- estilo editorial, não tech demais
+
+### 3.2. Aplicação
+A animação deve ser sutil o suficiente para:
+- comunicar presença em tempo real
+- aumentar percepção de “comunidade ativa”
+- não distrair demais
+
+### Resultado esperado
+O usuário deve entender mais claramente que existe atividade acontecendo naquele momento.
+
+==================================================
+4. NOVA MARGEM — REDUZIR ATRITO COM ENTRADA RÁPIDA
+==================================================
+
+## Problema
+O formulário de criação de nova margem está muito fragmentado em muitos campos verticais logo de cara. Isso aumenta o atrito.
+
+## Objetivo
+Quero uma experiência de criação mais fluida, rápida e inteligente.
+
+## Nova proposta de UX
+Transformar a criação de margem em um fluxo de “entrada rápida”.
+
+## Fluxo desejado
+
+### Etapa 1 — foco no trecho
+O primeiro gesto do usuário deve ser:
+- colar ou escrever o trecho
+
+### Etapa 2 — detectar o livro automaticamente
+Se o trecho estiver associado a um livro da biblioteca do usuário ou a um livro em contexto, o app deve:
+- sugerir automaticamente esse livro
+- ou detectar o livro se já estiver no fluxo daquele livro
+
+### Etapa 3 — expandir campos só depois
+Somente depois que o trecho estiver inserido, expandir de forma progressiva:
+- tipo de margem
+- página/capítulo/referência
+- comentário do leitor
+- spoiler ou não
+- visibilidade, se houver
+
+## Regras
+- mostrar o mínimo necessário no começo
+- reduzir sensação de formulário pesado
+- criar experiência mais intuitiva e rápida
+
+## Resultado esperado
+Quero que criar uma nova margem pareça:
+- natural
+- leve
+- instantâneo
+- menos burocrático
+
+==================================================
+5. BIBLIOTECA — MELHORAR CAPAS AUTOMATICAMENTE
+==================================================
+
+## Problema
+Livros sem capa, como quando aparece um retângulo cinza, prejudicam muito a estética da biblioteca e do app como um todo.
+
+## Objetivo
+Quero melhorar a obtenção automática de capas, especialmente quando a API principal falhar.
+
+## Implementação desejada
+
+### 5.1. Integrar fallback de capas com Open Library API
+Quando um livro for adicionado e estiver sem capa:
+- tentar buscar capa automaticamente na Open Library API
+- usar isso como fallback secundário de cover
+- salvar a capa encontrada no banco, se for válida
+
+### 5.2. Política de fallback
+Sugestão de ordem:
+1. capa principal da fonte/API atual
+2. fallback via Open Library
+3. override manual para livros importantes, quando necessário
+4. placeholder editorial elegante somente em último caso
+
+### 5.3. Aplicar essa lógica em:
+- biblioteca
+- detalhe do livro
+- explorar
+- listas/rankings
+- livros em destaque
+
+### Resultado esperado
+Quero reduzir drasticamente o número de livros sem capa.
+
+==================================================
+6. ECOS COMPARTILHADOS — CRIAR “MARGEM SOBRE MARGEM”
+==================================================
+
+## Problema
+Hoje o usuário pode salvar o eco de outra pessoa, mas ainda não existe uma forma forte de responder à margem do outro com uma margem própria.
+
+## Objetivo
+Quero implementar o que pode se tornar o maior diferencial social do app:
+**uma margem sobre margem**.
+
+## Conceito
+Permitir que o usuário crie uma nova margem em resposta direta ao eco/margem de outro usuário.
+
+## Isso seria:
+- uma resposta em cadeia
+- uma leitura sobre outra leitura
+- uma conversa editorial entre margens
+- uma espécie de anotação-resposta
+
+## Implementação desejada
+
+### 6.1. Ação nova
+Adicionar uma ação clara do tipo:
+- “Responder com margem”
+- ou “Criar margem a partir desta”
+- ou equivalente mais elegante dentro do branding do app
+
+### 6.2. Fluxo
+Ao tocar nessa ação:
+- abrir fluxo de nova margem
+- já vinculando o eco original
+- permitir citar o trecho original ou o comentário do outro leitor
+- criar relação entre a margem original e a margem-resposta
+
+### 6.3. Estrutura de dados
+Quero guardar essa relação no banco, algo como:
+- `parent_eco_id`
+- ou `reply_to_eco_id`
+- ou estrutura equivalente
+
+### 6.4. Visualização
+Na margem-resposta, mostrar que ela nasceu de outra margem.
+Na margem original, pode haver indicação de que ela gerou respostas em cadeia.
+
+### Resultado esperado
+Quero transformar o app de:
+- comentários em cima de trechos
+
+para:
+- uma rede de leituras em camadas
+
+Isso tem potencial social e viral muito forte.
+
+==================================================
+7. PERFIL — EXPANDIR “REAÇÃO MAIS USADA” PARA “DNA DE LEITURA”
+==================================================
+
+## Problema / oportunidade
+A informação “Reação mais usada” já é muito boa, mas ainda está subaproveitada.
+
+## Objetivo
+Transformar isso em uma camada mais rica e altamente compartilhável:
+**DNA de leitura**.
+
+## Conceito
+Criar uma área no perfil que mostre o padrão emocional e interpretativo do leitor ao longo do tempo.
+
+## Implementação desejada
+
+### 7.1. Nome da seção
+Pode ser algo como:
+- DNA de leitura
+- Assinatura emocional da leitura
+- Mapa de leitura
+- Impressão de leitura
+- outra nomenclatura dentro do branding do app
+
+### 7.2. Conteúdo da seção
+Quero mostrar:
+- reação mais usada
+- padrões emocionais predominantes
+- tipos de margem mais frequentes
+- gêneros em que mais interage
+- talvez badges/traços de leitura
+
+### Exemplos de badges ou traços:
+- leitora contemplativa
+- leitora simbólica
+- leitora intensa
+- leitora analítica
+- sensível ao detalhe
+- leitora de subtexto
+- vive de citações
+- pensa em perguntas
+- reage mais com surpresa / choro / fogo etc.
+
+### 7.3. Formato visual
+Pode ser:
+- badges
+- mini gráfico sutil
+- conjunto de atributos visuais
+- radar emocional minimalista
+- bloco altamente compartilhável no perfil
+
+### 7.4. Base de cálculo
+Quero que isso seja derivado de dados reais, como:
+- reações feitas
+- tipos de ecos criados
+- gêneros de interesse
+- livros anotados
+- padrões ao longo do tempo
+
+### Resultado esperado
+Quero que essa área seja:
+- interessante
+- estética
+- altamente compartilhável
+- única do Marginalia
+
+==================================================
+8. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessas melhorias, quero que:
+
+- os cards fiquem mais legíveis e menos cansativos
+- o feed tenha diferenciação visual melhor por tipo de margem
+- o “ao vivo” da home fique mais perceptível
+- criar nova margem fique muito mais rápido e intuitivo
+- a biblioteca tenha muito menos livros sem capa
+- exista a funcionalidade de margem sobre margem
+- o perfil ganhe uma camada nova e viral com o DNA de leitura
+
+==================================================
+9. PRIORIDADE DE IMPLEMENTAÇÃO
+==================================================
+
+Implementar nesta ordem:
+
+1. legibilidade e respiro dos cards
+2. diferenciação visual dos tipos de margem no feed
+3. melhoria da home com ponto “ao vivo” pulsante
+4. novo fluxo de entrada rápida para “Nova Margem”
+5. fallback de capas com Open Library API
+6. criar sistema de “margem sobre margem”
+7. expandir perfil com “DNA de leitura”
+
+==================================================
+10. IMPORTANTE
+==================================================
+
+Não quero apenas proposta visual.
+Quero implementação real no código, com persistência onde necessário, UX refinada e comportamento funcional.
+
+Essas mudanças devem manter a identidade editorial, sofisticada e silenciosamente elegante do Marginalia.

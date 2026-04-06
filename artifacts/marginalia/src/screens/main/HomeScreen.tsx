@@ -59,7 +59,11 @@ function MomentosSection() {
           Momento do livro hoje
         </span>
         <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-        <div className="w-1.5 h-1.5 rounded-full bg-[#697962] animate-pulse" />
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#697962] opacity-35" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#697962]" />
+        </span>
+        <span className="font-sans text-[7px] font-light tracking-[0.14em] uppercase text-[#697962]/70">ao vivo</span>
       </div>
       <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
         Onde leitores estão parando agora
@@ -187,6 +191,10 @@ function CommunityFeedSection() {
       <div className="flex items-center gap-2 mb-1.5">
         <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#697962]">Ecos da comunidade</span>
         <div className="flex-1 h-px bg-[#697962]/20" />
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#697962] opacity-35" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#697962]" />
+        </span>
       </div>
       <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-4">O que leitores estão sentindo agora</p>
       <div className="space-y-3">

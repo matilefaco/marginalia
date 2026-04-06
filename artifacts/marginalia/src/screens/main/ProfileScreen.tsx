@@ -24,6 +24,118 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
+/* ─── DNA de Leitura ─── */
+interface DnaProps {
+  myMargins: ReturnType<typeof useApp>["margins"];
+  userReactions: Record<string, string>;
+  myBooks: ReturnType<typeof useApp>["progress"];
+  dominantMarginType: typeof MARGIN_TYPES[number] | null;
+  dominantEmojiEntry: typeof EMOJI_REACTIONS[number] | null;
+  archetype: typeof READER_ARCHETYPES[number];
+}
+
+function DnaDeLeiturasSection({ myMargins, userReactions, myBooks, dominantMarginType, dominantEmojiEntry, archetype }: DnaProps) {
+  const hasData = myMargins.length > 0 || Object.keys(userReactions).length > 0;
+  if (!hasData) return null;
+
+  // Compute traits
+  const marginCount = myMargins.length;
+  const bookCount = myBooks.filter((p) => p.status === "reading" || p.status === "completed" || p.status === "finished").length;
+  const avgMarginsPerBook = bookCount > 0 ? (marginCount / bookCount) : 0;
+
+  const annotationStyle = (() => {
+    if (!dominantMarginType) return null;
+    const styleMap: Record<string, { label: string; desc: string; color: string }> = {
+      favorite_quote:      { label: "Colecionador de trechos", desc: "Você guarda o que é belo", color: "#C9A99A" },
+      symbolic_reading:    { label: "Leitor de símbolos", desc: "Você vê mais do que o texto diz", color: "#8A9E8C" },
+      theory:              { label: "Construtor de teorias", desc: "Você conecta ideias", color: "#6B7A6B" },
+      question:            { label: "O que questiona", desc: "Você não lê sem duvidar", color: "#BDAB9C" },
+      critique:            { label: "Crítico exigente", desc: "Você avalia cada escolha do autor", color: "#7A7A7A" },
+      reaction:            { label: "Leitor visceral", desc: "Você sente antes de pensar", color: "#C4A28C" },
+      insight:             { label: "Caçador de insights", desc: "Você lê para entender", color: "#697962" },
+      personal_connection: { label: "Leitor pessoal", desc: "Você se vê nas histórias", color: "#C4A08A" },
+    };
+    return styleMap[dominantMarginType.id] ?? null;
+  })();
+
+  const emotionalProfile = (() => {
+    if (!dominantEmojiEntry) return null;
+    const profileMap: Record<string, { label: string; desc: string }> = {
+      "🤍": { label: "Leitor sensível", desc: "Você se toca facilmente" },
+      "😭": { label: "Leitor emocional", desc: "Você sente tudo de verdade" },
+      "🤔": { label: "Leitor reflexivo", desc: "Você processa devagar" },
+      "🔥": { label: "Leitor intenso", desc: "Você lê com adrenalina" },
+      "✨": { label: "Leitor estético", desc: "Você aprecia a forma" },
+      "😮": { label: "Leitor curioso", desc: "Você se surpreende" },
+    };
+    return profileMap[dominantEmojiEntry.emoji] ?? null;
+  })();
+
+  const densityTrait = (() => {
+    if (marginCount === 0) return null;
+    if (avgMarginsPerBook >= 5) return { label: "Leitor denso", desc: "Você registra cada detalhe", icon: "📑" };
+    if (avgMarginsPerBook >= 2) return { label: "Leitor criterioso", desc: "Você marca o que importa", icon: "✍" };
+    return { label: "Leitor seletivo", desc: "Você guarda só o essencial", icon: "🎯" };
+  })();
+
+  const traits = [
+    annotationStyle ? { ...annotationStyle, icon: dominantMarginType?.icon } : null,
+    emotionalProfile ? { label: emotionalProfile.label, desc: emotionalProfile.desc, color: "#AE8F7D", icon: dominantEmojiEntry?.emoji } : null,
+    densityTrait ? { label: densityTrait.label, desc: densityTrait.desc, color: "#697962", icon: densityTrait.icon } : null,
+  ].filter(Boolean) as { label: string; desc: string; color: string; icon: string | undefined }[];
+
+  if (traits.length === 0) return null;
+
+  return (
+    <div className="mb-7">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">DNA de leitura</span>
+        <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+      </div>
+      <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-4">
+        Padrões que emergem das suas margens
+      </p>
+
+      <div className="space-y-2.5">
+        {traits.map((trait, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-4 rounded-[14px] px-4 py-3.5 border"
+            style={{
+              borderColor: `${trait.color}25`,
+              backgroundColor: `${trait.color}0A`,
+            }}
+          >
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-[18px]"
+              style={{ backgroundColor: `${trait.color}18` }}
+            >
+              {trait.icon}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-serif text-[15px] text-[#2A2A2A] leading-tight mb-0.5">{trait.label}</p>
+              <p className="font-sans font-light text-[10px] text-[#454545]/50">{trait.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Reading fingerprint tagline */}
+      <div className="mt-4 rounded-[12px] border border-[#AE8F7D]/15 bg-[#EBE6DB]/20 px-4 py-3 flex items-center gap-3">
+        <span className="text-[20px]">{archetype.marginTypes[0] ? "📚" : "📖"}</span>
+        <div>
+          <p className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-0.5">
+            Impressão digital
+          </p>
+          <p className="font-serif italic text-[12.5px] text-[#454545]/65">
+            {archetype.label} · {traits[0]?.label} · {dominantEmojiEntry?.emoji ?? "📖"}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ProfileScreen() {
   const { currentUser, progress, savedMargins, margins, userReactions } = useApp();
   const { updateProfile: saveToSupabase } = useAuth();
@@ -437,6 +549,16 @@ export function ProfileScreen() {
             </button>
           </div>
         </div>
+
+        {/* DNA de Leitura */}
+        <DnaDeLeiturasSection
+          myMargins={myMargins}
+          userReactions={userReactions}
+          myBooks={myBooks}
+          dominantMarginType={dominantMarginType}
+          dominantEmojiEntry={dominantEmojiEntry}
+          archetype={archetype}
+        />
 
         {/* Estatísticas de leitura */}
         <div className="mb-7">

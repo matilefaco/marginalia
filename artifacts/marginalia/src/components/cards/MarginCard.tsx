@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Share2, Check, MessageCircle, Bookmark, BookmarkCheck } from "lucide-react";
+import { Share2, Check, MessageCircle, Bookmark, BookmarkCheck, CornerUpRight } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { canUserSeeMargin, getBlockedReason } from "@/utils/spoiler";
 import { formatReference, marginTypeLabel, timeAgo } from "@/utils/formatting";
@@ -13,6 +13,21 @@ import { ShareCardModal } from "./ShareCardModal";
 const USER_USERNAME_MAP: Record<string, string> = Object.fromEntries(
   MOCK_USERS.map((u) => [u.id, u.username])
 );
+
+/* ─── Type accent colour system ─── */
+const ACCENT_MAP: Record<string, { border: string; label: string }> = {
+  favorite_quote:      { border: "#C9A99A", label: "#A07868" },
+  symbolic_reading:    { border: "#8A9E8C", label: "#697962" },
+  theory:              { border: "#6B7A6B", label: "#5A6A5A" },
+  question:            { border: "#BDAB9C", label: "#9A8878" },
+  critique:            { border: "#7A7A7A", label: "#646464" },
+  reaction:            { border: "#C4A28C", label: "#9A7A60" },
+  insight:             { border: "#8A9E8C", label: "#697962" },
+  personal_connection: { border: "#C4A08A", label: "#A07868" },
+};
+function accent(type: string) {
+  return ACCENT_MAP[type] ?? { border: "#AE8F7D", label: "#AE8F7D" };
+}
 
 interface Props {
   margin: Margin;
@@ -176,11 +191,7 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
               ? "bg-[#AE8F7D]/12 border-[#AE8F7D]/35"
               : "border-dashed border-[#454545]/15 hover:border-[#AE8F7D]/30 text-[#454545]/35"
           }`}
-          title={
-            myEmoji
-              ? "Toque para remover · segure para trocar"
-              : "Segure para reagir"
-          }
+          title={myEmoji ? "Toque para remover · segure para trocar" : "Segure para reagir"}
         >
           {myEmoji ?? <span className="font-sans text-[11px]">＋</span>}
         </button>
@@ -221,16 +232,9 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
   );
 }
 
-interface EcoarBarProps {
-  margin: Margin;
-  linkToThread?: boolean;
-  avatarColor?: string;
-}
-
-function EcoarBar({ margin, linkToThread }: Omit<EcoarBarProps, "avatarColor">) {
+function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boolean }) {
   const [, navigate] = useLocation();
   const { currentUser } = useApp();
-  // Resolve the real avatar color: current user > mock users > fallback
   const avatarColor = margin.userId === currentUser.id
     ? (currentUser.avatarColor || "#697962")
     : MOCK_USERS.find((u) => u.id === margin.userId)?.avatarColor || "#AE8F7D";
@@ -239,9 +243,13 @@ function EcoarBar({ margin, linkToThread }: Omit<EcoarBarProps, "avatarColor">) 
   const handleAuthorClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (margin.userId !== currentUser.id) {
-      navigate(`/user/${margin.userId}`);
-    }
+    if (margin.userId !== currentUser.id) navigate(`/user/${margin.userId}`);
+  };
+
+  const handleReplyWithMargin = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/nova-margem?replyTo=${margin.id}&bookId=${margin.bookId}`);
   };
 
   const ecoarContent = (
@@ -259,7 +267,7 @@ function EcoarBar({ margin, linkToThread }: Omit<EcoarBarProps, "avatarColor">) 
   );
 
   return (
-    <div className="pt-2.5 border-t border-[#454545]/6 mt-3 space-y-2">
+    <div className="pt-3 border-t border-[#454545]/6 mt-4 space-y-2.5">
       <div className="flex items-center justify-between">
         <button
           type="button"
@@ -284,6 +292,13 @@ function EcoarBar({ margin, linkToThread }: Omit<EcoarBarProps, "avatarColor">) 
         </button>
         <div className="flex items-center gap-2">
           {ecoarContent}
+          <button
+            title="Responder com sua margem"
+            onClick={handleReplyWithMargin}
+            className="flex items-center gap-1 text-[#454545]/22 hover:text-[#697962] transition-colors"
+          >
+            <CornerUpRight className="w-3 h-3" />
+          </button>
           <SaveButton margin={margin} />
           <ShareButton margin={margin} />
         </div>
@@ -292,29 +307,37 @@ function EcoarBar({ margin, linkToThread }: Omit<EcoarBarProps, "avatarColor">) 
   );
 }
 
+/* ─── CARD: Citação favorita ─── */
 function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const ref = formatReference(margin);
+  const a = accent(margin.postType);
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="border border-[#AE8F7D]/18 rounded-[14px] p-5 hover:border-[#AE8F7D]/35 transition-colors"
-      style={{ backgroundColor: bookColor ? `${bookColor}CC` : "#EBE6DB4D" }}
+      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all"
+      style={{
+        border: "1px solid rgba(174,143,125,0.16)",
+        borderLeft: `3px solid ${a.border}AA`,
+        backgroundColor: bookColor ? `${bookColor}CC` : "#EBE6DB4D",
+      }}
     >
-      <div className="flex items-center justify-between mb-3">
-        <span className="font-sans text-[7.5px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">✦ Citação favorita</span>
+      <div className="flex items-center justify-between mb-3.5">
+        <span className="font-sans text-[7.5px] font-light tracking-[0.22em] uppercase" style={{ color: a.label }}>
+          ✦ Citação favorita
+        </span>
         <span className="font-sans font-light text-[7px] text-[#454545]/25">{timeAgo(margin.createdAt)}</span>
       </div>
-      <div className="text-center py-3 mb-3">
-        <p className="font-serif italic text-[19px] text-[#2A2A2A] leading-[1.65]">
+      <div className="text-center py-4 mb-3.5">
+        <p className="font-serif italic text-[18px] text-[#2A2A2A] leading-[1.75]">
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
       {showBook && (
-        <p className="font-sans font-light text-[8.5px] tracking-[0.1em] uppercase text-[#454545]/40 text-center mb-3">
+        <p className="font-sans font-light text-[8.5px] tracking-[0.1em] uppercase text-[#454545]/40 text-center mb-4">
           {margin.bookTitle} {ref && `· ${ref}`}
         </p>
       )}
-      <div className="mb-2.5">
+      <div className="mb-3">
         <EmojiReactionBar margin={margin} />
       </div>
       <EcoarBar margin={margin} linkToThread={linkToThread} />
@@ -324,28 +347,35 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
   return <Link href={`/thread/${margin.id}`} className="block active:scale-[0.99] active:opacity-90 transition-all duration-150">{content}</Link>;
 }
 
+/* ─── CARD: Pergunta ─── */
 function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const ref = formatReference(margin);
+  const a = accent(margin.postType);
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="border border-dashed border-[#AE8F7D]/30 rounded-[14px] p-4 hover:border-[#AE8F7D]/50 transition-colors"
-      style={{ backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3" }}
+      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all"
+      style={{
+        border: "1px dashed rgba(189,171,156,0.35)",
+        borderLeft: `3px solid ${a.border}AA`,
+        backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3",
+      }}
     >
-      <div className="flex items-center gap-2 mb-3">
-        <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase text-[#BDAB9C]">❓ Pergunta</span>
+      <div className="flex items-center gap-2 mb-3.5">
+        <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase" style={{ color: a.label }}>❓ Pergunta</span>
         {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#454545]/45 truncate max-w-[100px]">{margin.bookTitle}</span></>}
+        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#454545]/35">{ref}</span></>}
         <span className="ml-auto font-sans text-[7px] font-light text-[#454545]/25">{timeAgo(margin.createdAt)}</span>
       </div>
-      <div className="bg-[#FAF8F3]/80 border-l-2 border-[#BDAB9C]/60 pl-3 mb-3">
-        <p className="font-serif italic text-[15px] text-[#2A2A2A] leading-[1.65]">
+      <div className="bg-[#FAF8F3]/80 pl-4 mb-4" style={{ borderLeft: `2px solid ${a.border}88` }}>
+        <p className="font-serif italic text-[15px] text-[#2A2A2A] leading-[1.75]">
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
       {margin.commentary && (
-        <p className="font-serif text-[13px] text-[#454545]/72 leading-[1.7] mb-3">{margin.commentary}</p>
+        <p className="font-serif text-[15px] text-[#454545]/72 leading-[1.75] mb-4">{margin.commentary}</p>
       )}
-      <div className="mb-2">
+      <div className="mb-3">
         <EmojiReactionBar margin={margin} />
       </div>
       <EcoarBar margin={margin} linkToThread={linkToThread} />
@@ -355,30 +385,38 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
   return <Link href={`/thread/${margin.id}`} className="block active:scale-[0.99] active:opacity-90 transition-all duration-150">{content}</Link>;
 }
 
+/* ─── CARD: Teoria ─── */
 function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
+  const a = accent(margin.postType);
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="border-l-4 border-[#697962]/50 rounded-r-[14px] rounded-l-none p-4 hover:border-l-[#697962]/80 transition-all shadow-sm"
-      style={{ backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3" }}
+      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all shadow-sm"
+      style={{
+        border: "1px solid rgba(107,122,107,0.18)",
+        borderLeft: `3px solid ${a.border}CC`,
+        backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3",
+      }}
     >
-      <div className="flex items-center gap-2 mb-3">
-        <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase text-[#697962]">🔭 Teoria</span>
-        {showBook && <><span className="text-[#697962]/25">·</span><span className="font-sans text-[8px] font-light text-[#454545]/45 truncate max-w-[90px]">{margin.bookTitle}</span></>}
+      <div className="flex items-center gap-2 mb-3.5">
+        <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase" style={{ color: a.label }}>🔭 Teoria</span>
+        {showBook && <><span style={{ color: `${a.border}40` }}>·</span><span className="font-sans text-[8px] font-light text-[#454545]/45 truncate max-w-[90px]">{margin.bookTitle}</span></>}
         <span className="ml-auto font-sans text-[7px] font-light text-[#454545]/25">{timeAgo(margin.createdAt)}</span>
       </div>
-      <p className="font-serif italic text-[13px] text-[#454545]/60 border-l border-[#697962]/25 pl-2.5 mb-3 leading-[1.65] line-clamp-2">
-        &ldquo;{margin.excerpt}&rdquo;
-      </p>
+      <div className="pl-3 mb-4" style={{ borderLeft: `2px solid ${a.border}50` }}>
+        <p className="font-serif italic text-[14px] text-[#454545]/60 leading-[1.75] line-clamp-3">
+          &ldquo;{margin.excerpt}&rdquo;
+        </p>
+      </div>
       {margin.commentary && (
-        <p className="font-serif text-[14px] text-[#2A2A2A]/80 leading-[1.7] mb-3">{margin.commentary}</p>
+        <p className="font-serif text-[15px] text-[#2A2A2A]/80 leading-[1.75] mb-4">{margin.commentary}</p>
       )}
-      <div className="mb-2">
+      <div className="mb-3">
         <EmojiReactionBar margin={margin} />
       </div>
       {totalReactions > 0 && (
-        <p className="font-sans font-light text-[8px] text-[#697962]/55 mb-2">{totalReactions} leitores ecoaram isso</p>
+        <p className="font-sans font-light text-[8px] mb-2" style={{ color: `${a.border}99` }}>{totalReactions} leitores ecoaram isso</p>
       )}
       <EcoarBar margin={margin} linkToThread={linkToThread} />
     </div>
@@ -387,28 +425,25 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
   return <Link href={`/thread/${margin.id}`} className="block active:scale-[0.99] active:opacity-90 transition-all duration-150">{content}</Link>;
 }
 
+/* ─── CARD: Standard (insight / reaction / critique / symbolic / personal) ─── */
 function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
   const ref = formatReference(margin);
   const typeIcon = MARGIN_TYPES.find((t) => t.id === margin.postType)?.icon || "";
-
-  const TYPE_COLORS: Record<string, string> = {
-    insight: "text-[#697962]",
-    reaction: "text-[#AE8F7D]",
-    critique: "text-[#454545]/70",
-    personal_connection: "text-[#AE8F7D]",
-    symbolic_reading: "text-[#697962]",
-  };
-  const typeColor = TYPE_COLORS[margin.postType] || "text-[#AE8F7D]";
+  const a = accent(margin.postType);
 
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="rounded-[14px] border border-[#AE8F7D]/15 p-5 hover:border-[#AE8F7D]/30 transition-colors"
-      style={{ backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3" }}
+      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all"
+      style={{
+        border: "1px solid rgba(174,143,125,0.14)",
+        borderLeft: `3px solid ${a.border}99`,
+        backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3",
+      }}
     >
-      <div className="flex items-center gap-2 mb-3">
-        <span className={`font-sans text-[8px] font-light tracking-[0.18em] uppercase ${typeColor} flex items-center gap-1`}>
+      <div className="flex items-center gap-2 mb-3.5">
+        <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase flex items-center gap-1" style={{ color: a.label }}>
           <span>{typeIcon}</span>
           <span>{marginTypeLabel(margin.postType)}</span>
         </span>
@@ -416,15 +451,22 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
         {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#454545]/45 truncate max-w-[100px]">{margin.bookTitle}</span></>}
         <span className="ml-auto font-sans text-[7px] font-light text-[#454545]/25 flex-shrink-0">{timeAgo(margin.createdAt)}</span>
       </div>
-      <div className="border-l-2 border-[#AE8F7D]/45 pl-3 mb-3.5">
-        <p className="font-serif italic text-[15px] text-[#2A2A2A] leading-[1.7]">
+
+      {/* Quote block */}
+      <div className="pl-4 mb-4" style={{ borderLeft: `2px solid ${a.border}66` }}>
+        <p className="font-serif italic text-[15px] text-[#2A2A2A] leading-[1.75]">
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
+
+      {/* Commentary — visually separated from the quote */}
       {margin.commentary && (
-        <p className="font-serif text-[13px] text-[#454545]/72 leading-[1.7] mb-3.5">{margin.commentary}</p>
+        <p className="font-serif text-[15px] text-[#454545]/72 leading-[1.75] mb-4">
+          {margin.commentary}
+        </p>
       )}
-      <div className="mb-2.5">
+
+      <div className="mb-3">
         <EmojiReactionBar margin={margin} />
       </div>
       {totalReactions > 0 && (
@@ -474,7 +516,7 @@ function SpoilerShieldCard({ margin, reason }: { margin: Margin; reason: string 
     return (
       <div data-testid={`card-margin-${margin.id}-revealed`} className="bg-[#FAF8F3] rounded-[14px] border border-[#AE8F7D]/20 p-4 opacity-80">
         <div className="border-l-2 border-[#AE8F7D]/30 pl-3 mb-2">
-          <p className="font-serif italic text-[15px] text-[#2A2A2A]/75 leading-[1.65]">&ldquo;{margin.excerpt}&rdquo;</p>
+          <p className="font-serif italic text-[15px] text-[#2A2A2A]/75 leading-[1.75]">&ldquo;{margin.excerpt}&rdquo;</p>
         </div>
         <p className="font-sans font-light text-[8px] text-[#AE8F7D]/60 tracking-[0.08em]">Conteúdo liberado manualmente</p>
       </div>
