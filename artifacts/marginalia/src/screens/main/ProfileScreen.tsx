@@ -159,7 +159,7 @@ export function ProfileScreen() {
   };
 
   return (
-    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden">
+    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden screen-enter">
       {/* Save toast */}
       {savedToast && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#697962] text-[#FAF8F3] font-sans text-[11px] font-light tracking-[0.08em] px-5 py-2.5 rounded-full shadow-lg feed-enter pointer-events-none">

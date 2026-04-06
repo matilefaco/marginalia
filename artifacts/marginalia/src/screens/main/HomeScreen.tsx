@@ -273,7 +273,7 @@ export function HomeScreen() {
   });
 
   return (
-    <div className="min-h-full bg-[#FAF8F3]">
+    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden screen-enter">
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-10 pb-4">
         <div className="flex items-center gap-2.5">

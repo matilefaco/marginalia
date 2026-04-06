@@ -1,0 +1,159 @@
+Quero corrigir definitivamente o layout dos toggles/botões de notificações na tela “Notificações”.
+
+O problema continua visível:
+- o toggle está saindo da tela pela direita
+- parte do botão fica cortada
+- o alinhamento entre texto e toggle está errado
+- o container da linha não está respeitando a largura útil da tela
+- em telas pequenas de iPhone isso fica ainda mais evidente
+
+Preciso que isso seja corrigido de forma estrutural, não com gambiarra.
+
+--------------------------------------------------
+1. PROBLEMA DE LAYOUT
+--------------------------------------------------
+
+Hoje cada item de notificação parece estar ocupando mais largura do que deveria.
+O toggle fica empurrado para fora do container e ultrapassa a borda direita da tela.
+
+Quero corrigir isso em toda a tela de Notificações.
+
+--------------------------------------------------
+2. ESTRUTURA CORRETA DE CADA LINHA
+--------------------------------------------------
+
+Cada item de notificação deve ter esta estrutura:
+
+- container pai com largura limitada à tela
+- bloco de texto à esquerda
+- toggle à direita
+- espaçamento seguro entre os dois
+- tudo centralizado verticalmente
+- nada pode ultrapassar o container
+
+Estrutura desejada:
+- wrapper da tela com padding horizontal consistente
+- item com `display: flex`
+- `justify-content: space-between`
+- `align-items: center`
+- texto ocupando o espaço disponível
+- toggle com largura fixa e sem poder ser empurrado para fora
+
+--------------------------------------------------
+3. REGRAS DE CSS / LAYOUT
+--------------------------------------------------
+
+Aplicar isso de forma equivalente no stack atual do projeto:
+
+### Wrapper da tela
+- padding-left: 20px
+- padding-right: 20px
+- max-width: 100%
+- overflow-x: hidden
+- box-sizing: border-box
+
+### Linha do item
+- display: flex
+- justify-content: space-between
+- align-items: center
+- gap: 12px
+- width: 100%
+- max-width: 100%
+- box-sizing: border-box
+
+### Bloco de texto
+- flex: 1
+- min-width: 0
+- padding-right: 12px
+
+### Toggle
+- flex-shrink: 0
+- width fixa
+- max-width fixa
+- align-self: center
+- margin-right: 0
+- nunca usar posicionamento absoluto nessa tela
+- nunca deixar o toggle depender de largura do texto
+
+--------------------------------------------------
+4. REMOVER CAUSAS DO OVERFLOW
+--------------------------------------------------
+
+Revisar e remover qualquer uma destas causas:
+
+- uso de width: 100vw
+- margens negativas
+- translateX indevido
+- posição absoluta no toggle
+- largura do item maior que o container
+- padding somado com width sem box-sizing correto
+- uso de right/left que empurre o toggle para fora
+
+Também revisar se o próprio componente do switch/toggle tem largura interna exagerada.
+
+--------------------------------------------------
+5. GARANTIR ÁREA SEGURA À DIREITA
+--------------------------------------------------
+
+Quero uma margem de segurança visual entre o toggle e a borda da tela.
+
+Mesmo em iPhone pequeno, o toggle deve:
+- ficar completamente visível
+- não colar na borda
+- não ser cortado
+- respeitar o mesmo alinhamento de todos os itens
+
+--------------------------------------------------
+6. CORRIGIR EM TODA A TELA, NÃO SÓ EM UM ITEM
+--------------------------------------------------
+
+Aplicar essa correção em todos os toggles da tela “Notificações”:
+
+- Reações nos meus ecos
+- Comentários nos meus ecos
+- Respostas aos meus comentários
+- Quando salvarem meu eco
+- Livros em alta
+- Recomendações do app
+- Novidades do Marginalia
+- Notificações dentro do app
+- Notificações por e-mail
+
+Todos devem seguir exatamente o mesmo padrão de alinhamento e largura.
+
+--------------------------------------------------
+7. RESPONSIVIDADE
+--------------------------------------------------
+
+Quero que isso funcione corretamente em telas pequenas de celular.
+
+Testar especialmente:
+- iPhone com largura menor
+- zoom do navegador mobile
+- textos mais longos
+- toggles ligados e desligados
+
+Nada pode sair da tela.
+
+--------------------------------------------------
+8. RESULTADO ESPERADO
+--------------------------------------------------
+
+Depois da correção:
+
+- o toggle deve ficar totalmente dentro da tela
+- com alinhamento elegante à direita
+- sem cortar
+- sem colar na borda
+- sem desalinhamento com o texto
+- com sensação de layout premium e bem resolvido
+
+--------------------------------------------------
+9. IMPORTANTE
+--------------------------------------------------
+
+Não quero ajuste superficial.
+Quero corrigir a estrutura do layout do item de notificação para que esse erro não volte.
+
+Implemente a correção no código.
+Não apenas descreva.

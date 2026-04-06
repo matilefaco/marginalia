@@ -27,7 +27,7 @@ function LinkRow({ label, onPress, external }: LinkRowProps) {
 
 export function AboutScreen() {
   return (
-    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden">
+    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden screen-enter">
       <div className="flex items-center gap-3 px-5 pt-8 pb-4">
         <Link href="/settings">
           <button className="text-[#454545]/40">

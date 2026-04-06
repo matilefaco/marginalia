@@ -31,7 +31,7 @@ export function SettingsScreen() {
   ];
 
   return (
-    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden">
+    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden screen-enter">
       <div className="flex items-center gap-3 px-5 pt-8 pb-4">
         <Link href="/profile">
           <button className="text-[#454545]/40">
@@ -110,10 +110,10 @@ export function SettingsScreen() {
                   key={g}
                   data-testid={`settings-genre-${g}`}
                   onClick={() => toggleGenre(g)}
-                  className={`font-sans text-[10px] font-light px-3 py-1.5 rounded-full border transition-all ${
+                  className={`font-sans text-[10px] font-light px-3 py-1.5 rounded-full border transition-all duration-[180ms] ${
                     isSelected
-                      ? "bg-[#454545] text-[#FAF8F3] border-transparent"
-                      : "bg-transparent text-[#454545]/50 border-[#454545]/12 hover:border-[#AE8F7D]/30"
+                      ? "bg-[#454545] text-[#FAF8F3] border-transparent scale-[1.04]"
+                      : "bg-transparent text-[#454545]/50 border-[#454545]/12 hover:border-[#AE8F7D]/30 scale-100"
                   }`}
                 >
                   {g}

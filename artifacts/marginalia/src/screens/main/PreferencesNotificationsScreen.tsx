@@ -12,8 +12,8 @@ interface ToggleRowProps {
 
 function ToggleRow({ label, description, value, onChange }: ToggleRowProps) {
   return (
-    <div className="flex items-start justify-between py-3.5 border-b border-[#454545]/5 gap-4">
-      <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between py-3.5 border-b border-[#454545]/5 gap-4 w-full max-w-full">
+      <div className="flex-1 min-w-0 pr-3">
         <p className="font-sans font-light text-[13px] text-[#454545]/80 leading-snug">{label}</p>
         {description && (
           <p className="font-sans font-light text-[10px] text-[#454545]/35 mt-0.5 leading-relaxed">{description}</p>
@@ -21,15 +21,16 @@ function ToggleRow({ label, description, value, onChange }: ToggleRowProps) {
       </div>
       <button
         onClick={() => onChange(!value)}
-        className={`relative flex-shrink-0 w-11 h-6 rounded-full transition-colors duration-200 ${
+        className={`relative flex-shrink-0 w-11 h-6 rounded-full transition-colors duration-[220ms] ease-in-out ${
           value ? "bg-[#697962]" : "bg-[#EBE6DB]"
         }`}
         aria-checked={value}
         role="switch"
+        style={{ minWidth: "2.75rem" }}
       >
         <span
-          className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${
-            value ? "translate-x-6" : "translate-x-1"
+          className={`absolute top-[4px] w-[16px] h-[16px] rounded-full bg-white shadow-sm transition-all duration-[220ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            value ? "left-[24px]" : "left-[4px]"
           }`}
         />
       </button>
@@ -64,7 +65,7 @@ export function PreferencesNotificationsScreen() {
     updateNotificationPref(key, v);
 
   return (
-    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden">
+    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden screen-enter">
       <div className="flex items-center gap-3 px-5 pt-8 pb-4">
         <Link href="/settings">
           <button className="text-[#454545]/40">

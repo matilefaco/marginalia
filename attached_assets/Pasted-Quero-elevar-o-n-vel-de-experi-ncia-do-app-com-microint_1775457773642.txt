@@ -1,0 +1,222 @@
+Quero elevar o nível de experiência do app com microinterações elegantes, feedbacks sutis e sensação de fluidez contínua.
+
+O objetivo é fazer o app parecer leve, vivo e refinado, sem exageros.
+
+⸻
+
+1. MICROINTERAÇÕES (ESSENCIAL)
+
+1.1. Botões (todos)
+
+Quero que TODOS os botões tenham feedback ao toque.
+
+Comportamento:
+	•	ao tocar → leve redução de escala
+	•	ao soltar → volta suave
+
+Implementação:
+
+transition: transform 0.12s ease, opacity 0.12s ease;
+
+No toque:
+
+transform: scale(0.96);
+opacity: 0.85;
+
+
+⸻
+
+1.2. Chips (gêneros, filtros, etc)
+
+Quando selecionar:
+	•	leve animação de “ativação”
+	•	mudança de cor suave
+	•	leve expansão (efeito breathing)
+
+transition: all 0.18s ease;
+
+Selecionado:
+	•	background muda suavemente
+	•	borda suaviza
+	•	leve scale 1.03
+
+⸻
+
+1.3. Toggles (notificações, privacidade)
+
+Quero um comportamento mais sofisticado:
+	•	thumb desliza suave
+	•	leve “spring effect” (não rígido)
+	•	cor muda gradualmente (não instantâneo)
+
+⸻
+
+2. TRANSIÇÕES ENTRE TELAS
+
+Problema atual:
+
+Transição meio seca ou travando.
+
+Quero:
+	•	transições suaves tipo iOS
+	•	sensação de continuidade
+
+Comportamento:
+	•	nova tela entra com leve fade + slide
+	•	antiga sai suavemente
+
+transition: all 0.25s ease;
+
+Entrada:
+	•	opacity: 0 → 1
+	•	translateY: 10px → 0
+
+⸻
+
+3. TOQUE EM ECO / MARGEM
+
+Problema:
+
+sensação de travamento ao clicar
+
+Correção:
+
+Adicionar feedback imediato ANTES da navegação
+
+Comportamento:
+	•	ao tocar → eco dá leve “press”
+	•	sombra muda levemente
+	•	depois navega
+
+⸻
+
+4. HOVER/TOUCH VISUAL EM CARDS
+
+Cards (ecos, livros, etc):
+
+Ao tocar:
+	•	leve elevação
+	•	sombra aumenta suavemente
+	•	fundo muda sutilmente
+
+⸻
+
+5. LOADING STATES (MUITO IMPORTANTE)
+
+Hoje o app parece “duro” porque não mostra carregamento elegante.
+
+Quero:
+
+Skeleton loading:
+	•	blocos com shimmer leve
+	•	aparência de papel/textura suave
+
+Ex:
+	•	retângulos suaves onde virão textos
+	•	círculos onde virão avatares
+
+⸻
+
+6. ANIMAÇÃO DE REAÇÃO (EMOJIS)
+
+Quando o usuário reage:
+
+Quero:
+	•	emoji dá um “pop”
+	•	leve escala + fade
+
+transform: scale(1.2 → 1);
+transition: 0.2s ease;
+
+Opcional (premium):
+	•	pequena explosão de partículas MUITO sutil
+
+⸻
+
+7. FEEDBACK DE SALVAMENTO
+
+Quando algo for salvo:
+	•	mostrar micro feedback visual
+	•	sem modal pesado
+
+Exemplo:
+	•	pequeno texto: “Salvo”
+	•	fade in + fade out (1.2s)
+	•	ou leve check animado
+
+⸻
+
+8. SCROLL SUAVE
+
+Quero melhorar a sensação de leitura:
+
+scroll-behavior: smooth;
+
+E evitar travamentos:
+	•	remover re-render desnecessário
+	•	otimizar listas grandes
+
+⸻
+
+9. TIPOGRAFIA VIVA
+
+Texto deve reagir sutilmente:
+	•	títulos → levemente mais espaçados
+	•	citações → leve fade ao entrar na tela
+
+⸻
+
+10. HIERARQUIA VISUAL MAIS SOFISTICADA
+
+Aplicar:
+	•	opacidade para elementos secundários
+	•	contraste suave (nunca agressivo)
+	•	sombras quase imperceptíveis
+
+⸻
+
+11. TEMPO DE ANIMAÇÃO PADRÃO
+
+Padronizar tudo:
+	•	micro interação: 120ms
+	•	transição leve: 180ms
+	•	navegação: 250ms
+
+⸻
+
+12. O QUE NÃO FAZER
+
+Não quero:
+	•	animações exageradas
+	•	coisas chamativas demais
+	•	delays perceptíveis
+	•	nada “gimmick”
+
+Tudo deve parecer:
+👉 natural
+👉 leve
+👉 quase invisível
+
+⸻
+
+13. RESULTADO ESPERADO
+
+O app deve parecer:
+	•	fluido
+	•	responsivo
+	•	sofisticado
+	•	silenciosamente elegante
+
+Tipo:
+👉 Notion + Apple + um toque editorial
+
+⸻
+
+14. PRIORIDADE
+
+Implementar primeiro em:
+	1.	Botões
+	2.	Reações
+	3.	Navegação entre telas
+	4.	Toggles
+	5.	Cards (ecos/livros)

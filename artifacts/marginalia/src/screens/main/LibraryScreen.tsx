@@ -31,7 +31,7 @@ export function LibraryScreen() {
   });
 
   return (
-    <div className="min-h-full bg-[#FAF8F3]">
+    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden screen-enter">
       <div className="px-5 pt-8 pb-4">
         <div className="flex items-center justify-between mb-5">
           <h1 className="font-serif italic text-[26px] text-[#454545]">Biblioteca</h1>

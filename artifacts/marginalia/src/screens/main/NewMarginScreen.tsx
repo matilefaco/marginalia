@@ -80,7 +80,7 @@ export function NewMarginScreen() {
 
   return (
     <div
-      className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col"
+      className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col screen-enter overflow-x-hidden"
       style={{
         backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
         backgroundSize: "5px 5px",
