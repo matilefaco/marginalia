@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Share2, Check, MessageCircle } from "lucide-react";
+import { Share2, Check, MessageCircle, Bookmark, BookmarkCheck } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { canUserSeeMargin, getBlockedReason } from "@/utils/spoiler";
 import { formatReference, marginTypeLabel, timeAgo } from "@/utils/formatting";
@@ -55,13 +55,29 @@ function ShareButton({ margin }: { margin: Margin }) {
   );
 }
 
-function EmojiReactionBar({ margin, onEcoarClick, compact = false }: { margin: Margin; onEcoarClick?: () => void; compact?: boolean }) {
-  const { addReaction } = useApp();
+function SaveButton({ margin }: { margin: Margin }) {
+  const { savedMargins, toggleSaveMargin } = useApp();
+  const isSaved = savedMargins.includes(margin.id);
+  return (
+    <button
+      data-testid={`button-save-margin-${margin.id}`}
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleSaveMargin(margin.id); }}
+      title={isSaved ? "Salvo" : "Salvar eco"}
+      className={`transition-all active:scale-90 ${isSaved ? "text-[#AE8F7D]" : "text-[#454545]/25 hover:text-[#AE8F7D]/60"}`}
+    >
+      {isSaved ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+    </button>
+  );
+}
+
+function EmojiReactionBar({ margin, compact = false }: { margin: Margin; compact?: boolean }) {
+  const { addReaction, userReactions } = useApp();
   const [justReacted, setJustReacted] = useState<string | null>(null);
+  const myEmoji = userReactions[margin.id];
   const reactions = margin.reactions as Record<string, number>;
   const topReactions = Object.entries(reactions)
     .sort(([, a], [, b]) => b - a)
-    .slice(0, compact ? 3 : 6);
+    .slice(0, compact ? 4 : 8);
   const notReacted = EMOJI_REACTIONS.filter((r) => !(r.emoji in reactions));
 
   const handleReact = (e: React.MouseEvent, emoji: string) => {
@@ -74,20 +90,29 @@ function EmojiReactionBar({ margin, onEcoarClick, compact = false }: { margin: M
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      {topReactions.map(([emoji, count]) => (
-        <button
-          key={emoji}
-          data-testid={`chip-reaction-${margin.id}-${emoji}`}
-          onClick={(e) => handleReact(e, emoji)}
-          style={{ transition: "transform 0.15s ease, background 0.15s" }}
-          className={`flex items-center gap-1 text-[14px] leading-none px-2 py-1 rounded-full bg-[#EBE6DB]/70 border border-[#AE8F7D]/12 hover:bg-[#AE8F7D]/10 hover:border-[#AE8F7D]/30 active:scale-90 ${
-            justReacted === emoji ? "scale-125 bg-[#AE8F7D]/15" : "scale-100"
-          }`}
-        >
-          <span>{emoji}</span>
-          <span className="font-sans font-light text-[9px] text-[#454545]/55">{count}</span>
-        </button>
-      ))}
+      {topReactions.map(([emoji, count]) => {
+        const isMine = myEmoji === emoji;
+        return (
+          <button
+            key={emoji}
+            data-testid={`chip-reaction-${margin.id}-${emoji}`}
+            onClick={(e) => handleReact(e, emoji)}
+            style={{ transition: "transform 0.15s ease, background 0.15s" }}
+            className={`flex items-center gap-1 text-[14px] leading-none px-2 py-1 rounded-full border transition-colors active:scale-90 ${
+              justReacted === emoji
+                ? "scale-125 bg-[#AE8F7D]/20 border-[#AE8F7D]/50"
+                : isMine
+                ? "bg-[#AE8F7D]/18 border-[#AE8F7D]/45 shadow-sm"
+                : "bg-[#EBE6DB]/70 border-[#AE8F7D]/12 hover:bg-[#AE8F7D]/10 hover:border-[#AE8F7D]/30"
+            }`}
+          >
+            <span>{emoji}</span>
+            <span className={`font-sans font-light text-[9px] ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/55"}`}>
+              {count}
+            </span>
+          </button>
+        );
+      })}
       {!compact && notReacted.slice(0, 2).map((r) => (
         <button
           key={r.emoji}
@@ -118,7 +143,7 @@ function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarPro
       className="flex items-center gap-1.5 font-sans text-[8.5px] font-light tracking-[0.1em] text-[#454545]/45 hover:text-[#AE8F7D] transition-colors"
     >
       <MessageCircle className="w-3 h-3" />
-      <span>Ecoar</span>
+      <span>Responder</span>
       {margin.commentsCount > 0 && (
         <span className="text-[#454545]/28">· {margin.commentsCount}</span>
       )}
@@ -140,8 +165,9 @@ function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarPro
             <span className="font-sans text-[7px] text-[#AE8F7D]/60" title="Trecho muito ativo">🔥</span>
           )}
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           {ecoarContent}
+          <SaveButton margin={margin} />
           <ShareButton margin={margin} />
         </div>
       </div>

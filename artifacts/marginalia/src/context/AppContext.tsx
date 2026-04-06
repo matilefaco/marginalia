@@ -21,6 +21,8 @@ interface AppState {
   notifications: Notification[];
   onboardingCompleted: boolean;
   onboardingStep: number;
+  userReactions: Record<number, string>;
+  savedMargins: number[];
 }
 
 interface AppActions {
@@ -29,7 +31,8 @@ interface AppActions {
   updateProfile: (data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string; avatarColor?: string; readerType?: string; instagram?: string; tiktok?: string }) => void;
   updateBookProgress: (bookId: number, updates: Partial<BookProgress>) => void;
   addMargin: (margin: Omit<Margin, "id" | "createdAt" | "reactions" | "commentsCount" | "userName" | "userInitials">) => void;
-  addReaction: (marginId: number, reaction: string) => void;
+  addReaction: (marginId: number, emoji: string) => void;
+  toggleSaveMargin: (marginId: number) => void;
   completeOnboarding: () => void;
   setOnboardingStep: (step: number) => void;
   getProgressForBook: (bookId: number) => BookProgress | undefined;
@@ -48,6 +51,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(0);
+  const [userReactions, setUserReactions] = useState<Record<number, string>>({});
+  const [savedMargins, setSavedMargins] = useState<number[]>([]);
 
   const updateSpoilerPreference = (pref: SpoilerPreference) => {
     setCurrentUser((u) => ({ ...u, spoilerPreference: pref }));
@@ -111,14 +116,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const addReaction = (marginId: number, reaction: string) => {
-    setMargins((prev) =>
-      prev.map((m) => {
+  const addReaction = (marginId: number, emoji: string) => {
+    const prevEmoji = userReactions[marginId];
+    if (prevEmoji === emoji) {
+      setUserReactions((prev) => { const next = { ...prev }; delete next[marginId]; return next; });
+      setMargins((prev) => prev.map((m) => {
         if (m.id !== marginId) return m;
-        const reactions = { ...m.reactions };
-        reactions[reaction] = (reactions[reaction] || 0) + 1;
+        const reactions = { ...m.reactions } as Record<string, number>;
+        reactions[emoji] = Math.max(0, (reactions[emoji] || 1) - 1);
+        if (reactions[emoji] === 0) delete reactions[emoji];
         return { ...m, reactions };
-      })
+      }));
+    } else {
+      setUserReactions((prev) => ({ ...prev, [marginId]: emoji }));
+      setMargins((prev) => prev.map((m) => {
+        if (m.id !== marginId) return m;
+        const reactions = { ...m.reactions } as Record<string, number>;
+        if (prevEmoji) {
+          reactions[prevEmoji] = Math.max(0, (reactions[prevEmoji] || 1) - 1);
+          if (reactions[prevEmoji] === 0) delete reactions[prevEmoji];
+        }
+        reactions[emoji] = (reactions[emoji] || 0) + 1;
+        return { ...m, reactions };
+      }));
+    }
+  };
+
+  const toggleSaveMargin = (marginId: number) => {
+    setSavedMargins((prev) =>
+      prev.includes(marginId) ? prev.filter((id) => id !== marginId) : [...prev, marginId]
     );
   };
 
@@ -143,12 +169,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
         notifications,
         onboardingCompleted,
         onboardingStep,
+        userReactions,
+        savedMargins,
         updateSpoilerPreference,
         updatePreferredGenres,
         updateProfile,
         updateBookProgress,
         addMargin,
         addReaction,
+        toggleSaveMargin,
         completeOnboarding,
         setOnboardingStep,
         getProgressForBook,

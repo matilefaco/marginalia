@@ -1,0 +1,295 @@
+Quero corrigir e refinar algumas partes importantes do MARGINALIA. Essas mudanças são obrigatórias e devem ser implementadas com cuidado, porque afetam diretamente a lógica do produto e a experiência do usuário.
+
+IMPORTANTE:
+Não quero soluções aproximadas.
+Quero que essas regras sejam respeitadas exatamente como descritas abaixo.
+
+==================================================
+1. CORRIGIR DEFINITIVAMENTE O CADASTRO / ONBOARDING DE LEITURA
+==================================================
+
+PROBLEMA ATUAL:
+Durante o cadastro / onboarding, o app ainda está pedindo para o usuário definir a PORCENTAGEM de leitura do livro.
+
+ISSO ESTÁ ERRADO.
+
+O usuário NÃO deve informar a porcentagem manualmente.
+
+REGRA CORRETA:
+Quando o usuário estiver configurando “O que você está lendo agora?”, ele deve informar APENAS:
+
+- a página atual
+OU
+- o capítulo atual
+
+A porcentagem deve ser calculada automaticamente pelo app a partir dessas informações.
+
+IMPLEMENTAÇÃO:
+Na tela “O que você está lendo agora?”:
+
+Remover:
+- slider de porcentagem como forma principal de input
+- qualquer campo onde o usuário digite % diretamente
+
+Substituir por:
+
+Para cada livro selecionado, mostrar uma área chamada:
+“Você está em que ponto?”
+
+Opções:
+1. Página atual
+2. Capítulo atual
+
+Exemplo de interface:
+- Página ___ de 144
+- Capítulo ___ de 10
+
+Se o usuário preencher página:
+→ calcular automaticamente a porcentagem com base no total de páginas
+
+Se o usuário preencher capítulo:
+→ calcular automaticamente uma porcentagem aproximada com base no total de capítulos
+
+Exibir abaixo de forma automática:
+“≈ 42% do livro”
+
+IMPORTANTE:
+O cálculo de porcentagem é consequência do dado informado.
+Nunca o contrário.
+
+SE O LIVRO TIVER PÁGINAS E CAPÍTULOS:
+dar preferência para página, mas permitir capítulo também.
+
+SE O LIVRO TIVER SÓ PÁGINAS:
+usar páginas.
+
+SE O LIVRO TIVER SÓ CAPÍTULOS:
+usar capítulos.
+
+Também quero que isso seja aplicado em:
+- cadastro inicial
+- edição de progresso depois
+- página do livro
+- qualquer outro lugar em que o progresso apareça
+
+A lógica deve ser única e consistente em todo o app.
+
+==================================================
+2. MELHORAR TOTALMENTE AS REAÇÕES RÁPIDAS COM EMOJIS
+==================================================
+
+PROBLEMA ATUAL:
+Os emojis atuais não estão tão bons e o usuário consegue reagir várias vezes com o mesmo emoji.
+
+Quero uma experiência melhor.
+
+NOVO SISTEMA:
+Cada leitor pode reagir a um eco de outro leitor com APENAS UMA reação rápida por eco.
+
+Ou seja:
+- um usuário só pode deixar 1 emoji por eco
+- se tocar em outro emoji, substitui a reação anterior
+- não pode somar vários emojis no mesmo eco pela mesma pessoa
+
+EXEMPLO:
+Se eu reagi com 😢 e depois tocar em 🤔:
+→ remove 😢
+→ adiciona 🤔
+
+NOVA CURADORIA DE EMOJIS:
+Quero um conjunto mais emocional, expressivo e intuitivo.
+
+Sugestão de reações:
+- 😢 comoveu / doeu
+- 😡 me irritou / revoltou
+- 🤔 me fez pensar
+- 😮 me pegou de surpresa
+- 🖤 me tocou profundamente
+- ✨ lindo / especial
+- 📌 quero guardar
+- 🔥 muito forte
+
+Se achar melhor, pode manter 6 ou 7 apenas, mas precisam ser bem escolhidos e claramente emocionais.
+
+Quero que os emojis pareçam:
+- vivos
+- intuitivos
+- rápidos de usar
+- emocionalmente claros
+
+Também quero:
+- contagem ao lado de cada emoji
+- destaque visual para a reação que o próprio usuário escolheu
+- animação sutil ao tocar
+
+==================================================
+3. ECOAR ESCREVENDO CONTINUA EXISTINDO
+==================================================
+
+Além da reação rápida com emoji, o usuário também deve poder escrever um eco normalmente.
+
+Ou seja, cada eco/post de outro leitor deve permitir duas formas de interação:
+
+1. reação rápida com 1 emoji
+2. resposta escrita (eco em texto)
+
+Essas duas coisas coexistem.
+
+O usuário pode:
+- reagir com emoji
+- escrever uma resposta
+- ou fazer os dois
+
+==================================================
+4. QUANDO CLICAR NUM ECO, MOSTRAR TODAS AS RESPOSTAS
+==================================================
+
+Quero melhorar muito a visualização dos ecos.
+
+COMPORTAMENTO DESEJADO:
+Quando o leitor clicar em um eco/post de outro usuário, deve abrir a visão detalhada desse eco.
+
+Nessa visão detalhada, além do eco original, devem aparecer:
+
+- todas as respostas já feitas por outros leitores naquele eco
+- em ordem cronológica ou pela mais relevante, desde que seja consistente
+- com avatar, nome e tempo
+- com reações rápidas também, se possível
+
+Ou seja:
+cada eco precisa funcionar como uma pequena thread/conversa.
+
+ESTRUTURA:
+Eco original no topo
+Abaixo:
+“Respostas” / “Ecos” / “Vozes nesse trecho” (escolher o naming mais bonito)
+
+E então listar:
+- resposta 1
+- resposta 2
+- resposta 3
+etc.
+
+Quero que fique claro que existe uma conversa em torno daquele trecho.
+
+==================================================
+5. SISTEMA DE FAVORITAR ECOS DE OUTROS LEITORES
+==================================================
+
+Adicionar um sistema de favoritos.
+
+O usuário deve conseguir favoritar:
+- ecos/posts de outros leitores
+- respostas/ecos que ele achou especiais
+
+IMPLEMENTAÇÃO:
+Adicionar ícone de favorito/salvar em cada eco.
+
+Pode ser:
+- bookmark
+ou
+- estrela
+Mas precisa combinar com o design do app.
+
+COMPORTAMENTO:
+- ao tocar, salva aquele eco
+- feedback visual imediato
+- estado salvo / não salvo
+
+Depois esses ecos favoritados devem aparecer em um lugar próprio dentro do perfil ou biblioteca pessoal do leitor.
+
+Sugestão de nome:
+- Ecos salvos
+- Guardados
+- Margens guardadas
+
+Quero que isso funcione bem porque é uma feature importante.
+
+==================================================
+6. MELHORAR A TELA DETALHADA DO ECO
+==================================================
+
+A tela detalhada do eco deve ficar mais completa.
+
+Ela deve conter:
+- livro
+- referência (capítulo / página)
+- eco original
+- autor do eco
+- reações rápidas
+- contador de reações
+- botão de favoritar
+- campo para responder
+- lista de respostas já feitas
+
+Também quero melhorar o texto do campo de resposta.
+
+Placeholder sugerido:
+- “O que isso te causou?”
+- “Ecoe esse trecho…”
+- “O que isso abriu em você?”
+Escolher o que ficar melhor dentro da identidade do app.
+
+==================================================
+7. MELHORAR A CLAREZA DA INTERAÇÃO
+==================================================
+
+Hoje algumas interações ainda parecem um pouco ambíguas.
+
+Quero deixar muito claro para o usuário:
+
+- ele pode reagir com 1 emoji
+- ele pode responder escrevendo
+- ele pode favoritar
+- ele pode abrir a conversa completa
+
+Então adicionar pequenas pistas visuais / microcopy discretas:
+Exemplo:
+- “Reaja rápido”
+- “Responder”
+- “Salvar eco”
+
+Mas sem poluir o visual.
+
+==================================================
+8. AJUSTES DE UX IMPORTANTES
+==================================================
+
+Também quero que você revise e corrija qualquer ponto em que:
+
+- ainda apareça porcentagem como input manual
+- ainda exista lógica duplicada de progresso
+- ainda não esteja claro como reagir
+- ainda não esteja clara a diferença entre reagir e responder
+
+A regra geral deve ser:
+
+PROGRESSO:
+usuário informa página ou capítulo
+app calcula %
+
+INTERAÇÃO COM ECO:
+usuário reage com 1 emoji máximo
+usuário pode responder em texto
+usuário pode favoritar
+usuário pode abrir a thread completa
+
+==================================================
+9. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessas alterações, o app deve ficar:
+
+- mais intuitivo
+- mais lógico
+- mais emocional
+- mais conversacional
+- mais útil
+
+O usuário deve entender imediatamente:
+- onde ele está no livro
+- como responder ao que outro leitor escreveu
+- como reagir rápido
+- como salvar ecos que gostou
+
+Essas mudanças são prioritárias e devem ser implementadas corretamente, não de forma superficial.

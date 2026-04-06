@@ -24,7 +24,7 @@ function TikTokIcon({ className }: { className?: string }) {
 }
 
 export function ProfileScreen() {
-  const { currentUser, progress, updateProfile } = useApp();
+  const { currentUser, progress, updateProfile, savedMargins, margins } = useApp();
 
   const [editing, setEditing] = useState(false);
   const [editFirstName, setEditFirstName] = useState(currentUser.firstName);
@@ -410,6 +410,28 @@ export function ProfileScreen() {
             </div>
           </section>
         )}
+
+        {/* Guardados — saved ecos */}
+        {savedMargins.length > 0 && (() => {
+          const saved = margins.filter((m) => savedMargins.includes(m.id));
+          return saved.length > 0 ? (
+            <section className="mb-7">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Guardados</span>
+                <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+                <span className="font-sans font-light text-[8px] text-[#454545]/30">{saved.length}</span>
+              </div>
+              <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+                Ecos que te tocaram
+              </p>
+              <div className="space-y-3">
+                {saved.slice(0, 5).map((m) => (
+                  <MarginCard key={m.id} margin={m} showBook linkToThread />
+                ))}
+              </div>
+            </section>
+          ) : null;
+        })()}
 
         {/* My Margins */}
         {myMargins.length > 0 && (

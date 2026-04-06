@@ -70,12 +70,14 @@ export const VISIBILITY_OPTIONS = [
 export type Visibility = "public" | "friends" | "private";
 
 export const EMOJI_REACTIONS = [
-  { emoji: "🖤", label: "me tocou", category: "sensível" },
-  { emoji: "💥", label: "forte", category: "emocional" },
+  { emoji: "😢", label: "comoveu", category: "sensível" },
+  { emoji: "🔥", label: "muito forte", category: "emocional" },
   { emoji: "🤔", label: "me fez pensar", category: "reflexivo" },
-  { emoji: "✨", label: "bonito", category: "sensível" },
+  { emoji: "😮", label: "me pegou de surpresa", category: "emocional" },
+  { emoji: "🖤", label: "me tocou", category: "sensível" },
+  { emoji: "✨", label: "lindo", category: "sensível" },
   { emoji: "📌", label: "quero guardar", category: "memorável" },
-  { emoji: "😵", label: "impacto", category: "emocional" },
+  { emoji: "😡", label: "me revoltou", category: "emocional" },
 ] as const;
 
 export const REACTION_TYPES = EMOJI_REACTIONS.map((r) => r.emoji) as unknown as readonly string[];

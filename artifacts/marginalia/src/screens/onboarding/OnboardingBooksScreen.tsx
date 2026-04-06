@@ -15,9 +15,25 @@ const STATUS_LABELS: Record<Status, string> = {
   wishlist: "Quero ler",
 };
 
+interface Sel {
+  status: Status;
+  page: string;
+  chapter: string;
+}
+
+function calcPercent(sel: Sel, book: (typeof MOCK_BOOKS)[0]): number {
+  if (sel.page && book.totalPages > 0) {
+    return Math.min(100, Math.round((parseInt(sel.page) / book.totalPages) * 100));
+  }
+  if (sel.chapter && book.totalChapters > 0) {
+    return Math.min(100, Math.round((parseInt(sel.chapter) / book.totalChapters) * 100));
+  }
+  return 0;
+}
+
 export function OnboardingBooksScreen({ onComplete }: Props) {
   const { updateBookProgress } = useApp();
-  const [selections, setSelections] = useState<Record<number, { status: Status; percent: number }>>({});
+  const [selections, setSelections] = useState<Record<number, Sel>>({});
   const [search, setSearch] = useState("");
 
   const filtered = MOCK_BOOKS.filter(
@@ -33,11 +49,11 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
         delete next[bookId];
         return next;
       }
-      return { ...prev, [bookId]: { status: "reading", percent: 0 } };
+      return { ...prev, [bookId]: { status: "reading", page: "", chapter: "" } };
     });
   };
 
-  const updateSelection = (bookId: number, update: Partial<{ status: Status; percent: number }>) => {
+  const updateSel = (bookId: number, update: Partial<Sel>) => {
     setSelections((prev) => ({
       ...prev,
       [bookId]: { ...prev[bookId], ...update },
@@ -46,9 +62,14 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
 
   const handleComplete = () => {
     Object.entries(selections).forEach(([bookId, sel]) => {
+      const book = MOCK_BOOKS.find((b) => b.id === parseInt(bookId));
+      const pct = book ? calcPercent(sel, book) : 0;
+      const page = sel.page ? parseInt(sel.page) : 0;
       updateBookProgress(parseInt(bookId), {
         status: sel.status,
-        currentPercent: sel.percent,
+        currentPercent: pct,
+        currentPage: page,
+        currentChapter: sel.chapter,
       });
     });
     onComplete();
@@ -72,7 +93,7 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
           O que você está lendo agora?
         </h2>
         <p className="font-sans font-light text-[11px] text-[#454545]/50">
-          Isso alimenta seu feed e protege seu ritmo.
+          Isso alimenta seu feed e protege seu ritmo de leitura.
         </p>
       </div>
 
@@ -89,6 +110,7 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
         {filtered.map((book) => {
           const sel = selections[book.id];
           const isSelected = !!sel;
+          const pct = isSelected ? calcPercent(sel, book) : 0;
 
           return (
             <div
@@ -110,8 +132,8 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
                   {isSelected && <div className="w-2 h-2 rounded-full bg-[#FAF8F3]" />}
                 </div>
                 <div className="flex-1 text-left">
-                  <div className="font-serif text-[14px] text-[#454545]">{book.title}</div>
-                  <div className="font-sans font-light text-[10px] tracking-[0.06em] uppercase text-[#454545]/40">
+                  <div className="font-serif text-[14px] text-[#2A2A2A]">{book.title}</div>
+                  <div className="font-sans font-light text-[10px] tracking-[0.06em] uppercase text-[#454545]/45">
                     {book.author}
                   </div>
                 </div>
@@ -124,7 +146,7 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
                     {(["reading", "completed", "wishlist"] as Status[]).map((s) => (
                       <button
                         key={s}
-                        onClick={() => updateSelection(book.id, { status: s })}
+                        onClick={() => updateSel(book.id, { status: s })}
                         className={`flex-1 font-sans text-[9px] font-light tracking-[0.1em] py-1.5 rounded-full border transition-all ${
                           sel.status === s
                             ? "bg-[#454545] text-[#FAF8F3] border-transparent"
@@ -135,24 +157,52 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
                       </button>
                     ))}
                   </div>
+
                   {sel.status === "reading" && (
-                    <div>
-                      <div className="flex justify-between mb-1">
-                        <span className="font-sans font-light text-[9px] text-[#454545]/40 tracking-[0.08em] uppercase">
-                          Progresso
-                        </span>
-                        <span className="font-sans font-light text-[9px] text-[#AE8F7D]">
-                          {sel.percent}%
-                        </span>
-                      </div>
-                      <input
-                        type="range"
-                        min={0}
-                        max={100}
-                        value={sel.percent}
-                        onChange={(e) => updateSelection(book.id, { percent: parseInt(e.target.value) })}
-                        className="w-full accent-[#AE8F7D]"
-                      />
+                    <div className="bg-[#EBE6DB]/40 rounded-[10px] p-3 space-y-2.5">
+                      <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D]">
+                        Você está em que ponto?
+                      </p>
+                      {book.totalPages > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="font-sans font-light text-[10px] text-[#454545]/55 w-14 flex-shrink-0">Página</span>
+                          <input
+                            type="number"
+                            min={1}
+                            max={book.totalPages}
+                            value={sel.page}
+                            onChange={(e) => updateSel(book.id, { page: e.target.value, chapter: "" })}
+                            placeholder="—"
+                            className="w-14 font-serif italic text-[14px] text-[#AE8F7D] text-center bg-[#FAF8F3] rounded-[6px] py-1 border border-[#AE8F7D]/15 focus:border-[#AE8F7D]/40 outline-none"
+                          />
+                          <span className="font-sans font-light text-[9px] text-[#454545]/40">de {book.totalPages}</span>
+                        </div>
+                      )}
+                      {book.totalChapters > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="font-sans font-light text-[10px] text-[#454545]/55 w-14 flex-shrink-0">Capítulo</span>
+                          <input
+                            type="number"
+                            min={1}
+                            max={book.totalChapters}
+                            value={sel.chapter}
+                            onChange={(e) => updateSel(book.id, { chapter: e.target.value, page: "" })}
+                            placeholder="—"
+                            className="w-14 font-serif italic text-[14px] text-[#AE8F7D] text-center bg-[#FAF8F3] rounded-[6px] py-1 border border-[#AE8F7D]/15 focus:border-[#AE8F7D]/40 outline-none"
+                          />
+                          <span className="font-sans font-light text-[9px] text-[#454545]/40">de {book.totalChapters}</span>
+                        </div>
+                      )}
+                      {(sel.page || sel.chapter) && pct > 0 && (
+                        <p className="font-sans font-light text-[9px] text-[#697962]">
+                          ≈ {pct}% do livro
+                        </p>
+                      )}
+                      {!sel.page && !sel.chapter && (
+                        <p className="font-sans font-light text-[8px] text-[#454545]/30 italic">
+                          Deixar em branco para começar do início
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
