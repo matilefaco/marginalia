@@ -6,7 +6,8 @@ import { MOCK_BOOKS, MOCK_MARGINS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { BookCover } from "@/components/BookCover";
 import { canUserSeeMargin } from "@/utils/spoiler";
-import { SPOILER_PREFERENCES } from "@/data/constants";
+import { SPOILER_PREFERENCES, EMOJI_REACTIONS, REACTION_CATEGORY_CONFIG } from "@/data/constants";
+import type { EmojiReactionCategory } from "@/data/constants";
 
 const TABS = [
   { id: "ecos", label: "Ecos" },
@@ -43,18 +44,40 @@ const ZONE_INSIGHTS: Record<number, string> = {
   9: "Fechamento — mas alguns nunca largaram",
 };
 
+function getCategory(dominantEmoji: string | null): EmojiReactionCategory | "default" {
+  if (!dominantEmoji) return "default";
+  const r = EMOJI_REACTIONS.find((e) => e.emoji === dominantEmoji);
+  if (!r) return "default";
+  return r.category as EmojiReactionCategory;
+}
+
 function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }) {
   const allMargins = MOCK_MARGINS.filter((m) => m.bookId === bookId && m.percent !== undefined);
+
   const buckets = Array.from({ length: 10 }, (_, i) => {
     const lo = i * 10;
     const hi = lo + 10;
-    const count = allMargins.filter((m) => (m.percent ?? 0) >= lo && (m.percent ?? 0) < hi).length;
-    return { lo, hi, count, zoneIdx: i };
+    const marginsInBucket = allMargins.filter((m) => (m.percent ?? 0) >= lo && (m.percent ?? 0) < hi);
+    const count = marginsInBucket.length;
+
+    const emojiTotals: Record<string, number> = {};
+    marginsInBucket.forEach((m) => {
+      Object.entries(m.reactions as Record<string, number>).forEach(([emoji, cnt]) => {
+        emojiTotals[emoji] = (emojiTotals[emoji] || 0) + cnt;
+      });
+    });
+    const dominant = Object.entries(emojiTotals).sort(([, a], [, b]) => b - a)[0]?.[0] ?? null;
+    const category = getCategory(dominant);
+
+    return { lo, hi, count, zoneIdx: i, dominant, category };
   });
+
   const max = Math.max(...buckets.map((b) => b.count), 1);
   const totalReaders = allMargins.length;
   const peakBucket = buckets.reduce((acc, b) => (b.count > acc.count ? b : acc), buckets[0]);
   const peakPercent = totalReaders > 0 ? Math.round((peakBucket.count / totalReaders) * 100) : 0;
+
+  const categoriesPresent = [...new Set(buckets.filter((b) => b.count > 0 && b.category !== "default").map((b) => b.category))] as EmojiReactionCategory[];
 
   return (
     <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[14px] p-5">
@@ -62,36 +85,37 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
         <p className="font-sans text-[8px] font-light tracking-[0.2em] uppercase text-[#AE8F7D]">
           Ritmo de Leitura Coletivo
         </p>
-        <p className="font-sans font-light text-[8px] text-[#454545]/25">{totalReaders} margens mapeadas</p>
+        <p className="font-sans font-light text-[8px] text-[#454545]/30">{totalReaders} margens</p>
       </div>
-      <p className="font-serif italic text-[11px] text-[#454545]/40 mb-5">
-        Onde os leitores pararam, sentiram, reagiram.
+      <p className="font-serif italic text-[12px] text-[#454545]/50 mb-4">
+        Veja onde os leitores mais sentiram este livro
       </p>
 
-      <div className="flex items-end gap-[3px] h-16 mb-1">
+      <div className="flex items-end gap-[3px] h-20 mb-1">
         {buckets.map((b, i) => {
-          const height = b.count > 0 ? Math.max((b.count / max) * 100, 10) : 5;
+          const height = b.count > 0 ? Math.max((b.count / max) * 100, 10) : 4;
           const isPeak = b.count === max && b.count > 0;
           const isReached = b.lo < userPercent;
           const isCurrent = userPercent >= b.lo && userPercent < b.hi;
           const isSilent = b.count === 0;
-          const barColor = isPeak
-            ? "#AE8F7D"
-            : isSilent
+          const cfg = REACTION_CATEGORY_CONFIG[b.category];
+          const barColor = isSilent
             ? "#EBE6DB"
-            : isReached || isCurrent
-            ? "#BDAB9C"
-            : "#D4CCBF";
+            : isCurrent
+            ? "#697962"
+            : isReached
+            ? cfg.color
+            : `${cfg.color}88`;
 
           return (
             <div key={i} className="flex-1 flex flex-col items-center justify-end" style={{ height: "100%" }}>
-              {isPeak && (
-                <div className="mb-1">
-                  <span className="font-sans text-[6px] text-[#AE8F7D] whitespace-nowrap">✦ pico</span>
+              {isPeak && b.dominant && (
+                <div className="mb-0.5">
+                  <span className="text-[11px] leading-none">{b.dominant}</span>
                 </div>
               )}
-              {isCurrent && (
-                <div className="mb-1">
+              {isCurrent && !isPeak && (
+                <div className="mb-0.5">
                   <span className="font-sans text-[6px] text-[#697962] whitespace-nowrap">você</span>
                 </div>
               )}
@@ -100,43 +124,54 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
                 style={{
                   height: `${height}%`,
                   backgroundColor: barColor,
-                  minHeight: "5px",
-                  opacity: !isReached && !isCurrent ? 0.55 : 1,
+                  minHeight: isSilent ? "3px" : "6px",
                 }}
-                title={`${ZONE_LABELS[i]}: ${b.count} margens`}
+                title={`${ZONE_LABELS[i]}: ${b.count} margens${b.dominant ? ` · ${b.dominant}` : ""}`}
               />
             </div>
           );
         })}
       </div>
+
       <div className="flex justify-between mb-4">
         <span className="font-sans font-light text-[7px] text-[#454545]/25">início</span>
         <span className="font-sans font-light text-[7px] text-[#454545]/25">final</span>
       </div>
 
-      {/* Dynamic insight blocks */}
+      {/* Legend */}
+      {categoriesPresent.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {categoriesPresent.map((cat) => {
+            const cfg = REACTION_CATEGORY_CONFIG[cat];
+            return (
+              <div key={cat} className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg.color }} />
+                <span className="font-sans font-light text-[7.5px] text-[#454545]/50">{cfg.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Insights */}
       <div className="space-y-2">
         {peakBucket.count > 0 && (
-          <div className="bg-[#EBE6DB]/50 rounded-[10px] px-3.5 py-2.5">
-            <p className="font-sans font-light text-[9px] text-[#697962] leading-relaxed">
-              ✦ <strong>{peakPercent}% dos leitores</strong> reagiram entre{" "}
+          <div
+            className="rounded-[10px] px-3.5 py-2.5"
+            style={{ backgroundColor: `${REACTION_CATEGORY_CONFIG[peakBucket.category].color}15` }}
+          >
+            <p className="font-sans font-light text-[9px] text-[#454545]/65 leading-relaxed">
+              {peakBucket.dominant && <span className="mr-1 text-[11px]">{peakBucket.dominant}</span>}
+              <strong>{peakPercent}% dos leitores</strong> sentiram mais forte entre{" "}
               {peakBucket.lo}–{peakBucket.hi}% — {ZONE_INSIGHTS[peakBucket.zoneIdx]}
             </p>
           </div>
         )}
 
         {userPercent < peakBucket.hi && peakBucket.count > 0 && (
-          <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[10px] px-3.5 py-2.5">
+          <div className="bg-[#EBE6DB]/40 border border-[#AE8F7D]/10 rounded-[10px] px-3.5 py-2.5">
             <p className="font-sans font-light text-[9px] text-[#454545]/55 leading-relaxed">
-              Você ainda não chegou aqui — esse é um dos pontos mais marcantes do livro.
-            </p>
-          </div>
-        )}
-
-        {buckets.filter((b) => b.count === 0 && b.lo < 80).length >= 3 && (
-          <div className="rounded-[10px] px-3.5 py-2.5">
-            <p className="font-sans font-light text-[9px] text-[#454545]/40 leading-relaxed italic">
-              Há zonas silenciosas — onde leitores passaram sem parar.
+              Você ainda não chegou aqui — um dos pontos mais marcantes deste livro está pela frente.
             </p>
           </div>
         )}

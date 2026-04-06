@@ -68,7 +68,7 @@ A Portuguese-language literary social network where users annotate book passages
 9. **Thread** (`/thread/:id`) — Margin detail with reactions (8 types), reply input; empty state "O que isso te causou?", placeholder "Escreva seu eco…"
 
 ### Key Components
-- `MarginCard` — Shows margin with book-color tinting. 4 layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. Each has an "Ecoar" CTA button (links to thread), activity badges (🔥 if totalReactions ≥ 6, 🟢 if commentsCount ≥ 5), and ShareButton with "marginalia — leia junto" tagline. OR SpoilerShieldCard if blocked.
+- `MarginCard` — Shows margin with book-color tinting. 4 layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. Each has an `EmojiReactionBar` (🖤💥🤔✨📌😵 with scale animation on tap), "Ecoar" CTA (links to thread), and ShareButton. OR SpoilerShieldCard if blocked.
 - `BookCover` — Reusable colored book cover placeholder using bookColor + italic first-letter initial + paper texture + spine shadow. Sizes: xs/sm/md/lg. Used in LibraryScreen, HomeScreen, BookDetailScreen, ProfileScreen (wishlist), and WishlistSection.
 - `LogoMark` — SVG book logo
 - `Navbar` — 5-item bottom nav with elevated center "+" button for /nova-margem

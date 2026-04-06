@@ -69,23 +69,26 @@ export const VISIBILITY_OPTIONS = [
 
 export type Visibility = "public" | "friends" | "private";
 
-export const REACTION_TYPES = [
-  "Isso mudou minha visão",
-  "Me atravessou",
-  "Belo demais",
-  "Preciso pensar mais nisso",
-  "Me identifiquei profundamente",
-  "Quero reler esse trecho",
-  "Discordo, mas amei ler",
-  "Isso abriu uma teoria",
-  "Isso me quebrou",
-  "Voltei pra reler",
-  "Me deixou desconfortável",
-  "Não entendi",
-  "Isso é genial",
+export const EMOJI_REACTIONS = [
+  { emoji: "🖤", label: "me tocou", category: "sensível" },
+  { emoji: "💥", label: "forte", category: "emocional" },
+  { emoji: "🤔", label: "me fez pensar", category: "reflexivo" },
+  { emoji: "✨", label: "bonito", category: "sensível" },
+  { emoji: "📌", label: "quero guardar", category: "memorável" },
+  { emoji: "😵", label: "impacto", category: "emocional" },
 ] as const;
 
-export type ReactionType = typeof REACTION_TYPES[number];
+export const REACTION_TYPES = EMOJI_REACTIONS.map((r) => r.emoji) as unknown as readonly string[];
+
+export type EmojiReactionCategory = "sensível" | "emocional" | "reflexivo" | "memorável";
+
+export const REACTION_CATEGORY_CONFIG: Record<EmojiReactionCategory | "default", { color: string; label: string }> = {
+  emocional: { color: "#B85450", label: "🔥 Pico emocional" },
+  reflexivo: { color: "#697962", label: "💭 Pico reflexivo" },
+  sensível:  { color: "#AE8F7D", label: "🖤 Pico sensível" },
+  memorável: { color: "#5A5A5A", label: "📌 Pico memorável" },
+  default:   { color: "#BDAB9C", label: "" },
+};
 
 export const READER_ARCHETYPES = [
   {
