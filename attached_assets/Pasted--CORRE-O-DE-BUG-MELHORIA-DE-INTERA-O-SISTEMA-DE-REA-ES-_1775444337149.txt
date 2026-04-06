@@ -1,0 +1,214 @@
+
+
+⸻
+
+CORREÇÃO DE BUG + MELHORIA DE INTERAÇÃO — SISTEMA DE REAÇÕES (EMOJIS)
+
+Quero corrigir um bug e melhorar a experiência ao reagir com emojis nas margens/insights.
+
+⸻
+
+1. BUG: Clique no emoji redireciona para login/apresentação
+
+Problema atual:
+
+Ao clicar em um emoji de reação, o app às vezes redireciona o usuário para a tela inicial de login/cadastro.
+
+Isso NÃO pode acontecer.
+
+⸻
+
+Possíveis causas (verificar e corrigir):
+
+1. Elemento clicável dentro de link/navigation
+	•	O botão de emoji pode estar dentro de:
+	•	<a>
+	•	<Link>
+	•	ou qualquer container com navegação
+
+✔ Solução:
+	•	Garantir que o botão de emoji NÃO esteja dentro de elementos navegáveis
+	•	Se estiver, separar completamente a área clicável
+
+⸻
+
+2. Falta de event.stopPropagation()
+O clique no emoji pode estar “subindo” e acionando o clique do card inteiro (que pode navegar).
+
+✔ Solução obrigatória:
+
+No handler do emoji:
+
+const handleReact = (e, emoji) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  // lógica de reação aqui
+};
+
+
+⸻
+
+3. Botão sendo tratado como submit
+Se estiver dentro de um <form>, pode estar enviando o formulário.
+
+✔ Solução:
+	•	Garantir que o botão tenha:
+
+<button type="button">
+
+
+⸻
+
+4. Problema de autenticação sendo revalidada
+	•	Verificar se a ação de reagir não está disparando:
+	•	refresh de página
+	•	perda de token
+	•	re-render global com fallback para login
+
+✔ Garantir:
+	•	A reação deve ser uma ação local (ou API async), sem reload
+	•	Nunca deve disparar redirecionamento
+
+⸻
+
+Comportamento correto:
+
+Ao clicar em um emoji:
+	•	NÃO navegar
+	•	NÃO recarregar página
+	•	NÃO alterar rota
+	•	Apenas registrar a reação
+
+⸻
+
+2. REGRA DE INTERAÇÃO DAS REAÇÕES
+
+Regras:
+	•	Usuário só pode selecionar 1 emoji por margem
+	•	Se clicar em outro emoji → substitui o anterior
+	•	Se clicar no mesmo emoji novamente → remove reação
+
+⸻
+
+3. ANIMAÇÃO AO CLICAR NO EMOJI
+
+Quero adicionar uma microinteração elegante e discreta.
+
+Objetivo:
+	•	dar feedback imediato
+	•	sensação tátil
+	•	manter estética refinada (nada exagerado)
+
+⸻
+
+1. Animação no clique (tap feedback)
+
+Quando o usuário toca no emoji:
+	•	leve redução de escala
+	•	retorno suave
+
+.emoji-button {
+  transition: transform 0.12s ease;
+}
+
+.emoji-button:active {
+  transform: scale(0.9);
+}
+
+
+⸻
+
+2. Animação ao selecionar (emoji escolhido)
+
+Quando o emoji for selecionado:
+	•	leve aumento (pop)
+	•	depois volta ao normal
+
+.emoji-selected {
+  animation: emojiPop 0.18s ease;
+}
+
+@keyframes emojiPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+
+⸻
+
+3. Feedback visual do selecionado
+
+O emoji ativo deve:
+	•	ficar levemente destacado
+	•	mais opaco ou com fundo suave
+
+Exemplo:
+
+.emoji-active {
+  background: rgba(0,0,0,0.05);
+  border-radius: 12px;
+}
+
+
+⸻
+
+4. Atualização do contador
+
+Quando o número de reações mudar:
+	•	fazer um leve fade/scale no número
+
+.count-update {
+  animation: countPulse 0.2s ease;
+}
+
+@keyframes countPulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+
+⸻
+
+4. TRANSIÇÃO SUAVE (OPCIONAL, MAS RECOMENDADO)
+
+Se quiser elevar ainda mais:
+
+Quando o usuário reage:
+	•	pode subir um micro “feedback invisível”
+	•	tipo:
+	•	leve brilho
+	•	ou leve highlight no card
+
+Mas bem sutil — nada chamativo.
+
+⸻
+
+5. IMPLEMENTAÇÃO (RESUMO)
+
+Corrigir:
+	•	impedir propagação do clique (stopPropagation)
+	•	impedir comportamento padrão (preventDefault)
+	•	garantir botão com type="button"
+	•	remover qualquer navegação acidental
+
+Adicionar:
+	•	animação de toque (scale down)
+	•	animação de seleção (pop)
+	•	estado visual ativo
+	•	micro animação no contador
+
+⸻
+
+6. RESULTADO ESPERADO
+
+Após essas mudanças:
+	•	clicar no emoji NÃO quebra a navegação
+	•	experiência fica fluida
+	•	interação parece viva e elegante
+	•	feedback instantâneo para o usuário
+	•	app ganha sensação premium
+
+⸻

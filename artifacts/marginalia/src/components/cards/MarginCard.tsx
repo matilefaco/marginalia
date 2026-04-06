@@ -97,21 +97,34 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
     };
   }, [pickerOpen]);
 
-  const selectEmoji = (emoji: string, e: React.MouseEvent) => {
+  const pop = (emoji: string) => {
+    setJustPopped(emoji);
+    setTimeout(() => setJustPopped(null), 400);
+  };
+
+  const selectEmoji = (emoji: string, e: React.MouseEvent | React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addReaction(margin.id, emoji);
-    setJustPopped(emoji);
-    setTimeout(() => setJustPopped(null), 500);
+    pop(emoji);
     setPickerOpen(false);
   };
 
+  const handleChipClick = (emoji: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addReaction(margin.id, emoji);
+    pop(emoji);
+  };
+
   const startPress = (e: React.PointerEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     timerRef.current = setTimeout(() => setPickerOpen(true), 380);
   };
 
   const endPress = (e: React.PointerEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -119,12 +132,10 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
       if (!pickerOpen) {
         if (myEmoji) {
           addReaction(margin.id, myEmoji);
-          setJustPopped(myEmoji);
-          setTimeout(() => setJustPopped(null), 500);
+          pop(myEmoji);
         } else if (lastUsedReaction) {
           addReaction(margin.id, lastUsedReaction);
-          setJustPopped(lastUsedReaction);
-          setTimeout(() => setJustPopped(null), 500);
+          pop(lastUsedReaction);
         } else {
           setPickerOpen(true);
         }
@@ -132,30 +143,31 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
     }
   };
 
-  const cancelPress = () => {
+  const cancelPress = (e: React.PointerEvent) => {
+    e.stopPropagation();
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
   };
 
   return (
-    <div className="flex items-center gap-1.5 flex-wrap">
-      <div
-        ref={containerRef}
-        className="relative flex-shrink-0"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <div
+      className="flex items-center gap-1.5 flex-wrap"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div ref={containerRef} className="relative flex-shrink-0">
         {pickerOpen && (
           <div
             className="absolute bottom-full left-0 mb-2 bg-[#2A2A2A] rounded-[20px] px-3 py-2.5 flex gap-2.5 shadow-2xl z-50"
             style={{ animation: "fadeScaleUp 0.15s ease" }}
+            onClick={(e) => e.stopPropagation()}
           >
             {EMOJI_REACTIONS.map((r) => (
               <button
+                type="button"
                 key={r.emoji}
-                onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => selectEmoji(r.emoji, e)}
-                className={`text-[22px] leading-none transition-transform hover:scale-125 active:scale-110 ${
+                className={`text-[22px] leading-none transition-transform hover:scale-125 active:scale-95 ${
                   r.emoji === myEmoji ? "scale-125 drop-shadow-sm" : ""
-                }`}
+                } ${justPopped === r.emoji ? "emoji-pop" : ""}`}
                 title={r.label}
               >
                 {r.emoji}
@@ -164,15 +176,17 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
           </div>
         )}
         <button
+          type="button"
           onPointerDown={startPress}
           onPointerUp={endPress}
           onPointerLeave={cancelPress}
           onPointerCancel={cancelPress}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
           style={{ userSelect: "none", WebkitUserSelect: "none", touchAction: "none" }}
           data-testid={`button-react-${margin.id}`}
           className={`text-[14px] leading-none px-2 py-1 rounded-full border transition-all select-none ${
             justPopped
-              ? "scale-125"
+              ? "emoji-pop"
               : myEmoji
               ? "bg-[#AE8F7D]/12 border-[#AE8F7D]/35"
               : "border-dashed border-[#454545]/15 hover:border-[#AE8F7D]/30 text-[#454545]/35"
@@ -192,19 +206,26 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
       {top3.map(([emoji, count]) => {
         const isMine = myEmoji === emoji;
         return (
-          <span
+          <button
+            type="button"
             key={emoji}
-            className={`flex items-center gap-0.5 text-[13px] leading-none px-2 py-1 rounded-full border ${
+            onClick={(e) => handleChipClick(emoji, e)}
+            className={`flex items-center gap-0.5 text-[13px] leading-none px-2 py-1 rounded-full border transition-all active:scale-95 ${
+              justPopped === emoji ? "emoji-pop" : ""
+            } ${
               isMine
                 ? "bg-[#AE8F7D]/18 border-[#AE8F7D]/40"
-                : "bg-[#EBE6DB]/70 border-[#AE8F7D]/10"
+                : "bg-[#EBE6DB]/70 border-[#AE8F7D]/10 hover:border-[#AE8F7D]/25"
             }`}
           >
             {emoji}
-            <span className={`font-sans font-light text-[8px] ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/55"}`}>
+            <span
+              key={count}
+              className={`font-sans font-light text-[8px] count-pulse ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/55"}`}
+            >
               {count}
             </span>
-          </span>
+          </button>
         );
       })}
       {extraCount > 0 && (
