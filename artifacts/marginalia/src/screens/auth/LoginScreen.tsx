@@ -10,21 +10,21 @@ interface Props {
 
 export function LoginScreen({ onLogin, onBack }: Props) {
   const { signIn } = useAuth();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const valid = email.trim() && password.trim().length >= 6;
+  const valid = identifier.trim().length >= 3 && password.trim().length >= 6;
 
   const handleLogin = async () => {
     if (!valid || loading) return;
     setLoading(true);
     setError("");
-    const { error } = await signIn(email.trim(), password);
+    const { error } = await signIn(identifier.trim(), password);
     setLoading(false);
     if (error) {
-      setError("E-mail ou senha incorretos. Tente novamente.");
+      setError(error);
       return;
     }
     onLogin();
@@ -55,14 +55,16 @@ export function LoginScreen({ onLogin, onBack }: Props) {
       <div className="space-y-6 mb-8">
         <div>
           <label className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] block mb-2">
-            E-mail
+            E-mail ou nome de usuário
           </label>
           <input
             data-testid="input-login-email"
-            type="email"
-            value={email}
-            onChange={(e) => { setEmail(e.target.value); setError(""); }}
-            placeholder="seu@email.com"
+            type="text"
+            autoCapitalize="none"
+            autoCorrect="off"
+            value={identifier}
+            onChange={(e) => { setIdentifier(e.target.value); setError(""); }}
+            placeholder="seu@email.com ou @usuario"
             className="w-full font-serif italic text-[16px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent border-b border-[#454545]/15 pb-2.5 outline-none focus:border-[#AE8F7D]/60 transition-colors"
             onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           />
@@ -86,7 +88,9 @@ export function LoginScreen({ onLogin, onBack }: Props) {
       </div>
 
       {error && (
-        <p className="font-sans text-[11px] text-red-400 mb-4 text-center">{error}</p>
+        <p className="font-sans text-[11px] text-red-400 mb-4 text-center leading-snug px-2">
+          {error}
+        </p>
       )}
 
       <button

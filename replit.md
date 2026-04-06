@@ -52,10 +52,12 @@ A Portuguese-language literary social network where users annotate book passages
 
 ### Auth Flow
 - **Routing**: Checks Supabase session → if authenticated, go to MainApp; if not, show OnboardingFlow
-- **SignUp**: Creates Supabase Auth user, upserts `public.profiles` with username/full_name/bio/avatar_color. Supabase trigger creates the profile row.
-- **Login**: `signInWithPassword` — supports email
+- **SignUp**: Creates Supabase Auth user, upserts `public.profiles` with username/full_name/bio/avatar_color/email. Saves `mg_username_email_${username}` and `mg_avatar_color_${uid}` to localStorage as fallbacks.
+- **Login**: Accepts **e-mail OR @username** — if username detected (no `@domain.tld`), queries `profiles.email` to find the real email, then signs in normally. Falls back to localStorage mapping `mg_username_email_${username}`.
 - **Logout**: Button in Settings → calls `supabase.auth.signOut()` → redirects to welcome
-- **Profile edit**: Saves to `public.profiles` via `useAuth().updateProfile()`. AppContext derives `currentUser` from the profile automatically.
+- **Profile edit**: `updateProfile` → `upsertProfileSafe()` which retries without unknown columns (PGRST204 error) and saves `avatar_color`/`email` to localStorage as fallback. Confirms save by re-fetching from DB.
+- **avatar_color resilience**: Always saved to `mg_avatar_color_${uid}` in localStorage. `loadProfile` merges localStorage fallback if DB column doesn't exist yet. Run `supabase/profiles_migration.sql` to add the column permanently.
+- **Migration**: `artifacts/marginalia/supabase/profiles_migration.sql` — run in Supabase SQL Editor to add all profile columns + RLS policies. Includes `NOTIFY pgrst, 'reload schema'` to refresh schema cache.
 
 ### Onboarding Flow (new users only)
 1. Splash screen (2.2s)

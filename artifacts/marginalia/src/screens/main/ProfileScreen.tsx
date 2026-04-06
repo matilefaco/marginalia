@@ -72,6 +72,8 @@ export function ProfileScreen() {
   const leituraCount = myBooks.filter((p) => p.status === "reading").length;
   const lidosCount = myBooks.filter((p) => p.status === "completed" || p.status === "finished" as string).length;
   const reacoesRecebidas = myMargins.reduce((sum, m) => sum + Object.values(m.reactions as Record<string, number>).reduce((a, b) => a + b, 0), 0);
+  // Reactions GIVEN by the user (unique margins they reacted to)
+  const reacoesFeitas = Object.keys(userReactions).length;
 
   const dominantEmojiEntry = (() => {
     const counts: Record<string, number> = {};
@@ -448,8 +450,8 @@ export function ProfileScreen() {
             {[
               { label: "Lendo", value: leituraCount, icon: "📖" },
               { label: "Lidos", value: lidosCount, icon: "📚" },
-              { label: "Margens", value: currentUser.stats.totalMargins, icon: "✍" },
-              { label: "Reações", value: reacoesRecebidas, icon: "🔥" },
+              { label: "Margens", value: myMargins.length, icon: "✍" },
+              { label: "Reações", value: reacoesFeitas, icon: "🔥" },
             ].map((stat) => (
               <div key={stat.label} data-testid={`stat-${stat.label.toLowerCase()}`} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] py-3 text-center">
                 <div className="text-[13px] mb-0.5">{stat.icon}</div>
@@ -461,12 +463,30 @@ export function ProfileScreen() {
 
           {/* Behavioral stats */}
           <div className="border border-[#AE8F7D]/15 rounded-[14px] divide-y divide-[#AE8F7D]/8">
-            {dominantEmojiEntry && (
+            {/* Reactions received on user's margins */}
+            {reacoesRecebidas > 0 && (
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className="text-[15px] flex-shrink-0">✨</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Ecos recebidos nas suas margens</p>
+                  <p className="font-serif italic text-[13px] text-[#3D3D3D]">{reacoesRecebidas} {reacoesRecebidas === 1 ? "reação" : "reações"}</p>
+                </div>
+              </div>
+            )}
+            {dominantEmojiEntry ? (
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">{dominantEmojiEntry.emoji}</span>
                 <div className="flex-1 min-w-0">
                   <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Reação mais usada</p>
                   <p className="font-serif italic text-[13px] text-[#3D3D3D] capitalize">{dominantEmojiEntry.label}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className="text-[15px] flex-shrink-0 opacity-30">🤍</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Reação mais usada</p>
+                  <p className="font-serif italic text-[12px] text-[#454545]/30">Reaja a ecos para aparecer aqui</p>
                 </div>
               </div>
             )}
@@ -503,7 +523,7 @@ export function ProfileScreen() {
                 </div>
               </div>
             )}
-            {!dominantEmojiEntry && !dominantMarginType && !topAnnotatedBook && (
+            {!dominantMarginType && !topAnnotatedBook && reacoesRecebidas === 0 && reacoesFeitas === 0 && !dominantEmojiEntry && (
               <div className="px-4 py-4 text-center">
                 <p className="font-serif italic text-[13px] text-[#454545]/35">As estatísticas aparecem conforme você lê e reage</p>
               </div>

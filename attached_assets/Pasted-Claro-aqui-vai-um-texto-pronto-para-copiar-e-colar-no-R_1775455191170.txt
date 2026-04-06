@@ -1,0 +1,185 @@
+Claro — aqui vai um texto pronto para copiar e colar no Replit, bem claro e direto:
+
+⸻
+
+Quero corrigir alguns erros importantes e implementar melhorias no sistema de login, perfil e estatísticas do usuário.
+
+1. Corrigir erro ao salvar a cor da bolinha/avatar
+
+Atualmente, quando tento mudar a cor da bolinha/avatar no perfil, aparece este erro:
+
+“Could not find the ‘avatar_color’ column of ‘profiles’ in the schema cache”
+
+Isso significa que o app está tentando salvar um campo avatar_color, mas essa coluna não está disponível corretamente no banco ou não está sendo reconhecida pelo Supabase.
+
+O que precisa ser feito:
+	•	verificar se a coluna avatar_color realmente existe na tabela profiles
+	•	se não existir, criar essa coluna no banco
+	•	se o nome estiver diferente no código, padronizar tudo para usar exatamente avatar_color
+	•	garantir que o frontend envie esse campo corretamente ao salvar o perfil
+	•	garantir que o perfil leia esse campo corretamente ao carregar os dados
+	•	garantir que a cor escolhida apareça no avatar/bolinha do usuário no perfil próprio e no perfil público
+	•	garantir que, após salvar, a cor continue persistida mesmo depois de logout/login, refresh ou troca de tela
+
+Comportamento esperado:
+	•	usuário escolhe a cor da bolinha
+	•	clica em salvar
+	•	a cor é salva normalmente no Supabase
+	•	ao voltar para o perfil, a cor continua lá
+	•	ao abrir o perfil público, a mesma cor aparece
+
+⸻
+
+2. Permitir login com e-mail ou nome de usuário
+
+Hoje o login parece estar aceitando apenas e-mail. Quero adicionar a opção de entrar com:
+	•	e-mail ou
+	•	nome de usuário (username)
+
+Comportamento desejado:
+
+O campo de login deve aceitar ambos:
+	•	se o usuário digitar um e-mail, fazer login com e-mail
+	•	se o usuário digitar um nome de usuário, o sistema deve encontrar o e-mail correspondente daquele username e então fazer o login normalmente
+
+Fluxo esperado:
+	1.	usuário digita no campo de identificação:
+	•	e-mail ou username
+	2.	se for username:
+	•	buscar na tabela profiles o usuário correspondente
+	•	encontrar o e-mail relacionado à conta
+	•	autenticar usando esse e-mail
+	3.	se for e-mail:
+	•	autenticar normalmente
+
+O que implementar:
+	•	renomear visualmente o campo de login para algo como:
+	•	“E-mail ou nome de usuário”
+	•	criar lógica para detectar se o valor digitado é e-mail ou username
+	•	se for username:
+	•	fazer lookup seguro para encontrar o e-mail correspondente
+	•	então continuar com o login
+	•	manter a experiência simples para o usuário
+
+Importante:
+	•	o username continua sendo único
+	•	o login por username deve funcionar sem quebrar o login por e-mail
+	•	tratar mensagens de erro com clareza
+
+⸻
+
+3. Corrigir estatísticas de reações do usuário
+
+Percebi que o app não está contabilizando corretamente as reações feitas pelo usuário.
+
+Exemplo:
+	•	eu reagi com emoji de choro em um eco
+	•	mas isso não apareceu corretamente nas minhas estatísticas
+
+Isso precisa ser corrigido.
+
+O que quero:
+
+As estatísticas do perfil devem refletir corretamente as ações reais do usuário.
+
+Regras:
+	•	quando o usuário reage a um eco, isso precisa ser salvo corretamente
+	•	essa reação precisa atualizar as estatísticas do usuário
+	•	quando o usuário remove a reação, as estatísticas também precisam ser atualizadas
+	•	quando o usuário troca um emoji por outro, os dados também precisam ser recalculados corretamente
+
+O que revisar:
+	•	garantir que a tabela de reações está salvando corretamente o user_id, eco_id e emoji_code
+	•	revisar a lógica que calcula:
+	•	total de reações feitas pelo usuário
+	•	reação mais usada
+	•	verificar se as estatísticas estão sendo buscadas do banco corretamente
+	•	verificar se o frontend está mostrando dados reais atualizados, e não dados estáticos ou desatualizados
+
+Também quero diferenciar claramente:
+	•	reações feitas pelo usuário
+	•	reações recebidas nos ecos do usuário
+
+Se já existir uma área de estatísticas, quero que isso fique consistente.
+
+⸻
+
+4. Atualizar corretamente a “reação mais usada”
+
+Hoje aparece uma reação mais usada no perfil, mas isso precisa ser baseado em uso real.
+
+Quero que:
+	•	a reação mais usada seja calculada com base nas reações reais do usuário
+	•	se o usuário ainda não tiver reagido a nada, mostrar estado vazio elegante
+	•	se o usuário reagir várias vezes com um emoji, esse emoji passe a ser o mais usado corretamente
+	•	se o usuário mudar o padrão de uso, essa informação também seja atualizada
+
+⸻
+
+5. Persistência total dos dados do usuário
+
+Esses pontos todos precisam seguir esta regra geral:
+
+Regra principal:
+
+Nunca deixar o usuário salvar, registrar ou fazer alguma ação e o app esquecer depois.
+
+Isso vale para:
+	•	cor da bolinha/avatar
+	•	bio
+	•	Instagram/TikTok
+	•	progresso
+	•	reações
+	•	estatísticas
+	•	preferências
+	•	perfil em geral
+
+O comportamento correto deve ser:
+	•	usuário faz uma alteração
+	•	app salva no Supabase
+	•	app refaz o fetch dos dados
+	•	UI atualiza imediatamente
+	•	ao sair e entrar novamente, tudo continua igual
+
+⸻
+
+6. O que revisar tecnicamente
+
+Perfil
+	•	corrigir o campo avatar_color no banco e no frontend
+	•	garantir update correto em profiles
+	•	garantir refetch do profile após salvar
+
+Login
+	•	adaptar fluxo de autenticação para aceitar e-mail ou username
+	•	buscar e-mail por username antes do sign in quando necessário
+
+Reações e estatísticas
+	•	garantir persistência correta das reações
+	•	recalcular estatísticas após cada reação
+	•	atualizar a seção de estatísticas do perfil com dados reais
+	•	corrigir reação mais usada
+	•	garantir que logout/login não resete essas informações
+
+⸻
+
+7. Resultado final esperado
+
+Depois dessas mudanças, quero que:
+	•	a cor da bolinha/avatar salve normalmente sem erro
+	•	o campo avatar_color funcione corretamente
+	•	o usuário consiga entrar com e-mail ou nome de usuário
+	•	as reações feitas pelo usuário sejam contabilizadas corretamente
+	•	a reação mais usada reflita uso real
+	•	as estatísticas do perfil fiquem corretas
+	•	nenhuma preferência ou interação se perca
+
+8. Prioridade
+
+Prioridade máxima para:
+	1.	corrigir erro do avatar_color
+	2.	permitir login com e-mail ou username
+	3.	corrigir contagem das reações nas estatísticas
+	4.	garantir persistência real de tudo isso no Supabase
+
+Implemente essas mudanças no código, não apenas descreva.
