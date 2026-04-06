@@ -1,0 +1,330 @@
+
+
+ATUALIZAÇÕES — GÊNEROS + BUG DE REAÇÃO + USERNAME — MARGINALIA
+
+Quero implementar melhorias na exploração por gêneros e corrigir um bug importante no sistema de reações, além de padronizar a exibição de usuários.
+
+⸻
+
+1. EXPLORAÇÃO POR GÊNERO (MELHORIA DE UX + NOVA FUNCIONALIDADE)
+
+Objetivo:
+
+Permitir que o usuário explore livros por gênero de forma ativa, fluida e organizada.
+
+⸻
+
+1.1. Adicionar filtro ao lado de “Gêneros em alta”
+
+Na seção “Gêneros em alta”, adicionar ao lado direito:
+	•	botão ou seletor:
+→ “Explorar por gênero”
+ou
+→ dropdown / filtro clicável
+
+⸻
+
+1.2. Comportamento ao clicar:
+
+Ao clicar no filtro:
+
+Abrir uma nova interface (modal ou página dedicada) contendo:
+
+Parte 1 — Lista de gêneros:
+	•	Literatura brasileira
+	•	Romance literário
+	•	Clássicos
+	•	Filosofia
+	•	Poesia
+	•	etc.
+
+Pode ser:
+	•	lista vertical
+	•	ou chips horizontais scrolláveis
+
+⸻
+
+1.3. Seleção de gênero
+
+Quando o usuário seleciona um gênero:
+
+→ carregar lista de livros daquele gênero
+
+⸻
+
+1.4. Listagem de livros (PAGINAÇÃO)
+
+A listagem deve:
+	•	carregar 10 livros por vez
+	•	usar paginação (ou infinite scroll)
+	•	permitir navegação por páginas
+
+⸻
+
+Estrutura:
+
+Página 1:
+	•	livros 1–10
+
+Página 2:
+	•	livros 11–20
+
+etc.
+
+⸻
+
+UX:
+	•	botão “Carregar mais”
+ou
+	•	scroll infinito suave
+
+⸻
+
+1.5. Layout dos livros
+
+Cada item deve conter:
+	•	capa
+	•	título
+	•	autor
+	•	número de margens
+	•	número de leitores
+
+⸻
+
+1.6. Harmonia visual (importante)
+	•	manter o estilo editorial do app
+	•	espaçamento leve
+	•	cards com bordas suaves
+	•	sem parecer “lista genérica”
+
+⸻
+
+1.7. Estado ativo
+
+Quando um gênero estiver selecionado:
+	•	destacar o gênero
+	•	manter contexto visível
+	•	permitir trocar rapidamente
+
+⸻
+
+⸻
+
+2. BUG CRÍTICO — REAÇÕES (EMOJIS)
+
+Problema atual:
+
+Quando o usuário reage com um emoji em uma margem/eco:
+
+→ TODOS os outros ecos ficam com o mesmo emoji selecionado
+
+Isso indica que o estado está sendo compartilhado globalmente, e não por item.
+
+⸻
+
+2.1. Causa provável:
+	•	estado de reação sendo armazenado de forma global
+	•	não está sendo indexado por margin_id
+	•	todos os componentes estão lendo o mesmo estado
+
+⸻
+
+2.2. Correção obrigatória:
+
+Cada margem deve ter seu próprio estado de reação.
+
+⸻
+
+Estrutura correta:
+
+const [reactions, setReactions] = useState({
+  // marginId: emoji
+});
+
+
+⸻
+
+Ao reagir:
+
+const handleReact = (e, marginId, emoji) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  setReactions(prev => ({
+    ...prev,
+    [marginId]: prev[marginId] === emoji ? null : emoji
+  }));
+};
+
+
+⸻
+
+Renderização:
+
+Cada margem deve verificar apenas sua própria reação:
+
+const selectedEmoji = reactions[margin.id];
+
+
+⸻
+
+2.3. Backend (se estiver usando)
+
+A tabela já deve garantir:
+	•	1 reação por usuário por margem
+
+UNIQUE(margin_id, user_id)
+
+Se trocar emoji:
+→ fazer UPDATE
+Se clicar no mesmo:
+→ DELETE
+
+⸻
+
+2.4. Resultado esperado:
+	•	reagir em um eco NÃO afeta outros ecos
+	•	cada card funciona isoladamente
+	•	estado correto por margem
+
+⸻
+
+⸻
+
+3. USERNAME VISÍVEL (IDENTIDADE DO USUÁRIO)
+
+Objetivo:
+
+Reforçar identidade social e consistência.
+
+⸻
+
+3.1. Regra:
+
+Cada usuário deve ter um:
+
+→ username único (ex: @anaclara)
+
+⸻
+
+3.2. Banco de dados
+
+Garantir:
+
+username VARCHAR(50) UNIQUE NOT NULL
+
+
+⸻
+
+3.3. Exibição nos ecos / comentários
+
+Atualmente aparece apenas:
+
+→ Nome (ex: Ana Clara)
+
+⸻
+
+Novo padrão:
+
+Exibir:
+
+→ Nome + @username
+
+Exemplo:
+
+Ana Clara  @anaclara
+
+ou
+
+Ana Clara · @anaclara
+
+
+⸻
+
+3.4. Onde aplicar:
+	•	ecos (margens)
+	•	comentários
+	•	replies
+	•	listas de usuários
+	•	perfil público
+
+⸻
+
+3.5. UX:
+	•	username com opacidade menor que o nome
+	•	manter estética elegante
+	•	não poluir visual
+
+⸻
+
+⸻
+
+4. MELHORIAS EXTRAS RECOMENDADAS (OPCIONAL MAS IMPORTANTE)
+
+⸻
+
+4.1. Clique no usuário
+
+Permitir:
+	•	clicar no nome ou avatar
+→ abrir perfil do usuário
+
+⸻
+
+4.2. Feedback ao trocar gênero
+	•	fade leve
+	•	sem reload
+	•	manter fluidez
+
+⸻
+
+4.3. Persistência do filtro
+
+Se o usuário escolher um gênero:
+	•	manter selecionado ao navegar
+	•	evitar reset brusco
+
+⸻
+
+4.4. Performance
+	•	lazy loading de livros
+	•	evitar carregar tudo de uma vez
+
+⸻
+
+⸻
+
+5. RESUMO EXECUTIVO
+
+Implementar:
+
+✔ Filtro de gêneros ao lado de “Gêneros em alta”
+✔ Tela/lista de livros por gênero
+✔ Paginação de 10 em 10 livros
+
+⸻
+
+Corrigir:
+
+🚨 Bug onde reagir em um eco afeta todos os outros
+→ estado deve ser por margin_id
+
+⸻
+
+Melhorar:
+
+✔ Exibir @username junto do nome
+✔ Garantir username único
+✔ Aplicar em toda a interface social
+
+⸻
+
+DIREÇÃO FINAL
+
+Essas mudanças resolvem:
+	•	bug crítico de interação
+	•	reforçam identidade social
+	•	melhoram descoberta de livros
+	•	deixam o app mais próximo de uma rede social real
+
+⸻

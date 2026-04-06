@@ -1,0 +1,588 @@
+
+
+⸻
+
+ESTRUTURA DE BANCO DE DADOS — PERFIS + GÊNEROS — MARGINALIA
+
+Quero organizar o banco de dados para suportar:
+	1.	Perfil público dos usuários
+	2.	Edição e salvamento de Instagram e TikTok
+	3.	Visualização do perfil público de outros leitores
+	4.	Estatísticas de leitura no perfil
+	5.	Cadastro de gêneros
+	6.	Associação de livros com gêneros
+	7.	Exploração e filtro de livros por gênero
+	8.	Gêneros em alta e gêneros completos
+
+⸻
+
+1. TABELA PRINCIPAL DE USUÁRIOS
+
+users
+
+Essa tabela armazena os dados principais de autenticação e identidade básica.
+
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  first_name VARCHAR(100),
+  last_name VARCHAR(100),
+  avatar_url TEXT,
+  bio TEXT,
+  city VARCHAR(120),
+
+  instagram_handle VARCHAR(100),
+  tiktok_handle VARCHAR(100),
+
+  is_profile_public BOOLEAN DEFAULT TRUE,
+  show_social_links BOOLEAN DEFAULT TRUE,
+
+  reader_type_title VARCHAR(120),
+  reader_type_description TEXT,
+  reading_signature TEXT,
+
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+
+⸻
+
+2. REGRAS DE PERFIL PÚBLICO
+
+Campos públicos do perfil
+
+Quando outro usuário abrir um perfil, mostrar apenas os campos públicos:
+	•	username
+	•	first_name
+	•	last_name
+	•	avatar_url
+	•	bio
+	•	city
+	•	instagram_handle se show_social_links = true
+	•	tiktok_handle se show_social_links = true
+	•	reader_type_title
+	•	reader_type_description
+	•	reading_signature
+
+Exemplo:
+
+Se o usuário preencher Instagram e TikTok e salvar, essas informações devem ficar registradas no banco e aparecer para os outros usuários no perfil público.
+
+⸻
+
+3. PERFIL EDITÁVEL PELO PRÓPRIO USUÁRIO
+
+Quando o leitor editar o perfil:
+	•	nome
+	•	sobrenome
+	•	@username
+	•	bio
+	•	cidade
+	•	Instagram
+	•	TikTok
+	•	tipo de leitor
+	•	assinatura de leitura
+
+o sistema deve atualizar a tabela users.
+
+Fluxo esperado:
+	•	usuário altera os campos
+	•	botão “Salvar” aparece
+	•	ao clicar em salvar:
+	•	faz UPDATE na tabela users
+	•	atualiza updated_at
+	•	retorna os dados atualizados
+	•	exibe feedback visual de sucesso
+
+⸻
+
+4. TABELA DE LIVROS
+
+books
+
+Tabela principal de livros.
+
+CREATE TABLE books (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title VARCHAR(255) NOT NULL,
+  author VARCHAR(255),
+  cover_url TEXT,
+  description TEXT,
+  publisher VARCHAR(255),
+  publication_year INT,
+  total_pages INT,
+  language VARCHAR(50),
+
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+
+⸻
+
+5. TABELA DE GÊNEROS
+
+genres
+
+Tabela com todos os gêneros disponíveis no app.
+
+CREATE TABLE genres (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug VARCHAR(100) UNIQUE NOT NULL,
+  name VARCHAR(120) UNIQUE NOT NULL,
+  description TEXT,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+Exemplos de gêneros:
+	•	literatura-brasileira
+	•	romance-literario
+	•	classicos
+	•	filosofia
+	•	poesia
+	•	realismo-magico
+	•	conto
+	•	ensaio
+	•	drama
+	•	ficcao-contemporanea
+
+⸻
+
+6. RELAÇÃO LIVROS ↔ GÊNEROS
+
+Um livro pode ter vários gêneros e um gênero pode ter vários livros.
+
+book_genres
+
+CREATE TABLE book_genres (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  book_id UUID NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+  genre_id UUID NOT NULL REFERENCES genres(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT NOW(),
+
+  UNIQUE(book_id, genre_id)
+);
+
+Isso permite:
+	•	filtrar todos os livros por gênero
+	•	mostrar gêneros de um livro
+	•	explorar livros de um gênero específico
+
+⸻
+
+7. ESTATÍSTICAS DE LEITURA DO USUÁRIO
+
+Para o perfil ficar mais rico, recomendo separar estatísticas em uma tabela própria.
+
+user_reading_stats
+
+CREATE TABLE user_reading_stats (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+
+  books_currently_reading INT DEFAULT 0,
+  books_finished INT DEFAULT 0,
+  total_margins INT DEFAULT 0,
+  total_reactions_received INT DEFAULT 0,
+  total_comments_received INT DEFAULT 0,
+  total_saved_posts INT DEFAULT 0,
+
+  favorite_genre_id UUID REFERENCES genres(id),
+  most_used_reaction VARCHAR(20),
+
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+Serve para mostrar no perfil:
+	•	quantos livros está lendo
+	•	quantas margens publicou
+	•	quantas reações recebeu
+	•	gênero favorito
+	•	reação rápida mais usada
+
+⸻
+
+8. LIVROS DO USUÁRIO / BIBLIOTECA DO USUÁRIO
+
+Se você quiser relacionar usuário com livros lidos, lendo ou concluídos:
+
+user_books
+
+CREATE TABLE user_books (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  book_id UUID NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+
+  status VARCHAR(30) NOT NULL, -- reading, finished, paused, wishlist
+  current_page INT,
+  current_chapter VARCHAR(100),
+  progress_percent NUMERIC(5,2),
+
+  started_at TIMESTAMP,
+  finished_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+
+  UNIQUE(user_id, book_id)
+);
+
+Status possíveis:
+	•	reading
+	•	finished
+	•	paused
+	•	wishlist
+
+Isso ajuda a gerar:
+	•	livros em leitura
+	•	livros concluídos
+	•	progresso por livro
+	•	estatísticas do perfil
+
+⸻
+
+9. MARGENS / POSTS DOS LEITORES
+
+Como o app gira em torno das margens, essa tabela é importante para conectar perfis e gêneros indiretamente via livro.
+
+margins
+
+CREATE TABLE margins (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  book_id UUID NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+
+  type VARCHAR(30) NOT NULL, -- insight, interpretacao, critica, pergunta, citacao
+  title VARCHAR(255),
+  quoted_excerpt TEXT,
+  content TEXT NOT NULL,
+
+  page_number INT,
+  chapter_label VARCHAR(100),
+  progress_percent NUMERIC(5,2),
+
+  is_spoiler BOOLEAN DEFAULT FALSE,
+  visibility VARCHAR(20) DEFAULT 'public', -- public, private
+
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+
+⸻
+
+10. REAÇÕES NAS MARGENS
+
+margin_reactions
+
+CREATE TABLE margin_reactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  margin_id UUID NOT NULL REFERENCES margins(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  emoji_code VARCHAR(20) NOT NULL, -- heart, fire, wow, cry, thinking etc
+  created_at TIMESTAMP DEFAULT NOW(),
+
+  UNIQUE(margin_id, user_id)
+);
+
+Regra:
+
+Cada usuário pode ter apenas uma reação por margem.
+Se trocar de emoji, atualiza o registro existente.
+
+⸻
+
+11. COMENTÁRIOS NAS MARGENS
+
+margin_comments
+
+CREATE TABLE margin_comments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  margin_id UUID NOT NULL REFERENCES margins(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  parent_comment_id UUID REFERENCES margin_comments(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+Isso permite:
+	•	comentários
+	•	replies
+	•	thread dentro da margem
+
+⸻
+
+12. SALVOS / FAVORITOS
+
+saved_margins
+
+CREATE TABLE saved_margins (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  margin_id UUID NOT NULL REFERENCES margins(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT NOW(),
+
+  UNIQUE(user_id, margin_id)
+);
+
+
+⸻
+
+13. ECO / REVERBERAÇÃO
+
+Se quiser manter “ecoar” como ação social separada da reação:
+
+margin_echoes
+
+CREATE TABLE margin_echoes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  margin_id UUID NOT NULL REFERENCES margins(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT NOW(),
+
+  UNIQUE(user_id, margin_id)
+);
+
+
+⸻
+
+14. GÊNEROS EM ALTA
+
+Para mostrar “gêneros em alta”, o ideal é calcular com base em atividade recente.
+Você pode fazer isso de duas formas:
+
+Opção A — cálculo dinâmico
+
+Calcular com base em:
+	•	número de margens recentes em livros daquele gênero
+	•	reações recentes
+	•	comentários recentes
+	•	saves recentes
+	•	crescimento semanal
+
+Opção B — tabela materializada para performance
+
+Criar uma tabela agregada:
+
+CREATE TABLE genre_trends (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  genre_id UUID NOT NULL UNIQUE REFERENCES genres(id) ON DELETE CASCADE,
+
+  total_books INT DEFAULT 0,
+  total_margins INT DEFAULT 0,
+  total_reactions INT DEFAULT 0,
+  weekly_growth_percent NUMERIC(6,2) DEFAULT 0,
+
+  trend_score NUMERIC(10,2) DEFAULT 0,
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+Essa tabela serve para:
+	•	listar gêneros em alta
+	•	mostrar porcentagem de crescimento
+	•	ordenar por popularidade recente
+
+⸻
+
+15. PERFIL PÚBLICO DE OUTROS USUÁRIOS
+
+Quando o usuário clicar no perfil de outro leitor, a tela deve buscar:
+
+Dados básicos:
+
+SELECT
+  username,
+  first_name,
+  last_name,
+  avatar_url,
+  bio,
+  city,
+  instagram_handle,
+  tiktok_handle,
+  reader_type_title,
+  reader_type_description,
+  reading_signature
+FROM users
+WHERE id = :user_id
+  AND is_profile_public = TRUE;
+
+Estatísticas:
+
+SELECT
+  books_currently_reading,
+  books_finished,
+  total_margins,
+  total_reactions_received,
+  total_comments_received,
+  total_saved_posts,
+  favorite_genre_id,
+  most_used_reaction
+FROM user_reading_stats
+WHERE user_id = :user_id;
+
+Margens públicas daquele usuário:
+
+SELECT *
+FROM margins
+WHERE user_id = :user_id
+  AND visibility = 'public'
+ORDER BY created_at DESC;
+
+
+⸻
+
+16. EXPLORAR LIVROS POR GÊNERO
+
+Para a tela de gêneros:
+
+Buscar todos os gêneros
+
+SELECT id, slug, name
+FROM genres
+WHERE is_active = TRUE
+ORDER BY name ASC;
+
+Buscar livros de um gênero específico
+
+SELECT b.*
+FROM books b
+INNER JOIN book_genres bg ON bg.book_id = b.id
+INNER JOIN genres g ON g.id = bg.genre_id
+WHERE g.slug = :genre_slug
+ORDER BY b.title ASC;
+
+
+⸻
+
+17. SUGESTÃO DE CAMPOS PÚBLICOS E PRIVADOS
+
+Públicos:
+	•	nome
+	•	username
+	•	avatar
+	•	bio
+	•	cidade
+	•	Instagram
+	•	TikTok
+	•	tipo de leitor
+	•	assinatura de leitura
+	•	estatísticas
+	•	margens públicas
+
+Privados:
+	•	email
+	•	password_hash
+	•	qualquer configuração interna
+	•	preferências sensíveis futuras
+
+⸻
+
+18. ÍNDICES IMPORTANTES
+
+Para performance, adicionar índices:
+
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_books_title ON books(title);
+CREATE INDEX idx_genres_slug ON genres(slug);
+CREATE INDEX idx_book_genres_book_id ON book_genres(book_id);
+CREATE INDEX idx_book_genres_genre_id ON book_genres(genre_id);
+CREATE INDEX idx_user_books_user_id ON user_books(user_id);
+CREATE INDEX idx_user_books_book_id ON user_books(book_id);
+CREATE INDEX idx_margins_user_id ON margins(user_id);
+CREATE INDEX idx_margins_book_id ON margins(book_id);
+CREATE INDEX idx_margin_reactions_margin_id ON margin_reactions(margin_id);
+CREATE INDEX idx_margin_comments_margin_id ON margin_comments(margin_id);
+CREATE INDEX idx_saved_margins_user_id ON saved_margins(user_id);
+CREATE INDEX idx_genre_trends_trend_score ON genre_trends(trend_score DESC);
+
+
+⸻
+
+19. REGRAS DE NEGÓCIO IMPORTANTES
+
+Redes sociais
+	•	salvar apenas o handle, sem @ obrigatório
+	•	exibir com @ na interface
+	•	validar tamanho máximo
+	•	permitir nulo
+
+Perfil público
+	•	qualquer usuário pode abrir o perfil de outro se is_profile_public = true
+
+Reação por margem
+	•	1 reação por usuário por margem
+	•	trocar emoji atualiza o registro existente
+	•	clicar no mesmo emoji remove a reação
+
+Gêneros
+	•	livro pode ter vários gêneros
+	•	usuário pode explorar todos os gêneros
+	•	seção “gêneros em alta” usa ranking por atividade recente
+
+⸻
+
+20. SUGESTÃO DE ESTRUTURA FINAL ENXUTA
+
+Se quiser o mínimo necessário para começar agora, recomendo estas tabelas como base inicial:
+	•	users
+	•	books
+	•	genres
+	•	book_genres
+	•	user_reading_stats
+	•	user_books
+	•	margins
+	•	margin_reactions
+	•	margin_comments
+	•	genre_trends
+
+⸻
+
+21. DIREÇÃO DE IMPLEMENTAÇÃO NO REPLIT
+
+Prioridade 1
+
+Implementar:
+	•	users
+	•	genres
+	•	books
+	•	book_genres
+
+Prioridade 2
+
+Implementar:
+	•	salvamento de Instagram/TikTok no perfil
+	•	leitura pública de perfis
+	•	exploração por gênero
+
+Prioridade 3
+
+Implementar:
+	•	estatísticas do usuário
+	•	gêneros em alta
+	•	filtros avançados por gênero
+
+⸻
+
+22. RECOMENDAÇÃO EXTRA
+
+Eu sugiro também adicionar futuramente:
+
+followers
+
+Para seguir leitores
+
+CREATE TABLE user_follows (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  follower_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  followed_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(follower_user_id, followed_user_id)
+);
+
+Isso deixaria o perfil público ainda mais forte socialmente.
+
+⸻

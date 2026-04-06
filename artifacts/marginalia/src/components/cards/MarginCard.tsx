@@ -4,10 +4,14 @@ import { Share2, Check, MessageCircle, Bookmark, BookmarkCheck } from "lucide-re
 import { useApp } from "@/context/AppContext";
 import { canUserSeeMargin, getBlockedReason } from "@/utils/spoiler";
 import { formatReference, marginTypeLabel, timeAgo } from "@/utils/formatting";
-import type { Margin } from "@/data/mockData";
-import { MOCK_BOOKS } from "@/data/mockData";
 import { Shield } from "lucide-react";
 import { MARGIN_TYPES, EMOJI_REACTIONS } from "@/data/constants";
+import type { Margin } from "@/data/mockData";
+import { MOCK_BOOKS, MOCK_USERS } from "@/data/mockData";
+
+const USER_USERNAME_MAP: Record<string, string> = Object.fromEntries(
+  MOCK_USERS.map((u) => [u.id, u.username])
+);
 
 interface Props {
   margin: Margin;
@@ -194,12 +198,10 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
           title={
             myEmoji
               ? "Toque para remover · segure para trocar"
-              : lastUsedReaction
-              ? `Toque para ${lastUsedReaction} · segure para escolher`
               : "Segure para reagir"
           }
         >
-          {myEmoji ?? (lastUsedReaction ? lastUsedReaction : <span className="font-sans text-[11px]">＋</span>)}
+          {myEmoji ?? <span className="font-sans text-[11px]">＋</span>}
         </button>
       </div>
 
@@ -285,6 +287,11 @@ function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarPro
             <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
           </div>
           <span className="font-sans font-light text-[10px] text-[#AE8F7D]">{margin.userName}</span>
+          {USER_USERNAME_MAP[margin.userId] && (
+            <span className="font-sans font-light text-[9px] text-[#454545]/30">
+              {USER_USERNAME_MAP[margin.userId]}
+            </span>
+          )}
           {totalReactions >= 8 && (
             <span className="font-sans text-[7px] text-[#AE8F7D]/60" title="Trecho muito ativo">🔥</span>
           )}

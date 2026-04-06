@@ -17,6 +17,7 @@ export function ExploreScreen() {
   const { currentUser } = useApp();
   const [query, setQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [genreBooksLimit, setGenreBooksLimit] = useState(10);
 
   const searchResults = query.trim()
     ? MOCK_BOOKS.filter(
@@ -193,7 +194,11 @@ export function ExploreScreen() {
                   <button
                     type="button"
                     key={genre.label}
-                    onClick={() => setSelectedGenre(isSelected ? null : genre.label)}
+                    onClick={() => {
+                      const next = isSelected ? null : genre.label;
+                      setSelectedGenre(next);
+                      setGenreBooksLimit(10);
+                    }}
                     className={`w-full flex items-center justify-between py-2.5 px-3 rounded-[10px] border transition-all text-left ${
                       isSelected
                         ? "bg-[#AE8F7D]/10 border-[#AE8F7D]/30"
@@ -223,44 +228,62 @@ export function ExploreScreen() {
 
             {/* Books by selected genre */}
             {selectedGenre && (() => {
-              const genreBooks = MOCK_BOOKS.filter((b) =>
+              const allGenreBooks = MOCK_BOOKS.filter((b) =>
                 b.genres.some((g) => g.toLowerCase().includes(selectedGenre.toLowerCase()) || selectedGenre.toLowerCase().includes(g.toLowerCase()))
               );
+              const visibleBooks = allGenreBooks.slice(0, genreBooksLimit);
+              const hasMore = allGenreBooks.length > genreBooksLimit;
               return (
                 <div className="mt-4 feed-enter">
-                  <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D] mb-3">
-                    Livros em {selectedGenre}
-                  </p>
-                  {genreBooks.length === 0 ? (
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D]">
+                      Livros em {selectedGenre}
+                    </p>
+                    <p className="font-sans font-light text-[8px] text-[#454545]/30">
+                      {allGenreBooks.length} {allGenreBooks.length === 1 ? "livro" : "livros"}
+                    </p>
+                  </div>
+                  {allGenreBooks.length === 0 ? (
                     <p className="font-serif italic text-[13px] text-[#454545]/35 text-center py-4">
                       Nenhum livro encontrado neste gênero ainda.
                     </p>
                   ) : (
-                    <div className="space-y-2">
-                      {genreBooks.map((book) => (
-                        <Link key={book.id} href={`/book/${book.id}`}>
-                          <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 transition-colors">
-                            <div
-                              className="w-10 h-14 rounded-[5px] flex-shrink-0"
-                              style={{ backgroundColor: book.bookColor }}
-                            />
-                            <div className="flex-1 min-w-0">
-                              <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                              <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
-                              <div className="flex items-center gap-2">
-                                <span className="font-sans font-light text-[8px] text-[#697962]">
-                                  {book.communityStats.activeReaders} leitores
-                                </span>
-                                <span className="text-[#AE8F7D]/25">·</span>
-                                <span className="font-sans font-light text-[8px] text-[#454545]/35">
-                                  {book.communityStats.totalMargins} margens
-                                </span>
+                    <>
+                      <div className="space-y-2">
+                        {visibleBooks.map((book) => (
+                          <Link key={book.id} href={`/book/${book.id}`}>
+                            <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 transition-colors">
+                              <div
+                                className="w-10 h-14 rounded-[5px] flex-shrink-0"
+                                style={{ backgroundColor: book.bookColor }}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
+                                <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-sans font-light text-[8px] text-[#697962]">
+                                    {book.communityStats.activeReaders} leitores
+                                  </span>
+                                  <span className="text-[#AE8F7D]/25">·</span>
+                                  <span className="font-sans font-light text-[8px] text-[#454545]/35">
+                                    {book.communityStats.totalMargins} margens
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
+                          </Link>
+                        ))}
+                      </div>
+                      {hasMore && (
+                        <button
+                          type="button"
+                          onClick={() => setGenreBooksLimit((l) => l + 10)}
+                          className="w-full mt-3 py-2.5 border border-dashed border-[#AE8F7D]/30 rounded-[10px] font-sans font-light text-[10px] tracking-[0.1em] text-[#AE8F7D] hover:bg-[#AE8F7D]/5 transition-colors"
+                        >
+                          Carregar mais · {allGenreBooks.length - genreBooksLimit} restantes
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               );
