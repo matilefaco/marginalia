@@ -55,39 +55,50 @@ function lsSet(key: string, value: string) {
   try { localStorage.setItem(key, value); } catch {}
 }
 
-// ─── Profile loader ───────────────────────────────────────────────────────────
+// ─── Profile upsert — resilient to missing columns ───────────────────────────
+//
+// Supabase returns PGRST204 ("Could not find the 'x' column…") when the schema
+// cache doesn't know about a column.  We parse the column name out of the error
+// message, save it locally if we track it, then retry — recursively — until the
+// upsert succeeds or we run out of retries.
 
-// Strip unknown columns from the upsert payload and retry
+function persistColumnLocally(col: string, value: unknown, userId: string) {
+  if (!value) return;
+  if (col === "avatar_color") lsSet(`mg_avatar_color_${userId}`, value as string);
+  if (col === "email")        lsSet(`mg_email_${userId}`,        value as string);
+}
+
 async function upsertProfileSafe(
   userId: string,
-  data: Record<string, unknown>
+  data: Record<string, unknown>,
+  excluded: Set<string> = new Set()
 ): Promise<{ error: import("@supabase/supabase-js").PostgrestError | null }> {
+  // Build payload, skipping any columns we've already excluded
+  const payload: Record<string, unknown> = { id: userId };
+  for (const [k, v] of Object.entries(data)) {
+    if (!excluded.has(k)) payload[k] = v;
+  }
+
   const { error } = await supabase
     .from("profiles")
-    .upsert({ id: userId, ...data }, { onConflict: "id" });
+    .upsert(payload, { onConflict: "id" });
 
-  if (error && error.code === "PGRST204") {
-    // One or more columns are missing from the schema cache.
-    // Save recognised local-only fields and retry without them.
-    const LOCALLY_SAVED = ["avatar_color", "email"] as const;
-    const safeData = { ...data };
+  if (error?.code === "PGRST204" && excluded.size < 10) {
+    // Parse the missing column name from the error message
+    // e.g. "Could not find the 'email' column of 'profiles' in the schema cache"
+    const match = error.message.match(/the '([^']+)' column/);
+    const missingCol = match?.[1];
 
-    for (const col of LOCALLY_SAVED) {
-      if (col in safeData) {
-        if (col === "avatar_color" && safeData[col]) {
-          lsSet(`mg_avatar_color_${userId}`, safeData[col] as string);
-        }
-        if (col === "email" && safeData[col]) {
-          lsSet(`mg_email_${userId}`, safeData[col] as string);
-        }
-        delete safeData[col];
-      }
+    if (missingCol && !excluded.has(missingCol)) {
+      // Save this column's value to localStorage as a fallback
+      persistColumnLocally(missingCol, data[missingCol], userId);
+
+      // Retry without the problematic column
+      return upsertProfileSafe(userId, data, new Set([...excluded, missingCol]));
     }
 
-    const { error: error2 } = await supabase
-      .from("profiles")
-      .upsert({ id: userId, ...safeData }, { onConflict: "id" });
-    return { error: error2 };
+    // Can't determine the missing column — bail out with the original error
+    return { error };
   }
 
   return { error };
