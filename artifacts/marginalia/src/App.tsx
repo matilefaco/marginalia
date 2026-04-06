@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -30,7 +30,10 @@ import type { SpoilerPreference } from "@/data/constants";
 const queryClient = new QueryClient();
 
 function Splash({ onDone }: { onDone: () => void }) {
-  setTimeout(onDone, 2000);
+  useEffect(() => {
+    const t = setTimeout(onDone, 2000);
+    return () => clearTimeout(t);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#FAF8F3]"

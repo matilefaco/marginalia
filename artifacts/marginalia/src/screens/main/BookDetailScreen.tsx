@@ -10,12 +10,12 @@ import { SPOILER_PREFERENCES, EMOJI_REACTIONS, REACTION_CATEGORY_CONFIG } from "
 import type { EmojiReactionCategory } from "@/data/constants";
 
 const TABS = [
-  { id: "ecos", label: "Ecos" },
-  { id: "theories", label: "Teorias" },
-  { id: "critiques", label: "Críticas" },
-  { id: "questions", label: "Perguntas" },
-  { id: "sobre", label: "Sobre" },
-  { id: "mine", label: "Meus" },
+  { id: "todos", label: "Todos" },
+  { id: "insights", label: "Insights" },
+  { id: "interpretacoes", label: "Interpretações" },
+  { id: "criticas", label: "Críticas" },
+  { id: "perguntas", label: "Perguntas" },
+  { id: "citacoes", label: "Citações" },
 ];
 
 
@@ -311,7 +311,8 @@ export function BookDetailScreen() {
   const prog = progress.find((p) => p.bookId === bookId && p.userId === "user_me");
   const bookMargins = MOCK_MARGINS.filter((m) => m.bookId === bookId);
 
-  const [activeTab, setActiveTab] = useState("ecos");
+  const [activeTab, setActiveTab] = useState("todos");
+  const [feedKey, setFeedKey] = useState(0);
   const [editingProgress, setEditingProgress] = useState(false);
   const [progressMode, setProgressMode] = useState<"page" | "chapter">("page");
   const [pageInput, setPageInput] = useState(String(prog?.currentPage || ""));
@@ -324,13 +325,22 @@ export function BookDetailScreen() {
   );
   const blockedCount = bookMargins.length - visibleMargins.length;
 
-  const tabMargins = {
-    ecos: visibleMargins,
-    theories: visibleMargins.filter((m) => m.postType === "theory"),
-    critiques: visibleMargins.filter((m) => m.postType === "critique"),
-    questions: visibleMargins.filter((m) => m.postType === "question"),
-    sobre: [],
-    mine: bookMargins.filter((m) => m.userId === "user_me"),
+  const tabMargins: Record<string, typeof visibleMargins> = {
+    todos: visibleMargins,
+    insights: visibleMargins.filter((m) =>
+      ["insight", "reaction", "personal_connection"].includes(m.postType)
+    ),
+    interpretacoes: visibleMargins.filter((m) =>
+      ["theory", "symbolic_reading"].includes(m.postType)
+    ),
+    criticas: visibleMargins.filter((m) => m.postType === "critique"),
+    perguntas: visibleMargins.filter((m) => m.postType === "question"),
+    citacoes: visibleMargins.filter((m) => m.postType === "favorite_quote"),
+  };
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    setFeedKey((k) => k + 1);
   };
 
   const statusLabel = prog?.status === "reading" ? "Lendo"
@@ -512,6 +522,30 @@ export function BookDetailScreen() {
           </div>
         </div>
 
+        {/* Sobre o livro */}
+        <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[14px] p-5">
+          <p className="font-sans text-[8px] font-light tracking-[0.2em] uppercase text-[#AE8F7D] mb-3">
+            Sobre o livro
+          </p>
+          <p className="font-serif italic text-[15px] text-[#3D3D3D] leading-relaxed mb-5">
+            {book.sinopse || book.description}
+          </p>
+          <div className="space-y-2.5 border-t border-[#454545]/5 pt-4">
+            {[
+              { label: "Autor", value: book.author },
+              { label: "Publicação", value: String(book.publishYear) },
+              { label: "Gênero", value: book.genres.join(", ") },
+              ...(book.totalPages > 0 ? [{ label: "Páginas", value: `${book.totalPages} páginas` }] : []),
+              ...(book.totalChapters > 0 ? [{ label: "Capítulos", value: `${book.totalChapters} capítulos` }] : []),
+            ].map(({ label, value }) => (
+              <div key={label} className="flex justify-between items-baseline">
+                <span className="font-sans font-light text-[9px] tracking-[0.1em] uppercase text-[#454545]/35">{label}</span>
+                <span className="font-sans font-light text-[11px] text-[#454545]/60">{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Eco Map */}
         <EcoMap bookId={bookId} userPercent={prog?.currentPercent ?? 0} />
 
@@ -530,72 +564,44 @@ export function BookDetailScreen() {
           </div>
         )}
 
-        {/* Tabs */}
+        {/* Content Filter Tabs + Feed */}
         <div>
           <div className="flex gap-1 overflow-x-auto pb-2 mb-4 scrollbar-hide">
             {TABS.map((tab) => {
-              const count = tabMargins[tab.id as keyof typeof tabMargins]?.length || 0;
+              const count = tabMargins[tab.id]?.length ?? 0;
               return (
                 <button
                   key={tab.id}
                   data-testid={`tab-${tab.id}`}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={`flex-shrink-0 font-sans text-[9px] font-light tracking-[0.12em] uppercase px-3 py-2 rounded-full border transition-all ${
                     activeTab === tab.id
                       ? "bg-[#AE8F7D] text-[#FAF8F3] border-transparent"
                       : "bg-transparent text-[#454545]/45 border-[#454545]/10 hover:border-[#AE8F7D]/25"
                   }`}
                 >
-                  {tab.label} {tab.id !== "sobre" && count > 0 ? `· ${count}` : ""}
+                  {tab.label}{count > 0 ? ` · ${count}` : ""}
                 </button>
               );
             })}
           </div>
 
-          {/* "Sobre" tab */}
-          {activeTab === "sobre" ? (
-            <div className="space-y-4">
-              <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[14px] p-5">
-                <p className="font-sans text-[8px] font-light tracking-[0.2em] uppercase text-[#AE8F7D] mb-3">
-                  Sobre o livro
+          <div key={feedKey} className="space-y-3 feed-enter">
+            {(tabMargins[activeTab] ?? []).length === 0 ? (
+              <div className="text-center py-10 border border-dashed border-[#AE8F7D]/15 rounded-[14px]">
+                <p className="font-serif italic text-[13px] text-[#454545]/35 mb-1">
+                  Nenhuma margem nesta categoria ainda.
                 </p>
-                <p className="font-serif italic text-[15px] text-[#3D3D3D] leading-relaxed mb-5">
-                  {book.sinopse || book.description}
+                <p className="font-sans font-light text-[9px] text-[#454545]/25">
+                  Seja o primeiro a registrar um pensamento aqui.
                 </p>
-                <div className="space-y-2.5 border-t border-[#454545]/5 pt-4">
-                  {[
-                    { label: "Autor", value: book.author },
-                    { label: "Publicação", value: String(book.publishYear) },
-                    { label: "Gênero", value: book.genres.join(", ") },
-                    ...(book.totalPages > 0 ? [{ label: "Páginas", value: `${book.totalPages} páginas` }] : []),
-                    ...(book.totalChapters > 0 ? [{ label: "Capítulos", value: `${book.totalChapters} capítulos` }] : []),
-                  ].map(({ label, value }) => (
-                    <div key={label} className="flex justify-between items-baseline">
-                      <span className="font-sans font-light text-[9px] tracking-[0.1em] uppercase text-[#454545]/35">{label}</span>
-                      <span className="font-sans font-light text-[11px] text-[#454545]/60">{value}</span>
-                    </div>
-                  ))}
-                </div>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {(tabMargins[activeTab as keyof typeof tabMargins] || []).length === 0 ? (
-                <div className="text-center py-10 border border-dashed border-[#AE8F7D]/15 rounded-[14px]">
-                  <p className="font-serif italic text-[13px] text-[#454545]/35 mb-1">
-                    Nenhuma margem nesta categoria ainda.
-                  </p>
-                  <p className="font-sans font-light text-[9px] text-[#454545]/25">
-                    Seja o primeiro a registrar um eco aqui.
-                  </p>
-                </div>
-              ) : (
-                (tabMargins[activeTab as keyof typeof tabMargins] || []).map((m) => (
-                  <MarginCard key={m.id} margin={m} />
-                ))
-              )}
-            </div>
-          )}
+            ) : (
+              (tabMargins[activeTab] ?? []).map((m) => (
+                <MarginCard key={m.id} margin={m} />
+              ))
+            )}
+          </div>
         </div>
 
         {/* Add Margin CTA */}

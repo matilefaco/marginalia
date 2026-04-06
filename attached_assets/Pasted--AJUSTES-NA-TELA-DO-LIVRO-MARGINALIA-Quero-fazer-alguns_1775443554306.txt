@@ -1,0 +1,291 @@
+
+
+⸻
+
+AJUSTES NA TELA DO LIVRO — MARGINALIA
+
+Quero fazer alguns ajustes de estrutura, navegação e experiência na tela de detalhes do livro.
+
+1. Reposicionar a seção “Sobre o livro”
+
+A seção “Sobre o livro” não deve ficar misturada com os filtros de conteúdo social lá embaixo.
+Quero que ela fique na parte superior da tela, junto das informações principais do livro.
+
+Nova ordem ideal da página:
+	1.	Cabeçalho do livro
+	•	capa
+	•	título
+	•	autor
+	•	progresso do leitor
+	•	botão de atualizar progresso
+	•	estatísticas gerais do livro
+	2.	Sobre o livro
+	•	sinopse / descrição curta
+	•	informações editoriais relevantes
+	•	talvez gênero, ano, páginas, etc., se houver
+	3.	Ritmo de leitura coletivo / gráfico coletivo
+	4.	Insights e atividade social do livro
+	5.	Filtros de conteúdo (ecos, teorias, críticas, perguntas etc.)
+	6.	Feed de margens / publicações dos leitores
+
+Objetivo dessa mudança:
+	•	deixar a página mais lógica
+	•	primeiro mostrar contexto do livro
+	•	depois mostrar leitura coletiva/social
+	•	evitar que “Sobre o livro” pareça apenas mais uma categoria de postagem
+
+⸻
+
+2. Adicionar uma transição suave ao abrir uma margem de outro leitor
+
+Quero um efeito visual suave quando o leitor tocar em uma margem/eco de outro usuário para abrir os detalhes.
+
+O efeito deve transmitir:
+	•	delicadeza
+	•	fluidez
+	•	sensação editorial/literária
+	•	nada agressivo ou rápido demais
+
+Sugestão de comportamento:
+
+Ao clicar em uma margem:
+	•	aplicar fade + leve slide vertical
+	•	duração curta, elegante
+	•	sensação de expansão natural do card
+	•	pode também ter um leve efeito de “elevação” do card antes de abrir
+
+Direção visual sugerida:
+	•	transição entre 180ms e 280ms
+	•	easing suave
+	•	sem zoom exagerado
+	•	sem animação “tech” ou “hard”
+	•	precisa parecer refinado e orgânico
+
+Pode funcionar assim:
+	•	toque no card
+	•	card responde com microinteração
+	•	abre detalhes com transição suave
+	•	replies/comentários aparecem de forma progressiva
+	•	evitar mudança brusca de tela
+
+⸻
+
+3. Corrigir bug que redireciona para o início/login
+
+Existe um problema grave de navegação:
+
+Bug:
+
+Às vezes, quando o usuário clica em algumas informações dos insights, a página redireciona para o início, login ou cadastro.
+
+Isso não pode acontecer.
+
+Quero corrigir isso com prioridade.
+
+O que verificar:
+	•	links, botões ou containers clicáveis com navegação incorreta
+	•	elementos com href="/", Link, navigate() ou comportamento padrão de formulário
+	•	cliques em áreas internas de cards disparando navegação indevida
+	•	propagação de evento (event bubbling) em elementos filhos
+	•	rotas protegidas sendo reavaliadas de forma errada
+	•	estado de autenticação sendo perdido ao interagir com o card
+	•	componentes que estão recarregando a página ao invés de trocar apenas o estado local
+
+Comportamento correto:
+
+Ao clicar em informações de insight, o usuário deve:
+	•	abrir detalhes daquele insight
+	•	expandir replies/comentários
+	•	navegar para a margem específica
+	•	ou filtrar conteúdo relacionado
+
+Mas nunca ser jogado para login/cadastro sem motivo.
+
+Garantia importante:
+
+Revisar toda a tela para que nenhum clique secundário em:
+	•	emoji
+	•	reação
+	•	autor
+	•	comentário
+	•	bloco de insight
+	•	estatística
+	•	item do gráfico
+
+dispare navegação errada.
+
+⸻
+
+4. Avaliação do filtro atual: ECOS / TEORIAS / CRÍTICAS / PERGUNTAS
+
+Quero uma análise de UX e uma possível reformulação desse filtro.
+
+Problema do filtro atual
+
+Hoje existem as categorias:
+	•	ECOS
+	•	TEORIAS
+	•	CRÍTICAS
+	•	PERGUNTAS
+
+Visualmente está bonito, mas conceitualmente pode estar um pouco confuso.
+
+Motivo:
+
+Essas categorias misturam coisas de naturezas diferentes:
+	•	Ecos parece mais um formato/interação social
+	•	Teorias é um tipo de interpretação
+	•	Críticas é um tipo de leitura/opinião
+	•	Perguntas é outro tipo de intenção
+
+Ou seja: o filtro mistura formato, tom e tipo de conteúdo ao mesmo tempo.
+
+Isso pode dificultar o entendimento do usuário.
+
+⸻
+
+5. Proposta de reformulação do filtro
+
+Quero que o sistema de filtros fique mais claro, intuitivo e escalável.
+
+Opção recomendada: transformar em categorias editoriais mais coerentes
+
+Sugestão de filtros principais:
+	•	Todos
+	•	Insights
+	•	Interpretações
+	•	Críticas
+	•	Perguntas
+	•	Citações
+
+O que cada um significaria:
+	•	Todos → mostra tudo
+	•	Insights → reflexões rápidas, percepções, sentimentos, epifanias
+	•	Interpretações → leituras mais profundas, teorias, conexões simbólicas
+	•	Críticas → avaliações, discordâncias, análise da obra
+	•	Perguntas → dúvidas, provocações, discussões abertas
+	•	Citações → trechos destacados com comentário
+
+Vantagem:
+
+Esse sistema fica mais claro porque todas as categorias passam a ser tipos de conteúdo.
+
+⸻
+
+6. O que fazer com “Ecos”
+
+O termo “Ecos” faz muito mais sentido como mecânica de interação, e não como filtro principal de conteúdo.
+
+Recomendação:
+
+“Ecoar” deve continuar existindo como ação social, tipo:
+	•	ecoar uma margem
+	•	ecoar um insight
+	•	ver quantos leitores ecoaram aquilo
+
+Mas não necessariamente como aba principal de classificação.
+
+Melhor uso para “Eco”:
+	•	contador social
+	•	ação de engajamento
+	•	métrica de relevância
+	•	destaque de conteúdo mais reverberado
+
+Exemplo:
+	•	“19 leitores ecoaram isso”
+	•	“Mais ecoado da semana”
+	•	“Ecoar insight”
+
+Isso deixa o conceito mais forte.
+
+⸻
+
+7. Alternativa se quiser manter uma identidade mais autoral
+
+Se você quiser algo mais original e menos genérico, pode usar filtros com linguagem própria do app.
+
+Minha avaliação:
+
+A palavra “Ecos” é bonita e forte como branding, mas isoladamente não é tão clara como categoria de feed.
+Ela funciona melhor como ação/interação do que como aba estrutural.
+
+⸻
+
+8. Recomendação final sobre os filtros
+
+Melhor solução:
+
+Trocar o filtro atual por algo mais claro e consistente, como:
+	•	Todos
+	•	Insights
+	•	Interpretações
+	•	Críticas
+	•	Perguntas
+	•	Citações
+
+O que evitar:
+
+Evitar misturar no mesmo nível:
+	•	ação social
+	•	tipo de texto
+	•	tom de comentário
+	•	função de engajamento
+
+Porque isso enfraquece a arquitetura da interface.
+
+⸻
+
+9. Ajustes visuais e de UX para essa área
+
+Quero também refinar a experiência dessa faixa de filtros:
+
+Melhorias:
+	•	manter scroll horizontal, se necessário
+	•	destacar filtro ativo de forma elegante
+	•	evitar excesso de categorias
+	•	permitir leitura imediata do que cada aba significa
+	•	garantir que a troca de filtro tenha animação sutil
+	•	ao trocar o filtro, o feed deve atualizar sem recarregar a página
+
+Transição do filtro:
+
+Ao trocar de aba:
+	•	fade leve nos cards
+	•	leve movimento vertical
+	•	sem travar
+	•	sem resetar a posição do usuário de forma brusca
+
+⸻
+
+10. Diretriz geral dessa tela
+
+Quero que essa tela fique mais:
+	•	editorial
+	•	fluida
+	•	lógica
+	•	elegante
+	•	estável
+	•	sem bugs de navegação
+
+Ela deve parecer menos uma tela genérica de rede social e mais uma experiência de leitura social refinada.
+
+⸻
+
+RESUMO EXECUTIVO DAS ALTERAÇÕES
+
+Implementar:
+	•	mover “Sobre o livro” para cima, junto das informações principais do livro
+	•	adicionar transição suave ao abrir margem/insight de outro leitor
+	•	corrigir o bug que às vezes redireciona para login/cadastro/início
+	•	revisar a arquitetura dos filtros de conteúdo
+	•	preferir categorias mais claras e consistentes
+
+Rever:
+	•	se ECOS / TEORIAS / CRÍTICAS / PERGUNTAS faz sentido como sistema final
+	•	considerar transformar Eco em ação social, não em filtro principal
+
+Sugestão final de filtros:
+
+Todos / Insights / Interpretações / Críticas / Perguntas / Citações
+
+⸻

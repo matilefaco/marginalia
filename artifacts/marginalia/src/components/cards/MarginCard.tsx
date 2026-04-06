@@ -293,7 +293,7 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
     </div>
   );
   if (!linkToThread) return content;
-  return <Link href={`/thread/${margin.id}`} className="block">{content}</Link>;
+  return <Link href={`/thread/${margin.id}`} className="block active:opacity-75 transition-opacity duration-150">{content}</Link>;
 }
 
 function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
@@ -324,7 +324,7 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
     </div>
   );
   if (!linkToThread) return content;
-  return <Link href={`/thread/${margin.id}`} className="block">{content}</Link>;
+  return <Link href={`/thread/${margin.id}`} className="block active:opacity-75 transition-opacity duration-150">{content}</Link>;
 }
 
 function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
@@ -356,7 +356,7 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
     </div>
   );
   if (!linkToThread) return content;
-  return <Link href={`/thread/${margin.id}`} className="block">{content}</Link>;
+  return <Link href={`/thread/${margin.id}`} className="block active:opacity-75 transition-opacity duration-150">{content}</Link>;
 }
 
 function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
@@ -408,7 +408,7 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
     </div>
   );
   if (!linkToThread) return content;
-  return <Link href={`/thread/${margin.id}`} className="block">{content}</Link>;
+  return <Link href={`/thread/${margin.id}`} className="block active:opacity-75 transition-opacity duration-150">{content}</Link>;
 }
 
 export function MarginCard({ margin, showBook = false, linkToThread = true }: Props) {

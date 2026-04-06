@@ -56,7 +56,7 @@ export function ThreadScreen() {
   };
 
   return (
-    <div className="min-h-full bg-[#FAF8F3] flex flex-col">
+    <div className="min-h-full bg-[#FAF8F3] flex flex-col screen-enter">
       {/* Header */}
       <div className="flex items-center gap-3 px-5 pt-8 pb-4 border-b border-[#AE8F7D]/12">
         <Link href={`/book/${margin.bookId}`}>
