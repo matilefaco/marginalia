@@ -1,0 +1,233 @@
+Perfeito — isso aqui é polimento fino de UI/UX, e faz MUITA diferença no nível do app.
+
+Segue um texto direto, técnico e pronto pra colar no Replit:
+
+⸻
+
+Quero corrigir problemas de layout e responsividade na interface, principalmente na tela de Perfil e Notificações, onde elementos estão ultrapassando os limites da tela.
+
+⸻
+
+1. PROBLEMA GERAL
+
+Atualmente existem problemas de layout:
+	•	linhas/traços horizontais ultrapassando a largura da tela
+	•	botões (toggles) encostando ou saindo da borda direita
+	•	desalinhamento entre texto e componentes interativos
+	•	falta de padding lateral consistente
+	•	elementos não respeitando limites de container
+
+Isso prejudica a estética e a sensação premium do app.
+
+⸻
+
+2. CORREÇÃO DE LAYOUT GLOBAL (MUITO IMPORTANTE)
+
+2.1. Criar um padrão de container
+
+Todos os conteúdos principais devem estar dentro de um container com padding horizontal consistente.
+
+Regra:
+	•	aplicar padding horizontal padrão em TODAS as telas
+
+padding-left: 20px;
+padding-right: 20px;
+
+ou equivalente no layout (React Native / CSS / Tailwind).
+
+⸻
+
+2.2. Limitar largura máxima dos elementos
+
+Garantir que nenhum elemento ultrapasse o container:
+
+max-width: 100%;
+overflow: hidden;
+
+
+⸻
+
+2.3. Box sizing correto
+
+Garantir:
+
+box-sizing: border-box;
+
+para evitar que bordas e padding quebrem o layout.
+
+⸻
+
+3. CORREÇÃO DOS TRAÇOS (DIVIDERS)
+
+Problema:
+
+Os traços horizontais (linhas de separação) estão ultrapassando a tela.
+
+Correção:
+
+Eles devem respeitar o padding do container.
+
+Regra:
+
+NÃO usar width: 100vw
+
+Usar:
+
+width: 100%;
+
+ou
+
+align-self: stretch;
+
+E garantir que estão dentro de um container com padding.
+
+⸻
+
+4. CORREÇÃO DOS TOGGLES (BOTÕES DE NOTIFICAÇÃO)
+
+Problema:
+
+Os toggles estão encostando ou saindo da borda direita.
+
+Correção de layout:
+
+Cada item deve ser estruturado assim:
+
+Estrutura ideal:
+	•	container flex horizontal
+	•	texto à esquerda
+	•	toggle à direita
+	•	espaço entre eles
+
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 12px;
+
+
+⸻
+
+4.1. Evitar overflow do toggle
+
+O toggle deve ter limite:
+
+flex-shrink: 0;
+
+
+⸻
+
+4.2. Texto deve ocupar o espaço restante
+
+flex: 1;
+min-width: 0;
+
+Isso evita que o texto empurre o toggle para fora da tela.
+
+⸻
+
+4.3. Margem de segurança direita
+
+Adicionar uma margem mínima para não colar na borda:
+
+padding-right: 4px;
+
+ou garantir que o container já tem padding suficiente.
+
+⸻
+
+5. CORREÇÃO NA TELA DE PERFIL (HEADER)
+
+Problema:
+
+Elementos no topo (nome, sobrenome, botões de salvar/cancelar) estão desalinhados.
+
+Ajustes:
+
+5.1. Container do header:
+
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+
+5.2. Inputs (nome/sobrenome):
+	•	garantir que não ultrapassem o espaço disponível
+	•	usar:
+
+flex: 1;
+min-width: 0;
+
+
+⸻
+
+6. CORREÇÃO DE ELEMENTOS QUE ESCAPAM DA TELA
+
+Aplicar globalmente:
+
+overflow-x: hidden;
+
+E evitar uso de:
+	•	width: 100vw
+	•	margens negativas
+
+⸻
+
+7. PADRÃO VISUAL CONSISTENTE
+
+Quero que o app siga essas regras:
+
+Espaçamento lateral:
+	•	sempre 20px
+
+Espaçamento entre elementos:
+	•	12px a 16px
+
+Alinhamento:
+	•	tudo deve alinhar na mesma coluna vertical (esquerda)
+	•	nenhum elemento pode “quebrar” essa linha
+
+⸻
+
+8. RESPONSIVIDADE
+
+Garantir que:
+	•	tudo funcione em telas pequenas (iPhone padrão)
+	•	nada ultrapasse lateralmente
+	•	textos quebram linha corretamente
+	•	botões nunca saem da tela
+
+⸻
+
+9. RESULTADO ESPERADO
+
+Depois dessas correções:
+	•	nenhum traço ultrapassa a tela
+	•	toggles ficam perfeitamente alinhados à direita
+	•	nada encosta na borda
+	•	layout fica limpo, elegante e consistente
+	•	sensação de app premium aumenta significativamente
+
+⸻
+
+10. PRIORIDADE
+
+Aplicar essas correções primeiro em:
+	1.	Tela de Notificações
+	2.	Tela de Perfil (edição)
+	3.	Tela de Preferências
+
+Depois padronizar no resto do app.
+
+⸻
+
+11. IMPORTANTE
+
+Não quero soluções pontuais.
+
+Quero:
+	•	padronização global de layout
+	•	containers consistentes
+	•	comportamento previsível em todas as telas
+
+⸻
+
+Se quiser, depois posso te ajudar a deixar isso ainda mais nível App Store top 1%, com microinterações e refinamento visual absurdo.

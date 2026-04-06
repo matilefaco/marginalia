@@ -27,7 +27,7 @@ export function NotificationsScreen() {
   );
 
   return (
-    <div className="min-h-full bg-[#FAF8F3]">
+    <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden">
       <div className="flex items-center gap-3 px-5 pt-8 pb-4">
         <Link href="/">
           <button className="text-[#454545]/40">

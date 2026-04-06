@@ -183,8 +183,8 @@ function MainApp() {
   const hideNavbar = NO_NAVBAR_PATHS.includes(location) || location.startsWith("/thread/");
 
   return (
-    <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto relative bg-[#FAF8F3] shadow-2xl">
-      <div className="flex-1 pb-20">
+    <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto relative bg-[#FAF8F3] shadow-2xl overflow-x-hidden">
+      <div className="flex-1 pb-20 overflow-x-hidden">
         <Switch>
           <Route path="/" component={HomeScreen} />
           <Route path="/explore" component={ExploreScreen} />
