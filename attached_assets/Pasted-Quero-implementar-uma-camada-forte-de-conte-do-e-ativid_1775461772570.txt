@@ -1,0 +1,386 @@
+Quero implementar uma camada forte de conteúdo e atividade no app para que a comunidade pareça viva, interessante e movimentada desde já.
+
+OBJETIVO GERAL:
+Quero que o app tenha muito mais livros, muito mais ecos, mais comentários, mais reações e sensação constante de atividade social.
+
+A ideia é fazer o Marginalia parecer uma comunidade real de leitores, mesmo enquanto a base de usuários ainda está crescendo.
+
+==================================================
+1. AUMENTAR MUITO A QUANTIDADE DE LIVROS NO APP
+==================================================
+
+Quero integrar o app com uma API pública de livros, de preferência Google Books API, para trazer muitos livros automaticamente.
+
+O sistema deve permitir:
+- buscar livros por gênero
+- buscar livros por título
+- buscar livros por autor
+- paginar resultados
+- salvar/cachear livros no banco para reutilização futura
+
+IMPLEMENTAÇÃO:
+Criar uma lógica backend para consumir Google Books API e expor rotas internas do app.
+
+Rotas sugeridas:
+- /api/books?genre=poesia&page=1&limit=8
+- /api/books?search=clarice+lispector&page=1&limit=8
+- /api/books/trending?page=1&limit=8
+
+Cada livro retornado deve ter, quando possível:
+- external_api_id
+- title
+- author
+- description
+- cover_url
+- publisher
+- publication_year
+- total_pages
+- language
+- categorias/gêneros
+
+IMPORTANTE:
+- se o livro buscado ainda não existir na tabela books, salvar automaticamente ou fazer cache
+- evitar chamadas repetidas desnecessárias à API
+- manter paginação real
+- exibir 8 livros por página nas listagens do app
+
+==================================================
+2. POVOAR O APP COM LIVROS REAIS E MAIS VARIADOS
+==================================================
+
+Quero que o sistema traga livros suficientes para os principais gêneros do app, como:
+- Literatura brasileira
+- Romance literário
+- Clássicos
+- Filosofia
+- Poesia
+- Ficção contemporânea
+- Drama
+- Não ficção
+- Ensaios
+- Biografia
+- Literatura estrangeira
+- Ficção científica
+- Fantasia
+- Terror
+
+Quero que o app deixe de parecer limitado a poucos livros estáticos.
+
+==================================================
+3. CRIAR MUITA ATIVIDADE SOCIAL NO APP
+==================================================
+
+Quero implementar um sistema de seed/conteúdo inicial para que o app pareça movimentado.
+
+Quero popular o app automaticamente com:
+- usuários fictícios realistas
+- ecos
+- comentários
+- replies
+- reações
+- ecos salvos
+- livros com atividade
+- métricas sociais iniciais
+
+IMPORTANTE:
+isso deve ser feito de forma elegante e plausível, sem parecer artificial ou exagerado.
+
+==================================================
+4. CRIAR USUÁRIOS SEED
+==================================================
+
+Quero um script ou lógica para criar usuários fictícios de comunidade, com perfis minimamente ricos.
+
+Cada usuário seed deve ter:
+- nome
+- username único
+- avatar ou iniciais
+- avatar_color
+- bio curta
+- cidade opcional
+- reader_type_title
+- reader_type_description
+- reading_signature
+- preferências e gêneros de interesse, quando fizer sentido
+
+Exemplos de perfis:
+- leitora de Clarice e poesia
+- leitor de clássicos e filosofia
+- pessoa que lê fantasia e ficção científica
+- pessoa que ama ensaio, psicanálise, feminismo etc.
+
+Objetivo:
+dar a sensação de diversidade real de leitores.
+
+==================================================
+5. CRIAR ECOS AUTOMÁTICOS
+==================================================
+
+Quero popular o app com muitos ecos distribuídos entre vários livros.
+
+Esses ecos devem ser variados, com tipos como:
+- insight
+- citacao
+- critica
+- pergunta
+- interpretacao
+
+Cada eco deve conter:
+- user_id
+- book_id
+- type
+- quoted_excerpt (quando fizer sentido)
+- content
+- page_number ou chapter_label, quando fizer sentido
+- created_at distribuído no tempo
+- contagem plausível de reações e comentários
+
+Quero que os ecos pareçam reais, com textos variados e naturais, por exemplo:
+- reflexões emocionais
+- leituras simbólicas
+- perguntas abertas
+- comentários sobre estilo do autor
+- trechos marcantes
+- observações sobre personagens
+
+IMPORTANTE:
+não repetir sempre o mesmo padrão de texto.
+
+==================================================
+6. CRIAR COMENTÁRIOS E REPLIES
+==================================================
+
+Quero que muitos ecos já tenham comentários e respostas.
+
+Esses comentários devem:
+- parecer naturais
+- ter vozes diferentes
+- variar entre concordância, discordância, aprofundamento e emoção
+
+Exemplos de tons:
+- “Eu senti isso também.”
+- “Nunca tinha pensado dessa forma.”
+- “Esse trecho me destruiu.”
+- “Acho que aqui ela está falando mais sobre silêncio do que solidão.”
+- “Pra mim esse ponto conversa com o final inteiro.”
+
+Também quero replies em alguns comentários, para dar sensação de conversa viva.
+
+==================================================
+7. CRIAR REAÇÕES AUTOMÁTICAS
+==================================================
+
+Quero que os ecos e comentários já tenham reações variadas.
+
+Exemplos de emojis:
+- coração
+- choro
+- fogo
+- reflexão
+- surpresa
+- brilho
+
+Regras:
+- contagens variadas
+- distribuição orgânica
+- alguns ecos mais silenciosos
+- outros mais movimentados
+- alguns comentários também com reações
+
+IMPORTANTE:
+manter coerência visual com a proposta do app.
+
+==================================================
+8. CRIAR DADOS PARA “GUARDADOS” / “SALVOS”
+==================================================
+
+Quero que alguns ecos apareçam como guardados/salvos, para enriquecer o app.
+
+Também quero que a área de guardados do usuário funcione com dados reais quando ele salvar algo, mas o seed pode criar atividade nos outros usuários para dar sensação de comunidade viva.
+
+==================================================
+9. FAZER O APP PARECER VIVO DESDE O INÍCIO
+==================================================
+
+Quero que a experiência de um usuário novo, ao entrar no app, transmita imediatamente:
+- sensação de comunidade
+- livros com movimento
+- discussões já acontecendo
+- trechos marcantes sendo comentados
+- perfis interessantes
+- ecos circulando
+- atividade recente
+
+Ou seja:
+não quero uma sensação de app vazio.
+
+==================================================
+10. MISTURAR DADOS REAIS + DADOS INICIAIS
+==================================================
+
+Quero uma lógica híbrida.
+
+O app deve:
+- usar dados reais do usuário autenticado normalmente
+- e ao mesmo tempo ter dados seed iniciais para povoar a experiência
+
+Conforme a comunidade real crescer:
+- os dados reais podem ir substituindo a dependência do seed
+- mas por agora quero volume visual e social
+
+==================================================
+11. RANKINGS E DESTAQUES
+==================================================
+
+Quero que esses dados ajudem a alimentar áreas como:
+- ecos em alta
+- margens mais reagidas
+- livros em alta
+- gêneros em alta
+- leitores parecidos com você
+- guardados
+- recomendações
+
+Ou seja, a atividade gerada deve ajudar o app inteiro a parecer ativo.
+
+==================================================
+12. DISTRIBUIÇÃO DE TEMPO E NATURALIDADE
+==================================================
+
+Não quero que tudo pareça criado no mesmo instante.
+
+Quero distribuir created_at para simular atividade ao longo do tempo:
+- alguns ecos “1h atrás”
+- alguns “ontem”
+- alguns “3d”
+- alguns mais antigos
+
+O mesmo vale para comentários e reações.
+
+Isso é importante para a sensação de realidade.
+
+==================================================
+13. SISTEMA DE SEED
+==================================================
+
+Quero um script ou rotina clara de seed, algo fácil de rodar e rerodar.
+
+Exemplo:
+- npm run seed
+ou equivalente
+
+Esse seed deve criar:
+- gêneros, se necessário
+- livros iniciais
+- perfis seed
+- ecos
+- comentários
+- reações
+- saved_ecos
+- estatísticas coerentes
+
+Também quero que esse seed:
+- não crie usernames duplicados
+- respeite foreign keys
+- seja estável
+- possa ser expandido depois
+
+==================================================
+14. MANTER USUÁRIO REAL SEPARADO DO SEED
+==================================================
+
+Muito importante:
+não quero misturar dados seed com o usuário autenticado de forma errada.
+
+O usuário real deve continuar tendo:
+- seu próprio perfil
+- seus próprios livros
+- seus próprios ecos
+- suas próprias reações
+- suas próprias estatísticas
+
+Os dados seed são para comunidade e contexto, não para falsificar a conta do usuário real.
+
+==================================================
+15. ESTATÍSTICAS E CONTAGENS COERENTES
+==================================================
+
+Quero que as métricas derivadas dos dados seed façam sentido.
+
+Exemplo:
+- um eco com 8 reações pode ter 2 comentários
+- um livro com muitos ecos pode aparecer como mais debatido
+- livros em alta devem refletir alguma atividade
+- gêneros em alta devem refletir livros e ecos daquele gênero
+
+Ou seja:
+quero coerência mínima entre conteúdo e estatísticas.
+
+==================================================
+16. EFEITO PRÁTICO NO APP
+==================================================
+
+Depois dessa implementação, quero que:
+
+- a tela Explorar tenha muito mais livros
+- a tela dos livros mostre muito mais ecos
+- os livros tenham atividade social visível
+- o perfil de outros leitores pareça vivo
+- haja comentários e respostas em vários trechos
+- a comunidade pareça ativa
+
+==================================================
+17. PRIORIDADES DE IMPLEMENTAÇÃO
+==================================================
+
+Implementar nesta ordem:
+
+1. integração com API de livros para trazer muitos livros reais
+2. cache/salvamento desses livros no banco
+3. script de seed para usuários fictícios
+4. script de seed para ecos
+5. script de seed para comentários
+6. script de seed para reações
+7. usar esses dados para alimentar feed, explorar e livros em alta
+
+==================================================
+18. IMPORTANTE SOBRE UX
+==================================================
+
+Quero manter o estilo editorial e sofisticado do app.
+
+Mesmo com mais conteúdo, a interface não deve parecer bagunçada.
+
+Quero:
+- volume de conteúdo
+- mas com sensação de curadoria
+- conteúdo rico
+- atividade social
+- visual elegante
+
+==================================================
+19. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois disso, quero que o Marginalia pareça:
+
+- um app com catálogo amplo de livros
+- uma comunidade real de leitores
+- um lugar onde já existem ecos, reações, comentários e circulação de ideias
+- um ambiente vivo, atraente e viciante
+
+==================================================
+20. IMPORTANTE
+==================================================
+
+Implemente isso de verdade no código.
+
+Não quero apenas descrição ou mock visual.
+
+Quero:
+- integração real com API de livros
+- lógica real de seed
+- persistência real no banco
+- feed e telas usando esses dados
+
+Se necessário, crie serviços, scripts e rotinas para isso funcionar bem.

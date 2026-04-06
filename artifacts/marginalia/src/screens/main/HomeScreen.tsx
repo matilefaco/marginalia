@@ -9,6 +9,7 @@ import { canUserSeeMargin } from "@/utils/spoiler";
 import { MOCK_BOOKS, type Margin } from "@/data/mockData";
 import { progressLabel } from "@/utils/formatting";
 import { Shield } from "lucide-react";
+import { useCommunityFeed, formatCommunityMarginAge, totalReactions } from "@/hooks/useCommunity";
 
 const SUBTITLES = [
   "Seu ritmo está protegido.",
@@ -173,6 +174,68 @@ function FeedBreak({ index }: { index: number }) {
         </Link>
       )}
     </div>
+  );
+}
+
+function CommunityFeedSection() {
+  const { margins, loading } = useCommunityFeed(1, 8);
+  if (loading) return null;
+  if (margins.length === 0) return null;
+
+  return (
+    <section data-testid="section-community-feed">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#697962]">Ecos da comunidade</span>
+        <div className="flex-1 h-px bg-[#697962]/20" />
+      </div>
+      <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-4">O que leitores estão sentindo agora</p>
+      <div className="space-y-3">
+        {margins.map((m) => {
+          const rxTotal = totalReactions(m.reactions);
+          return (
+            <div key={m.id} className="bg-[#FAF8F3] border border-[#697962]/12 rounded-[14px] p-4">
+              <div className="flex items-center gap-2 mb-2.5">
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-medium text-white"
+                  style={{ backgroundColor: m.userAvatarColor ?? "#697962" }}
+                >
+                  {m.userInitials?.[0] ?? "?"}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-sans font-light text-[10px] text-[#3D3D3D] truncate">{m.userName}</p>
+                  <p className="font-sans font-light text-[8px] text-[#454545]/35">{formatCommunityMarginAge(m.createdAt)}</p>
+                </div>
+                {m.spoilerLevel !== "none" && (
+                  <span className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/25 px-1.5 py-0.5 rounded-full">
+                    {m.spoilerLevel}
+                  </span>
+                )}
+              </div>
+
+              <div className="bg-[#EBE6DB]/50 rounded-[8px] px-3 py-2 mb-2.5">
+                <p className="font-serif italic text-[13px] text-[#3D3D3D]/80 leading-relaxed line-clamp-3">
+                  &ldquo;{m.excerpt}&rdquo;
+                </p>
+              </div>
+
+              {m.commentary && (
+                <p className="font-sans font-light text-[11px] text-[#454545]/60 leading-relaxed mb-2 line-clamp-2">{m.commentary}</p>
+              )}
+
+              <div className="flex items-center gap-3">
+                <p className="font-sans font-light text-[8px] text-[#454545]/35 truncate flex-1">{m.bookTitle}</p>
+                {rxTotal > 0 && (
+                  <span className="font-sans font-light text-[8px] text-[#697962]">{rxTotal} reações</span>
+                )}
+                {m.commentsCount > 0 && (
+                  <span className="font-sans font-light text-[8px] text-[#454545]/30">{m.commentsCount} ecos</span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -414,6 +477,9 @@ export function HomeScreen() {
             </div>
           )}
         </section>
+
+        {/* Community Feed */}
+        <CommunityFeedSection />
 
         {/* Ritual CTA */}
         <section className="pb-4">

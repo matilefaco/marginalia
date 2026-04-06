@@ -5,6 +5,7 @@ import { MOCK_BOOKS, MOCK_USERS, MOCK_MARGINS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { BookCover } from "@/components/BookCover";
 import { useApp } from "@/context/AppContext";
+import { useCommunityTrending, type CommunityBook } from "@/hooks/useCommunity";
 
 interface GoogleBookResult {
   externalId: string;
@@ -80,31 +81,51 @@ export function ExploreScreen() {
   const [googleResults, setGoogleResults] = useState<GoogleBookResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { books: communityTrending } = useCommunityTrending();
+  const [communityGenreBooks, setCommunityGenreBooks] = useState<CommunityBook[]>([]);
+  const [communityGenreLoading, setCommunityGenreLoading] = useState(false);
+  const [communitySearchResults, setCommunitySearchResults] = useState<CommunityBook[]>([]);
 
   const selectGenre = (label: string) => {
     setSelectedGenre(label);
     setGenreBooksLimit(8);
     setGenreFocused(true);
     setShowAllGenres(false);
+    setCommunityGenreBooks([]);
+    setCommunityGenreLoading(true);
+    fetch(`/api/community/books?genre=${encodeURIComponent(label)}&limit=20`)
+      .then((r) => r.json())
+      .then((d) => setCommunityGenreBooks(d.books ?? []))
+      .catch(() => {})
+      .finally(() => setCommunityGenreLoading(false));
   };
 
   const exitGenreFocus = () => {
     setGenreFocused(false);
     setSelectedGenre(null);
     setGenreBooksLimit(8);
+    setCommunityGenreBooks([]);
   };
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (!query.trim()) {
       setGoogleResults([]);
+      setCommunitySearchResults([]);
       setIsSearching(false);
       return;
     }
     setIsSearching(true);
     debounceRef.current = setTimeout(async () => {
-      const results = await searchGoogleBooks(query);
-      setGoogleResults(results);
+      const [googleRes, communityRes] = await Promise.all([
+        searchGoogleBooks(query),
+        fetch(`/api/community/books?search=${encodeURIComponent(query)}&limit=8`)
+          .then((r) => r.json())
+          .then((d) => (d.books ?? []) as CommunityBook[])
+          .catch(() => [] as CommunityBook[]),
+      ]);
+      setGoogleResults(googleRes);
+      setCommunitySearchResults(communityRes);
       setIsSearching(false);
     }, 500);
     return () => {
@@ -120,7 +141,7 @@ export function ExploreScreen() {
       )
     : [];
 
-  const hasSearchResults = localResults.length > 0 || googleResults.length > 0;
+  const hasSearchResults = localResults.length > 0 || googleResults.length > 0 || communitySearchResults.length > 0;
 
   // "For you" — books matching user's preferred genres, not already in library
   const forYouBooks = MOCK_BOOKS.filter((b) =>
@@ -203,6 +224,31 @@ export function ExploreScreen() {
               </div>
             )}
 
+            {/* Community catalog results */}
+            {communitySearchResults.filter((cr) => !localResults.some((lr) => lr.title.toLowerCase() === cr.title.toLowerCase())).length > 0 && (
+              <div className="space-y-2 mb-4">
+                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#454545]/35 mb-2">
+                  Na comunidade
+                </p>
+                {communitySearchResults
+                  .filter((cr) => !localResults.some((lr) => lr.title.toLowerCase() === cr.title.toLowerCase()))
+                  .map((book) => (
+                    <div key={book.id} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-3">
+                      {book.coverUrl ? (
+                        <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      ) : (
+                        <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
+                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
+                        <p className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} margens · {book.publicationYear ?? ""}</p>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+
             {/* Google Books results */}
             {googleResults.length > 0 && (
               <div className="space-y-2">
@@ -210,7 +256,7 @@ export function ExploreScreen() {
                   Mais livros
                 </p>
                 {googleResults
-                  .filter((gr) => !localResults.some((lr) => lr.title.toLowerCase() === gr.title.toLowerCase()))
+                  .filter((gr) => !localResults.some((lr) => lr.title.toLowerCase() === gr.title.toLowerCase()) && !communitySearchResults.some((cr) => cr.title.toLowerCase() === gr.title.toLowerCase()))
                   .map((book) => (
                     <div
                       key={book.externalId}
@@ -277,38 +323,39 @@ export function ExploreScreen() {
           </section>
         )}
 
-        {/* Most Discussed */}
-        {!query && (
+        {/* Community trending books */}
+        {!query && communityTrending.length > 0 && (
           <section data-testid="section-most-discussed">
             <div className="flex items-center gap-2 mb-1.5">
               <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-                Livros mais discutidos
+                Em alta na comunidade
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
             </div>
+            <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">Os livros mais anotados agora</p>
             <div className="space-y-2">
-              {mostDiscussed.map((book, idx) => (
-                <Link key={book.id} href={`/book/${book.id}`} data-testid={`card-discussed-${book.id}`}>
-                  <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 transition-colors">
-                    <span className="font-serif italic text-[22px] text-[#AE8F7D]/40 w-6 flex-shrink-0 text-center">
-                      {idx + 1}
-                    </span>
+              {communityTrending.slice(0, 6).map((book, idx) => (
+                <div key={book.id} data-testid={`card-discussed-${book.id}`} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4">
+                  <span className="font-serif italic text-[22px] text-[#AE8F7D]/40 w-6 flex-shrink-0 text-center">{idx + 1}</span>
+                  {book.coverUrl ? (
+                    <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                  ) : (
                     <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
-                      <div className="flex items-center gap-2">
-                        <span className="font-sans font-light text-[8px] text-[#697962]">
-                          {book.communityStats.debates} debates
-                        </span>
-                        <span className="text-[#AE8F7D]/25">·</span>
-                        <span className="font-sans font-light text-[8px] text-[#454545]/35">
-                          {book.communityStats.totalMargins} margens
-                        </span>
-                      </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
+                    <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
+                      {book.genres && book.genres.length > 0 && (
+                        <>
+                          <span className="text-[#AE8F7D]/25">·</span>
+                          <span className="font-sans font-light text-[8px] text-[#454545]/35">{(book.genres as string[])[0]}</span>
+                        </>
+                      )}
                     </div>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </section>
@@ -361,12 +408,46 @@ export function ExploreScreen() {
                 </p>
               </div>
 
-              {allGenreBooks.length === 0 ? (
+              {communityGenreLoading && (
+                <div className="flex items-center justify-center py-6 gap-2">
+                  <Loader2 className="w-4 h-4 text-[#AE8F7D]/50 animate-spin" />
+                  <span className="font-sans font-light text-[10px] text-[#454545]/30">Buscando livros...</span>
+                </div>
+              )}
+
+              {!communityGenreLoading && communityGenreBooks.length > 0 && (
+                <div className="space-y-2 mb-4">
+                  {communityGenreBooks.map((book) => (
+                    <div key={book.id} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/25 transition-colors">
+                      {book.coverUrl ? (
+                        <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      ) : (
+                        <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
+                        <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
+                        <div className="flex items-center gap-2">
+                          <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
+                          {book.publicationYear && (<><span className="text-[#AE8F7D]/25">·</span><span className="font-sans font-light text-[8px] text-[#454545]/30">{book.publicationYear}</span></>)}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {!communityGenreLoading && communityGenreBooks.length === 0 && allGenreBooks.length === 0 && (
                 <p className="font-serif italic text-[13px] text-[#454545]/35 text-center py-6">
                   Nenhum livro encontrado neste gênero ainda.
                 </p>
-              ) : (
+              )}
+
+              {allGenreBooks.length > 0 && (
                 <>
+                  {communityGenreBooks.length > 0 && (
+                    <p className="font-sans font-light text-[8px] uppercase tracking-[0.14em] text-[#AE8F7D]/60 mb-2">Também em Marginalia</p>
+                  )}
                   <div className="space-y-2">
                     {visibleBooks.map((book) => (
                       <Link key={book.id} href={`/book/${book.id}`}>
