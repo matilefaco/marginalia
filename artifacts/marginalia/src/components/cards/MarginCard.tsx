@@ -8,6 +8,7 @@ import { Shield } from "lucide-react";
 import { MARGIN_TYPES, EMOJI_REACTIONS } from "@/data/constants";
 import type { Margin } from "@/data/mockData";
 import { MOCK_BOOKS, MOCK_USERS } from "@/data/mockData";
+import { ShareCardModal } from "./ShareCardModal";
 
 const USER_USERNAME_MAP: Record<string, string> = Object.fromEntries(
   MOCK_USERS.map((u) => [u.id, u.username])
@@ -21,41 +22,21 @@ interface Props {
 }
 
 function ShareButton({ margin }: { margin: Margin }) {
-  const [copied, setCopied] = useState(false);
-  const handleShare = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const typeLabel = MARGIN_TYPES.find((t) => t.id === margin.postType)?.label || "Margem";
-    const text = [
-      `"${margin.excerpt}"`,
-      ``,
-      `— ${margin.bookTitle}`,
-      `${margin.bookAuthor}`,
-      ``,
-      `@${margin.userName.replace("@", "")} · ${typeLabel}`,
-      ``,
-      `marginalia — leia junto`,
-    ].join("\n");
-    if (navigator.share) {
-      navigator.share({ text });
-    } else {
-      navigator.clipboard.writeText(text).catch(() => {});
-    }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const [modalOpen, setModalOpen] = useState(false);
   return (
-    <button
-      data-testid={`button-share-margin-${margin.id}`}
-      onClick={handleShare}
-      className="flex items-center gap-1 font-sans text-[7.5px] font-light tracking-[0.06em] text-[#454545]/28 hover:text-[#AE8F7D] transition-colors py-1 px-1"
-    >
-      {copied ? (
-        <><Check className="w-3 h-3" /><span>Copiado</span></>
-      ) : (
+    <>
+      <button
+        data-testid={`button-share-margin-${margin.id}`}
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setModalOpen(true); }}
+        className="flex items-center gap-1 font-sans text-[7.5px] font-light tracking-[0.06em] text-[#454545]/28 hover:text-[#AE8F7D] transition-colors py-1 px-1"
+        title="Compartilhar"
+      >
         <Share2 className="w-3 h-3" />
+      </button>
+      {modalOpen && (
+        <ShareCardModal margin={margin} onClose={() => setModalOpen(false)} />
       )}
-    </button>
+    </>
   );
 }
 

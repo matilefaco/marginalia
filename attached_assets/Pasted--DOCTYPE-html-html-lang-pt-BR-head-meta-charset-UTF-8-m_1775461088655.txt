@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marginalia — Cards Compartilháveis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–parchment: #FAF7F2;
+–parchment-warm: #F5F0E8;
+–ink: #2A2420;
+–ink-soft: #4A3F38;
+–dusty-rose: #C9A99A;
+–dusty-rose-light: #E8D5CD;
+–dusty-rose-dark: #A07868;
+–sage: #8A9E8C;
+–gold: #C4A882;
+–gold-light: #E8D8B8;
+–cream-border: rgba(42,36,32,0.08);
+}
+
+body {
+background: #1A1614;
+font-family: ‘Raleway’, sans-serif;
+color: var(–ink);
+min-height: 100vh;
+padding: 48px 24px;
+}
+
+.page-header {
+text-align: center;
+margin-bottom: 64px;
+}
+
+.page-header .logo {
+font-family: ‘EB Garamond’, serif;
+font-size: 13px;
+letter-spacing: 0.35em;
+color: var(–dusty-rose);
+text-transform: uppercase;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+margin-bottom: 12px;
+}
+
+.page-header .logo::before,
+.page-header .logo::after {
+content: ‘’;
+width: 32px;
+height: 1px;
+background: var(–dusty-rose);
+opacity: 0.4;
+}
+
+.page-header h1 {
+font-family: ‘EB Garamond’, serif;
+font-size: 28px;
+color: var(–parchment);
+font-weight: 400;
+font-style: italic;
+letter-spacing: 0.02em;
+margin-bottom: 8px;
+}
+
+.page-header p {
+font-size: 12px;
+letter-spacing: 0.2em;
+color: rgba(250,247,242,0.35);
+text-transform: uppercase;
+}
+
+.section-label {
+font-size: 10px;
+letter-spacing: 0.3em;
+text-transform: uppercase;
+color: rgba(250,247,242,0.3);
+text-align: center;
+margin-bottom: 32px;
+position: relative;
+}
+
+.section-label::before, .section-label::after {
+content: ‘’;
+position: absolute;
+top: 50%;
+width: 60px;
+height: 1px;
+background: rgba(250,247,242,0.1);
+}
+.section-label::before { right: calc(50% + 80px); }
+.section-label::after { left: calc(50% + 80px); }
+
+.cards-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+gap: 40px;
+max-width: 1200px;
+margin: 0 auto 80px;
+}
+
+.card-wrapper {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 14px;
+}
+
+.card-format-tag {
+font-size: 9px;
+letter-spacing: 0.3em;
+text-transform: uppercase;
+color: rgba(250,247,242,0.25);
+}
+
+/* ===================== */
+/* CARD BASE             */
+/* ===================== */
+
+.card {
+width: 100%;
+max-width: 380px;
+background: var(–parchment);
+position: relative;
+overflow: hidden;
+}
+
+/* Grain texture overlay */
+.card::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.035’/%3E%3C/svg%3E”);
+pointer-events: none;
+z-index: 10;
+}
+
+/* ===================== */
+/* STORIES CARD — 9:16   */
+/* ===================== */
+
+.card-stories {
+aspect-ratio: 9/16;
+border-radius: 24px;
+}
+
+/* ===================== */
+/* FEED CARD — 1:1       */
+/* ===================== */
+
+.card-feed {
+aspect-ratio: 1/1;
+border-radius: 16px;
+}
+
+/* ===================== */
+/* CARD: CITAÇÃO PESSOAL */
+/* ===================== */
+
+.card-quote-personal {
+background: var(–parchment);
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+padding: 0;
+}
+
+.card-quote-personal .card-top-bar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 28px 28px 0;
+}
+
+.card-quote-personal .tag-label {
+font-size: 8.5px;
+letter-spacing: 0.3em;
+text-transform: uppercase;
+color: var(–dusty-rose-dark);
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.card-quote-personal .tag-label::before {
+content: ‘✦’;
+font-size: 7px;
+}
+
+.card-quote-personal .app-mark {
+font-family: ‘EB Garamond’, serif;
+font-size: 11px;
+letter-spacing: 0.2em;
+color: rgba(42,36,32,0.3);
+font-style: italic;
+}
+
+.card-quote-personal .card-body {
+flex: 1;
+display: flex;
+flex-direction: column;
+justify-content: center;
+padding: 32px 36px;
+}
+
+.bracket-decoration {
+font-family: ‘EB Garamond’, serif;
+font-size: 56px;
+color: var(–dusty-rose-light);
+line-height: 1;
+margin-bottom: -8px;
+display: block;
+}
+
+.card-quote-personal .quote-text {
+font-family: ‘EB Garamond’, serif;
+font-size: 22px;
+font-style: italic;
+line-height: 1.55;
+color: var(–ink);
+letter-spacing: 0.01em;
+}
+
+.card-quote-personal .quote-source {
+margin-top: 20px;
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+.card-quote-personal .quote-source .book-title {
+font-size: 9.5px;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: var(–ink-soft);
+opacity: 0.6;
+}
+
+.card-quote-personal .quote-source .chapter {
+font-size: 9px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(–dusty-rose);
+opacity: 0.7;
+}
+
+.card-quote-personal .card-footer {
+border-top: 1px solid var(–cream-border);
+padding: 18px 28px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.user-info {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.user-avatar {
+width: 30px;
+height: 30px;
+border-radius: 50%;
+background: var(–ink);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 10px;
+font-weight: 600;
+color: var(–parchment);
+letter-spacing: 0.05em;
+flex-shrink: 0;
+}
+
+.user-name {
+font-size: 11px;
+font-weight: 500;
+color: var(–ink);
+display: block;
+}
+
+.user-handle {
+font-size: 9.5px;
+color: rgba(42,36,32,0.4);
+letter-spacing: 0.05em;
+}
+
+.reaction-pills {
+display: flex;
+gap: 4px;
+}
+
+.reaction-pill {
+background: var(–parchment-warm);
+border: 1px solid var(–cream-border);
+border-radius: 20px;
+padding: 3px 8px;
+font-size: 11px;
+display: flex;
+align-items: center;
+gap: 3px;
+}
+
+.reaction-pill span {
+font-size: 8.5px;
+color: var(–ink-soft);
+opacity: 0.6;
+}
+
+/* decorative line */
+.card-quote-personal .accent-line {
+position: absolute;
+left: 0;
+top: 0;
+bottom: 0;
+width: 3px;
+background: linear-gradient(to bottom, var(–dusty-rose-light), var(–dusty-rose), var(–dusty-rose-light));
+}
+
+/* ===================== */
+/* CARD: ECO COMUNIDADE  */
+/* ===================== */
+
+.card-echo {
+background: var(–parchment-warm);
+}
+
+.card-echo .echo-top {
+padding: 26px 28px 0;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.echo-badge {
+display: flex;
+align-items: center;
+gap: 5px;
+background: var(–ink);
+color: var(–parchment);
+padding: 4px 10px;
+border-radius: 20px;
+font-size: 8.5px;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+}
+
+.echo-badge .dot {
+width: 4px;
+height: 4px;
+border-radius: 50%;
+background: var(–dusty-rose-light);
+}
+
+.echo-count {
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+}
+
+.echo-count .number {
+font-family: ‘EB Garamond’, serif;
+font-size: 28px;
+color: var(–dusty-rose);
+line-height: 1;
+font-style: italic;
+}
+
+.echo-count .label {
+font-size: 8px;
+letter-spacing: 0.25em;
+color: rgba(42,36,32,0.35);
+text-transform: uppercase;
+}
+
+.card-echo .echo-passage {
+padding: 20px 28px;
+border-left: 2px solid var(–dusty-rose);
+margin: 20px 28px 0;
+background: rgba(201,169,154,0.06);
+border-radius: 0 8px 8px 0;
+}
+
+.card-echo .echo-passage blockquote {
+font-family: ‘EB Garamond’, serif;
+font-size: 18px;
+font-style: italic;
+line-height: 1.6;
+color: var(–ink);
+}
+
+.card-echo .echo-passage .passage-ref {
+margin-top: 10px;
+font-size: 8.5px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: rgba(42,36,32,0.4);
+}
+
+.card-echo .echo-margem {
+padding: 18px 28px;
+margin: 0 28px;
+}
+
+.card-echo .echo-margem p {
+font-size: 13px;
+line-height: 1.65;
+color: var(–ink-soft);
+}
+
+.card-echo .echo-type-badge {
+display: inline-flex;
+align-items: center;
+gap: 4px;
+font-size: 8.5px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(–dusty-rose-dark);
+margin-bottom: 10px;
+opacity: 0.8;
+}
+
+.card-echo .echo-footer {
+margin-top: auto;
+border-top: 1px solid var(–cream-border);
+padding: 16px 28px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.echo-stats {
+display: flex;
+gap: 12px;
+}
+
+.echo-stats .stat {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 2px;
+}
+
+.echo-stats .stat .s-num {
+font-family: ‘EB Garamond’, serif;
+font-size: 14px;
+color: var(–ink);
+font-style: italic;
+}
+
+.echo-stats .stat .s-label {
+font-size: 7.5px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: rgba(42,36,32,0.35);
+}
+
+/* ===================== */
+/* CARD: PERFIL PESSOAL  */
+/* ===================== */
+
+.card-profile {
+background: var(–ink);
+color: var(–parchment);
+}
+
+.card-profile::before {
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.85’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.06’/%3E%3C/svg%3E”);
+}
+
+.card-profile .profile-bg-circle {
+position: absolute;
+width: 280px;
+height: 280px;
+border-radius: 50%;
+background: radial-gradient(circle, rgba(201,169,154,0.08) 0%, transparent 70%);
+top: -60px;
+right: -60px;
+pointer-events: none;
+}
+
+.card-profile .profile-inner {
+position: relative;
+z-index: 2;
+height: 100%;
+display: flex;
+flex-direction: column;
+padding: 28px;
+}
+
+.card-profile .profile-top {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: auto;
+}
+
+.card-profile .p-logo {
+font-family: ‘EB Garamond’, serif;
+font-size: 11px;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: rgba(250,247,242,0.3);
+font-style: italic;
+}
+
+.card-profile .reader-type-chip {
+font-size: 8px;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: var(–dusty-rose-light);
+border: 1px solid rgba(201,169,154,0.25);
+padding: 4px 10px;
+border-radius: 20px;
+}
+
+.card-profile .avatar-large {
+width: 64px;
+height: 64px;
+border-radius: 50%;
+background: var(–dusty-rose-dark);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 20px;
+font-weight: 600;
+color: var(–parchment);
+letter-spacing: 0.05em;
+margin-bottom: 14px;
+border: 2px solid rgba(201,169,154,0.2);
+}
+
+.card-profile .p-name {
+font-family: ‘EB Garamond’, serif;
+font-size: 28px;
+font-weight: 400;
+color: var(–parchment);
+line-height: 1.1;
+margin-bottom: 4px;
+}
+
+.card-profile .p-handle {
+font-size: 11px;
+color: rgba(250,247,242,0.35);
+letter-spacing: 0.1em;
+margin-bottom: 20px;
+}
+
+.card-profile .p-signature {
+font-family: ‘EB Garamond’, serif;
+font-size: 17px;
+font-style: italic;
+color: var(–parchment);
+opacity: 0.7;
+line-height: 1.5;
+border-left: 2px solid var(–dusty-rose);
+padding-left: 14px;
+margin-bottom: 24px;
+}
+
+.card-profile .p-stats-row {
+display: flex;
+gap: 0;
+margin-bottom: 24px;
+}
+
+.card-profile .p-stat {
+flex: 1;
+text-align: center;
+padding: 14px 0;
+border: 1px solid rgba(250,247,242,0.07);
+}
+
+.card-profile .p-stat:first-child { border-radius: 8px 0 0 8px; }
+.card-profile .p-stat:last-child { border-radius: 0 8px 8px 0; }
+
+.card-profile .p-stat .ps-num {
+font-family: ‘EB Garamond’, serif;
+font-size: 22px;
+font-style: italic;
+color: var(–dusty-rose-light);
+display: block;
+line-height: 1;
+margin-bottom: 4px;
+}
+
+.card-profile .p-stat .ps-label {
+font-size: 7.5px;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: rgba(250,247,242,0.25);
+}
+
+.card-profile .p-most-used {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 10px 14px;
+background: rgba(250,247,242,0.04);
+border-radius: 8px;
+border: 1px solid rgba(250,247,242,0.06);
+}
+
+.card-profile .p-most-used .emoji { font-size: 16px; }
+
+.card-profile .p-most-used .mu-text { font-size: 11px; color: rgba(250,247,242,0.5); }
+.card-profile .p-most-used .mu-val { font-size: 11px; color: rgba(250,247,242,0.8); font-style: italic; font-family: ‘EB Garamond’, serif; }
+
+.card-profile .p-footer {
+margin-top: 20px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.card-profile .p-footer .invite-text {
+font-size: 9.5px;
+color: rgba(250,247,242,0.25);
+letter-spacing: 0.1em;
+line-height: 1.5;
+}
+
+.card-profile .p-footer .join-chip {
+font-size: 9px;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+background: var(–dusty-rose);
+color: var(–parchment);
+padding: 7px 14px;
+border-radius: 20px;
+}
+
+/* ===================== */
+/* CARD: ECO FEED (1:1)  */
+/* ===================== */
+
+.card-echo-feed {
+background: var(–parchment);
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+padding: 28px;
+position: relative;
+}
+
+.card-echo-feed .ecf-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 20px;
+}
+
+.card-echo-feed .ecf-type {
+font-size: 8.5px;
+letter-spacing: 0.28em;
+text-transform: uppercase;
+color: var(–dusty-rose-dark);
+}
+
+.card-echo-feed .ecf-app {
+font-family: ‘EB Garamond’, serif;
+font-size: 11px;
+font-style: italic;
+color: rgba(42,36,32,0.25);
+letter-spacing: 0.15em;
+}
+
+.card-echo-feed .ecf-quote {
+flex: 1;
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+
+.card-echo-feed .ecf-quote blockquote {
+font-family: ‘EB Garamond’, serif;
+font-size: 20px;
+font-style: italic;
+line-height: 1.55;
+color: var(–ink);
+border-left: 2px solid var(–dusty-rose);
+padding-left: 16px;
+margin-bottom: 16px;
+}
+
+.card-echo-feed .ecf-comment {
+font-size: 13px;
+line-height: 1.6;
+color: var(–ink-soft);
+opacity: 0.75;
+}
+
+.card-echo-feed .ecf-source {
+font-size: 8.5px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: rgba(42,36,32,0.35);
+margin-top: 10px;
+}
+
+.card-echo-feed .ecf-footer {
+border-top: 1px solid var(–cream-border);
+padding-top: 14px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.card-echo-feed .ecf-user {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.avatar-sm {
+width: 26px;
+height: 26px;
+border-radius: 50%;
+background: var(–ink);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 8.5px;
+font-weight: 600;
+color: var(–parchment);
+flex-shrink: 0;
+}
+
+.ecf-footer-reactions {
+display: flex;
+gap: 3px;
+}
+
+.ecf-r-pill {
+background: var(–parchment-warm);
+border: 1px solid var(–cream-border);
+border-radius: 20px;
+padding: 3px 7px;
+font-size: 11px;
+}
+
+/* ===================== */
+/* CORNER BRACKET MARK   */
+/* ===================== */
+
+.corner-bracket {
+position: absolute;
+font-family: ‘EB Garamond’, serif;
+font-size: 80px;
+line-height: 1;
+color: var(–dusty-rose-light);
+opacity: 0.25;
+pointer-events: none;
+z-index: 1;
+font-style: normal;
+}
+
+.corner-bracket.tl { top: -12px; left: 12px; }
+.corner-bracket.br { bottom: -20px; right: 12px; transform: rotate(180deg); }
+
+/* ===================== */
+/* DIVIDER               */
+/* ===================== */
+
+.section-divider {
+max-width: 1200px;
+margin: 0 auto 48px;
+display: flex;
+align-items: center;
+gap: 16px;
+}
+
+.section-divider::before, .section-divider::after {
+content: ‘’;
+flex: 1;
+height: 1px;
+background: rgba(250,247,242,0.06);
+}
+
+/* ===================== */
+/* INSTRUCTION NOTE      */
+/* ===================== */
+
+.export-note {
+max-width: 700px;
+margin: 0 auto 80px;
+padding: 24px 28px;
+border: 1px solid rgba(250,247,242,0.07);
+border-radius: 12px;
+background: rgba(250,247,242,0.03);
+}
+
+.export-note h3 {
+font-size: 11px;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: var(–dusty-rose);
+margin-bottom: 12px;
+}
+
+.export-note ul {
+list-style: none;
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.export-note ul li {
+font-size: 12.5px;
+color: rgba(250,247,242,0.4);
+line-height: 1.5;
+padding-left: 14px;
+position: relative;
+}
+
+.export-note ul li::before {
+content: ‘—’;
+position: absolute;
+left: 0;
+color: rgba(201,169,154,0.35);
+}
+
+/* ===================== */
+/* READING MOMENT CARD   */
+/* ===================== */
+
+.card-moment {
+background: linear-gradient(145deg, #2A2420 0%, #1A1614 100%);
+color: var(–parchment);
+}
+
+.card-moment .cm-inner {
+height: 100%;
+display: flex;
+flex-direction: column;
+padding: 28px;
+position: relative;
+z-index: 2;
+}
+
+.card-moment .cm-top {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 28px;
+}
+
+.card-moment .cm-eyebrow {
+font-size: 8.5px;
+letter-spacing: 0.3em;
+text-transform: uppercase;
+color: rgba(250,247,242,0.3);
+}
+
+.card-moment .cm-logo {
+font-family: ‘EB Garamond’, serif;
+font-size: 11px;
+letter-spacing: 0.2em;
+color: rgba(250,247,242,0.2);
+font-style: italic;
+}
+
+.card-moment .cm-book-title {
+font-family: ‘EB Garamond’, serif;
+font-size: 32px;
+font-style: italic;
+font-weight: 400;
+color: var(–parchment);
+line-height: 1.15;
+margin-bottom: 4px;
+}
+
+.card-moment .cm-author {
+font-size: 9.5px;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: rgba(250,247,242,0.3);
+margin-bottom: 28px;
+}
+
+.card-moment .cm-progress-area {
+margin-bottom: 28px;
+}
+
+.card-moment .cm-progress-label {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 8px;
+}
+
+.card-moment .cm-progress-label span {
+font-size: 9.5px;
+letter-spacing: 0.2em;
+color: rgba(250,247,242,0.3);
+text-transform: uppercase;
+}
+
+.card-moment .cm-progress-label .pct {
+font-family: ‘EB Garamond’, serif;
+font-size: 18px;
+font-style: italic;
+color: var(–dusty-rose-light);
+}
+
+.cm-progress-bar {
+height: 2px;
+background: rgba(250,247,242,0.08);
+border-radius: 2px;
+overflow: hidden;
+}
+
+.cm-progress-fill {
+height: 100%;
+background: linear-gradient(to right, var(–dusty-rose-dark), var(–dusty-rose-light));
+border-radius: 2px;
+}
+
+.card-moment .cm-passage {
+flex: 1;
+border-left: 2px solid rgba(201,169,154,0.3);
+padding-left: 16px;
+margin-bottom: 24px;
+}
+
+.card-moment .cm-passage blockquote {
+font-family: ‘EB Garamond’, serif;
+font-size: 17px;
+font-style: italic;
+line-height: 1.65;
+color: rgba(250,247,242,0.75);
+}
+
+.card-moment .cm-passage .page-ref {
+margin-top: 10px;
+font-size: 8.5px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: rgba(250,247,242,0.2);
+}
+
+.card-moment .cm-footer {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding-top: 16px;
+border-top: 1px solid rgba(250,247,242,0.06);
+}
+
+.card-moment .cm-footer .user-name-light {
+font-size: 11px;
+color: rgba(250,247,242,0.4);
+}
+
+.card-moment .cm-footer .moment-pill {
+font-size: 8.5px;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+background: rgba(201,169,154,0.12);
+color: var(–dusty-rose-light);
+padding: 5px 12px;
+border-radius: 20px;
+border: 1px solid rgba(201,169,154,0.15);
+}
+
+/* Circular badge for progress */
+.progress-circle-badge {
+position: absolute;
+right: 28px;
+bottom: 72px;
+width: 52px;
+height: 52px;
+border-radius: 50%;
+border: 1px solid rgba(201,169,154,0.15);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+
+.progress-circle-badge .pcb-num {
+font-family: ‘EB Garamond’, serif;
+font-size: 16px;
+font-style: italic;
+color: var(–dusty-rose-light);
+line-height: 1;
+}
+
+.progress-circle-badge .pcb-lbl {
+font-size: 6px;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+color: rgba(250,247,242,0.2);
+}
+</style>
+
+</head>
+<body>
+
+<div class="page-header">
+  <div class="logo">Marginalia</div>
+  <h1>Cards Compartilháveis</h1>
+  <p>Stories · Feed · Perfil</p>
+</div>
+
+<!-- ===================== -->
+
+<!-- SEÇÃO: CARDS PESSOAIS -->
+
+<!-- ===================== -->
+
+<div class="section-label">Cards pessoais do leitor</div>
+
+<div class="cards-grid">
+
+  <!-- CARD 1: Citação Favorita — Stories -->
+
+  <div class="card-wrapper">
+    <div class="card-format-tag">Stories · 9:16</div>
+    <div class="card card-stories card-quote-personal">
+      <div class="accent-line"></div>
+      <span class="corner-bracket tl">[</span>
+      <div class="card-top-bar">
+        <div class="tag-label">Citação favorita</div>
+        <div class="app-mark">marginalia</div>
+      </div>
+      <div class="card-body">
+        <span class="bracket-decoration">"</span>
+        <p class="quote-text">Quero escrever movimento puro. A passagem de um dia para outro.</p>
+        <div class="quote-source">
+          <span class="book-title">A Hora da Estrela</span>
+          <span class="chapter">Clarice Lispector · Cap. III</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="user-info">
+          <div class="user-avatar">MF</div>
+          <div>
+            <span class="user-name">Matile Facó</span>
+            <span class="user-handle">@matilefaco</span>
+          </div>
+        </div>
+        <div class="reaction-pills">
+          <div class="reaction-pill">✨ <span>9</span></div>
+          <div class="reaction-pill">🤔 <span>2</span></div>
+        </div>
+      </div>
+      <span class="corner-bracket br">[</span>
+    </div>
+  </div>
+
+  <!-- CARD 2: Momento de Leitura — Stories (dark) -->
+
+  <div class="card-wrapper">
+    <div class="card-format-tag">Stories · 9:16 — Modo noturno</div>
+    <div class="card card-stories card-moment">
+      <div class="cm-inner">
+        <div class="cm-top">
+          <div class="cm-eyebrow">Minha leitura agora</div>
+          <div class="cm-logo">marginalia</div>
+        </div>
+        <div class="cm-book-title">Grande Sertão:<br>Veredas</div>
+        <div class="cm-author">João Guimarães Rosa</div>
+        <div class="cm-progress-area">
+          <div class="cm-progress-label">
+            <span>Progresso</span>
+            <span class="pct">12%</span>
+          </div>
+          <div class="cm-progress-bar">
+            <div class="cm-progress-fill" style="width: 12%"></div>
+          </div>
+        </div>
+        <div class="cm-passage">
+          <blockquote>"Nonada. Tiros que o senhor ouviu foram de briga de homem não, quem sabe lá."</blockquote>
+          <div class="page-ref">p. 76 de 624</div>
+        </div>
+        <div class="cm-footer">
+          <span class="user-name-light">@matilefaco</span>
+          <span class="moment-pill">4 ecos liberados</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 3: Perfil de Leitura — Stories -->
+
+  <div class="card-wrapper">
+    <div class="card-format-tag">Perfil de leitor · Stories</div>
+    <div class="card card-stories card-profile">
+      <div class="profile-bg-circle"></div>
+      <div class="profile-inner">
+        <div class="profile-top">
+          <div class="p-logo">marginalia</div>
+          <div class="reader-type-chip">O Observador</div>
+        </div>
+        <div style="margin-top: auto; margin-bottom: 0;">
+          <div class="avatar-large">MF</div>
+          <div class="p-name">Matile<br>Facó</div>
+          <div class="p-handle">@matilefaco</div>
+          <div class="p-signature">"Cada livro me deixa diferente"</div>
+          <div class="p-stats-row">
+            <div class="p-stat">
+              <span class="ps-num">2</span>
+              <span class="ps-label">Lendo</span>
+            </div>
+            <div class="p-stat">
+              <span class="ps-num">3</span>
+              <span class="ps-label">Reações</span>
+            </div>
+            <div class="p-stat">
+              <span class="ps-num">2</span>
+              <span class="ps-label">Guardados</span>
+            </div>
+          </div>
+          <div class="p-most-used">
+            <span class="emoji">😮</span>
+            <div>
+              <div class="mu-text">Reação mais usada</div>
+              <div class="mu-val">Surpresa</div>
+            </div>
+          </div>
+          <div class="p-footer">
+            <div class="invite-text">Você percebe coisas<br>que passam despercebidas.</div>
+            <div class="join-chip">leia junto</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========================== -->
+
+<!-- SEÇÃO: ECOS DA COMUNIDADE  -->
+
+<!-- ========================== -->
+
+<div class="section-label" style="margin-top: 20px;">Ecos da comunidade</div>
+
+<div class="cards-grid">
+
+  <!-- CARD 4: Eco Reação — Feed (1:1) -->
+
+  <div class="card-wrapper">
+    <div class="card-format-tag">Feed · 1:1</div>
+    <div class="card card-feed card-echo-feed">
+      <span class="corner-bracket tl" style="font-size: 60px; opacity: 0.12;">[</span>
+      <div class="ecf-header">
+        <div class="ecf-type">✦ Reação · Cap. V</div>
+        <div class="ecf-app">marginalia</div>
+      </div>
+      <div class="ecf-quote">
+        <blockquote>"Ela era irreal como um pensamento, e real como um fato."</blockquote>
+        <p class="ecf-comment">Que paradoxo brutal. Clarice consegue fazer o impossível caber numa frase.</p>
+        <div class="ecf-source">A Hora da Estrela · Clarice Lispector</div>
+      </div>
+      <div class="ecf-footer">
+        <div class="ecf-user">
+          <div class="avatar-sm">RM</div>
+          <div>
+            <span class="user-name" style="font-size: 10px;">Rafael M.</span>
+            <span class="user-handle" style="font-size: 8.5px;">@rafaelm</span>
+          </div>
+        </div>
+        <div class="ecf-footer-reactions">
+          <div class="ecf-r-pill">✨ 6</div>
+          <div class="ecf-r-pill">🤔 3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 5: Eco Leitura Simbólica — Feed (1:1) -->
+
+  <div class="card-wrapper">
+    <div class="card-format-tag">Feed · 1:1 — Leitura Simbólica</div>
+    <div class="card card-feed card-echo-feed" style="background: var(--parchment-warm);">
+      <span class="corner-bracket tl" style="font-size: 60px; opacity: 0.1;">[</span>
+      <div class="ecf-header">
+        <div class="ecf-type" style="color: var(--sage);">⊕ Leitura Simbólica · p. 23</div>
+        <div class="ecf-app">marginalia</div>
+      </div>
+      <div class="ecf-quote">
+        <blockquote style="border-color: var(--sage);">"O sertão está em todo lugar."</blockquote>
+        <p class="ecf-comment">Rosa inaugura a obra com uma declaração que transcende o regionalismo — o sertão é uma condição metafísica.</p>
+        <div class="ecf-source">Grande Sertão: Veredas · Guimarães Rosa</div>
+      </div>
+      <div class="ecf-footer">
+        <div class="ecf-user">
+          <div class="avatar-sm" style="background: var(--sage);">AC</div>
+          <div>
+            <span class="user-name" style="font-size: 10px;">Ana Clara</span>
+            <span class="user-handle" style="font-size: 8.5px;">@anaclara</span>
+          </div>
+        </div>
+        <div style="font-size: 10px; color: rgba(42,36,32,0.35); letter-spacing: 0.1em;">13 ecoaram isso</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 6: Eco Comunidade — Stories -->
+
+  <div class="card-wrapper">
+    <div class="card-format-tag">Eco compartilhado · Stories</div>
+    <div class="card card-stories card-echo" style="display: flex; flex-direction: column; justify-content: space-between;">
+      <span class="corner-bracket tl" style="opacity: 0.12;">[</span>
+      <div>
+        <div class="echo-top">
+          <div class="echo-badge"><div class="dot"></div> Eco da comunidade</div>
+          <div class="echo-count">
+            <span class="number">13</span>
+            <span class="label">ecoaram</span>
+          </div>
+        </div>
+        <div class="echo-passage">
+          <div class="echo-type-badge">⊕ Leitura simbólica</div>
+          <blockquote>"O sertão está em todo lugar."</blockquote>
+          <div class="passage-ref">Grande Sertão: Veredas · p. 23</div>
+        </div>
+        <div class="echo-margem">
+          <div class="echo-type-badge" style="display: block; margin-bottom: 8px;">Margem da leitora</div>
+          <p>Rosa inaugura a obra com uma declaração que transcende o regionalismo — o sertão é uma condição metafísica.</p>
+        </div>
+      </div>
+      <div class="echo-footer">
+        <div class="user-info">
+          <div class="user-avatar" style="background: var(--ink);">AC</div>
+          <div>
+            <span class="user-name">Ana Clara</span>
+            <span class="user-handle">@anaclara 🔥</span>
+          </div>
+        </div>
+        <div class="echo-stats">
+          <div class="stat">
+            <span class="s-num">🤔</span>
+            <span class="s-label">8</span>
+          </div>
+          <div class="stat">
+            <span class="s-num">🔥</span>
+            <span class="s-label">5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Nota de exportação -->
+
+<div class="export-note">
+  <h3>Como exportar estes cards</h3>
+  <ul>
+    <li>Abra este HTML no Chrome ou Safari no desktop, selecione cada card com print de região (Cmd+Shift+4 no Mac) ou use extensão de screenshot de elemento.</li>
+    <li>Os cards de Stories estão em proporção 9:16 — prontos para uso no Instagram Stories sem cortes.</li>
+    <li>Os cards de Feed estão em proporção 1:1 — ideais para o grid do Instagram.</li>
+    <li>Para implementar no app: cada card é um componente separado que recebe dados dinâmicos do usuário.</li>
+    <li>A lógica de compartilhamento pode usar a Web Share API (navigator.share) ou gerar PNG via html2canvas.</li>
+  </ul>
+</div>
+
+</body>
+</html>
