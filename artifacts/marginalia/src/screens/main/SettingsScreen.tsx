@@ -1,12 +1,20 @@
-import { ArrowLeft, Eye, BookOpen, Shield } from "lucide-react";
-import { Link } from "wouter";
+import { ArrowLeft, Eye, BookOpen, Shield, LogOut } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { useApp } from "@/context/AppContext";
+import { useAuth } from "@/context/AuthContext";
 import { SPOILER_PREFERENCES, GENRES, type SpoilerPreference } from "@/data/constants";
 
 const ICONS = [Eye, BookOpen, Shield];
 
 export function SettingsScreen() {
   const { currentUser, updateSpoilerPreference, updatePreferredGenres } = useApp();
+  const { signOut } = useAuth();
+  const [, navigate] = useLocation();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   const toggleGenre = (genre: string) => {
     const current = currentUser.preferredGenres;
@@ -112,13 +120,21 @@ export function SettingsScreen() {
             <div className="flex-1 h-px bg-[#AE8F7D]/20" />
           </div>
           <div className="space-y-1">
-            {["Editar perfil", "Notificações", "Privacidade", "Sobre o Marginalia"].map((item) => (
+            {["Notificações", "Privacidade", "Sobre o Marginalia"].map((item) => (
               <div key={item} className="flex items-center justify-between py-3.5 border-b border-[#454545]/5">
                 <span className="font-sans font-light text-[13px] text-[#454545]/65">{item}</span>
                 <span className="text-[#454545]/20">›</span>
               </div>
             ))}
           </div>
+          <button
+            data-testid="button-logout"
+            onClick={handleLogout}
+            className="mt-6 w-full flex items-center justify-center gap-2 border border-red-200 text-red-400 font-sans font-light text-[12px] tracking-[0.1em] py-3.5 rounded-[10px] hover:bg-red-50 transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            Sair da conta
+          </button>
         </section>
       </div>
     </div>

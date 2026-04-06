@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { LogoMark } from "@/components/LogoMark";
+import { useAuth } from "@/context/AuthContext";
 
 interface Props {
   onLogin: () => void;
@@ -8,15 +9,24 @@ interface Props {
 }
 
 export function LoginScreen({ onLogin, onBack }: Props) {
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const valid = email.trim() && password.trim().length >= 6;
 
-  const handleLogin = () => {
-    if (!valid) return;
-    // Mock: accept any credentials and go to home
+  const handleLogin = async () => {
+    if (!valid || loading) return;
+    setLoading(true);
+    setError("");
+    const { error } = await signIn(email.trim(), password);
+    setLoading(false);
+    if (error) {
+      setError("E-mail ou senha incorretos. Tente novamente.");
+      return;
+    }
     onLogin();
   };
 
@@ -45,15 +55,16 @@ export function LoginScreen({ onLogin, onBack }: Props) {
       <div className="space-y-6 mb-8">
         <div>
           <label className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] block mb-2">
-            E-mail ou @username
+            E-mail
           </label>
           <input
             data-testid="input-login-email"
-            type="text"
+            type="email"
             value={email}
             onChange={(e) => { setEmail(e.target.value); setError(""); }}
-            placeholder="seu@email.com ou @seunome"
+            placeholder="seu@email.com"
             className="w-full font-serif italic text-[16px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent border-b border-[#454545]/15 pb-2.5 outline-none focus:border-[#AE8F7D]/60 transition-colors"
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           />
         </div>
         <div>
@@ -61,9 +72,6 @@ export function LoginScreen({ onLogin, onBack }: Props) {
             <label className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D]">
               Senha
             </label>
-            <button className="font-sans text-[9px] font-light text-[#454545]/30 hover:text-[#AE8F7D] transition-colors">
-              Esqueci a senha
-            </button>
           </div>
           <input
             data-testid="input-login-password"
@@ -72,40 +80,23 @@ export function LoginScreen({ onLogin, onBack }: Props) {
             onChange={(e) => { setPassword(e.target.value); setError(""); }}
             placeholder="Sua senha"
             className="w-full font-serif italic text-[16px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent border-b border-[#454545]/15 pb-2.5 outline-none focus:border-[#AE8F7D]/60 transition-colors"
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           />
         </div>
       </div>
 
       {error && (
-        <p className="font-sans text-[11px] text-[#AE8F7D] mb-4 text-center">{error}</p>
+        <p className="font-sans text-[11px] text-red-400 mb-4 text-center">{error}</p>
       )}
 
       <button
         data-testid="button-login"
         onClick={handleLogin}
-        disabled={!valid}
-        className="w-full bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.16em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#454545]/90 active:scale-[0.99] transition-all mb-4"
+        disabled={!valid || loading}
+        className="w-full flex items-center justify-center gap-2 bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.16em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#454545]/90 active:scale-[0.99] transition-all mb-4"
       >
-        Entrar
+        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Entrar"}
       </button>
-
-      <div className="flex items-center gap-3 mb-4">
-        <div className="flex-1 h-px bg-[#454545]/8" />
-        <span className="font-sans font-light text-[9px] tracking-[0.08em] text-[#454545]/25">ou</span>
-        <div className="flex-1 h-px bg-[#454545]/8" />
-      </div>
-
-      <div className="grid grid-cols-2 gap-2">
-        {["Google", "Apple"].map((p) => (
-          <button
-            key={p}
-            onClick={onLogin}
-            className="font-sans font-light text-[11px] text-[#454545]/50 border border-[#454545]/10 py-3.5 rounded-[10px] hover:border-[#AE8F7D]/30 transition-colors"
-          >
-            {p}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }

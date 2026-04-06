@@ -3,6 +3,7 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { AppProvider, useApp } from "@/context/AppContext";
 import { LogoMark } from "@/components/LogoMark";
 import { Navbar } from "@/components/Navbar";
@@ -56,13 +57,31 @@ function Splash({ onDone }: { onDone: () => void }) {
   );
 }
 
+function LoadingDots() {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAF8F3]">
+      <div className="flex gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="w-1.5 h-1.5 rounded-full bg-[#AE8F7D] animate-bounce"
+            style={{ animationDelay: `${i * 0.15}s` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 type OnboardingStep = "welcome" | "genres" | "spoiler" | "login" | "signup" | "books";
 
 function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
-  const { updatePreferredGenres, updateSpoilerPreference, updateProfile, completeOnboarding, currentUser } = useApp();
+  const { updatePreferredGenres, updateSpoilerPreference, completeOnboarding } = useApp();
+  const { signUp } = useAuth();
   const [step, setStep] = useState<OnboardingStep>("welcome");
-  const [pendingGenres, setPendingGenres] = useState<string[]>(currentUser.preferredGenres);
-  const [pendingSpoiler, setPendingSpoiler] = useState<SpoilerPreference>(currentUser.spoilerPreference);
+  const [pendingGenres, setPendingGenres] = useState<string[]>([]);
+  const [pendingSpoiler, setPendingSpoiler] = useState<SpoilerPreference>("chapter");
+  const [signupError, setSignupError] = useState("");
 
   const finish = () => {
     completeOnboarding();
@@ -116,8 +135,23 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   if (step === "signup") {
     return (
       <SignUpScreen
-        onComplete={(data) => {
-          updateProfile(data);
+        externalError={signupError}
+        onComplete={async (data) => {
+          setSignupError("");
+          const { error } = await signUp({
+            email: data.email,
+            password: data.password,
+            username: data.username.replace(/^@/, ""),
+            fullName: data.lastName
+              ? `${data.firstName} ${data.lastName}`
+              : data.firstName,
+            bio: data.bio,
+            avatarColor: data.avatarColor,
+          });
+          if (error) {
+            setSignupError(error);
+            return;
+          }
           setStep("books");
         }}
         onBack={() => setStep("spoiler")}
@@ -161,18 +195,22 @@ function MainApp() {
 }
 
 function AppContent() {
-  const { onboardingCompleted } = useApp();
+  const { session, authLoading } = useAuth();
   const [splashDone, setSplashDone] = useState(false);
-  const [onboardingDone, setOnboardingDone] = useState(false);
+  const [authFlowDone, setAuthFlowDone] = useState(false);
 
   if (!splashDone) {
     return <Splash onDone={() => setSplashDone(true)} />;
   }
 
-  if (!onboardingCompleted && !onboardingDone) {
+  if (authLoading) {
+    return <LoadingDots />;
+  }
+
+  if (!session && !authFlowDone) {
     return (
       <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto bg-[#FAF8F3] shadow-2xl">
-        <OnboardingFlow onComplete={() => setOnboardingDone(true)} />
+        <OnboardingFlow onComplete={() => setAuthFlowDone(true)} />
       </div>
     );
   }
@@ -184,11 +222,13 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AppProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <AppContent />
-          </WouterRouter>
-        </AppProvider>
+        <AuthProvider>
+          <AppProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <AppContent />
+            </WouterRouter>
+          </AppProvider>
+        </AuthProvider>
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>

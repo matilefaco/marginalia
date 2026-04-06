@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, useMemo, type ReactNode } from "react";
 import {
   MOCK_BOOKS,
   MOCK_MARGINS,
@@ -12,6 +12,7 @@ import {
   type Notification,
 } from "../data/mockData";
 import type { SpoilerPreference } from "../data/constants";
+import { useAuth } from "./AuthContext";
 
 interface AppState {
   currentUser: User;
@@ -42,15 +43,63 @@ interface AppActions {
 
 const AppContext = createContext<(AppState & AppActions) | null>(null);
 
-const me = MOCK_USERS.find((u) => u.id === "user_me")!;
+const mockMe = MOCK_USERS.find((u) => u.id === "user_me")!;
+
+function buildUserFromProfile(
+  profile: import("./AuthContext").SupabaseProfile,
+  userId: string,
+  email: string
+): User {
+  const nameParts = (profile.full_name || "Leitor").split(" ");
+  const firstName = nameParts[0] || "Leitor";
+  const lastName = nameParts.slice(1).join(" ") || "";
+  const name = lastName ? `${firstName} ${lastName}` : firstName;
+  const initials = (
+    firstName.charAt(0) + (lastName?.charAt(0) || "")
+  ).toUpperCase();
+  return {
+    id: userId,
+    name,
+    firstName,
+    lastName,
+    username: profile.username || "@leitor",
+    email,
+    bio: profile.bio || "",
+    city: profile.city || "",
+    instagram: profile.instagram_handle || "",
+    tiktok: profile.tiktok_handle || "",
+    avatarColor: profile.avatar_color || "#697962",
+    initials,
+    readerType: "observador",
+    readingSignature:
+      profile.reading_signature || "Cada livro me deixa diferente",
+    spoilerPreference: "chapter",
+    preferredGenres: [],
+    favoriteAuthors: [],
+    stats: {
+      booksRead: 0,
+      totalMargins: 0,
+      totalHighlights: 0,
+      debates: 0,
+    },
+  };
+}
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User>(me);
+  const { profile, supabaseUser } = useAuth();
+
+  const currentUser: User = useMemo(() => {
+    if (profile && supabaseUser) {
+      return buildUserFromProfile(profile, supabaseUser.id, supabaseUser.email || "");
+    }
+    return mockMe;
+  }, [profile, supabaseUser]);
+
   const [books] = useState<Book[]>(MOCK_BOOKS);
   const [margins, setMargins] = useState<Margin[]>(MOCK_MARGINS);
   const [progress, setProgress] = useState<BookProgress[]>(MOCK_PROGRESS);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
-  const [onboardingCompleted, setOnboardingCompleted] = useState(() =>
+  const [onboardingCompleted] = useState(() =>
     localStorage.getItem("marginalia_onboarded") === "true"
   );
   const [onboardingStep, setOnboardingStep] = useState(0);
@@ -58,27 +107,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [lastUsedReaction, setLastUsedReaction] = useState<string | null>(null);
   const [savedMargins, setSavedMargins] = useState<number[]>([]);
 
-  const updateSpoilerPreference = (pref: SpoilerPreference) => {
-    setCurrentUser((u) => ({ ...u, spoilerPreference: pref }));
-  };
+  const updateSpoilerPreference = (_pref: SpoilerPreference) => {};
 
-  const updatePreferredGenres = (genres: string[]) => {
-    setCurrentUser((u) => ({ ...u, preferredGenres: genres }));
-  };
+  const updatePreferredGenres = (_genres: string[]) => {};
 
-  const updateProfile = (data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string; avatarColor?: string; readerType?: string; instagram?: string; tiktok?: string }) => {
-    setCurrentUser((u) => {
-      const firstName = data.firstName ?? u.firstName;
-      const lastName = data.lastName ?? u.lastName;
-      const name = lastName ? `${firstName} ${lastName}` : firstName;
-      const initials = (firstName.charAt(0) + (lastName?.charAt(0) || "")).toUpperCase();
-      return { ...u, ...data, firstName, lastName, name, initials };
-    });
-  };
+  const updateProfile = (_data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string; avatarColor?: string; readerType?: string; instagram?: string; tiktok?: string }) => {};
 
   const updateBookProgress = (bookId: number, updates: Partial<BookProgress>) => {
     setProgress((prev) => {
-      const existing = prev.find((p) => p.bookId === bookId && p.userId === "user_me");
+      const existing = prev.find(
+        (p) => p.bookId === bookId && p.userId === "user_me"
+      );
       if (existing) {
         return prev.map((p) =>
           p.bookId === bookId && p.userId === "user_me" ? { ...p, ...updates } : p
@@ -114,47 +153,52 @@ export function AppProvider({ children }: { children: ReactNode }) {
       userInitials: currentUser.initials,
     };
     setMargins((prev) => [newMargin, ...prev]);
-    setCurrentUser((u) => ({
-      ...u,
-      stats: { ...u.stats, totalMargins: u.stats.totalMargins + 1 },
-    }));
   };
 
   const addReaction = (marginId: number, emoji: string) => {
     const prevEmoji = userReactions[marginId];
     if (prevEmoji === emoji) {
-      setUserReactions((prev) => { const next = { ...prev }; delete next[marginId]; return next; });
-      setMargins((prev) => prev.map((m) => {
-        if (m.id !== marginId) return m;
-        const reactions = { ...m.reactions } as Record<string, number>;
-        reactions[emoji] = Math.max(0, (reactions[emoji] || 1) - 1);
-        if (reactions[emoji] === 0) delete reactions[emoji];
-        return { ...m, reactions };
-      }));
+      setUserReactions((prev) => {
+        const next = { ...prev };
+        delete next[marginId];
+        return next;
+      });
+      setMargins((prev) =>
+        prev.map((m) => {
+          if (m.id !== marginId) return m;
+          const reactions = { ...m.reactions } as Record<string, number>;
+          reactions[emoji] = Math.max(0, (reactions[emoji] || 1) - 1);
+          if (reactions[emoji] === 0) delete reactions[emoji];
+          return { ...m, reactions };
+        })
+      );
     } else {
       setUserReactions((prev) => ({ ...prev, [marginId]: emoji }));
       setLastUsedReaction(emoji);
-      setMargins((prev) => prev.map((m) => {
-        if (m.id !== marginId) return m;
-        const reactions = { ...m.reactions } as Record<string, number>;
-        if (prevEmoji) {
-          reactions[prevEmoji] = Math.max(0, (reactions[prevEmoji] || 1) - 1);
-          if (reactions[prevEmoji] === 0) delete reactions[prevEmoji];
-        }
-        reactions[emoji] = (reactions[emoji] || 0) + 1;
-        return { ...m, reactions };
-      }));
+      setMargins((prev) =>
+        prev.map((m) => {
+          if (m.id !== marginId) return m;
+          const reactions = { ...m.reactions } as Record<string, number>;
+          if (prevEmoji) {
+            reactions[prevEmoji] = Math.max(0, (reactions[prevEmoji] || 1) - 1);
+            if (reactions[prevEmoji] === 0) delete reactions[prevEmoji];
+          }
+          reactions[emoji] = (reactions[emoji] || 0) + 1;
+          return { ...m, reactions };
+        })
+      );
     }
   };
 
   const toggleSaveMargin = (marginId: number) => {
     setSavedMargins((prev) =>
-      prev.includes(marginId) ? prev.filter((id) => id !== marginId) : [...prev, marginId]
+      prev.includes(marginId)
+        ? prev.filter((id) => id !== marginId)
+        : [...prev, marginId]
     );
   };
 
   const completeOnboarding = () => {
-    setOnboardingCompleted(true);
     localStorage.setItem("marginalia_onboarded", "true");
   };
 

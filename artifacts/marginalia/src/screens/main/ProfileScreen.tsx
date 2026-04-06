@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useApp } from "@/context/AppContext";
+import { useAuth } from "@/context/AuthContext";
 import { MOCK_MARGINS, MOCK_BOOKS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { BookCover } from "@/components/BookCover";
@@ -24,7 +25,8 @@ function TikTokIcon({ className }: { className?: string }) {
 }
 
 export function ProfileScreen() {
-  const { currentUser, progress, updateProfile, savedMargins, margins, userReactions } = useApp();
+  const { currentUser, progress, savedMargins, margins, userReactions } = useApp();
+  const { updateProfile: saveToSupabase } = useAuth();
 
   const [editing, setEditing] = useState(false);
   const [editFirstName, setEditFirstName] = useState(currentUser.firstName);
@@ -91,15 +93,16 @@ export function ProfileScreen() {
 
   const avatarColor = editing ? editAvatarColor : (currentUser.avatarColor || "#697962");
 
-  const saveEdit = () => {
-    updateProfile({
-      firstName: editFirstName.trim() || currentUser.firstName,
-      lastName: editLastName.trim(),
-      bio: editBio.trim(),
-      username: editUsername.trim(),
-      avatarColor: editAvatarColor,
-      instagram: editInstagram.trim(),
-      tiktok: editTikTok.trim(),
+  const saveEdit = async () => {
+    const first = editFirstName.trim() || currentUser.firstName;
+    const last = editLastName.trim();
+    await saveToSupabase({
+      full_name: last ? `${first} ${last}` : first,
+      username: editUsername.trim().replace(/^@/, ""),
+      bio: editBio.trim() || null,
+      avatar_color: editAvatarColor,
+      instagram_handle: editInstagram.trim() || null,
+      tiktok_handle: editTikTok.trim() || null,
     });
     setEditing(false);
     setShowColorPicker(false);

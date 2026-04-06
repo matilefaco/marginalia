@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { ArrowRight, ArrowLeft, Check, Loader2 } from "lucide-react";
 
 const AVATAR_COLORS = [
   { id: "verde", label: "Verde musgo", value: "#697962" },
@@ -17,13 +17,15 @@ interface Props {
     lastName: string;
     username: string;
     email: string;
+    password: string;
     bio: string;
     avatarColor: string;
-  }) => void;
+  }) => Promise<void>;
   onBack: () => void;
+  externalError?: string;
 }
 
-export function SignUpScreen({ onComplete, onBack }: Props) {
+export function SignUpScreen({ onComplete, onBack, externalError }: Props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -31,8 +33,16 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
   const [password, setPassword] = useState("");
   const [bio, setBio] = useState("");
   const [avatarColor, setAvatarColor] = useState("#697962");
+  const [loading, setLoading] = useState(false);
 
   const valid = firstName.trim() && email.trim() && password.trim().length >= 6;
+
+  const handleSubmit = async () => {
+    if (!valid || loading) return;
+    setLoading(true);
+    await onComplete({ firstName, lastName, username, email, password, bio, avatarColor });
+    setLoading(false);
+  };
 
   return (
     <div
@@ -62,7 +72,6 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
       </div>
 
       <div className="flex-1 space-y-5 overflow-auto pb-2">
-        {/* Name fields */}
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="font-sans text-[9px] font-light tracking-[0.16em] uppercase text-[#AE8F7D] block mb-1.5">
@@ -92,7 +101,6 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
           </div>
         </div>
 
-        {/* Avatar Color Picker */}
         <div className="bg-[#EBE6DB]/40 border border-[#AE8F7D]/12 rounded-[12px] p-4">
           <div className="flex items-center gap-3 mb-3">
             <div
@@ -121,7 +129,10 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
                 className="relative w-8 h-8 rounded-full transition-all hover:scale-110 active:scale-95"
                 style={{
                   backgroundColor: color.value,
-                  boxShadow: avatarColor === color.value ? `0 0 0 2px #FAF8F3, 0 0 0 3.5px ${color.value}` : "none",
+                  boxShadow:
+                    avatarColor === color.value
+                      ? `0 0 0 2px #FAF8F3, 0 0 0 3.5px ${color.value}`
+                      : "none",
                 }}
                 title={color.label}
               >
@@ -135,11 +146,30 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
           </div>
         </div>
 
-        {/* Other fields */}
         {[
-          { label: "@username", value: username, set: setUsername, placeholder: "@seunome", testid: "input-username" },
-          { label: "E-mail", value: email, set: setEmail, placeholder: "seu@email.com", testid: "input-email", type: "email" },
-          { label: "Senha", value: password, set: setPassword, placeholder: "Mínimo 6 caracteres", testid: "input-password", type: "password" },
+          {
+            label: "@username",
+            value: username,
+            set: setUsername,
+            placeholder: "@seunome",
+            testid: "input-username",
+          },
+          {
+            label: "E-mail",
+            value: email,
+            set: setEmail,
+            placeholder: "seu@email.com",
+            testid: "input-email",
+            type: "email",
+          },
+          {
+            label: "Senha",
+            value: password,
+            set: setPassword,
+            placeholder: "Mínimo 6 caracteres",
+            testid: "input-password",
+            type: "password",
+          },
         ].map(({ label, value, set, placeholder, testid, type }) => (
           <div key={testid}>
             <label className="font-sans text-[9px] font-light tracking-[0.16em] uppercase text-[#AE8F7D] block mb-1.5">
@@ -158,7 +188,10 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
 
         <div>
           <label className="font-sans text-[9px] font-light tracking-[0.16em] uppercase text-[#AE8F7D] block mb-1.5">
-            Bio <span className="text-[#454545]/25 normal-case tracking-normal">· opcional</span>
+            Bio{" "}
+            <span className="text-[#454545]/25 normal-case tracking-normal">
+              · opcional
+            </span>
           </label>
           <textarea
             data-testid="input-bio"
@@ -170,34 +203,26 @@ export function SignUpScreen({ onComplete, onBack }: Props) {
           />
         </div>
 
-        <div className="pt-1">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="flex-1 h-px bg-[#454545]/8" />
-            <span className="font-sans font-light text-[9px] tracking-[0.08em] text-[#454545]/25">ou continue com</span>
-            <div className="flex-1 h-px bg-[#454545]/8" />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {["Google", "Apple"].map((provider) => (
-              <button
-                key={provider}
-                className="font-sans font-light text-[11px] text-[#454545]/50 border border-[#454545]/10 py-3 rounded-[8px] hover:border-[#AE8F7D]/30 transition-colors"
-              >
-                {provider}
-              </button>
-            ))}
-          </div>
-        </div>
+        {externalError && (
+          <p className="font-sans text-[11px] text-red-400 text-center">{externalError}</p>
+        )}
       </div>
 
       <div className="pt-5">
         <button
           data-testid="button-create-account"
-          onClick={() => valid && onComplete({ firstName, lastName, username, email, bio, avatarColor })}
-          disabled={!valid}
+          onClick={handleSubmit}
+          disabled={!valid || loading}
           className="w-full flex items-center justify-center gap-2 bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#454545]/90 active:scale-[0.99] transition-all"
         >
-          Criar conta
-          <ArrowRight className="w-4 h-4" />
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <>
+              Criar conta
+              <ArrowRight className="w-4 h-4" />
+            </>
+          )}
         </button>
       </div>
     </div>

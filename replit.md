@@ -40,20 +40,29 @@ A Portuguese-language literary social network where users annotate book passages
 - `artifacts/marginalia` — React + Vite frontend (previewPath: `/`)
 - `artifacts/api-server` — Express API server (port 8080)
 
-### Architecture — Post-Refactor
-**Frontend runs off AppContext + mock data** (not API-dependent for UI). The API server still exists but the React app uses an in-memory data layer for all UI operations.
+### Architecture
+**Auth: Supabase.** Content: AppContext + mock data (not API-dependent for UI). The API server exists but the React app uses an in-memory data layer for all non-auth UI operations.
 
-- **AppContext** (`src/context/AppContext.tsx`) — global state with currentUser, books, margins, progress, notifications + actions; `updateProfile` supports firstName, lastName, bio, username, city, avatarColor, readerType, instagram, tiktok
+- **AuthContext** (`src/context/AuthContext.tsx`) — Supabase session, profile from `public.profiles`, signIn/signUp/signOut/updateProfile. `useAuth()` hook.
+- **Supabase client** (`src/lib/supabase.ts`) — singleton client; URL/key baked in via vite.config.ts `define` from `SUPABASE_URL` / `SUPABASE_ANON_KEY` secrets.
+- **AppContext** (`src/context/AppContext.tsx`) — reads `profile` from AuthContext to derive `currentUser` (real user data shown in profile/avatar everywhere). Manages books, margins, progress, notifications + actions; `updateProfile` is now a no-op (real saves go through AuthContext.updateProfile)
 - **Mock data** (`src/data/mockData.ts`) — 7 books (each with `bookColor`), 8 margins, 5 users (each with `readerType`, `instagram`, `tiktok`, `readingSignature`), progress, notifications, collections
 - **Constants** (`src/data/constants.ts`) — GENRES, SPOILER_PREFERENCES, MARGIN_TYPES, SPOILER_LEVELS, REACTION_TYPES (13 including "Isso me quebrou" etc.), READER_ARCHETYPES (10 archetypes: Analista, Detetive, Rebelde, Intenso, Interpretador, Observador, Questionador, Imersivo, Editor Mental, Teórico)
 - **Utils**: `spoiler.ts` (anti-spoiler filter logic), `formatting.ts` (timeAgo, formatReference, etc.)
 
-### Onboarding Flow
+### Auth Flow
+- **Routing**: Checks Supabase session → if authenticated, go to MainApp; if not, show OnboardingFlow
+- **SignUp**: Creates Supabase Auth user, upserts `public.profiles` with username/full_name/bio/avatar_color. Supabase trigger creates the profile row.
+- **Login**: `signInWithPassword` — supports email
+- **Logout**: Button in Settings → calls `supabase.auth.signOut()` → redirects to welcome
+- **Profile edit**: Saves to `public.profiles` via `useAuth().updateProfile()`. AppContext derives `currentUser` from the profile automatically.
+
+### Onboarding Flow (new users only)
 1. Splash screen (2.2s)
 2. **Welcome** — manifesto screen, "Começar" / "Já tenho conta"
 3. **Genres** — multi-select genre chips
 4. **Ritmo da leitura** — anti-spoiler preference (Ver tudo / Ver só o que li / Modo protegido)
-5. **Sign up** — name, @username, city, email, password
+5. **Sign up** — real Supabase account creation (name, @username, email, password, bio, avatar color)
 6. **Books** — search + select initial books, set status + progress %
 
 ### Main Screens (13 total)

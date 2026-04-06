@@ -1,0 +1,77 @@
+Quero conectar meu app ao Supabase agora.
+
+Já configurei o banco no Supabase e já tenho estas variáveis no Replit:
+- SUPABASE_URL
+- SUPABASE_ANON_KEY
+
+Agora implemente a autenticação real e conecte o frontend ao Supabase.
+
+FAÇA EXATAMENTE ISSO:
+
+1. Instale e configure o cliente do Supabase no app usando:
+- @supabase/supabase-js
+
+2. Crie um arquivo central de configuração do Supabase.
+
+3. Implemente autenticação real com:
+- cadastro com email e senha
+- login com email e senha
+- logout
+- sessão persistente
+- recuperação do usuário autenticado atual
+
+4. No cadastro, envie também:
+- username
+- full_name
+
+5. Ao fazer sign up, o usuário deve ser criado no Supabase Auth.
+A tabela profiles já está preparada com trigger para criar o perfil automaticamente.
+
+6. Crie telas reais e funcionais de:
+- login
+- cadastro
+
+7. Proteja as rotas do app:
+- se não estiver autenticado, ir para login
+- se estiver autenticado, acessar o app normalmente
+
+8. Crie um AuthProvider ou solução equivalente para:
+- guardar a sessão
+- guardar o usuário atual
+- observar mudanças de autenticação
+- disponibilizar login, cadastro e logout ao resto do app
+
+9. Após login, carregar o profile do usuário na tabela public.profiles.
+
+10. Mostrar no app os dados reais do usuário autenticado:
+- full_name
+- username
+- bio
+- avatar_url
+- city
+- instagram_handle
+- tiktok_handle
+- reader_type_title
+- reader_type_description
+- reading_signature
+
+11. Permitir editar o perfil e salvar na tabela profiles.
+
+12. Se o usuário clicar em logout:
+- encerrar a sessão corretamente
+- redirecionar para a tela de login
+
+13. Remover qualquer autenticação fake, mock ou baseada só em localStorage.
+
+14. Garantir que a navegação não mande o usuário autenticado para a tela de login sem motivo.
+
+15. Depois da autenticação estar funcionando, integrar criação de ecos, comentários e reações usando o user_id do usuário autenticado.
+
+PRIORIDADE MÁXIMA:
+- login funcionando de verdade
+- sessão persistente
+- profile carregando do Supabase
+- rotas protegidas
+- sem redirecionamentos errados para login
+
+QUERO QUE VOCÊ IMPLEMENTE, NÃO APENAS DESCREVA.
