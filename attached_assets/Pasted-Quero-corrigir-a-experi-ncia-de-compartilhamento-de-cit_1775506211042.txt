@@ -1,0 +1,175 @@
+Quero corrigir a experiência de compartilhamento de citações/ecos, porque atualmente existe um bug visual e também falta integrar melhor a ação real de compartilhar para story ou feed.
+
+==================================================
+1. BUG VISUAL NO MODAL/TELA DE COMPARTILHAR
+==================================================
+
+## Problema atual
+Quando o usuário aperta em “compartilhar”, o layout fica quebrado:
+- o botão “COMPARTILHAR” fica por baixo da citação/card
+- a prévia do card invade a área inferior
+- a hierarquia visual do modal fica errada
+- os botões inferiores não respeitam o espaço necessário
+- a área clicável do botão pode ficar prejudicada
+
+## O que quero
+Corrigir completamente o layout da tela/modal de compartilhamento.
+
+### Regras visuais:
+- o card da citação precisa ficar totalmente contido dentro da área útil
+- os botões inferiores (“baixar” e “compartilhar”) devem ficar sempre visíveis
+- nenhum botão pode ficar por baixo da citação/card
+- deve existir espaço vertical suficiente entre a prévia e os botões
+- o modal deve respeitar a altura da tela em dispositivos menores
+
+### O que revisar:
+- padding inferior do container
+- altura máxima da prévia/card
+- overflow vertical
+- posicionamento dos botões
+- z-index / stacking context
+- uso de height fixa que esteja empurrando os botões para baixo
+- garantir safe area e margem inferior
+
+### Comportamento correto:
+- o usuário abre o compartilhamento
+- vê a prévia da citação
+- consegue ver e tocar claramente em “baixar” e “compartilhar”
+- nada fica escondido, sobreposto ou cortado
+
+==================================================
+2. COMPARTILHAR DE VERDADE PARA STORY OU FEED
+==================================================
+
+## Objetivo
+Quero que a funcionalidade de compartilhar seja mais real e útil.
+
+Quando o usuário clicar em compartilhar, quero que seja possível compartilhar:
+- para o story
+- para o feed
+- usando o share sheet nativo do dispositivo, quando necessário
+
+## O que precisa acontecer
+Hoje a interface mostra opções como:
+- Stories 9:16
+- Feed 1:1
+
+Quero que essas opções realmente definam o formato do conteúdo compartilhado.
+
+### Regra:
+- se o usuário selecionar “Stories 9:16”, gerar/exportar a arte nesse formato vertical
+- se o usuário selecionar “Feed 1:1”, gerar/exportar a arte nesse formato quadrado
+- o botão compartilhar deve usar o formato selecionado no momento
+
+==================================================
+3. FLUXO DE COMPARTILHAMENTO DESEJADO
+==================================================
+
+## Fluxo ideal
+1. usuário abre a tela de compartilhamento
+2. escolhe o formato:
+   - Stories 9:16
+   - Feed 1:1
+3. visualiza a prévia correta nesse formato
+4. toca em “Compartilhar”
+5. o app:
+   - gera a imagem/cartão no formato selecionado
+   - abre o sistema de compartilhamento nativo do dispositivo
+   - permite enviar para Instagram Stories, feed, WhatsApp, salvar imagem etc.
+
+## Importante
+Mesmo que não exista integração direta perfeita com o Instagram em todos os ambientes, o mínimo esperado é:
+- gerar a imagem corretamente
+- abrir o share sheet nativo
+- permitir que o usuário escolha para onde enviar
+
+==================================================
+4. COMPORTAMENTO DOS BOTÕES INFERIORES
+==================================================
+
+## Botão “Baixar”
+Quero que:
+- baixe/exporte a arte gerada no formato selecionado
+- o arquivo final respeite o formato story ou feed
+- o botão fique sempre totalmente visível
+
+## Botão “Compartilhar”
+Quero que:
+- use a arte/formato atualmente selecionado
+- abra o compartilhamento nativo
+- não fique escondido atrás da citação
+- tenha prioridade visual clara
+
+==================================================
+5. AJUSTES DE LAYOUT DO MODAL DE COMPARTILHAMENTO
+==================================================
+
+## O que quero que seja corrigido
+- limitar altura máxima da prévia/card
+- permitir scroll interno se necessário
+- reservar espaço fixo e seguro para a barra de ações inferior
+- garantir que os botões fiquem fora da área da prévia
+- adicionar espaçamento inferior suficiente entre card e botões
+- respeitar diferentes tamanhos de tela mobile
+
+## Estrutura ideal
+- topo: título + fechar
+- seletor de formato (stories / feed)
+- prévia da arte centralizada
+- espaço respirando abaixo da prévia
+- barra de ações inferior fixa ou bem posicionada:
+  - baixar
+  - compartilhar
+
+## Resultado esperado
+A citação não pode mais “descer” sobre a área dos botões.
+
+==================================================
+6. AJUSTES DE UX
+==================================================
+
+## Quero também:
+- destacar melhor a aba/formato selecionado
+- transição suave ao alternar entre Stories 9:16 e Feed 1:1
+- atualização imediata da prévia
+- botão compartilhar com feedback de toque elegante
+- sensação premium e refinada
+
+==================================================
+7. COMPORTAMENTO RESPONSIVO
+==================================================
+
+A tela de compartilhamento precisa funcionar bem em telas menores de iPhone também.
+
+### Garantir:
+- nenhum botão cortado
+- nenhuma sobreposição
+- nenhum texto saindo da área útil
+- prévia redimensionada corretamente
+- safe area respeitada
+
+==================================================
+8. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessa correção, quero que:
+
+- a tela de compartilhar fique visualmente correta
+- o botão compartilhar não fique mais por baixo da citação
+- o usuário consiga escolher entre story e feed
+- a arte seja gerada no formato escolhido
+- o compartilhamento abra corretamente no sistema nativo
+- a experiência fique bonita, clara e funcional
+
+==================================================
+9. PRIORIDADE
+==================================================
+
+Prioridade máxima para:
+
+1. corrigir o layout quebrado da tela/modal de compartilhar
+2. garantir que o botão compartilhar fique sempre visível
+3. fazer o seletor de story/feed funcionar de verdade
+4. compartilhar/exportar no formato escolhido
+
+Implemente isso no código, não apenas visualmente.

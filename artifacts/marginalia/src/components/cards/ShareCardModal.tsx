@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { X, Download, Share2, Loader2 } from "lucide-react";
 import type { Margin } from "@/data/mockData";
 import { MOCK_USERS } from "@/data/mockData";
@@ -359,11 +359,13 @@ function SymbolicFeedCard({ margin }: { margin: Margin }) {
 export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
   const { getProgressForBook } = useApp();
   const cardRef = useRef<HTMLDivElement>(null);
+  const previewAreaRef = useRef<HTMLDivElement>(null);
   const [format, setFormat] = useState<Format>("stories");
   const [storyTpl, setStoryTpl] = useState<StoryTpl>("quote");
   const [feedTpl, setFeedTpl] = useState<FeedTpl>("reaction");
   const [exporting, setExporting] = useState(false);
   const [shared, setShared] = useState(false);
+  const [previewScale, setPreviewScale] = useState(1);
 
   const progress = getProgressForBook(margin.bookId);
   const progressPct = progress?.status === "reading" ? (progress.currentPercent ?? 0) : 0;
@@ -372,18 +374,42 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
   const cardW = isStories ? 270 : 360;
   const cardH = isStories ? 480 : 360;
 
+  /* recompute scale whenever the preview area or card dims change */
+  useEffect(() => {
+    const area = previewAreaRef.current;
+    if (!area) return;
+    const compute = () => {
+      const { width, height } = area.getBoundingClientRect();
+      const availW = width - 40; // 20px padding each side
+      const availH = height - 16; // small breathing room
+      const scaleH = availH / cardH;
+      const scaleW = availW / cardW;
+      setPreviewScale(Math.min(1, scaleH, scaleW));
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(area);
+    return () => ro.disconnect();
+  }, [cardW, cardH]);
+
+  const captureCanvas = useCallback(async () => {
+    if (!cardRef.current) return null;
+    const outputScale = isStories ? 4 : 3;
+    return html2canvas(cardRef.current, {
+      scale: outputScale,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null,
+      logging: false,
+    });
+  }, [isStories]);
+
   const handleDownload = useCallback(async () => {
-    if (!cardRef.current || exporting) return;
+    if (exporting) return;
     setExporting(true);
     try {
-      const scale = isStories ? 4 : 3;
-      const canvas = await html2canvas(cardRef.current, {
-        scale,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
-        logging: false,
-      });
+      const canvas = await captureCanvas();
+      if (!canvas) return;
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
       if (!blob) return;
       const url = URL.createObjectURL(blob);
@@ -395,67 +421,69 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     } finally {
       setExporting(false);
     }
-  }, [exporting, isStories, margin.id]);
+  }, [exporting, isStories, margin.id, captureCanvas]);
 
   const handleShare = useCallback(async () => {
-    if (!cardRef.current || exporting) return;
+    if (exporting) return;
     setExporting(true);
     try {
-      const scale = isStories ? 4 : 3;
-      const canvas = await html2canvas(cardRef.current, {
-        scale,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
-        logging: false,
-      });
+      const canvas = await captureCanvas();
+      if (!canvas) return;
       const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
       if (!blob) return;
       const file = new File([blob], `marginalia-${margin.id}.png`, { type: "image/png" });
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           files: [file],
+          title: "Marginalia",
           text: `"${margin.excerpt.slice(0, 100)}" — ${margin.bookTitle}`,
         });
         setShared(true);
-        setTimeout(() => setShared(false), 2000);
+        setTimeout(() => setShared(false), 2500);
       } else {
+        /* fallback: download the image */
         await handleDownload();
       }
     } catch {
+      /* user cancelled or share unavailable — fallback silently */
       await handleDownload();
     } finally {
       setExporting(false);
     }
-  }, [exporting, isStories, margin, handleDownload]);
+  }, [exporting, margin, handleDownload, captureCanvas]);
 
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: "rgba(26,22,20,0.95)", backdropFilter: "blur(8px)" }}
+      style={{ background: "rgba(26,22,20,0.96)", backdropFilter: "blur(10px)" }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      {/* header */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-3 flex-shrink-0">
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between px-5 pt-safe-top pb-3 flex-shrink-0 pt-5">
         <div>
           <p className="font-serif italic text-[17px] text-[#FAF7F2]">Compartilhar</p>
-          <p className="font-sans font-light text-[9px] tracking-[0.22em] uppercase text-[#FAF7F2]/30 mt-0.5">Stories · Feed · Instagram</p>
+          <p className="font-sans font-light text-[9px] tracking-[0.22em] uppercase text-[#FAF7F2]/30 mt-0.5">
+            Stories · Feed · Instagram
+          </p>
         </div>
-        <button onClick={onClose} className="w-8 h-8 rounded-full border border-[#FAF7F2]/10 flex items-center justify-center text-[#FAF7F2]/40 hover:text-[#FAF7F2]/70 transition-colors">
+        <button
+          onClick={onClose}
+          className="w-8 h-8 rounded-full border border-[#FAF7F2]/10 flex items-center justify-center text-[#FAF7F2]/40 hover:text-[#FAF7F2]/70 transition-colors"
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
 
-      {/* format tabs */}
-      <div className="flex gap-2 px-5 mb-4 flex-shrink-0">
+      {/* ── Format tabs ── */}
+      <div className="flex gap-2 px-5 mb-3 flex-shrink-0">
         {(["stories", "feed"] as Format[]).map((f) => (
           <button
             key={f}
             onClick={() => setFormat(f)}
-            className={`px-4 py-1.5 rounded-full font-sans text-[9px] tracking-[0.2em] uppercase transition-all ${
+            className={`px-4 py-2 rounded-full font-sans text-[9px] tracking-[0.2em] uppercase transition-all duration-200 ${
               format === f
-                ? "bg-[#C9A99A] text-[#2A2420]"
-                : "border border-[#FAF7F2]/12 text-[#FAF7F2]/40 hover:border-[#FAF7F2]/25 hover:text-[#FAF7F2]/60"
+                ? "bg-[#C9A99A] text-[#2A2420] shadow-lg"
+                : "border border-[#FAF7F2]/15 text-[#FAF7F2]/45 hover:border-[#FAF7F2]/30 hover:text-[#FAF7F2]/65"
             }`}
           >
             {f === "stories" ? "Stories 9:16" : "Feed 1:1"}
@@ -463,68 +491,97 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
         ))}
       </div>
 
-      {/* template selector */}
-      <div className="flex gap-2 px-5 mb-5 flex-shrink-0">
+      {/* ── Template sub-selector ── */}
+      <div className="flex gap-2 px-5 mb-3 flex-shrink-0">
         {isStories ? (
           <>
-            <button
-              onClick={() => setStoryTpl("quote")}
-              className={`px-3 py-1 rounded-full font-sans text-[8px] tracking-[0.15em] uppercase transition-all ${storyTpl === "quote" ? "bg-[#FAF7F2]/10 text-[#FAF7F2]/80 border border-[#FAF7F2]/20" : "text-[#FAF7F2]/30 hover:text-[#FAF7F2]/50"}`}
-            >
-              Citação
-            </button>
-            <button
-              onClick={() => setStoryTpl("moment")}
-              className={`px-3 py-1 rounded-full font-sans text-[8px] tracking-[0.15em] uppercase transition-all ${storyTpl === "moment" ? "bg-[#FAF7F2]/10 text-[#FAF7F2]/80 border border-[#FAF7F2]/20" : "text-[#FAF7F2]/30 hover:text-[#FAF7F2]/50"}`}
-            >
-              Momento
-            </button>
+            {(["quote", "moment"] as StoryTpl[]).map((t) => (
+              <button
+                key={t}
+                onClick={() => setStoryTpl(t)}
+                className={`px-3 py-1 rounded-full font-sans text-[8px] tracking-[0.15em] uppercase transition-all duration-200 ${
+                  storyTpl === t
+                    ? "bg-[#FAF7F2]/12 text-[#FAF7F2]/85 border border-[#FAF7F2]/22"
+                    : "text-[#FAF7F2]/30 hover:text-[#FAF7F2]/55"
+                }`}
+              >
+                {t === "quote" ? "Citação" : "Momento"}
+              </button>
+            ))}
           </>
         ) : (
           <>
-            <button
-              onClick={() => setFeedTpl("reaction")}
-              className={`px-3 py-1 rounded-full font-sans text-[8px] tracking-[0.15em] uppercase transition-all ${feedTpl === "reaction" ? "bg-[#FAF7F2]/10 text-[#FAF7F2]/80 border border-[#FAF7F2]/20" : "text-[#FAF7F2]/30 hover:text-[#FAF7F2]/50"}`}
-            >
-              Reação
-            </button>
-            <button
-              onClick={() => setFeedTpl("symbolic")}
-              className={`px-3 py-1 rounded-full font-sans text-[8px] tracking-[0.15em] uppercase transition-all ${feedTpl === "symbolic" ? "bg-[#FAF7F2]/10 text-[#FAF7F2]/80 border border-[#FAF7F2]/20" : "text-[#FAF7F2]/30 hover:text-[#FAF7F2]/50"}`}
-            >
-              Simbólica
-            </button>
+            {(["reaction", "symbolic"] as FeedTpl[]).map((t) => (
+              <button
+                key={t}
+                onClick={() => setFeedTpl(t)}
+                className={`px-3 py-1 rounded-full font-sans text-[8px] tracking-[0.15em] uppercase transition-all duration-200 ${
+                  feedTpl === t
+                    ? "bg-[#FAF7F2]/12 text-[#FAF7F2]/85 border border-[#FAF7F2]/22"
+                    : "text-[#FAF7F2]/30 hover:text-[#FAF7F2]/55"
+                }`}
+              >
+                {t === "reaction" ? "Reação" : "Simbólica"}
+              </button>
+            ))}
           </>
         )}
       </div>
 
-      {/* card preview */}
-      <div className="flex-1 flex items-center justify-center px-5 min-h-0">
+      {/* ── Card preview — grows to fill remaining space ── */}
+      <div
+        ref={previewAreaRef}
+        className="flex-1 flex items-center justify-center min-h-0 overflow-hidden px-5"
+      >
+        {/* Scaled outer shell — takes up only the visually-scaled footprint */}
         <div
-          ref={cardRef}
-          style={{ width: cardW, height: cardH, flexShrink: 0 }}
-          className="shadow-2xl"
+          style={{
+            width: cardW * previewScale,
+            height: cardH * previewScale,
+            position: "relative",
+            flexShrink: 0,
+            transition: "width 0.2s ease, height 0.2s ease",
+          }}
         >
-          {isStories && storyTpl === "quote" && <QuoteStoryCard margin={margin} />}
-          {isStories && storyTpl === "moment" && <MomentStoryCard margin={margin} progressPct={progressPct} />}
-          {!isStories && feedTpl === "reaction" && <ReactionFeedCard margin={margin} />}
-          {!isStories && feedTpl === "symbolic" && <SymbolicFeedCard margin={margin} />}
+          {/* Inner card rendered at natural size, then scaled visually */}
+          <div
+            ref={cardRef}
+            style={{
+              width: cardW,
+              height: cardH,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              transform: `scale(${previewScale})`,
+              transformOrigin: "top left",
+              transition: "transform 0.2s ease",
+            }}
+            className="shadow-2xl"
+          >
+            {isStories && storyTpl === "quote" && <QuoteStoryCard margin={margin} />}
+            {isStories && storyTpl === "moment" && <MomentStoryCard margin={margin} progressPct={progressPct} />}
+            {!isStories && feedTpl === "reaction" && <ReactionFeedCard margin={margin} />}
+            {!isStories && feedTpl === "symbolic" && <SymbolicFeedCard margin={margin} />}
+          </div>
         </div>
       </div>
 
-      {/* format info */}
-      <div className="text-center py-3 flex-shrink-0">
+      {/* ── Format label ── */}
+      <div className="text-center py-2 flex-shrink-0">
         <span className="font-sans text-[8px] tracking-[0.2em] uppercase text-[#FAF7F2]/20">
           {isStories ? "1080 × 1920 px · Instagram Stories" : "1080 × 1080 px · Instagram Feed"}
         </span>
       </div>
 
-      {/* action buttons */}
-      <div className="flex gap-3 px-5 pb-8 flex-shrink-0">
+      {/* ── Action buttons — always pinned above safe area ── */}
+      <div
+        className="flex gap-3 px-5 flex-shrink-0"
+        style={{ paddingBottom: "max(32px, env(safe-area-inset-bottom, 16px) + 16px)" }}
+      >
         <button
           onClick={handleDownload}
           disabled={exporting}
-          className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-[12px] border border-[#FAF7F2]/12 text-[#FAF7F2]/60 hover:border-[#FAF7F2]/25 hover:text-[#FAF7F2]/80 transition-all font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-40"
+          className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-[12px] border border-[#FAF7F2]/15 text-[#FAF7F2]/60 hover:border-[#FAF7F2]/30 hover:text-[#FAF7F2]/85 active:scale-95 transition-all duration-150 font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-35"
         >
           {exporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
           Baixar
@@ -532,13 +589,9 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
         <button
           onClick={handleShare}
           disabled={exporting}
-          className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-[12px] bg-[#C9A99A] text-[#2A2420] hover:bg-[#E8D5CD] transition-all font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-40 font-medium"
+          className="flex-[2] flex items-center justify-center gap-2 py-3.5 rounded-[12px] bg-[#C9A99A] text-[#2A2420] hover:bg-[#D4B5A8] active:scale-95 active:bg-[#BFA090] transition-all duration-150 font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-35 font-medium shadow-lg"
         >
-          {exporting ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Share2 className="w-3.5 h-3.5" />
-          )}
+          {exporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />}
           {shared ? "Compartilhado!" : "Compartilhar"}
         </button>
       </div>
