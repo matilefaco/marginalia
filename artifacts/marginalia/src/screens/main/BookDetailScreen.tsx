@@ -404,12 +404,21 @@ export function BookDetailScreen() {
                   </div>
                 </>
               )}
-              <button
-                onClick={() => setEditingProgress(!editingProgress)}
-                className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#454545]/35 hover:text-[#AE8F7D] transition-colors"
-              >
-                {editingProgress ? "Cancelar" : "Atualizar progresso"}
-              </button>
+              {!editingProgress ? (
+                <button
+                  onClick={() => setEditingProgress(true)}
+                  className="mt-1 w-full bg-[#454545] text-[#FAF8F3] font-sans text-[9px] font-semibold tracking-[0.14em] uppercase py-2 rounded-[8px] hover:bg-[#3A3A3A] active:bg-[#2A2A2A] transition-colors shadow-sm"
+                >
+                  Atualizar progresso
+                </button>
+              ) : (
+                <button
+                  onClick={() => setEditingProgress(false)}
+                  className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#454545]/35 hover:text-[#AE8F7D] transition-colors mt-1"
+                >
+                  Cancelar
+                </button>
+              )}
             </div>
           </div>
 
@@ -497,7 +506,7 @@ export function BookDetailScreen() {
                   <button
                     data-testid="button-save-progress"
                     onClick={applyProgress}
-                    className="w-full bg-[#697962] text-[#FAF8F3] font-sans text-[10px] font-light tracking-[0.12em] uppercase py-3 rounded-[10px] hover:bg-[#697962]/90 transition-colors"
+                    className="w-full bg-[#454545] text-[#FAF8F3] font-sans text-[10px] font-semibold tracking-[0.16em] uppercase py-3.5 rounded-[10px] hover:bg-[#3A3A3A] active:bg-[#2A2A2A] transition-colors shadow-md"
                   >
                     Salvar progresso
                   </button>

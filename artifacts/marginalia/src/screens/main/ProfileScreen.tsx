@@ -39,6 +39,8 @@ export function ProfileScreen() {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [shared, setShared] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!editing) {
@@ -106,16 +108,25 @@ export function ProfileScreen() {
   const avatarColor = editing ? editAvatarColor : (currentUser.avatarColor || "#697962");
 
   const saveEdit = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    setSaveError(null);
     const first = editFirstName.trim() || currentUser.firstName;
     const last = editLastName.trim();
-    await saveToSupabase({
+    const { error } = await saveToSupabase({
       full_name: last ? `${first} ${last}` : first,
-      username: editUsername.trim().replace(/^@/, ""),
+      username: editUsername.trim().replace(/^@/, "") || null,
       bio: editBio.trim() || null,
       avatar_color: editAvatarColor,
-      instagram_handle: editInstagram.trim() || null,
-      tiktok_handle: editTikTok.trim() || null,
+      instagram_handle: editInstagram.trim().replace(/^@/, "") || null,
+      tiktok_handle: editTikTok.trim().replace(/^@/, "") || null,
     });
+    setIsSaving(false);
+    if (error) {
+      setSaveError(error);
+      setTimeout(() => setSaveError(null), 4000);
+      return;
+    }
     setEditing(false);
     setShowColorPicker(false);
     setSavedToast(true);
@@ -153,6 +164,12 @@ export function ProfileScreen() {
           Perfil atualizado ✓
         </div>
       )}
+      {/* Error toast */}
+      {saveError && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#6B3A3A] text-[#FAF8F3] font-sans text-[11px] font-light tracking-[0.08em] px-5 py-2.5 rounded-full shadow-lg feed-enter pointer-events-none max-w-[280px] text-center">
+          {saveError}
+        </div>
+      )}
       <div className="px-5 pt-10 pb-10">
 
         {/* Top Actions */}
@@ -162,8 +179,19 @@ export function ProfileScreen() {
               <button onClick={cancelEdit} className="text-[#454545]/35 hover:text-[#454545]/65 transition-colors">
                 <X className="w-5 h-5" />
               </button>
-              <button onClick={saveEdit} className="text-[#697962] hover:text-[#697962]/80 transition-colors">
-                <Check className="w-5 h-5" />
+              <button
+                onClick={saveEdit}
+                disabled={isSaving}
+                className={`transition-colors ${isSaving ? "text-[#697962]/40" : "text-[#697962] hover:text-[#697962]/80"}`}
+              >
+                {isSaving ? (
+                  <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v2a6 6 0 100 12v2a8 8 0 01-8-8z" />
+                  </svg>
+                ) : (
+                  <Check className="w-5 h-5" />
+                )}
               </button>
             </>
           ) : (

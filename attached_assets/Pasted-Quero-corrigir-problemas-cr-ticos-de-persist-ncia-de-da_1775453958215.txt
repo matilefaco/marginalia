@@ -1,0 +1,204 @@
+Quero corrigir problemas críticos de persistência de dados, UX e performance no app.
+
+Esses pontos são PRIORIDADE MÁXIMA, pois afetam diretamente a confiabilidade do produto.
+
+--------------------------------------------------
+1. BUG CRÍTICO: PERFIL NÃO SALVA (Instagram, TikTok, cor da bolinha)
+--------------------------------------------------
+
+Atualmente, quando o usuário:
+- preenche Instagram
+- preenche TikTok
+- escolhe a cor da bolinha/avatar
+
+e clica em salvar, os dados NÃO persistem.
+
+Isso é inaceitável. Precisa corrigir completamente.
+
+### O comportamento correto deve ser:
+
+- ao clicar em salvar, deve executar um UPDATE na tabela `profiles` do Supabase
+- usar o `auth.uid()` como referência do usuário
+- todos os campos devem ser enviados corretamente no update
+
+### Campos obrigatórios no update:
+- instagram_handle
+- tiktok_handle
+- avatar_color
+- bio
+- full_name
+- username
+
+### Após salvar:
+- os dados devem ser recarregados imediatamente do Supabase
+- a UI deve refletir os novos dados sem precisar refresh manual
+- ao sair da conta e voltar, os dados devem continuar lá
+
+### IMPORTANTE:
+- remover qualquer estado local/mock que sobrescreva dados reais
+- garantir que o formulário esteja ligado ao estado vindo do banco
+- garantir que não exista overwrite por valores default após salvar
+
+--------------------------------------------------
+2. PERSISTÊNCIA ABSOLUTA DE DADOS DO USUÁRIO
+--------------------------------------------------
+
+O app deve funcionar como um sistema persistente real.
+
+Regra fundamental:
+
+"Nunca perder nenhuma ação do usuário."
+
+### Isso significa:
+
+- tudo que o usuário fizer deve ser salvo no banco
+- dados devem sobreviver:
+  - refresh
+  - logout
+  - login novamente
+  - troca de tela
+
+### Inclui:
+
+- progresso de leitura
+- reações (emoji)
+- ecos criados
+- comentários
+- perfil (bio, redes sociais, cor, etc)
+- livros adicionados
+- preferências
+
+### Implementação:
+
+- sempre usar Supabase como fonte de verdade
+- evitar depender apenas de state local
+- após qualquer ação → sincronizar com banco
+- ao carregar tela → sempre buscar do banco
+
+--------------------------------------------------
+3. COR DA BOLINHA (AVATAR) NÃO REFLETINDO
+--------------------------------------------------
+
+Corrigir:
+
+- salvar `avatar_color` corretamente no banco
+- usar esse valor ao renderizar avatar
+- aplicar em:
+  - perfil próprio
+  - perfil público
+  - comentários
+  - ecos
+
+Se não existir valor → usar fallback padrão elegante
+
+--------------------------------------------------
+4. MELHORAR BOTÃO "ATUALIZAR PROGRESSO"
+--------------------------------------------------
+
+Quero que o botão fique mais destacado visualmente.
+
+### Ajustes:
+
+- aumentar contraste (cor mais forte)
+- aumentar peso tipográfico
+- adicionar leve destaque visual:
+  - background mais sólido
+  - leve sombra ou borda
+- deixar claro que é ação principal
+
+Objetivo:
+→ usuário entender rapidamente que é uma ação importante
+
+--------------------------------------------------
+5. BUG DE NAVEGAÇÃO AO CLICAR EM ECO
+--------------------------------------------------
+
+Atualmente, ao clicar em um eco:
+- existe um delay estranho
+- ou transição lenta
+- ou comportamento inconsistente
+
+### Corrigir:
+
+- navegação deve ser instantânea ou suave
+- evitar travamentos ou delays perceptíveis
+- revisar:
+  - useEffect desnecessários
+  - re-renderizações pesadas
+  - chamadas duplicadas ao banco
+  - loading states mal gerenciados
+
+### Implementar:
+
+- loading state leve (skeleton ou fade)
+- transição suave (não travada)
+- evitar bloquear UI
+
+--------------------------------------------------
+6. SISTEMA DE PERSISTÊNCIA ROBUSTO
+--------------------------------------------------
+
+Quero garantir comportamento de app real:
+
+### Regras obrigatórias:
+
+- usuário fez algo → salvar imediatamente
+- usuário voltou → estado deve estar exatamente igual
+- nenhuma informação pode "sumir"
+
+### Exemplos:
+
+- reagiu com emoji → deve continuar lá sempre
+- comentou → comentário deve permanecer
+- atualizou progresso → deve continuar correto
+- editou perfil → deve manter sempre
+
+### Nunca deve acontecer:
+
+- usuário salvar algo → app esquecer
+- logout/resetar dados
+- inconsistência entre UI e banco
+
+--------------------------------------------------
+7. SINCRONIZAÇÃO FRONTEND ↔ SUPABASE
+--------------------------------------------------
+
+Garantir fluxo correto:
+
+### Ao salvar:
+→ enviar update para Supabase
+
+### Após salvar:
+→ refetch do perfil/dados
+
+### Ao carregar tela:
+→ buscar dados reais do banco
+
+### Nunca:
+- confiar apenas em estado local
+- manter dados desatualizados
+
+--------------------------------------------------
+8. RESULTADO FINAL ESPERADO
+--------------------------------------------------
+
+Após essas correções:
+
+- perfil salva corretamente SEMPRE
+- Instagram/TikTok persistem
+- cor da bolinha funciona perfeitamente
+- bio aparece corretamente
+- progresso não se perde
+- interações nunca somem
+- navegação entre ecos é fluida
+- app se comporta como produto real
+
+--------------------------------------------------
+PRIORIDADE MÁXIMA:
+1. salvar perfil corretamente
+2. persistência absoluta de dados
+3. corrigir avatar_color
+4. corrigir navegação de ecos
+5. melhorar botão de progresso
+
+Implemente essas mudanças no código, não apenas descreva.

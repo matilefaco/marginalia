@@ -109,7 +109,7 @@ export function ThreadScreen() {
   const params = useParams<{ id: string }>();
   const [, navigate] = useLocation();
   const id = parseInt(params.id || "1", 10);
-  const { addReaction, userReactions, savedMargins, toggleSaveMargin, currentUser } = useApp();
+  const { addReaction, userReactions, savedMargins, toggleSaveMargin, currentUser, margins } = useApp();
 
   const [replyText, setReplyText] = useState("");
   const [localReplies, setLocalReplies] = useState<{ text: string; createdAt: string }[]>([]);
@@ -119,7 +119,8 @@ export function ThreadScreen() {
   const inputRef = useRef<HTMLInputElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
 
-  const margin = MOCK_MARGINS.find((m) => m.id === id);
+  // Look up from live AppContext margins first, fall back to MOCK_MARGINS
+  const margin = margins.find((m) => m.id === id) ?? MOCK_MARGINS.find((m) => m.id === id);
 
   if (!margin) {
     return (
@@ -137,7 +138,9 @@ export function ThreadScreen() {
   const totalVoices = mockReplies.length + localReplies.length;
   const visibleMockReplies = showAllReplies ? mockReplies : mockReplies.slice(0, 2);
   const authorUsername = USER_USERNAME_MAP[margin.userId];
-  const authorAvatarColor = MOCK_USERS.find((u) => u.id === margin.userId)?.avatarColor || "#697962";
+  const authorAvatarColor = margin.userId === currentUser.id
+    ? (currentUser.avatarColor || "#697962")
+    : MOCK_USERS.find((u) => u.id === margin.userId)?.avatarColor || "#697962";
   const reactionTop = Object.entries(reactions).sort(([, a], [, b]) => b - a);
 
   const handleReply = () => {

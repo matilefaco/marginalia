@@ -140,13 +140,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateProfile = async (updates: Partial<Omit<SupabaseProfile, "id">>) => {
     if (!supabaseUser) return { error: "Não autenticado" };
+    // Optimistic update for instant UI feedback
+    setProfile((prev) => (prev ? { ...prev, ...updates } : prev));
     const { error } = await supabase
       .from("profiles")
-      .upsert({ id: supabaseUser.id, ...updates });
-    if (!error) {
-      setProfile((prev) => (prev ? { ...prev, ...updates } : prev));
+      .upsert({ id: supabaseUser.id, ...updates }, { onConflict: "id" });
+    if (error) {
+      // Rollback optimistic update on error
+      await loadProfile(supabaseUser.id);
+      return { error: error.message };
     }
-    return { error: error ? error.message : null };
+    // Reload from DB to confirm the saved values are reflected
+    await loadProfile(supabaseUser.id);
+    return { error: null };
   };
 
   return (

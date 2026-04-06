@@ -6,7 +6,7 @@ import { LogoMark } from "@/components/LogoMark";
 import { BookCover } from "@/components/BookCover";
 import { filterMarginsForUser } from "@/utils/spoiler";
 import { canUserSeeMargin } from "@/utils/spoiler";
-import { MOCK_BOOKS, MOCK_MARGINS } from "@/data/mockData";
+import { MOCK_BOOKS, type Margin } from "@/data/mockData";
 import { progressLabel } from "@/utils/formatting";
 import { Shield } from "lucide-react";
 
@@ -19,8 +19,8 @@ const SUBTITLES = [
 ];
 
 // Simulated "momento do dia" — picks books with highest recent activity
-function getMomentosDeHoje(margins: typeof MOCK_MARGINS) {
-  const byBook = new Map<number, typeof MOCK_MARGINS>();
+function getMomentosDeHoje(margins: Margin[]) {
+  const byBook = new Map<number, Margin[]>();
   margins.forEach((m) => {
     if (!byBook.has(m.bookId)) byBook.set(m.bookId, []);
     byBook.get(m.bookId)!.push(m);

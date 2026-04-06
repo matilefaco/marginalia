@@ -246,9 +246,13 @@ interface EcoarBarProps {
   avatarColor?: string;
 }
 
-function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarProps) {
+function EcoarBar({ margin, linkToThread }: Omit<EcoarBarProps, "avatarColor">) {
   const [, navigate] = useLocation();
   const { currentUser } = useApp();
+  // Resolve the real avatar color: current user > mock users > fallback
+  const avatarColor = margin.userId === currentUser.id
+    ? (currentUser.avatarColor || "#697962")
+    : MOCK_USERS.find((u) => u.id === margin.userId)?.avatarColor || "#AE8F7D";
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
 
   const handleAuthorClick = (e: React.MouseEvent) => {
@@ -332,7 +336,7 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
       <div className="mb-2.5">
         <EmojiReactionBar margin={margin} />
       </div>
-      <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#697962" />
+      <EcoarBar margin={margin} linkToThread={linkToThread} />
     </div>
   );
   if (!linkToThread) return content;
@@ -363,7 +367,7 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
       <div className="mb-2">
         <EmojiReactionBar margin={margin} />
       </div>
-      <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#BDAB9C" />
+      <EcoarBar margin={margin} linkToThread={linkToThread} />
     </div>
   );
   if (!linkToThread) return content;
@@ -395,7 +399,7 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
       {totalReactions > 0 && (
         <p className="font-sans font-light text-[8px] text-[#697962]/55 mb-2">{totalReactions} leitores ecoaram isso</p>
       )}
-      <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#697962" />
+      <EcoarBar margin={margin} linkToThread={linkToThread} />
     </div>
   );
   if (!linkToThread) return content;
@@ -447,7 +451,7 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
           {totalReactions} {totalReactions === 1 ? "leitor ecoou" : "leitores ecoaram"} isso
         </p>
       )}
-      <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#697962" />
+      <EcoarBar margin={margin} linkToThread={linkToThread} />
     </div>
   );
   if (!linkToThread) return content;
