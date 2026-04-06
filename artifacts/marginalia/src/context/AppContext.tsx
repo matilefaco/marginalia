@@ -50,7 +50,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [margins, setMargins] = useState<Margin[]>(MOCK_MARGINS);
   const [progress, setProgress] = useState<BookProgress[]>(MOCK_PROGRESS);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
-  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(() =>
+    localStorage.getItem("marginalia_onboarded") === "true"
+  );
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [userReactions, setUserReactions] = useState<Record<number, string>>({});
   const [lastUsedReaction, setLastUsedReaction] = useState<string | null>(null);
@@ -151,7 +153,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const completeOnboarding = () => setOnboardingCompleted(true);
+  const completeOnboarding = () => {
+    setOnboardingCompleted(true);
+    localStorage.setItem("marginalia_onboarded", "true");
+  };
 
   const getProgressForBook = (bookId: number) =>
     progress.find((p) => p.bookId === bookId && p.userId === "user_me");

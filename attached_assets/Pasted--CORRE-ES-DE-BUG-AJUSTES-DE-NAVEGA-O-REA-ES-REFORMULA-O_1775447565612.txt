@@ -1,0 +1,456 @@
+
+
+⸻
+
+CORREÇÕES DE BUG + AJUSTES DE NAVEGAÇÃO + REAÇÕES + REFORMULAÇÃO DE GÊNEROS — MARGINALIA
+
+Quero corrigir alguns bugs importantes de navegação e melhorar a experiência de interação nos ecos, comentários e na seção de gêneros.
+
+⸻
+
+1. CORRIGIR REDIRECIONAMENTO ERRADO PARA A PÁGINA DE LOGIN
+
+Problema atual
+
+Às vezes, quando o usuário:
+	•	clica em uma reação rápida com emoji
+	•	clica em um eco publicado por alguém
+	•	principalmente no feed
+
+o app está redirecionando incorretamente para a página de login/apresentação.
+
+Isso está errado.
+
+Nesses casos, o usuário não deve ser enviado para login.
+
+⸻
+
+2. COMPORTAMENTO CORRETO DE NAVEGAÇÃO
+
+2.1. Ao clicar em um eco no feed
+
+Quando o usuário clicar em um eco publicado no feed, ele deve ser direcionado para a página correta daquele eco, ou seja:
+	•	abrir a tela completa do eco
+	•	mostrar o conteúdo expandido
+	•	mostrar autor
+	•	mostrar reações
+	•	mostrar comentários e replies
+	•	mostrar ações relacionadas àquele eco
+
+2.2. Ao clicar em uma reação rápida com emoji
+
+Quando o usuário clicar em um emoji:
+	•	não deve haver redirecionamento para login
+	•	não deve haver redirecionamento para rota errada
+	•	a ação deve apenas registrar ou remover a reação
+	•	o usuário deve permanecer no contexto atual
+
+2.3. Ao clicar em um comentário ou elemento relacionado ao eco
+
+Se houver navegação a partir de comentário, card ou trecho clicável, ela deve sempre respeitar o contexto correto:
+	•	se for ação de reagir, apenas reagir
+	•	se for ação de abrir eco, abrir a página do eco
+	•	nunca mandar para login sem motivo
+
+⸻
+
+3. REVISAR E CORRIGIR A CAUSA DO BUG
+
+Verificar e corrigir com prioridade os seguintes pontos:
+
+3.1. Event bubbling / propagação de clique
+
+Pode estar acontecendo de o clique no emoji ou em elementos internos estar acionando também o clique do card inteiro.
+
+Deve corrigir usando:
+	•	event.preventDefault()
+	•	event.stopPropagation()
+
+em todos os botões internos de reação, comentário, salvar, compartilhar etc.
+
+⸻
+
+3.2. Elementos clicáveis aninhados
+
+Verificar se botões de reação estão dentro de:
+	•	<Link>
+	•	<a>
+	•	containers com onClick de navegação
+
+Se estiverem, separar corretamente as áreas clicáveis.
+
+⸻
+
+3.3. Rota errada ou fallback incorreto
+
+Verificar se existe alguma lógica que, quando a rota falha ou quando algum estado está indefinido, manda o usuário para:
+	•	login
+	•	tela inicial
+	•	onboarding
+
+Isso não deve acontecer ao interagir com um eco ou com reação.
+
+⸻
+
+3.4. Verificação de autenticação mal resolvida
+
+Pode estar acontecendo alguma revalidação indevida do estado do usuário ao clicar nos componentes.
+
+Corrigir para que:
+	•	reação com emoji não force reload
+	•	clique em eco não reset estado global
+	•	a navegação seja SPA, sem refresh completo
+	•	ações pequenas não disparem checagem que joga usuário para login
+
+⸻
+
+4. CORRIGIR O BUG DO EMOJI QUE ESTÁ DIRECIONANDO ERRADO
+
+Problema
+
+O clique no emoji está sendo tratado como navegação ou está herdando navegação de outro container.
+
+Comportamento correto
+
+Ao clicar no emoji:
+	•	registrar reação naquele eco
+	•	atualizar contagem
+	•	aplicar microanimação
+	•	destacar emoji selecionado
+	•	permanecer na mesma tela
+
+Não pode:
+	•	abrir login
+	•	mudar rota
+	•	abrir página errada
+	•	selecionar outros ecos ao mesmo tempo
+
+⸻
+
+5. NA PÁGINA PRINCIPAL DO ECO, O BOTÃO “+ REAÇÃO RÁPIDA” PRECISA APARECER
+
+Problema atual
+
+Na página principal do eco, o botão de adicionar reação rápida (+) não está aparecendo.
+
+Correção desejada
+
+Esse botão precisa aparecer sempre no bloco de reações do eco.
+
+Posicionamento correto
+
+O botão + deve ficar:
+	•	à esquerda dos emojis dos outros usuários
+	•	como primeiro item da linha de reações
+	•	visualmente integrado ao conjunto
+	•	com o mesmo padrão sofisticado da interface
+
+Estrutura desejada da linha de reações
+
+Ordem visual:
+	1.	botão + para adicionar reação rápida
+	2.	emojis já existentes
+	3.	contadores de cada emoji
+
+Comportamento do botão +
+
+Ao tocar nele:
+	•	abrir seletor de reações rápidas
+	•	mostrar os emojis disponíveis
+	•	permitir escolher apenas uma reação por eco
+	•	se já houver reação do usuário, permitir trocar
+	•	se clicar na mesma reação novamente, remover
+
+⸻
+
+6. TAMBÉM PRECISA SER POSSÍVEL REAGIR A COMENTÁRIOS
+
+Nova funcionalidade
+
+Além de reagir ao eco principal, o usuário também deve poder reagir aos comentários de outros leitores.
+
+Isso deve funcionar assim:
+
+Cada comentário pode receber reação rápida com emoji, da mesma forma que os ecos.
+
+Regras para comentários
+	•	o usuário pode reagir com 1 emoji por comentário
+	•	pode trocar a reação
+	•	pode remover se clicar de novo no mesmo emoji
+	•	deve atualizar apenas aquele comentário
+	•	não pode afetar outros comentários nem o eco principal
+
+Visual desejado
+
+Nos comentários, a área de reação deve ser mais discreta que no eco principal, mas ainda elegante.
+
+Estrutura sugerida
+
+Abaixo ou ao lado do comentário:
+	•	botão +
+	•	emojis já usados naquele comentário
+	•	contadores pequenos
+
+⸻
+
+7. EXIBIR NOME DE USUÁRIO AO LADO DO NOME EM TODO O APP SOCIAL
+
+Quero que o nome de usuário apareça de forma consistente em todo lugar onde o leitor publica algo.
+
+Deve aparecer em:
+	•	todo eco
+	•	toda página de eco
+	•	todos os comentários
+	•	todos os replies
+	•	todo card social onde o autor estiver visível
+
+⸻
+
+8. FORMATO DE EXIBIÇÃO DO NOME
+
+Exibição desejada
+
+Mostrar:
+	•	nome do leitor
+	•	username único ao lado
+
+Exemplo visual
+	•	Ana Clara · @anaclara
+	•	Rafael M. · @rafaelm
+	•	Júlia Siqueira · @julias
+
+Regras visuais
+	•	o nome continua com mais destaque
+	•	o username aparece com opacidade um pouco menor
+	•	manter estilo refinado
+	•	não poluir a interface
+
+⸻
+
+9. USERNAME DEVE SER ÚNICO
+
+Cada usuário precisa ter um nome de usuário único no sistema.
+
+Regra obrigatória
+	•	não pode haver usernames repetidos
+	•	o banco deve garantir isso
+	•	o cadastro/edição deve validar disponibilidade
+
+Exemplo
+	•	@anaclara pode existir uma vez só
+	•	se já existir, pedir outro username
+
+⸻
+
+10. USERNAME PRECISA SER CLICÁVEL
+
+Quando o usuário tocar no nome ou no @username de alguém:
+	•	deve abrir o perfil público daquele leitor
+	•	nunca deve redirecionar para login
+	•	nunca deve quebrar a navegação
+
+Isso deve funcionar em:
+	•	eco
+	•	página do eco
+	•	comentário
+	•	reply
+	•	listas de usuários
+
+⸻
+
+11. REFORMULAR A SEÇÃO “GÊNEROS EM ALTA”
+
+Problema atual
+
+A seção “Gêneros em alta” está muito estática e pouco funcional.
+
+Ela até mostra informação, mas ainda não serve bem como ferramenta de descoberta.
+
+Objetivo
+
+Transformar essa área em uma experiência mais prática, clara e elegante para explorar livros por gênero.
+
+⸻
+
+12. NOVO CONCEITO: “PRINCIPAIS GÊNEROS”
+
+Quero reformular a seção para algo mais funcional.
+
+Trocar o conceito de:
+	•	“Gêneros em alta”
+
+Para algo como:
+	•	Principais gêneros
+	•	ou uma estrutura equivalente, mais útil e menos passiva
+
+⸻
+
+13. COMPORTAMENTO DA NOVA SEÇÃO “PRINCIPAIS GÊNEROS”
+
+Etapa 1 — Estado inicial
+
+Mostrar apenas os 5 principais gêneros de forma muito limpa e sofisticada.
+
+Exemplo:
+	•	Literatura brasileira
+	•	Romance literário
+	•	Clássicos
+	•	Filosofia
+	•	Poesia
+
+Cada item deve ser clicável.
+
+⸻
+
+14. AO CLICAR EM UM GÊNERO
+
+Quando o usuário clicar em um dos 5 principais gêneros:
+	•	expandir ou abrir a visualização daquele gênero
+	•	carregar os 8 primeiros livros daquele gênero
+	•	mostrar esses livros de forma organizada
+	•	manter o gênero selecionado destacado
+
+Cada livro deve mostrar:
+	•	capa
+	•	título
+	•	autor
+	•	número de margens
+	•	número de leitores ou debates, se houver
+
+⸻
+
+15. PAGINAÇÃO DOS LIVROS POR GÊNERO
+
+A lista de livros de cada gênero deve ser dividida por páginas.
+
+Regra
+	•	mostrar 8 livros por página
+	•	permitir trocar de página
+	•	navegação discreta e elegante
+
+Exemplos
+	•	Página 1: livros 1 a 8
+	•	Página 2: livros 9 a 16
+	•	Página 3: livros 17 a 24
+
+Pode ser implementado com:
+	•	paginação clássica discreta
+	•	ou botão “ver mais”
+	•	ou setas leves de navegação
+
+Mas precisa ficar sofisticado e harmonioso com o design do app.
+
+⸻
+
+16. FILTRO DISCRETO PARA “VER TODOS OS GÊNEROS”
+
+Além dos 5 principais gêneros, quero um filtro mais amplo e refinado.
+
+Na mesma área deve existir:
+	•	um botão/filtro discreto tipo “Ver todos”
+	•	ou um seletor elegante
+
+Objetivo
+
+Permitir que o leitor veja todos os gêneros disponíveis e escolha o que quer explorar.
+
+Comportamento
+
+Ao clicar em “Ver todos os gêneros”:
+	•	abrir lista completa de gêneros
+	•	permitir selecionar qualquer gênero
+	•	ao selecionar, mostrar os livros daquele gênero
+	•	com o mesmo padrão de 8 livros por página
+
+⸻
+
+17. DIREÇÃO VISUAL DA SEÇÃO DE GÊNEROS
+
+Quero que essa área fique:
+	•	mais funcional
+	•	mais prática
+	•	mais editorial
+	•	menos “só informativa”
+	•	mais parecida com ferramenta real de descoberta
+
+Visualmente:
+	•	títulos elegantes
+	•	pouco ruído
+	•	destaque suave no gênero selecionado
+	•	transições discretas
+	•	boa hierarquia entre gênero e livros
+
+Evitar:
+	•	aparência pesada
+	•	excesso de informações simultâneas
+	•	listas muito densas
+	•	visual genérico de e-commerce
+
+⸻
+
+18. MICROINTERAÇÕES RECOMENDADAS
+
+Nos gêneros
+
+Ao clicar em um gênero:
+	•	leve fade
+	•	leve expansão
+	•	mudança suave de estado ativo
+
+Nos livros carregados
+
+Ao trocar de página:
+	•	animação sutil
+	•	sem “pulo”
+	•	sem reset brusco da tela
+
+Nas reações
+
+Ao selecionar emoji:
+	•	micro feedback
+	•	escala leve
+	•	destaque elegante
+
+⸻
+
+19. RESUMO GERAL DO QUE PRECISA SER FEITO
+
+Corrigir bugs de navegação
+	•	impedir redirecionamento incorreto para login
+	•	ao clicar em eco no feed, abrir a página correta do eco
+	•	ao clicar em emoji, não navegar para lugar nenhum
+	•	revisar propagação de clique e rotas internas
+
+Corrigir sistema de reação
+	•	botão + de reação rápida precisa aparecer na página do eco
+	•	ele deve ficar à esquerda dos emojis já existentes
+	•	reação também deve funcionar em comentários
+	•	cada item deve ter sua própria reação sem afetar outros
+
+Melhorar identidade dos usuários
+	•	mostrar nome + @username em ecos e comentários
+	•	garantir username único
+	•	permitir clicar no username para abrir o perfil público
+
+Reformular gêneros
+	•	substituir “Gêneros em alta” por algo mais funcional como “Principais gêneros”
+	•	mostrar 5 principais gêneros
+	•	ao clicar em um, mostrar os 8 primeiros livros
+	•	paginar os livros por página
+	•	incluir filtro discreto para ver todos os gêneros
+	•	mostrar os livros do gênero selecionado com o mesmo padrão
+
+⸻
+
+20. RESULTADO ESPERADO
+
+Após essas mudanças, quero que o app fique com esta lógica:
+	•	tocar em eco abre eco
+	•	tocar em emoji reage, sem quebrar navegação
+	•	tocar em username abre perfil
+	•	reagir a comentário também seja possível
+	•	explorar gêneros seja útil de verdade, e não apenas decorativo
+
+O objetivo é deixar o app mais estável, mais funcional e com uma experiência social/literária mais refinada.
+
+⸻

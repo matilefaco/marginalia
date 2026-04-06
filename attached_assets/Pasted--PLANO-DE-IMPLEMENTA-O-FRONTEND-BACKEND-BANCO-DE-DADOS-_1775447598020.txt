@@ -1,0 +1,539 @@
+
+
+⸻
+
+PLANO DE IMPLEMENTAÇÃO — FRONTEND + BACKEND + BANCO DE DADOS — MARGINALIA
+
+Quero organizar essas mudanças em tarefas técnicas bem definidas, separadas por área, para corrigir os bugs de navegação, melhorar o sistema de reações, padronizar usernames e reformular a seção de gêneros.
+
+⸻
+
+1. FRONTEND — CORREÇÕES DE NAVEGAÇÃO
+
+1.1. Corrigir redirecionamento indevido para login
+
+Problema
+
+Ao clicar em:
+	•	emoji de reação rápida
+	•	eco no feed
+	•	alguns elementos sociais internos
+
+o app às vezes está redirecionando para a tela de login/apresentação.
+
+Comportamento correto
+	•	clicar em um eco no feed deve abrir a página daquele eco
+	•	clicar em emoji deve apenas registrar/remover reação
+	•	clicar em comentário, salvar, compartilhar ou username deve executar apenas sua ação específica
+	•	nenhuma dessas ações deve mandar o usuário para login sem motivo
+
+Tarefas de frontend
+	•	revisar todos os onClick dos cards de eco no feed
+	•	revisar elementos clicáveis aninhados dentro dos cards
+	•	impedir que botões internos herdem a navegação do card pai
+	•	aplicar event.preventDefault() e event.stopPropagation() em:
+	•	reação por emoji
+	•	botão salvar
+	•	botão compartilhar
+	•	botão comentar
+	•	ações de comentário
+	•	clique no username
+	•	garantir que botões estejam com type="button" quando aplicável
+	•	revisar uso de <Link> e <a> em componentes sociais
+	•	garantir que o clique no card do eco navegue para /eco/:id ou rota equivalente
+	•	garantir que elementos internos não acionem o clique do card pai
+
+⸻
+
+1.2. Corrigir navegação do feed para a página correta do eco
+
+Comportamento esperado
+
+Ao clicar em um eco no feed:
+	•	abrir a página detalhada daquele eco
+	•	carregar dados completos do eco
+	•	mostrar trecho, texto, autor, reações, comentários e replies
+
+Tarefas
+	•	padronizar rota da página do eco
+	•	garantir que cada card no feed possua o ecoId correto
+	•	validar que a navegação está passando o ID correto do eco
+	•	tratar casos em que o ID não exista sem redirecionar para login
+	•	exibir fallback adequado se o eco não for encontrado
+
+⸻
+
+2. FRONTEND — SISTEMA DE REAÇÕES
+
+2.1. Corrigir bug onde reagir em um eco afeta outros ecos
+
+Problema
+
+Quando o usuário reage com emoji em um eco/margem, outros ecos também aparecem como reagidos.
+
+Causa provável
+
+O estado da reação está sendo compartilhado globalmente, e não por item.
+
+Comportamento correto
+
+Cada eco e cada comentário deve ter seu próprio estado de reação.
+
+Tarefas
+	•	armazenar estado de reação por ecoId
+	•	armazenar estado de reação por commentId
+	•	remover qualquer estado global compartilhado entre cards
+	•	garantir que a renderização use a reação específica daquele item
+	•	atualizar apenas o item reagido
+	•	ao clicar no mesmo emoji novamente, remover reação
+	•	ao clicar em emoji diferente, substituir reação anterior
+
+Estrutura desejada
+	•	reações do eco principal indexadas por ecoId
+	•	reações de comentários indexadas por commentId
+
+⸻
+
+2.2. Exibir botão “+ reação rápida” na página principal do eco
+
+Problema
+
+Na página principal do eco, o botão + para adicionar reação rápida não está aparecendo.
+
+Comportamento correto
+
+O botão + deve aparecer sempre no bloco de reações do eco principal.
+
+Posição correta
+	•	à esquerda dos emojis já existentes
+	•	como primeiro item da linha de reações
+
+Tarefas
+	•	adicionar o botão + no bloco de reações da página do eco
+	•	manter o mesmo estilo visual editorial do app
+	•	abrir seletor de reações ao clicar
+	•	permitir escolher uma reação por usuário
+	•	se já houver reação do usuário, permitir troca
+	•	se clicar na mesma reação já escolhida, remover
+
+⸻
+
+2.3. Permitir reação em comentários
+
+Nova funcionalidade
+
+O usuário também deve poder reagir com emoji a comentários de outros leitores.
+
+Comportamento correto
+
+Cada comentário pode receber reação rápida de forma independente.
+
+Tarefas
+	•	adicionar área de reações em cada comentário
+	•	incluir botão + discreto para comentários
+	•	exibir emojis já usados e contadores
+	•	permitir 1 reação por usuário por comentário
+	•	permitir trocar ou remover reação
+	•	não afetar outros comentários nem o eco principal
+
+⸻
+
+2.4. Microinterações de reação
+
+Objetivo
+
+Deixar a reação mais elegante e tátil.
+
+Tarefas
+	•	adicionar animação suave no toque do emoji
+	•	adicionar micro pop no emoji selecionado
+	•	destacar visualmente o emoji ativo
+	•	aplicar micro animação no contador após update
+	•	manter tudo discreto e refinado
+
+⸻
+
+3. FRONTEND — USERNAME EM TODO O SISTEMA SOCIAL
+
+3.1. Mostrar nome + @username
+
+Comportamento esperado
+
+Em todos os lugares sociais, o nome do usuário deve aparecer junto com o username.
+
+Formato sugerido
+	•	Ana Clara · @anaclara
+	•	Rafael M. · @rafaelm
+	•	Júlia Siqueira · @julias
+
+Aplicar em
+	•	cards de eco no feed
+	•	página detalhada do eco
+	•	comentários
+	•	replies
+	•	listas de usuários
+	•	qualquer bloco com autor visível
+
+Tarefas
+	•	atualizar componente de autoria do eco
+	•	atualizar componente de comentário
+	•	atualizar componente de reply
+	•	manter nome com maior destaque
+	•	exibir @username com opacidade menor
+	•	manter consistência visual em todo o app
+
+⸻
+
+3.2. Tornar username clicável
+
+Comportamento esperado
+
+Ao clicar no nome ou no @username:
+	•	abrir o perfil público daquele leitor
+
+Tarefas
+	•	transformar nome e username em link clicável
+	•	navegar para /perfil/:username ou rota equivalente
+	•	impedir que esse clique dispare navegação do card pai
+	•	garantir que não haja redirecionamento para login
+
+⸻
+
+4. FRONTEND — REFORMULAÇÃO DE GÊNEROS
+
+4.1. Substituir “Gêneros em alta” por uma estrutura mais funcional
+
+Objetivo
+
+Transformar a seção de gêneros em uma ferramenta real de descoberta.
+
+Novo conceito
+
+Trocar a lógica atual por algo como:
+	•	Principais gêneros
+
+Estado inicial da seção
+
+Mostrar apenas os 5 principais gêneros de forma limpa e sofisticada.
+
+Exemplo
+	•	Literatura brasileira
+	•	Romance literário
+	•	Clássicos
+	•	Filosofia
+	•	Poesia
+
+⸻
+
+4.2. Clique em gênero para mostrar livros
+
+Comportamento esperado
+
+Ao clicar em um dos 5 principais gêneros:
+	•	destacar o gênero selecionado
+	•	abrir a listagem dos livros desse gênero
+	•	carregar os 8 primeiros livros
+
+Cada livro deve mostrar
+	•	capa
+	•	título
+	•	autor
+	•	número de margens
+	•	número de leitores e/ou debates
+
+Tarefas
+	•	criar estado de gênero selecionado
+	•	renderizar livros do gênero selecionado abaixo da lista de gêneros
+	•	manter transição suave entre gêneros
+	•	não recarregar a página inteira
+
+⸻
+
+4.3. Paginação dos livros por gênero
+
+Regra
+
+Mostrar 8 livros por página.
+
+Tarefas
+	•	criar paginação por gênero
+	•	ao trocar de página, buscar/renderizar próximos 8 livros
+	•	permitir navegação entre páginas
+	•	manter paginação discreta e elegante
+	•	evitar scroll brusco ao trocar página
+
+⸻
+
+4.4. Filtro “Ver todos os gêneros”
+
+Objetivo
+
+Além dos 5 principais gêneros, permitir que o leitor veja todos os gêneros disponíveis.
+
+Comportamento esperado
+	•	botão ou seletor discreto “Ver todos”
+	•	ao clicar, abrir lista completa de gêneros
+	•	ao selecionar um gênero, mostrar os livros dele
+	•	seguir o mesmo padrão de 8 livros por página
+
+Tarefas
+	•	adicionar controle visual discreto de “Ver todos”
+	•	abrir modal, drawer ou expandir lista completa
+	•	manter visual sofisticado
+	•	permitir seleção rápida
+	•	manter o gênero ativo destacado
+
+⸻
+
+4.5. Microinterações da seção de gêneros
+
+Tarefas
+	•	fade suave ao trocar gênero
+	•	destaque sutil do gênero ativo
+	•	animação leve ao expandir livros
+	•	evitar aparência pesada ou genérica
+
+⸻
+
+5. BACKEND — ROTAS E LÓGICA DE NEGÓCIO
+
+5.1. Endpoint para página do eco
+
+Necessidade
+
+Ao clicar num eco, o frontend precisa buscar dados completos do eco.
+
+Endpoint sugerido
+	•	GET /api/ecos/:id
+
+Deve retornar
+	•	dados do eco
+	•	autor
+	•	username do autor
+	•	reações agregadas
+	•	reação do usuário atual
+	•	comentários
+	•	replies
+	•	reações dos comentários
+
+⸻
+
+5.2. Endpoint para reagir em eco
+
+Endpoint sugerido
+	•	POST /api/ecos/:id/reactions
+
+Regras
+	•	1 reação por usuário por eco
+	•	se o emoji for igual ao atual, remover reação
+	•	se for diferente, substituir
+	•	retornar estado atualizado do eco
+
+⸻
+
+5.3. Endpoint para reagir em comentário
+
+Endpoint sugerido
+	•	POST /api/comments/:id/reactions
+
+Regras
+	•	1 reação por usuário por comentário
+	•	se clicar no mesmo emoji, remover
+	•	se clicar em outro, substituir
+	•	retornar estado atualizado do comentário
+
+⸻
+
+5.4. Endpoint para perfil público por username
+
+Endpoint sugerido
+	•	GET /api/users/:username
+
+Deve retornar
+	•	nome
+	•	username
+	•	avatar
+	•	bio
+	•	cidade
+	•	redes públicas
+	•	tipo de leitor
+	•	assinatura de leitura
+	•	estatísticas públicas
+	•	ecos públicos do usuário
+
+⸻
+
+5.5. Endpoint para gêneros principais
+
+Endpoint sugerido
+	•	GET /api/genres/highlighted
+
+Deve retornar
+	•	5 principais gêneros
+	•	nome
+	•	slug
+	•	total de margens
+	•	crescimento percentual, se houver
+
+⸻
+
+5.6. Endpoint para todos os gêneros
+
+Endpoint sugerido
+	•	GET /api/genres
+
+Deve retornar
+	•	lista completa de gêneros disponíveis
+	•	nome
+	•	slug
+	•	ordenação alfabética ou por relevância
+
+⸻
+
+5.7. Endpoint para livros por gênero com paginação
+
+Endpoint sugerido
+	•	GET /api/genres/:slug/books?page=1&limit=8
+
+Deve retornar
+	•	gênero selecionado
+	•	lista de livros
+	•	paginação
+	•	total de livros
+	•	página atual
+	•	total de páginas
+
+⸻
+
+6. BANCO DE DADOS — AJUSTES NECESSÁRIOS
+
+6.1. Garantir username único
+
+Regra obrigatória
+
+Cada usuário deve ter um username único.
+
+Exemplo de regra
+	•	campo username com UNIQUE
+	•	obrigatório no cadastro
+	•	validado também na edição
+
+⸻
+
+6.2. Reações em ecos
+
+Regra
+
+1 reação por usuário por eco.
+
+Estrutura
+
+Tabela de reações de eco com restrição única em:
+	•	eco_id
+	•	user_id
+
+⸻
+
+6.3. Reações em comentários
+
+Nova necessidade
+
+Também será preciso armazenar reações em comentários.
+
+Estrutura sugerida
+
+Tabela específica para reações em comentários com:
+	•	comment_id
+	•	user_id
+	•	emoji_code
+	•	created_at
+
+E restrição única em:
+	•	comment_id
+	•	user_id
+
+⸻
+
+6.4. Gêneros e livros
+
+Estrutura necessária
+	•	tabela de gêneros
+	•	tabela de livros
+	•	tabela relacional livros ↔ gêneros
+	•	consulta paginada por gênero
+
+⸻
+
+7. VALIDAÇÕES IMPORTANTES
+
+7.1. Navegação
+	•	nunca redirecionar para login ao clicar em eco ou emoji, se o usuário já estiver autenticado
+	•	se o eco não existir, mostrar fallback adequado
+	•	se houver erro de carregamento, mostrar mensagem de erro, não login
+
+7.2. Reações
+	•	cada reação deve atualizar somente o item correto
+	•	reação em eco não pode afetar outro eco
+	•	reação em comentário não pode afetar outro comentário
+	•	reação em comentário não pode afetar eco principal
+
+7.3. Username
+	•	usernames duplicados devem ser bloqueados
+	•	username deve ser exibido em todo conteúdo social
+	•	username clicável deve abrir perfil correto
+
+7.4. Gêneros
+	•	sempre mostrar apenas 8 livros por página
+	•	trocar gênero deve resetar paginação para página 1 daquele gênero
+	•	“Ver todos” deve listar o catálogo completo de gêneros
+
+⸻
+
+8. ORDEM DE PRIORIDADE DE IMPLEMENTAÇÃO
+
+PRIORIDADE 1 — BUGS CRÍTICOS
+	1.	corrigir redirecionamento indevido para login
+	2.	corrigir clique em eco abrindo rota correta
+	3.	corrigir clique em emoji para não navegar
+	4.	corrigir estado de reação por item
+
+PRIORIDADE 2 — EXPERIÊNCIA SOCIAL
+	5.	exibir botão + de reação na página do eco
+	6.	permitir reação em comentários
+	7.	mostrar nome + @username em ecos e comentários
+	8.	tornar username clicável para abrir perfil
+
+PRIORIDADE 3 — DESCOBERTA POR GÊNEROS
+	9.	reformular seção para “Principais gêneros”
+	10.	mostrar 5 principais gêneros
+	11.	ao clicar, carregar 8 livros por página
+	12.	adicionar “Ver todos os gêneros”
+
+⸻
+
+9. RESULTADO FINAL ESPERADO
+
+Quero que, depois dessas alterações:
+	•	clicar em um eco no feed abra a página correta do eco
+	•	clicar em reação rápida não redirecione para login
+	•	o botão + de reação apareça corretamente na página do eco
+	•	comentários também possam receber reações
+	•	o nome e o @username apareçam juntos em todo conteúdo social
+	•	clicar no username leve ao perfil público correto
+	•	a seção de gêneros fique mais útil, prática e elegante
+	•	o leitor consiga explorar gêneros e livros com paginação clara e sofisticada
+
+⸻
+
+10. OBSERVAÇÃO DE DIREÇÃO DE PRODUTO
+
+A intenção dessas mudanças é fazer o MARGINALIA parecer menos uma interface estática e mais uma plataforma social literária real, estável e refinada.
+
+A experiência precisa transmitir:
+	•	clareza de navegação
+	•	consistência social
+	•	identidade de usuário forte
+	•	descoberta de livros elegante
+	•	zero comportamento confuso ou quebrado
+
+⸻

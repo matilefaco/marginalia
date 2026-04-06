@@ -5,19 +5,38 @@ import { MOCK_BOOKS, MOCK_USERS, MOCK_MARGINS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { useApp } from "@/context/AppContext";
 
-const GENRE_TRENDING = [
-  { label: "Literatura brasileira", count: 412, delta: "+18%", trend: "tendência" },
-  { label: "Romance literário", count: 889, delta: "+7%", trend: "" },
-  { label: "Clássicos", count: 634, delta: "+12%", trend: "" },
-  { label: "Filosofia", count: 287, delta: "+31%", trend: "em alta" },
-  { label: "Poesia", count: 201, delta: "+22%", trend: "" },
+const GENRE_MAIN = [
+  "Literatura brasileira",
+  "Romance literário",
+  "Clássicos",
+  "Filosofia",
+  "Poesia",
+];
+
+const GENRE_ALL = [
+  "Literatura brasileira",
+  "Romance literário",
+  "Clássicos",
+  "Filosofia",
+  "Poesia",
+  "Realismo mágico",
+  "Conto",
+  "Ensaio",
+  "Ficção contemporânea",
+  "Drama",
+  "Distopia",
+  "Histórico",
+  "Ficção científica",
+  "Memória",
+  "Terror",
 ];
 
 export function ExploreScreen() {
   const { currentUser } = useApp();
   const [query, setQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-  const [genreBooksLimit, setGenreBooksLimit] = useState(10);
+  const [genreBooksLimit, setGenreBooksLimit] = useState(8);
+  const [showAllGenres, setShowAllGenres] = useState(false);
 
   const searchResults = query.trim()
     ? MOCK_BOOKS.filter(
@@ -170,34 +189,35 @@ export function ExploreScreen() {
           </section>
         )}
 
-        {/* Genres in High */}
+        {/* Principais gêneros */}
         {!query && (
           <section data-testid="section-genres-trending">
             <div className="flex items-center gap-2 mb-3">
               <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-                Gêneros em alta
+                Principais gêneros
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-              {selectedGenre && (
-                <button
-                  onClick={() => setSelectedGenre(null)}
-                  className="font-sans text-[8px] font-light text-[#454545]/40 hover:text-[#AE8F7D] transition-colors"
-                >
-                  Ver todos
-                </button>
-              )}
+              <button
+                onClick={() => {
+                  setShowAllGenres((v) => !v);
+                  if (selectedGenre && !GENRE_MAIN.includes(selectedGenre)) setSelectedGenre(null);
+                }}
+                className="font-sans text-[8px] font-light text-[#454545]/40 hover:text-[#AE8F7D] transition-colors"
+              >
+                {showAllGenres ? "Ver menos" : "Ver todos"}
+              </button>
             </div>
-            <div className="space-y-1">
-              {GENRE_TRENDING.map((genre) => {
-                const isSelected = selectedGenre === genre.label;
+            <div className="space-y-0.5">
+              {(showAllGenres ? GENRE_ALL : GENRE_MAIN).map((label) => {
+                const isSelected = selectedGenre === label;
                 return (
                   <button
                     type="button"
-                    key={genre.label}
+                    key={label}
                     onClick={() => {
-                      const next = isSelected ? null : genre.label;
+                      const next = isSelected ? null : label;
                       setSelectedGenre(next);
-                      setGenreBooksLimit(10);
+                      setGenreBooksLimit(8);
                     }}
                     className={`w-full flex items-center justify-between py-2.5 px-3 rounded-[10px] border transition-all text-left ${
                       isSelected
@@ -205,22 +225,12 @@ export function ExploreScreen() {
                         : "border-transparent hover:bg-[#EBE6DB]/60 hover:border-[#AE8F7D]/10"
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <span className={`font-sans font-light text-[13px] transition-colors ${
-                        isSelected ? "text-[#3D3D3D]" : "text-[#454545]/70"
-                      }`}>{genre.label}</span>
-                      {genre.trend && (
-                        <span className="font-sans font-light text-[8px] text-[#697962] bg-[#697962]/10 rounded-full px-2 py-0.5">
-                          {genre.trend}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="font-sans font-light text-[9px] text-[#454545]/30">{genre.count} margens</span>
-                      <span className={`font-sans font-light text-[9px] ${isSelected ? "text-[#AE8F7D]" : "text-[#697962]"}`}>
-                        {genre.delta}
-                      </span>
-                    </div>
+                    <span className={`font-sans font-light text-[13px] transition-colors ${
+                      isSelected ? "text-[#3D3D3D]" : "text-[#454545]/70"
+                    }`}>{label}</span>
+                    {isSelected && (
+                      <span className="font-sans font-light text-[8px] text-[#AE8F7D]/60">Selecionado</span>
+                    )}
                   </button>
                 );
               })}
@@ -277,7 +287,7 @@ export function ExploreScreen() {
                       {hasMore && (
                         <button
                           type="button"
-                          onClick={() => setGenreBooksLimit((l) => l + 10)}
+                          onClick={() => setGenreBooksLimit((l) => l + 8)}
                           className="w-full mt-3 py-2.5 border border-dashed border-[#AE8F7D]/30 rounded-[10px] font-sans font-light text-[10px] tracking-[0.1em] text-[#AE8F7D] hover:bg-[#AE8F7D]/5 transition-colors"
                         >
                           Carregar mais · {allGenreBooks.length - genreBooksLimit} restantes
