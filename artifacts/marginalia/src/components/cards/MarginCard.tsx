@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { Share2, Check } from "lucide-react";
+import { Share2, Check, MessageCircle } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { canUserSeeMargin, getBlockedReason } from "@/utils/spoiler";
 import { formatReference, marginTypeLabel, timeAgo } from "@/utils/formatting";
@@ -21,7 +21,17 @@ function ShareButton({ margin }: { margin: Margin }) {
   const handleShare = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const text = `"${margin.excerpt}"\n\n— ${margin.bookTitle}, ${margin.bookAuthor}\n\nvia Marginalia`;
+    const typeLabel = MARGIN_TYPES.find((t) => t.id === margin.postType)?.label || "Margem";
+    const text = [
+      `"${margin.excerpt}"`,
+      ``,
+      `— ${margin.bookTitle}`,
+      `${margin.bookAuthor}`,
+      ``,
+      `@${margin.userName.replace("@", "")} · ${typeLabel}`,
+      ``,
+      `marginalia — leia junto`,
+    ].join("\n");
     if (navigator.share) {
       navigator.share({ text });
     } else {
@@ -34,20 +44,78 @@ function ShareButton({ margin }: { margin: Margin }) {
     <button
       data-testid={`button-share-margin-${margin.id}`}
       onClick={handleShare}
-      className="flex items-center gap-1 font-sans text-[8px] font-light tracking-[0.08em] text-[#454545]/30 hover:text-[#AE8F7D] transition-colors py-1 px-1"
+      className="flex items-center gap-1 font-sans text-[7.5px] font-light tracking-[0.06em] text-[#454545]/28 hover:text-[#AE8F7D] transition-colors py-1 px-1"
     >
       {copied ? (
         <><Check className="w-3 h-3" /><span>Copiado</span></>
       ) : (
-        <><Share2 className="w-3 h-3" /><span>Compartilhar</span></>
+        <Share2 className="w-3 h-3" />
       )}
     </button>
   );
 }
 
-// Quote card — more elegant, centered around the excerpt
+function ActivityBadge({ commentsCount, totalReactions }: { commentsCount: number; totalReactions: number }) {
+  if (totalReactions >= 6) {
+    return (
+      <span className="font-sans text-[7px] font-light text-[#AE8F7D]/70" title="Trecho muito ativo">
+        🔥
+      </span>
+    );
+  }
+  if (commentsCount >= 5) {
+    return (
+      <span className="font-sans text-[7px] font-light text-[#697962]/70" title="Crescendo agora">
+        🟢
+      </span>
+    );
+  }
+  return null;
+}
+
+interface EcoarBarProps {
+  margin: Margin;
+  linkToThread?: boolean;
+  avatarColor?: string;
+}
+
+function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarProps) {
+  const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
+  const ecoarContent = (
+    <button
+      data-testid={`button-ecoar-${margin.id}`}
+      onClick={(e) => { if (!linkToThread) { e.preventDefault(); e.stopPropagation(); } }}
+      className="flex items-center gap-1.5 font-sans text-[8px] font-light tracking-[0.1em] text-[#454545]/40 hover:text-[#AE8F7D] transition-colors"
+    >
+      <MessageCircle className="w-3 h-3" />
+      <span>Ecoar</span>
+      {margin.commentsCount > 0 && (
+        <span className="text-[#454545]/25">· {margin.commentsCount}</span>
+      )}
+    </button>
+  );
+
+  return (
+    <div className="flex items-center justify-between pt-2 border-t border-[#454545]/5 mt-2">
+      <div className="flex items-center gap-2.5">
+        <div
+          className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ backgroundColor: avatarColor }}
+        >
+          <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
+        </div>
+        <span className="font-sans font-light text-[9.5px] text-[#AE8F7D]">{margin.userName}</span>
+        <ActivityBadge commentsCount={margin.commentsCount} totalReactions={totalReactions} />
+      </div>
+      <div className="flex items-center gap-3">
+        {ecoarContent}
+        <ShareButton margin={margin} />
+      </div>
+    </div>
+  );
+}
+
 function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
-  const { addReaction } = useApp();
   const ref = formatReference(margin);
   const content = (
     <div
@@ -69,24 +137,14 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
           {margin.bookTitle} {ref && `· ${ref}`}
         </p>
       )}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full bg-[#697962] flex items-center justify-center">
-            <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
-          </div>
-          <span className="font-sans font-light text-[10px] text-[#AE8F7D]">{margin.userName}</span>
-        </div>
-        <ShareButton margin={margin} />
-      </div>
+      <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#697962" />
     </div>
   );
   if (!linkToThread) return content;
   return <Link href={`/thread/${margin.id}`} className="block">{content}</Link>;
 }
 
-// Question card — dashed accent, inviting interaction
 function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
-  const { addReaction } = useApp();
   const ref = formatReference(margin);
   const content = (
     <div
@@ -107,26 +165,16 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
       {margin.commentary && (
         <p className="font-serif text-[12px] text-[#454545]/65 leading-relaxed mb-2.5">{margin.commentary}</p>
       )}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <div className="w-5 h-5 rounded-full bg-[#BDAB9C] flex items-center justify-center">
-            <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
-          </div>
-          <span className="font-sans font-light text-[10px] text-[#AE8F7D]">{margin.userName}</span>
-          <span className="font-sans font-light text-[8px] text-[#454545]/25">· {margin.commentsCount} respostas</span>
-        </div>
-        <ShareButton margin={margin} />
-      </div>
+      <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#BDAB9C" />
     </div>
   );
   if (!linkToThread) return content;
   return <Link href={`/thread/${margin.id}`} className="block">{content}</Link>;
 }
 
-// Theory card — more structured, academic feel
 function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
+  const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
   const ref = formatReference(margin);
-  const totalReactions = Object.values(margin.reactions).reduce((a, b) => a + b, 0);
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
@@ -144,27 +192,20 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
       {margin.commentary && (
         <p className="font-serif text-[13px] text-[#3D3D3D]/75 leading-relaxed mb-3">{margin.commentary}</p>
       )}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <div className="w-5 h-5 rounded-full bg-[#697962] flex items-center justify-center">
-            <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
-          </div>
-          <span className="font-sans font-light text-[10px] text-[#AE8F7D]">{margin.userName}</span>
-          {totalReactions > 0 && <span className="font-sans font-light text-[8px] text-[#454545]/25">· {totalReactions} reações</span>}
-        </div>
-        <ShareButton margin={margin} />
-      </div>
+      {totalReactions > 0 && (
+        <p className="font-sans font-light text-[7.5px] text-[#697962]/55 mb-2">{totalReactions} leitores ecoaram isso</p>
+      )}
+      <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#697962" />
     </div>
   );
   if (!linkToThread) return content;
   return <Link href={`/thread/${margin.id}`} className="block">{content}</Link>;
 }
 
-// Standard card for insight, reaction, critique, personal_connection, symbolic_reading
 function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const { addReaction } = useApp();
   const ref = formatReference(margin);
-  const totalReactions = Object.values(margin.reactions).reduce((a, b) => a + b, 0);
+  const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
   const typeIcon = MARGIN_TYPES.find((t) => t.id === margin.postType)?.icon || "";
 
   const TYPE_COLORS: Record<string, string> = {
@@ -197,21 +238,11 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
         </p>
       </div>
       {margin.commentary && (
-        <p className="font-serif text-[12px] text-[#454545]/60 leading-relaxed mb-3">{margin.commentary}</p>
+        <p className="font-serif text-[12px] text-[#454545]/60 leading-relaxed mb-2.5">{margin.commentary}</p>
       )}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-5 h-5 rounded-full bg-[#697962] flex items-center justify-center flex-shrink-0">
-          <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
-        </div>
-        <span className="font-sans font-light text-[10px] text-[#AE8F7D]">{margin.userName}</span>
-        <span className="font-sans font-light text-[8px] text-[#454545]/25">· {margin.commentsCount} eco{margin.commentsCount !== 1 ? "s" : ""}</span>
-        {totalReactions > 0 && (
-          <span className="font-sans font-light text-[8px] text-[#454545]/25">· {totalReactions} reações</span>
-        )}
-      </div>
       {Object.keys(margin.reactions).length > 0 && (
         <div className="flex flex-wrap gap-1.5 mb-2">
-          {Object.entries(margin.reactions)
+          {Object.entries(margin.reactions as Record<string, number>)
             .sort(([, a], [, b]) => b - a)
             .slice(0, 3)
             .map(([reaction, count]) => (
@@ -226,9 +257,12 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
             ))}
         </div>
       )}
-      <div className="flex justify-end pt-1 border-t border-[#454545]/5">
-        <ShareButton margin={margin} />
-      </div>
+      {totalReactions > 0 && (
+        <p className="font-sans font-light text-[7.5px] text-[#454545]/30 mb-1">
+          {totalReactions} {totalReactions === 1 ? "leitor ecoou" : "leitores ecoaram"} isso
+        </p>
+      )}
+      <EcoarBar margin={margin} linkToThread={linkToThread} avatarColor="#697962" />
     </div>
   );
   if (!linkToThread) return content;

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useParams, Link } from "wouter";
-import { ArrowLeft, Shield, BookOpen } from "lucide-react";
+import { ArrowLeft, Shield } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { MOCK_BOOKS, MOCK_MARGINS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
+import { BookCover } from "@/components/BookCover";
 import { canUserSeeMargin } from "@/utils/spoiler";
 import { SPOILER_PREFERENCES } from "@/data/constants";
 
@@ -218,11 +219,7 @@ export function BookDetailScreen() {
         {/* Book cover + Progress */}
         <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[14px] p-5 shadow-sm">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-16 h-22 rounded-[8px] bg-gradient-to-b from-[#EBE6DB] to-[#BDAB9C]/50 flex-shrink-0 shadow-sm" style={{ height: 88 }}>
-              <div className="w-full h-full rounded-[8px] flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-[#AE8F7D]/50" />
-              </div>
-            </div>
+            <BookCover title={book.title} bookColor={book.bookColor} size="lg" className="shadow-sm" />
             <div className="flex-1 min-w-0">
               <p className="font-sans font-light text-[8px] tracking-[0.14em] uppercase text-[#AE8F7D] mb-1">{statusLabel}</p>
               {prog?.status === "reading" && (

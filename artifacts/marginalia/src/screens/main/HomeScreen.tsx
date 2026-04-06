@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { useApp } from "@/context/AppContext";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { LogoMark } from "@/components/LogoMark";
+import { BookCover } from "@/components/BookCover";
 import { filterMarginsForUser } from "@/utils/spoiler";
 import { canUserSeeMargin } from "@/utils/spoiler";
 import { MOCK_BOOKS, MOCK_MARGINS } from "@/data/mockData";
@@ -124,28 +125,45 @@ function MomentosSection() {
 function FeedBreak({ index }: { index: number }) {
   const breaks = [
     {
-      label: "Guarde antes que se perca",
-      body: "Aquele trecho que ficou ecoando na sua cabeça merece existir no papel também.",
-      cta: "Registrar margem",
-      href: "/nova-margem",
+      label: "Trechos que estão fazendo leitores parar",
+      body: "Algumas frases não pedem para ser entendidas. Pedem para ser sentidas. Os ecos mais ativos desta semana estão aqui.",
+      cta: "Explorar ecos",
+      href: "/explore",
+      accent: "text-[#AE8F7D]",
     },
     {
-      label: "Outros leitores pararam aqui também",
-      body: "Os livros que mais importam são aqueles que interrompem a leitura para fazer você pensar.",
-      cta: "Ver ecos da comunidade",
-      href: "/explore",
+      label: "Pouca gente percebeu isso",
+      body: "As margens mais raras são as que revelam o que passa despercebido. Leia junto, sinta diferente.",
+      cta: "Registrar o que você viu",
+      href: "/nova-margem",
+      accent: "text-[#697962]",
+    },
+    {
+      label: "Guarde antes que se perca",
+      body: "Aquele trecho que ficou ecoando na sua cabeça merece existir no papel também.",
+      cta: "Nova margem",
+      href: "/nova-margem",
+      accent: "text-[#AE8F7D]",
     },
     {
       label: "Isso ficou com você por um motivo",
-      body: "O Marginalia respeita o seu ritmo de leitura — e guarda tudo o que você sentiu.",
+      body: "O Marginalia respeita o seu ritmo de leitura — e guarda tudo o que você sentiu no caminho.",
       cta: null,
       href: null,
+      accent: "text-[#BDAB9C]",
+    },
+    {
+      label: "Leitores deste livro também marcaram",
+      body: "Ver como outros percebem o mesmo texto é como ter várias janelas para o mesmo mundo.",
+      cta: "Ver livros em destaque",
+      href: "/explore",
+      accent: "text-[#697962]",
     },
   ];
   const b = breaks[index % breaks.length];
   return (
     <div className="bg-[#EBE6DB]/35 border border-[#AE8F7D]/12 rounded-[14px] p-5">
-      <p className="font-sans text-[7px] font-light tracking-[0.2em] uppercase text-[#AE8F7D] mb-2">{b.label}</p>
+      <p className={`font-sans text-[7px] font-light tracking-[0.2em] uppercase ${b.accent} mb-2`}>{b.label}</p>
       <p className="font-serif italic text-[13px] text-[#454545]/60 leading-relaxed mb-3">{b.body}</p>
       {b.cta && b.href && (
         <Link href={b.href}>
@@ -181,11 +199,23 @@ function WishlistSection() {
         {wishlistBooks.map(({ book }) =>
           book ? (
             <Link key={book.id} href={`/book/${book.id}`} className="flex-shrink-0">
-              <div className="w-[120px] bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[12px] overflow-hidden hover:border-[#AE8F7D]/35 transition-colors">
+              <div className="w-[110px] bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[12px] overflow-hidden hover:border-[#AE8F7D]/35 transition-colors">
                 <div
-                  className="h-[72px] w-full"
+                  className="h-[68px] w-full flex items-center justify-center relative"
                   style={{ backgroundColor: book.bookColor }}
-                />
+                >
+                  <span className="font-serif italic text-[32px] text-[#3D3D3D]/30 select-none">
+                    {book.title.charAt(0)}
+                  </span>
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: "linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 100%)",
+                      backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.07) 1px, transparent 1px)",
+                      backgroundSize: "3px 3px",
+                    }}
+                  />
+                </div>
                 <div className="p-2.5">
                   <p className="font-serif italic text-[11px] text-[#3D3D3D] leading-tight line-clamp-2 mb-0.5">
                     {book.title}
@@ -287,7 +317,7 @@ export function HomeScreen() {
             </div>
             <div className="bg-[#FAF8F3] border border-[#AE8F7D]/20 rounded-[16px] p-5 shadow-sm">
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-14 h-20 rounded-[8px] bg-gradient-to-b from-[#EBE6DB] to-[#BDAB9C]/40 flex-shrink-0" />
+                <BookCover title={currentBook.title} bookColor={currentBook.bookColor} size="md" className="rounded-[8px] shadow-sm" />
                 <div className="flex-1 min-w-0">
                   <p className="font-sans font-light text-[8px] tracking-[0.14em] uppercase text-[#AE8F7D] mb-1">Lendo agora</p>
                   <h2 className="font-serif italic text-[18px] text-[#3D3D3D] leading-tight mb-0.5">{currentBook.title}</h2>

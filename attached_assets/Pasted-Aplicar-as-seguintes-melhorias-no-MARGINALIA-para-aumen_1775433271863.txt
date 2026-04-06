@@ -1,0 +1,281 @@
+Aplicar as seguintes melhorias no MARGINALIA para aumentar interação, identidade e experiência do usuário.
+
+---
+
+1) SISTEMA DE “ECOAR” (INTERAÇÃO PRINCIPAL)
+
+Criar uma forma mais intuitiva e central de interação chamada:
+
+👉 “Ecoar”
+
+---
+
+ALTERAÇÕES:
+
+- Adicionar botão principal em cada margem:
+
+“Ecoar”
+
+---
+
+COMPORTAMENTO:
+
+Ao clicar em “Ecoar”, abrir:
+
+- campo rápido de comentário
+- opções rápidas de reação
+
+---
+
+TIPOS DE ECO:
+
+- comentário (texto livre)
+- reação rápida (botões já existentes)
+- eco silencioso (só contar interação)
+
+---
+
+MICROCOPY:
+
+Substituir:
+
+“Seja o primeiro a ecoar esta margem”
+
+Por:
+
+“Você pode ecoar isso”
+ou
+“O que isso te causou?”
+
+---
+
+Exibir:
+
+“12 ecos”
+(em vez de só número solto)
+
+---
+
+2) MELHORAR A EXPERIÊNCIA DE COMENTAR
+
+Ao tocar no card:
+
+- abrir visão expandida (como já existe)
+- focar no campo:
+
+“Escreva seu eco…”
+
+---
+
+Adicionar:
+
+- placeholder inteligente:
+
+“Isso te lembrou de algo?”
+“Você concorda?”
+“Te incomodou?”
+
+---
+
+3) CARDS COMPARTILHÁVEIS (MUITO IMPORTANTE)
+
+Melhorar completamente os cards de compartilhamento.
+
+---
+
+ADICIONAR NOS CARDS:
+
+- nome do livro
+- autor
+- trecho destacado
+- comentário do leitor
+- @username do leitor
+- logo do Marginalia
+- frase discreta:
+
+“marginalia — leia junto”
+
+---
+
+DETALHES VISUAIS:
+
+- fundo elegante (parchment)
+- tipografia forte
+- espaçamento respirado
+- estilo “printável”
+
+---
+
+NO PERFIL:
+
+Ao compartilhar perfil:
+
+Adicionar:
+
+- @username visível
+- arquétipo
+- assinatura
+- logo
+
+---
+
+4) MAIS LIVROS + CAPAS
+
+Adicionar:
+
+- biblioteca maior de livros
+- capas reais
+
+---
+
+ONDE USAR CAPAS:
+
+- feed
+- biblioteca
+- explorar
+- página do livro
+
+---
+
+Fallback:
+
+Se não tiver capa → placeholder elegante
+
+---
+
+5) AUMENTAR DENSIDADE DE ECOS (APP MAIS VIVO)
+
+Adicionar dados nos cards:
+
+- “12 leitores ecoaram”
+- “5 salvaram”
+- “3 voltaram nesse trecho”
+
+---
+
+Adicionar pequenos indicadores:
+
+- 🔥 trecho mais ativo
+- ⚡ reação rápida
+- 🟢 crescendo agora
+
+---
+
+6) MELHORAR O FEED (MENOS MONÓTONO)
+
+Problema atual:
+Tudo parece igual
+
+---
+
+SOLUÇÃO:
+
+Variar cards:
+
+- trecho longo
+- trecho curto
+- só insight
+- só reação
+- destaque editorial
+
+---
+
+Diferenciar por livro:
+
+Cada livro pode ter um tom sutil diferente
+
+(ex: leve variação de fundo)
+
+---
+
+Inserir blocos:
+
+- “Momento do livro hoje”
+- “Trechos que estão fazendo leitores parar”
+- “Pouca gente percebeu isso”
+
+---
+
+7) MELHORAR O BOTÃO CENTRAL
+
+Manter como:
+
+“+ Nova Margem”
+
+Mas adicionar microcopy ao abrir:
+
+“Registre o que esse trecho fez com você”
+
+---
+
+8) MELHORAR CAMPO DE ESCRITA
+
+Já está bom, mas ajustar:
+
+Placeholder:
+
+“Digite ou cole o trecho que ficou com você”
+
+---
+
+Adicionar:
+
+contador leve de caracteres
+
+---
+
+9) MELHORAR IDENTIDADE DO APP
+
+Reforçar Marginalia em pequenos pontos:
+
+- loading
+- compartilhamento
+- empty states
+
+---
+
+Exemplos:
+
+“Seu ritmo está protegido.”
+“Algumas leituras levam tempo.”
+
+---
+
+10) MELHORAR SENSAÇÃO DE VIDA
+
+Adicionar:
+
+- animações leves ao ecoar
+- feedback ao reagir
+- microtransições suaves
+
+---
+
+11) AJUSTES IMPORTANTES
+
+- garantir login funcionando corretamente
+- garantir estado inicial zerado
+- garantir navegação fluida
+
+---
+
+12) OBJETIVO FINAL
+
+O app deve parecer:
+
+- vivo
+- íntimo
+- coletivo
+- inteligente
+
+---
+
+O usuário deve sentir:
+
+👉 “tem gente lendo comigo agora”
+
+👉 “isso aqui não é só um app — é uma experiência”
+
+---
+
+Essas melhorias devem ser implementadas mantendo a estética atual, mas elevando interação, profundidade e dinamismo.

@@ -140,9 +140,14 @@ export function ThreadScreen() {
         {/* Replies */}
         <div className="space-y-4">
           {localReplies.length === 0 && (
-            <p className="font-serif italic text-[13px] text-[#454545]/30 text-center py-4">
-              Seja o primeiro a ecoar esta margem.
-            </p>
+            <div className="text-center py-6">
+              <p className="font-serif italic text-[13px] text-[#454545]/35 mb-1">
+                O que isso te causou?
+              </p>
+              <p className="font-sans font-light text-[9px] text-[#454545]/25">
+                Você pode ecoar isso
+              </p>
+            </div>
           )}
           {localReplies.map((reply, i) => (
             <div key={i} className="flex gap-3">
@@ -168,7 +173,7 @@ export function ThreadScreen() {
           value={replyText}
           onChange={(e) => setReplyText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleReply()}
-          placeholder="Escreva um eco..."
+          placeholder="Escreva seu eco…"
           className="flex-1 font-serif italic text-[13px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent outline-none"
         />
         <button

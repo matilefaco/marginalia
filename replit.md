@@ -57,7 +57,7 @@ A Portuguese-language literary social network where users annotate book passages
 6. **Books** — search + select initial books, set status + progress %
 
 ### Main Screens (13 total)
-1. **Home** (`/`) — Continue reading card, "Hoje para você" feed (anti-spoiler filtered), "Em alta", "Sua atividade", rituais
+1. **Home** (`/`) — Continue reading card (with BookCover), "Hoje para você" feed (anti-spoiler filtered) with 5 editorial FeedBreak types (including "Trechos que estão fazendo leitores parar", "Pouca gente percebeu isso"), WishlistSection (horizontal book covers), "Em alta", "Sua atividade"
 2. **Explore** (`/explore`) — Search, editorial collections, trending margins, books in debate, compatible readers
 3. **Nova Margem** (`/nova-margem`) — 7-step wizard: book → excerpt → reference → type → commentary → spoiler → visibility → publish
 4. **Library** (`/library`) — Status filters (Todos/Lendo/Concluídos/Quero ler/Abandonados/Favoritos), book cards with progress
@@ -65,10 +65,11 @@ A Portuguese-language literary social network where users annotate book passages
 6. **Profile** (`/profile`) — Reader archetype (ex: "O Analista") + description, reading signature card with "Compartilhar meu perfil de leitura" share button, Instagram/TikTok social links (view + inline edit), avatar color picker, 4-stat grid, my margins. NO "leitores compatíveis" section.
 7. **Notifications** (`/notifications`) — Typed notification list with unread dots
 8. **Settings** (`/settings`) — Ritmo da leitura preference + genre toggles
-9. **Thread** (`/thread/:id`) — Margin detail with reactions (8 types), reply input
+9. **Thread** (`/thread/:id`) — Margin detail with reactions (8 types), reply input; empty state "O que isso te causou?", placeholder "Escreva seu eco…"
 
 ### Key Components
-- `MarginCard` — Shows margin with book-color tinting (each book has a `bookColor`, cards get a subtle palette-matched background). 4 differentiated layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. OR SpoilerShieldCard if blocked.
+- `MarginCard` — Shows margin with book-color tinting. 4 layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. Each has an "Ecoar" CTA button (links to thread), activity badges (🔥 if totalReactions ≥ 6, 🟢 if commentsCount ≥ 5), and ShareButton with "marginalia — leia junto" tagline. OR SpoilerShieldCard if blocked.
+- `BookCover` — Reusable colored book cover placeholder using bookColor + italic first-letter initial + paper texture + spine shadow. Sizes: xs/sm/md/lg. Used in LibraryScreen, HomeScreen, BookDetailScreen, and WishlistSection.
 - `LogoMark` — SVG book logo
 - `Navbar` — 5-item bottom nav with elevated center "+" button for /nova-margem
 - `SpoilerShieldCard` — Elegant blocked content card with update progress / unlock actions
