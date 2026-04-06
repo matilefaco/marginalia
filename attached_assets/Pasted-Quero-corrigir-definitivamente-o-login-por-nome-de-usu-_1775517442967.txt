@@ -1,0 +1,211 @@
+Quero corrigir definitivamente o login por nome de usuário, porque o problema continua acontecendo.
+
+Hoje o campo mostra corretamente “E-mail ou nome de usuário”, mas quando eu tento entrar usando o username, o sistema ainda retorna:
+
+“Usuário não encontrado. Verifique o nome de usuário ou use seu e-mail.”
+
+Isso precisa ser consertado de forma real e funcional.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+O login por username ainda não funciona.
+
+Exemplo real:
+- username digitado: matilefaco
+- senha correta
+- resultado: usuário não encontrado
+
+Ou seja:
+- a interface aceita username
+- mas a lógica de autenticação ainda não está resolvendo esse username corretamente
+
+==================================================
+2. O QUE EU QUERO
+==================================================
+
+Quero que o usuário possa entrar de duas formas, no mesmo campo:
+
+### Opção 1
+- e-mail + senha
+
+### Opção 2
+- nome de usuário + senha
+
+As duas precisam funcionar de verdade.
+
+==================================================
+3. COMPORTAMENTO CORRETO ESPERADO
+==================================================
+
+Quando o usuário digitar no campo “E-mail ou nome de usuário”:
+
+### Se for e-mail
+- seguir com o fluxo normal do Supabase Auth
+
+### Se for username
+- localizar corretamente o perfil na tabela `profiles`
+- resolver o username para a conta correta
+- autenticar o usuário com a senha informada
+- criar a sessão normalmente
+- carregar o perfil normalmente
+- redirecionar normalmente após login
+
+==================================================
+4. O QUE PRECISA SER REVISADO NO CÓDIGO
+==================================================
+
+Quero que você revise o fluxo completo do login por username, porque claramente ainda existe falha na resolução do usuário.
+
+### Verificar especificamente:
+
+#### 4.1. Busca do username na tabela `profiles`
+- conferir se a consulta está usando exatamente o campo `username`
+- conferir se não há problema de case sensitivity
+- conferir se o username salvo no banco realmente bate com o digitado
+- conferir se está buscando no schema/tabela correta
+
+#### 4.2. Normalização do username
+Quero que o login por username seja tolerante e consistente.
+
+Antes da busca, normalizar:
+- trim de espaços
+- lower-case
+- remover `@` se o usuário digitar com arroba
+
+Exemplo:
+- `matilefaco`
+- `Matilefaco`
+- `@matilefaco`
+
+Todos devem resolver para o mesmo username, se esse for o padrão do sistema.
+
+#### 4.3. Relação entre profile e auth
+Revisar como o sistema está convertendo username em uma conta autenticável.
+
+Quero que você verifique se:
+- o profile encontrado está corretamente ligado ao usuário autenticado do Supabase
+- o sistema está conseguindo chegar ao identificador certo da conta
+- a estratégia atual está realmente viável dentro das restrições do Supabase Auth
+
+==================================================
+5. SE A ABORDAGEM ATUAL NÃO FOR VIÁVEL, MUDAR A ESTRATÉGIA
+==================================================
+
+Se a implementação atual de login por username não estiver correta para a arquitetura do Supabase, quero que você mude a abordagem.
+
+Quero que você implemente uma solução realmente funcional e segura.
+
+### Caminhos possíveis:
+- função server-side / endpoint seguro para resolver username
+- fluxo intermediário controlado pelo backend
+- ajuste da arquitetura de autenticação para permitir login por username sem comprometer segurança
+
+### O que eu NÃO quero:
+- solução só visual
+- solução parcial
+- mensagem bonita sem funcionamento real
+- depender do usuário usar e-mail se a UI diz que username também funciona
+
+==================================================
+6. EXPERIÊNCIA DO USUÁRIO
+==================================================
+
+O comportamento final precisa ser simples.
+
+Exemplo desejado:
+
+### Caso 1
+- usuário digita e-mail
+- senha
+- entra
+
+### Caso 2
+- usuário digita username
+- senha
+- entra
+
+Nos dois casos:
+- login bem sucedido
+- sessão criada
+- perfil carregado
+- navegação normal
+
+==================================================
+7. MENSAGENS DE ERRO
+==================================================
+
+Quero mensagens corretas e coerentes com o fluxo real.
+
+### Exemplos:
+- se o username realmente não existir → “Usuário não encontrado”
+- se a senha estiver errada → “Senha incorreta” ou mensagem equivalente
+- se houver erro técnico → mensagem genérica apropriada
+
+Mas hoje o erro “Usuário não encontrado” está aparecendo mesmo quando o username existe, então isso precisa ser corrigido.
+
+==================================================
+8. TESTES QUE QUERO QUE VOCÊ FAÇA
+==================================================
+
+Depois da correção, testar estes cenários:
+
+### Teste 1
+- login com e-mail válido + senha correta
+- deve funcionar
+
+### Teste 2
+- login com username válido + senha correta
+- deve funcionar
+
+### Teste 3
+- login com username em maiúsculas/minúsculas diferentes
+- deve funcionar se a estratégia for case-insensitive
+
+### Teste 4
+- login com username usando @
+- deve funcionar se o sistema aceitar essa normalização
+
+### Teste 5
+- username inexistente
+- deve dar mensagem correta
+
+### Teste 6
+- username existente + senha errada
+- deve dar erro de senha, não erro de usuário inexistente
+
+==================================================
+9. IMPORTANTE SOBRE SEGURANÇA
+==================================================
+
+A correção deve ser feita de forma compatível com as boas práticas do Supabase.
+
+Não quero:
+- expor dados sensíveis
+- vazar e-mail publicamente sem necessidade
+- quebrar o fluxo de autenticação padrão
+- solução insegura feita só para “parecer” que funciona
+
+Quero uma implementação real, segura e estável.
+
+==================================================
+10. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois da correção:
+
+- o login por nome de usuário deve funcionar de verdade
+- o erro “Usuário não encontrado” não pode mais aparecer quando o username existir
+- o login por e-mail deve continuar funcionando normalmente
+- o campo “E-mail ou nome de usuário” deve corresponder ao comportamento real do sistema
+- o usuário deve conseguir entrar com username ou e-mail sem fricção
+
+==================================================
+11. PRIORIDADE
+==================================================
+
+Isso é prioridade alta e precisa ser resolvido de forma definitiva.
+
+Implemente a correção no código e no fluxo de autenticação.
+Não quero apenas ajuste de interface ou mensagem.

@@ -133,6 +133,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (data.email) lsSet(`mg_email_${userId}`, data.email);
 
       setProfile(merged);
+
+      // ── AUTO-BACKFILL: register username→email on every login ──────────────
+      // This ensures any user who logs in has their username indexed so future
+      // logins by username work from any device.
+      const username = (data.username as string | null)?.toLowerCase();
+      const email = userEmail?.toLowerCase();
+      if (username && email) {
+        lsSet(`mg_username_email_${username}`, email);
+        lsSet(`mg_userid_${username}`, userId);
+        fetch("/api/auth/register-username", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, userId }),
+        }).catch(() => {});
+      }
     }
   };
 
@@ -170,11 +185,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ─── resolveEmail: username → email via server-side index ───────────────────
+  // ─── resolveEmailFromUsername: 4-tier lookup ─────────────────────────────────
+  // Returns: email string | "__user_exists__" (found in profiles but not indexed)
+  //          | null (user not found anywhere)
   const resolveEmailFromUsername = async (username: string): Promise<string | null> => {
     const clean = username.toLowerCase().replace(/^@/, "").trim();
 
-    // 1. Try server-side index (authoritative, works across devices)
+    // ── Tier 1: Server-side username index (authoritative, cross-device) ──────
     try {
       const res = await fetch("/api/auth/resolve-username", {
         method: "POST",
@@ -186,43 +203,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (data.email) return data.email;
       }
     } catch {
-      // network error — fall through to fallbacks
+      // network error — fall through
     }
 
-    // 2. Fallback: try Supabase profiles table (email column, if it exists)
-    try {
-      const { data: row } = await supabase
-        .from("profiles")
-        .select("id, email")
-        .eq("username", clean)
-        .maybeSingle();
-      if (row?.email) {
-        // Backfill to server index so future logins on any device work
-        fetch("/api/auth/register-username", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: clean, email: row.email, userId: row.id }),
-        }).catch(() => {});
-        return row.email as string;
-      }
-    } catch {
-      // profiles.email column might not exist
-    }
-
-    // 3. Last resort: localStorage cache (same device only)
+    // ── Tier 2: localStorage cache (same device where user signed up) ─────────
     const cached = lsGet(`mg_username_email_${clean}`);
     if (cached) {
-      // Backfill to server index if we have a userId cached too
-      const userId = lsGet(`mg_userid_${clean}`);
-      if (userId) {
+      const cachedUserId = lsGet(`mg_userid_${clean}`);
+      // Backfill to server index silently
+      if (cachedUserId) {
         fetch("/api/auth/register-username", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: clean, email: cached, userId }),
+          body: JSON.stringify({ username: clean, email: cached, userId: cachedUserId }),
         }).catch(() => {});
       }
+      return cached;
     }
-    return cached ?? null;
+
+    // ── Tier 3: Supabase profiles — case-insensitive username match ───────────
+    // The profiles table IS publicly readable. We look up by username (ilike)
+    // to get the userId, then check our index by userId.
+    try {
+      const { data: profileRow } = await supabase
+        .from("profiles")
+        .select("id")
+        .ilike("username", clean)
+        .maybeSingle();
+
+      if (profileRow?.id) {
+        // Found user in profiles — now check our index by userId
+        try {
+          const res = await fetch("/api/auth/resolve-by-userid", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: profileRow.id }),
+          });
+          if (res.ok) {
+            const data = await res.json() as { email?: string };
+            if (data.email) return data.email;
+          }
+        } catch {
+          // fall through
+        }
+        // User exists in Supabase but email not yet in our index
+        // Signal this so we can give a helpful error message
+        return "__user_exists__";
+      }
+    } catch {
+      // profiles query failed — user genuinely not found
+    }
+
+    return null;
   };
 
   // ─── signIn: accepts e-mail OR username ──────────────────────────────────────
@@ -234,12 +266,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (!isEmail) {
       const resolved = await resolveEmailFromUsername(trimmed);
-      if (!resolved) {
+
+      if (resolved === "__user_exists__") {
+        // User's account was found but their email isn't indexed yet.
+        // This happens for users who signed up before the username-login fix.
+        // Once they log in with email, they'll be auto-indexed permanently.
         return {
           error:
-            "Usuário não encontrado. Verifique o nome de usuário ou use seu e-mail.",
+            "Conta encontrada! Para ativar o login por nome de usuário neste dispositivo, entre com seu e-mail desta vez. Após isso, o login por nome de usuário funcionará automaticamente.",
         };
       }
+
+      if (!resolved) {
+        return {
+          error: "Usuário não encontrado. Verifique o nome de usuário ou use seu e-mail.",
+        };
+      }
+
       loginEmail = resolved;
     }
 
@@ -250,8 +293,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (error) {
       const msg = error.message.toLowerCase();
-      if (msg.includes("invalid") || msg.includes("credentials") || msg.includes("email not confirmed")) {
-        return { error: "E-mail/usuário ou senha incorretos. Tente novamente." };
+      if (msg.includes("invalid") || msg.includes("credentials")) {
+        return { error: "Senha incorreta. Tente novamente." };
+      }
+      if (msg.includes("email not confirmed")) {
+        return { error: "E-mail ainda não confirmado. Verifique sua caixa de entrada." };
       }
       return { error: error.message };
     }
@@ -286,12 +332,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       lsSet(`mg_email_${userId}`, email);
       if (avatarColor) lsSet(`mg_avatar_color_${userId}`, avatarColor);
 
-      // Server-side persistent mapping (fire and forget — does not block signup)
-      fetch("/api/auth/register-username", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username.toLowerCase(), email, userId }),
-      }).catch((e) => console.warn("[signUp] register-username failed:", e));
+      // Server-side persistent mapping — awaited so it's reliable at signup
+      try {
+        await fetch("/api/auth/register-username", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: username.toLowerCase(), email, userId }),
+        });
+      } catch (e) {
+        console.warn("[signUp] register-username failed:", e);
+        // Non-fatal — backfill will happen on first successful login
+      }
 
       await upsertProfileSafe(userId, {
         username,

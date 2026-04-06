@@ -42,11 +42,6 @@ router.post("/register-username", async (req, res) => {
  * Called during login to find the email for a given username.
  * Body: { username }
  * Returns: { email } or 404
- *
- * Security note: This endpoint intentionally reveals which usernames exist
- * (and their associated emails), which is standard behavior for apps that
- * support username login. The actual authentication remains protected by
- * Supabase's signInWithPassword, which requires the correct password.
  */
 router.post("/resolve-username", async (req, res) => {
   const { username } = req.body as { username?: string };
@@ -65,13 +60,46 @@ router.post("/resolve-username", async (req, res) => {
       .limit(1);
 
     if (!row) {
-      return res.status(404).json({ error: "Usuário não encontrado." });
+      return res.status(404).json({ error: "not_indexed" });
     }
 
     res.json({ email: row.email });
   } catch (e) {
     console.error("[auth] resolve-username error:", e);
     res.status(500).json({ error: "Failed to resolve username" });
+  }
+});
+
+/**
+ * POST /api/auth/resolve-by-userid
+ * Look up the email for a known Supabase user ID in the index.
+ * Used as a secondary lookup when we found the user in profiles by username
+ * but need to cross-reference with the email index.
+ * Body: { userId }
+ * Returns: { email } or 404
+ */
+router.post("/resolve-by-userid", async (req, res) => {
+  const { userId } = req.body as { userId?: string };
+
+  if (!userId) {
+    return res.status(400).json({ error: "userId is required" });
+  }
+
+  try {
+    const [row] = await db
+      .select({ email: usernameIndexTable.email })
+      .from(usernameIndexTable)
+      .where(eq(usernameIndexTable.userId, userId))
+      .limit(1);
+
+    if (!row) {
+      return res.status(404).json({ error: "not_indexed" });
+    }
+
+    res.json({ email: row.email });
+  } catch (e) {
+    console.error("[auth] resolve-by-userid error:", e);
+    res.status(500).json({ error: "Failed to resolve by userId" });
   }
 });
 
