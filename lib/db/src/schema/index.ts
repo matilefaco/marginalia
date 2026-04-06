@@ -5,3 +5,5 @@ export * from "./community_books";
 export * from "./community_users";
 export * from "./community_margins";
 export * from "./community_replies";
+export * from "./user_books";
+export * from "./user_margins";

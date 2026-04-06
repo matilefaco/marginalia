@@ -358,7 +358,8 @@ function SymbolicFeedCard({ margin }: { margin: Margin }) {
 /* ───────────────────────────────────────── */
 export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
   const { getProgressForBook } = useApp();
-  const cardRef = useRef<HTMLDivElement>(null);
+  const previewCardRef = useRef<HTMLDivElement>(null);
+  const exportCardRef = useRef<HTMLDivElement>(null);
   const previewAreaRef = useRef<HTMLDivElement>(null);
   const [format, setFormat] = useState<Format>("stories");
   const [storyTpl, setStoryTpl] = useState<StoryTpl>("quote");
@@ -392,17 +393,20 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     return () => ro.disconnect();
   }, [cardW, cardH]);
 
+  /* Capture from the hidden export element — no CSS transform, full natural size */
   const captureCanvas = useCallback(async () => {
-    if (!cardRef.current) return null;
+    if (!exportCardRef.current) return null;
     const outputScale = isStories ? 4 : 3;
-    return html2canvas(cardRef.current, {
+    return html2canvas(exportCardRef.current, {
       scale: outputScale,
       useCORS: true,
       allowTaint: true,
       backgroundColor: null,
       logging: false,
+      width: cardW,
+      height: cardH,
     });
-  }, [isStories]);
+  }, [isStories, cardW, cardH]);
 
   const handleDownload = useCallback(async () => {
     if (exporting) return;
@@ -545,7 +549,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
         >
           {/* Inner card rendered at natural size, then scaled visually */}
           <div
-            ref={cardRef}
+            ref={previewCardRef}
             style={{
               width: cardW,
               height: cardH,
@@ -563,6 +567,31 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
             {!isStories && feedTpl === "reaction" && <ReactionFeedCard margin={margin} />}
             {!isStories && feedTpl === "symbolic" && <SymbolicFeedCard margin={margin} />}
           </div>
+        </div>
+      </div>
+
+      {/* ── Hidden full-size export container — no transforms, html2canvas captures this ── */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: "-9999px",
+          width: cardW,
+          height: cardH,
+          overflow: "hidden",
+          pointerEvents: "none",
+          zIndex: -1,
+        }}
+        aria-hidden="true"
+      >
+        <div
+          ref={exportCardRef}
+          style={{ width: cardW, height: cardH }}
+        >
+          {isStories && storyTpl === "quote" && <QuoteStoryCard margin={margin} />}
+          {isStories && storyTpl === "moment" && <MomentStoryCard margin={margin} progressPct={progressPct} />}
+          {!isStories && feedTpl === "reaction" && <ReactionFeedCard margin={margin} />}
+          {!isStories && feedTpl === "symbolic" && <SymbolicFeedCard margin={margin} />}
         </div>
       </div>
 

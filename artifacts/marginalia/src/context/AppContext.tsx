@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useMemo, useEffect, useCallback, type ReactNode } from "react";
 import {
   MOCK_BOOKS,
   MOCK_MARGINS,
@@ -84,6 +84,7 @@ interface AppState {
   lastUsedReaction: string | null;
   savedMargins: number[];
   userPrefs: UserPreferences;
+  progressLoading: boolean;
 }
 
 interface AppActions {
@@ -160,6 +161,87 @@ function saveToStorage(key: string, value: unknown) {
   } catch {}
 }
 
+/* ── DB row → BookProgress ──────────────────────────────────────────────── */
+function dbRowToProgress(row: {
+  id: number;
+  userId: string;
+  bookId: number;
+  status: string;
+  currentPage: number;
+  currentChapter: string;
+  currentPercent: number;
+  updatedAt: string | Date;
+}): BookProgress {
+  return {
+    id: `p_${row.bookId}_${row.userId}`,
+    userId: row.userId,
+    bookId: row.bookId,
+    status: row.status as BookProgress["status"],
+    currentPage: row.currentPage,
+    currentChapter: row.currentChapter,
+    currentPercent: row.currentPercent,
+    lastOpenedAt: new Date(row.updatedAt).toISOString(),
+  };
+}
+
+/* ── DB row → Margin ────────────────────────────────────────────────────── */
+function dbRowToMargin(
+  row: {
+    id: number;
+    userId: string;
+    bookId: number;
+    bookTitle: string;
+    bookAuthor: string;
+    excerpt: string;
+    commentary: string;
+    postType: string;
+    spoilerLevel: string;
+    visibility: string;
+    referenceType: string;
+    page: number | null;
+    chapter: string | null;
+    reactions: unknown;
+    commentsCount: number;
+    createdAt: string | Date;
+    parentEcoId?: number | null;
+  },
+  user: User
+): Margin {
+  return {
+    id: row.id,
+    userId: row.userId,
+    bookId: row.bookId,
+    bookTitle: row.bookTitle,
+    bookAuthor: row.bookAuthor,
+    excerpt: row.excerpt,
+    referenceType: row.referenceType as Margin["referenceType"],
+    page: row.page ?? undefined,
+    chapter: row.chapter ?? undefined,
+    postType: row.postType as Margin["postType"],
+    commentary: row.commentary,
+    spoilerLevel: row.spoilerLevel as Margin["spoilerLevel"],
+    visibility: row.visibility as Margin["visibility"],
+    reactions: (row.reactions as Record<string, number>) ?? {},
+    commentsCount: row.commentsCount,
+    createdAt: new Date(row.createdAt).toISOString(),
+    userName: user.name,
+    userInitials: user.initials,
+  };
+}
+
+/* ── API helpers ─────────────────────────────────────────────────────────── */
+const API = "/api";
+
+async function apiFetch<T>(url: string, opts?: RequestInit): Promise<T | null> {
+  try {
+    const r = await fetch(url, opts);
+    if (!r.ok) return null;
+    return (await r.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
   const { profile, supabaseUser } = useAuth();
 
@@ -170,14 +252,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return mockMe;
   }, [profile, supabaseUser]);
 
-  // ── User Preferences (localStorage, inherited from onboarding) ──────────────
+  // ── User Preferences (localStorage, inherited from onboarding) ──────────
   const [userPrefs, setUserPrefs] = useState<UserPreferences>(DEFAULT_PREFS);
 
   useEffect(() => {
     const uid = baseUser.id;
     let prefs = loadFromStorage<UserPreferences | null>(`mg_prefs_${uid}`, null);
-
-    // First real login: inherit choices made during onboarding (stored under "user_me")
     if (!prefs && uid !== "user_me") {
       const pending = loadFromStorage<UserPreferences | null>("mg_prefs_user_me", null);
       if (pending) {
@@ -185,11 +265,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         saveToStorage(`mg_prefs_${uid}`, prefs);
       }
     }
-
     setUserPrefs(prefs ? { ...DEFAULT_PREFS, ...prefs, notifications: { ...DEFAULT_PREFS.notifications, ...(prefs.notifications ?? {}) }, privacy: { ...DEFAULT_PREFS.privacy, ...(prefs.privacy ?? {}) } } : DEFAULT_PREFS);
   }, [baseUser.id]);
 
-  // Merge prefs back into currentUser so spoilerPreference & preferredGenres stay live
   const currentUser: User = useMemo(() => ({
     ...baseUser,
     spoilerPreference: userPrefs.spoilerPreference,
@@ -198,74 +276,78 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const [books] = useState<Book[]>(MOCK_BOOKS);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
-  const [onboardingCompleted] = useState(() =>
-    localStorage.getItem("marginalia_onboarded") === "true"
-  );
+  const [onboardingCompleted] = useState(() => localStorage.getItem("marginalia_onboarded") === "true");
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [lastUsedReaction, setLastUsedReaction] = useState<string | null>(null);
+  const [progressLoading, setProgressLoading] = useState(false);
 
   // Community margins (from mock data) — kept mutable so reaction counts update visually
   const [communityMargins, setCommunityMargins] = useState<Margin[]>(MOCK_MARGINS);
 
-  // --- User-specific persisted state (localStorage) ---
-  // These are loaded/reset whenever the real user ID changes.
+  // User-specific state
   const [userProgress, setUserProgress] = useState<BookProgress[]>([]);
   const [userReactions, setUserReactions] = useState<Record<number, string>>({});
   const [savedMargins, setSavedMargins] = useState<number[]>([]);
   const [userMargins, setUserMargins] = useState<Margin[]>([]);
 
-  // Sync all user-specific state from localStorage when userId changes
+  /* ── Load user data: localStorage first, then hydrate from DB ── */
   useEffect(() => {
     const uid = currentUser.id;
     if (uid === "user_me") {
-      // Mock user: reset to clean state
       setUserProgress([]);
       setUserReactions({});
       setSavedMargins([]);
       setUserMargins([]);
       return;
     }
+
+    // Fast load from localStorage
     setUserProgress(loadFromStorage<BookProgress[]>(`mg_progress_${uid}`, []));
     setUserReactions(loadFromStorage<Record<number, string>>(`mg_reactions_${uid}`, {}));
     setSavedMargins(loadFromStorage<number[]>(`mg_saved_${uid}`, []));
     setUserMargins(loadFromStorage<Margin[]>(`mg_margins_${uid}`, []));
+
+    // Authoritative hydration from DB
+    setProgressLoading(true);
+    Promise.all([
+      apiFetch<unknown[]>(`${API}/user-books/${uid}`),
+      apiFetch<unknown[]>(`${API}/user-margins/${uid}`),
+    ]).then(([booksRows, marginsRows]) => {
+      if (booksRows && Array.isArray(booksRows) && booksRows.length > 0) {
+        const loaded = (booksRows as Parameters<typeof dbRowToProgress>[0][]).map(dbRowToProgress);
+        setUserProgress(loaded);
+        saveToStorage(`mg_progress_${uid}`, loaded);
+      }
+      if (marginsRows && Array.isArray(marginsRows) && marginsRows.length > 0) {
+        const loaded = (marginsRows as Parameters<typeof dbRowToMargin>[0][]).map((r) => dbRowToMargin(r, currentUser));
+        setUserMargins(loaded);
+        saveToStorage(`mg_margins_${uid}`, loaded);
+      }
+    }).finally(() => setProgressLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser.id]);
 
-  // Persist progress changes
-  useEffect(() => {
-    if (currentUser.id === "user_me") return;
-    saveToStorage(`mg_progress_${currentUser.id}`, userProgress);
-  }, [userProgress, currentUser.id]);
-
-  // Persist reaction changes
+  // Persist reactions & saved margins to localStorage
   useEffect(() => {
     if (currentUser.id === "user_me") return;
     saveToStorage(`mg_reactions_${currentUser.id}`, userReactions);
   }, [userReactions, currentUser.id]);
 
-  // Persist saved margins changes
   useEffect(() => {
     if (currentUser.id === "user_me") return;
     saveToStorage(`mg_saved_${currentUser.id}`, savedMargins);
   }, [savedMargins, currentUser.id]);
 
-  // Persist user-posted margins
-  useEffect(() => {
-    if (currentUser.id === "user_me") return;
-    saveToStorage(`mg_margins_${currentUser.id}`, userMargins);
-  }, [userMargins, currentUser.id]);
-
-  // Merge MOCK_PROGRESS (community) + user progress, user's entries win for their books
+  // Merge MOCK_PROGRESS + user progress, user entries win
   const progress = useMemo<BookProgress[]>(() => {
     const uid = currentUser.id;
-    // Remove mock "user_me" entries when a real user is logged in (they'd own their own entries)
     const filteredMock = MOCK_PROGRESS.filter(
       (p) => !(p.userId === "user_me" && uid !== "user_me")
     );
     return [...filteredMock, ...userProgress];
   }, [userProgress, currentUser.id]);
 
-  // Merge community margins (mutable) + user-posted margins (newest first)
+  // Merge community margins + user-posted margins
   const margins = useMemo<Margin[]>(() => {
     return [...userMargins, ...communityMargins];
   }, [userMargins, communityMargins]);
@@ -275,75 +357,127 @@ export function AppProvider({ children }: { children: ReactNode }) {
     saveToStorage(`mg_prefs_${currentUser.id}`, next);
   };
 
-  const updateSpoilerPreference = (pref: SpoilerPreference) => {
+  const updateSpoilerPreference = (pref: SpoilerPreference) =>
     savePrefs({ ...userPrefs, spoilerPreference: pref });
-  };
 
-  const updatePreferredGenres = (genres: string[]) => {
+  const updatePreferredGenres = (genres: string[]) =>
     savePrefs({ ...userPrefs, preferredGenres: genres });
-  };
 
-  const updateNotificationPref = (key: keyof NotificationPrefs, value: boolean) => {
+  const updateNotificationPref = (key: keyof NotificationPrefs, value: boolean) =>
     savePrefs({ ...userPrefs, notifications: { ...userPrefs.notifications, [key]: value } });
-  };
 
-  const updatePrivacyPref = (key: keyof PrivacyPrefs, value: boolean) => {
+  const updatePrivacyPref = (key: keyof PrivacyPrefs, value: boolean) =>
     savePrefs({ ...userPrefs, privacy: { ...userPrefs.privacy, [key]: value } });
-  };
 
   const updateProfile = (_data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string; avatarColor?: string; readerType?: string; instagram?: string; tiktok?: string }) => {};
 
-  const updateBookProgress = (bookId: number, updates: Partial<BookProgress>) => {
-    const uid = currentUser.id;
-    setUserProgress((prev) => {
-      const existing = prev.find(
-        (p) => p.bookId === bookId && p.userId === uid
-      );
-      if (existing) {
-        return prev.map((p) =>
-          p.bookId === bookId && p.userId === uid ? { ...p, ...updates } : p
-        );
-      }
-      return [
-        ...prev,
-        {
-          id: `p_${bookId}_${uid}`,
-          userId: uid,
-          bookId,
-          status: "reading",
-          currentPage: 0,
-          currentChapter: "",
-          currentPercent: 0,
-          lastOpenedAt: new Date().toISOString(),
-          ...updates,
-        } as BookProgress,
-      ];
-    });
-  };
+  /* ── Book Progress: optimistic update + DB persist ──────────────────── */
+  const updateBookProgress = useCallback(
+    (bookId: number, updates: Partial<BookProgress>) => {
+      const uid = currentUser.id;
 
-  const addMargin = (
-    margin: Omit<Margin, "id" | "createdAt" | "reactions" | "commentsCount" | "userName" | "userInitials">
-  ) => {
-    const newMargin: Margin = {
-      ...margin,
-      id: Date.now(),
-      createdAt: new Date().toISOString(),
-      reactions: {},
-      commentsCount: 0,
-      userName: currentUser.name,
-      userInitials: currentUser.initials,
-    };
-    setUserMargins((prev) => [newMargin, ...prev]);
-  };
+      // 1. Optimistic local update
+      setUserProgress((prev) => {
+        const existing = prev.find((p) => p.bookId === bookId && p.userId === uid);
+        const next = existing
+          ? prev.map((p) => p.bookId === bookId && p.userId === uid ? { ...p, ...updates } : p)
+          : [
+              ...prev,
+              {
+                id: `p_${bookId}_${uid}`,
+                userId: uid,
+                bookId,
+                status: "reading" as const,
+                currentPage: 0,
+                currentChapter: "",
+                currentPercent: 0,
+                lastOpenedAt: new Date().toISOString(),
+                ...updates,
+              },
+            ];
+        // Cache to localStorage immediately
+        saveToStorage(`mg_progress_${uid}`, next);
+        return next;
+      });
+
+      // 2. Persist to DB (fire and forget)
+      if (uid !== "user_me") {
+        apiFetch(`${API}/user-books/${uid}/${bookId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            status: updates.status,
+            currentPage: updates.currentPage,
+            currentChapter: updates.currentChapter,
+            currentPercent: updates.currentPercent,
+          }),
+        }).catch((e) => console.error("[updateBookProgress] API error:", e));
+      }
+    },
+    [currentUser.id]
+  );
+
+  /* ── Add Margin: optimistic + DB persist ────────────────────────────── */
+  const addMargin = useCallback(
+    (margin: Omit<Margin, "id" | "createdAt" | "reactions" | "commentsCount" | "userName" | "userInitials">) => {
+      const uid = currentUser.id;
+      const tempId = Date.now();
+      const newMargin: Margin = {
+        ...margin,
+        id: tempId,
+        createdAt: new Date().toISOString(),
+        reactions: {},
+        commentsCount: 0,
+        userName: currentUser.name,
+        userInitials: currentUser.initials,
+      };
+
+      // Optimistic add
+      setUserMargins((prev) => {
+        const next = [newMargin, ...prev];
+        saveToStorage(`mg_margins_${uid}`, next);
+        return next;
+      });
+
+      // Persist to DB
+      if (uid !== "user_me") {
+        apiFetch<{ id: number }>(`${API}/user-margins`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: uid,
+            bookId: margin.bookId,
+            bookTitle: margin.bookTitle,
+            bookAuthor: margin.bookAuthor,
+            excerpt: margin.excerpt,
+            commentary: margin.commentary,
+            postType: margin.postType,
+            spoilerLevel: margin.spoilerLevel,
+            visibility: margin.visibility,
+            referenceType: margin.referenceType,
+            page: margin.page ?? null,
+            chapter: margin.chapter ?? null,
+            parentEcoId: (margin as { parentEcoId?: number }).parentEcoId ?? null,
+          }),
+        }).then((saved) => {
+          if (saved?.id && saved.id !== tempId) {
+            // Replace temp ID with real DB ID
+            setUserMargins((prev) => {
+              const next = prev.map((m) => m.id === tempId ? { ...m, id: saved.id } : m);
+              saveToStorage(`mg_margins_${uid}`, next);
+              return next;
+            });
+          }
+        }).catch((e) => console.error("[addMargin] API error:", e));
+      }
+    },
+    [currentUser]
+  );
 
   const addReaction = (marginId: number, emoji: string) => {
     const prevEmoji = userReactions[marginId];
 
-    const applyReactionToList = (
-      list: Margin[],
-      addingEmoji: string,
-      removingEmoji: string | undefined
-    ): Margin[] =>
+    const applyReactionToList = (list: Margin[], addingEmoji: string, removingEmoji: string | undefined): Margin[] =>
       list.map((m) => {
         if (m.id !== marginId) return m;
         const reactions = { ...m.reactions } as Record<string, number>;
@@ -365,12 +499,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       });
 
     if (prevEmoji === emoji) {
-      // Toggle off
-      setUserReactions((prev) => {
-        const next = { ...prev };
-        delete next[marginId];
-        return next;
-      });
+      setUserReactions((prev) => { const next = { ...prev }; delete next[marginId]; return next; });
       setUserMargins((prev) => removeReactionFromList(prev, emoji));
       setCommunityMargins((prev) => removeReactionFromList(prev, emoji));
     } else {
@@ -383,9 +512,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const toggleSaveMargin = (marginId: number) => {
     setSavedMargins((prev) =>
-      prev.includes(marginId)
-        ? prev.filter((id) => id !== marginId)
-        : [...prev, marginId]
+      prev.includes(marginId) ? prev.filter((id) => id !== marginId) : [...prev, marginId]
     );
   };
 
@@ -397,15 +524,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     progress.find((p) => p.bookId === bookId && p.userId === currentUser.id);
 
   const markNotificationRead = (id: number) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-    );
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
   };
 
   return (
     <AppContext.Provider
       value={{
-        currentUser,
+        currentUser: {
+          ...currentUser,
+          stats: {
+            ...currentUser.stats,
+            totalMargins: userMargins.length,
+          },
+        },
         books,
         margins,
         progress,
@@ -416,6 +547,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         lastUsedReaction,
         savedMargins,
         userPrefs,
+        progressLoading,
         updateSpoilerPreference,
         updatePreferredGenres,
         updateNotificationPref,

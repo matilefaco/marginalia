@@ -1,0 +1,196 @@
+Quero corrigir alguns problemas críticos de persistência, estatísticas e compartilhamento no app.
+
+Esses pontos afetam diretamente a confiança do usuário no produto, então quero que sejam tratados como prioridade alta.
+
+==================================================
+1. CORRIGIR PERSISTÊNCIA DO PROGRESSO DOS LIVROS
+==================================================
+
+## Problema atual
+O progresso dos livros que o usuário define não está ficando salvo corretamente.
+
+Exemplo:
+- o usuário atualiza a página/capítulo/progresso do livro
+- aparentemente o app aceita
+- mas depois isso não persiste corretamente
+- e após logout/login ou refresh, o progresso pode sumir ou voltar ao estado antigo
+
+## Isso precisa ser corrigido completamente.
+
+## Comportamento correto desejado
+Quando o usuário atualizar o progresso de um livro, isso deve:
+- salvar imediatamente no banco
+- persistir de verdade no Supabase
+- continuar igual depois de refresh
+- continuar igual depois de logout/login
+- aparecer corretamente em todas as áreas do app que usam esse dado
+
+## O que revisar tecnicamente
+- revisar a tabela `user_books`
+- garantir que o progresso está sendo salvo no registro correto do usuário e do livro
+- revisar os campos:
+  - `status`
+  - `current_page`
+  - `current_chapter`
+  - `progress_percent`
+  - `updated_at`
+- garantir que o update está usando o `user_id` do usuário autenticado e o `book_id` correto
+- garantir que, se o registro ainda não existir, seja feito insert/upsert corretamente
+- garantir que, após salvar, o app faça refetch dos dados reais do banco
+- remover qualquer lógica que dependa apenas de state local e não sincronize corretamente com o Supabase
+
+## Resultado esperado
+Depois da correção:
+- o progresso do livro deve ficar salvo de verdade
+- o usuário deve voltar à conta e encontrar o progresso exatamente como deixou
+- nunca mais o app pode “esquecer” o progresso registrado
+
+==================================================
+2. CORRIGIR AS ESTATÍSTICAS DO LEITOR
+==================================================
+
+## Problema atual
+As estatísticas do leitor não estão contabilizando corretamente as margens/ecos que o leitor escreve.
+
+Ou seja:
+- o usuário cria ecos/margens
+- mas os números do perfil não refletem corretamente isso
+
+## Isso precisa ser corrigido.
+
+## Comportamento correto desejado
+As estatísticas do perfil devem refletir os dados reais do usuário.
+
+### Exemplos:
+- se o usuário escreveu uma nova margem/eco, o total de margens/ecos deve aumentar
+- se ele apagar uma margem/eco, o total deve diminuir
+- se ele ainda não escreveu nada, o número deve ser zero
+- tudo precisa ser baseado em dados reais do banco
+
+## O que revisar tecnicamente
+- revisar a lógica que atualiza `user_reading_stats`
+- conferir se existe sincronização automática após criação de eco/margem
+- garantir que o total de ecos/margens do usuário seja recalculado corretamente
+- revisar se o perfil está lendo:
+  - valor real calculado do banco
+  - e não algum valor estático, mockado ou desatualizado
+
+## Se necessário
+Se hoje essa métrica não estiver sendo atualizada via trigger/função, pode:
+- recalcular sempre após criação/remoção de eco
+- ou recalcular por query ao carregar perfil
+- ou implementar trigger no banco
+
+## Campos que precisam ficar consistentes
+- `total_ecos` / `total_margins`
+- `total_comments_received`
+- `total_reactions_received`
+- demais estatísticas relacionadas, se já existirem
+
+## Resultado esperado
+Depois da correção:
+- o perfil do usuário deve mostrar corretamente quantas margens/ecos ele escreveu
+- as estatísticas devem refletir a atividade real
+- não pode haver defasagem entre o que o usuário fez e o que o perfil mostra
+
+==================================================
+3. CORRIGIR O SISTEMA DE COMPARTILHAMENTO DE CARDS
+==================================================
+
+## Problema atual
+O sistema de compartilhamento de cards está com defeito.
+
+Hoje a experiência não está cumprindo bem a função esperada de compartilhar a citação/eco no story ou no feed.
+
+## Objetivo
+Quero que o compartilhamento funcione de forma prática, clara e coerente com o formato escolhido pelo usuário.
+
+## Comportamento correto desejado
+Quando o usuário abrir a tela/modal de compartilhamento, ele deve poder:
+
+- escolher o formato:
+  - Stories 9:16
+  - Feed 1:1
+
+Depois, ao clicar em compartilhar:
+- o app deve gerar a arte no formato escolhido
+- e abrir o compartilhamento nativo do dispositivo
+- permitindo compartilhar para story, feed ou outras opções compatíveis do aparelho
+
+## Importante
+Mesmo que a integração direta com Instagram dependa do ambiente, o mínimo obrigatório é:
+- gerar corretamente a arte no formato selecionado
+- acionar o share sheet nativo
+- permitir que o usuário envie essa arte para o story, feed ou outro destino
+
+## O que revisar tecnicamente
+- revisar a lógica de exportação do card
+- revisar a geração da imagem final
+- garantir que a proporção selecionada esteja sendo respeitada
+- garantir que o botão “Compartilhar” use o formato atual selecionado
+- revisar o fluxo que abre o compartilhamento nativo do dispositivo
+- revisar se o app está apenas simulando esse fluxo em vez de realmente chamar o share nativo
+
+## Resultado esperado
+Depois da correção:
+- se o usuário escolher Stories 9:16, a arte deve sair em formato de story
+- se escolher Feed 1:1, a arte deve sair em formato quadrado
+- o botão compartilhar deve abrir o compartilhamento real do sistema
+- o fluxo deve parecer confiável, funcional e polido
+
+==================================================
+4. REGRA GERAL DE PERSISTÊNCIA
+==================================================
+
+Quero reforçar uma regra geral para o app inteiro:
+
+### Regra principal:
+Tudo o que o usuário registrar precisa persistir de verdade.
+
+Isso vale para:
+- progresso de livros
+- margens/ecos
+- comentários
+- reações
+- estatísticas
+- preferências
+- perfil
+- compartilhamentos configurados
+
+O app não pode mais aceitar uma ação e depois “esquecer”.
+
+==================================================
+5. PRIORIDADE DE IMPLEMENTAÇÃO
+==================================================
+
+Implementar nesta ordem:
+
+1. corrigir persistência do progresso dos livros
+2. corrigir atualização das estatísticas de margens/ecos do leitor
+3. corrigir fluxo de compartilhamento dos cards
+4. revisar a sincronização geral frontend ↔ Supabase
+
+==================================================
+6. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessas correções, quero que:
+
+- o progresso dos livros fique salvo corretamente
+- o progresso continue intacto após logout/login
+- as estatísticas do leitor contabilizem corretamente as margens/ecos escritas
+- o sistema de compartilhamento funcione de verdade para story/feed conforme o formato escolhido
+- o app pare de perder ou esquecer informações importantes do usuário
+
+==================================================
+7. IMPORTANTE
+==================================================
+
+Implemente essas mudanças de verdade no código, no fluxo de dados e na persistência com Supabase.
+
+Não quero apenas correção visual.
+Quero:
+- persistência real
+- contagem correta
+- compartilhamento funcional
+- comportamento confiável
