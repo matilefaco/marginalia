@@ -23,6 +23,7 @@ import { ProfileScreen } from "@/screens/main/ProfileScreen";
 import { NotificationsScreen } from "@/screens/main/NotificationsScreen";
 import { SettingsScreen } from "@/screens/main/SettingsScreen";
 import { ThreadScreen } from "@/screens/main/ThreadScreen";
+import { UserProfileScreen } from "@/screens/main/UserProfileScreen";
 import NotFound from "@/pages/not-found";
 
 import type { SpoilerPreference } from "@/data/constants";
@@ -150,6 +151,7 @@ function MainApp() {
           <Route path="/notifications" component={NotificationsScreen} />
           <Route path="/settings" component={SettingsScreen} />
           <Route path="/thread/:id" component={ThreadScreen} />
+          <Route path="/user/:id" component={UserProfileScreen} />
           <Route component={NotFound} />
         </Switch>
       </div>

@@ -1,0 +1,310 @@
+
+
+⸻
+
+ATUALIZAÇÕES DE PERFIL + EXPLORAÇÃO + MELHORIAS DE UX — MARGINALIA
+
+Quero implementar melhorias na página de perfil, navegação entre usuários e exploração por gêneros.
+
+⸻
+
+1. PERFIL — SALVAR REDES SOCIAIS (INSTAGRAM / TIKTOK)
+
+Problema atual:
+
+O usuário consegue inserir Instagram/TikTok, mas não existe uma ação clara de salvar.
+
+⸻
+
+Comportamento desejado:
+
+Quando o usuário editar:
+	•	Instagram
+	•	TikTok
+
+Deve aparecer um botão de “Salvar”
+
+⸻
+
+Regras:
+	•	O botão Salvar só aparece quando houver alteração
+	•	Após clicar em salvar:
+	•	persistir os dados (backend/local state)
+	•	atualizar imediatamente a UI
+	•	feedback visual de sucesso
+
+⸻
+
+UX do botão:
+	•	botão discreto no topo (check ✔ ou “Salvar”)
+	•	ou fixo no final da seção
+
+⸻
+
+Feedback após salvar:
+	•	leve animação (fade ou check)
+	•	ou toast discreto tipo:
+	•	“Perfil atualizado”
+
+⸻
+
+Exibição pública:
+
+Após salvar:
+	•	os dados devem aparecer na seção “Onde te encontrar”
+	•	visível para outros usuários
+
+⸻
+
+2. PERFIL PÚBLICO — VISUALIZAR OUTROS USUÁRIOS
+
+Objetivo:
+
+Permitir que qualquer usuário visualize o perfil de outro leitor.
+
+⸻
+
+Ao clicar em um usuário (ex: Ana Clara, Julia etc):
+
+Abrir uma página de perfil contendo:
+
+⸻
+
+Informações visíveis:
+	•	Nome
+	•	Username (@)
+	•	Avatar
+	•	Bio
+	•	Cidade (se houver)
+	•	Tipo de leitor
+	•	Assinatura de leitura
+	•	Redes sociais (Instagram/TikTok)
+	•	Estatísticas de leitura (se existir)
+	•	Margens/publicações desse usuário
+
+⸻
+
+Importante:
+	•	Essa tela deve ser somente leitura (read-only)
+	•	Não mostrar botões de edição
+	•	Não mostrar elementos privados
+
+⸻
+
+Privacidade:
+
+Se no futuro existir:
+	•	permitir esconder redes sociais
+	•	permitir perfil privado
+
+Mas por enquanto:
+→ tudo inserido = público
+
+⸻
+
+Navegação:
+	•	clicar no nome ou avatar → abre perfil
+	•	NÃO pode quebrar a navegação
+	•	NÃO pode redirecionar para login
+
+⸻
+
+3. GÊNEROS EM ALTA → EXPANSÃO PARA EXPLORAÇÃO COMPLETA
+
+Problema atual:
+
+A seção “Gêneros em alta” é passiva (apenas exibição).
+
+⸻
+
+Objetivo:
+
+Transformar em uma ferramenta ativa de descoberta.
+
+⸻
+
+3.1. Adicionar botão ou interação:
+
+Na seção “Gêneros em alta”:
+
+Adicionar:
+	•	botão: “Ver todos os gêneros”
+ou
+	•	tornar a seção clicável
+
+⸻
+
+3.2. Tela de gêneros
+
+Ao clicar:
+
+Abrir uma nova tela com:
+
+Lista completa de gêneros:
+	•	Literatura brasileira
+	•	Romance
+	•	Clássicos
+	•	Filosofia
+	•	Poesia
+	•	etc.
+
+⸻
+
+Comportamento:
+
+Ao clicar em um gênero:
+
+→ mostrar livros daquele gênero
+
+⸻
+
+3.3. Filtro ativo
+
+Quando um gênero for selecionado:
+	•	destacar o gênero selecionado
+	•	mostrar lista filtrada de livros
+	•	permitir trocar de gênero rapidamente
+
+⸻
+
+3.4. Melhorias adicionais:
+	•	permitir scroll horizontal de gêneros
+	•	permitir múltiplos gêneros no futuro
+	•	mostrar quantidade de margens por gênero
+
+⸻
+
+3.5. Organização da tela:
+
+Estrutura sugerida:
+
+Topo:
+	•	busca (opcional)
+	•	título: “Explorar gêneros”
+
+Depois:
+	•	lista de gêneros (chips ou lista)
+
+Depois:
+	•	lista de livros filtrados
+
+⸻
+
+4. MELHORIAS EXTRAS (RECOMENDAÇÕES IMPORTANTES)
+
+Aqui vão melhorias de produto que vão elevar MUITO o app:
+
+⸻
+
+4.1. PERFIL — “Estatísticas de leitura”
+
+Adicionar uma seção no perfil:
+
+Exemplo:
+	•	livros em leitura
+	•	total de margens
+	•	reações recebidas
+	•	emoji mais usado
+	•	gênero favorito
+	•	horário de leitura mais comum
+
+Isso deixa o perfil muito mais interessante e compartilhável.
+
+⸻
+
+4.2. PERFIL — CLIQUE NAS REDES SOCIAIS
+
+Permitir:
+	•	clicar no Instagram → abrir app ou navegador
+	•	clicar no TikTok → abrir app ou navegador
+
+⸻
+
+4.3. PERFIL — MICROINTERAÇÃO
+
+Quando abrir perfil de outro usuário:
+	•	fade + leve slide
+	•	sensação editorial
+	•	manter consistência com o resto do app
+
+⸻
+
+4.4. GÊNEROS — FEEDBACK VISUAL
+
+Quando clicar em um gênero:
+	•	highlight suave
+	•	animação leve
+	•	evitar troca brusca
+
+⸻
+
+4.5. GÊNEROS — CONTEXTO SOCIAL
+
+Adicionar:
+	•	“+18% essa semana”
+	•	“tendência”
+	•	“mais lido agora”
+
+Isso aumenta sensação de comunidade viva.
+
+⸻
+
+4.6. CARTÕES DE USUÁRIO (MATCH)
+
+Na parte “leitores parecidos com você”:
+
+Sugestão:
+	•	permitir clicar → abrir perfil
+	•	adicionar ação futura:
+	•	seguir
+	•	ver margens desse usuário
+
+⸻
+
+4.7. CONSISTÊNCIA DE NAVEGAÇÃO (MUITO IMPORTANTE)
+
+Garantir que:
+	•	nenhum clique leve para login sem motivo
+	•	nenhuma ação dê refresh completo
+	•	tudo funcione com estado interno (SPA)
+
+⸻
+
+5. RESUMO EXECUTIVO
+
+Implementar:
+
+✔ Botão de salvar redes sociais
+✔ Persistência de Instagram/TikTok
+✔ Perfil público clicável de outros usuários
+✔ Tela completa de exploração por gêneros
+✔ Filtro por gênero com atualização dinâmica
+
+⸻
+
+Melhorar:
+
+✔ Experiência visual do perfil
+✔ Interação com gêneros
+✔ Descoberta de livros
+✔ Navegação entre usuários
+
+⸻
+
+Adicionar:
+
+✔ Estatísticas de leitura
+✔ Clique nas redes sociais
+✔ Microinterações suaves
+
+⸻
+
+DIREÇÃO FINAL
+
+Essas mudanças transformam o app de:
+→ interface bonita
+
+para:
+→ plataforma social de leitura viva e explorável
+
+⸻

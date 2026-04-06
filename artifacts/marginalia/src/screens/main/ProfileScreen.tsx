@@ -36,6 +36,7 @@ export function ProfileScreen() {
   const [editTikTok, setEditTikTok] = useState(currentUser.tiktok || "");
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [shared, setShared] = useState(false);
+  const [savedToast, setSavedToast] = useState(false);
 
   const wishlistBooks = progress
     .filter((p) => p.userId === "user_me" && p.status === "wishlist")
@@ -102,6 +103,8 @@ export function ProfileScreen() {
     });
     setEditing(false);
     setShowColorPicker(false);
+    setSavedToast(true);
+    setTimeout(() => setSavedToast(false), 2500);
   };
 
   const cancelEdit = () => {
@@ -129,6 +132,12 @@ export function ProfileScreen() {
 
   return (
     <div className="min-h-full bg-[#FAF8F3]">
+      {/* Save toast */}
+      {savedToast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#697962] text-[#FAF8F3] font-sans text-[11px] font-light tracking-[0.08em] px-5 py-2.5 rounded-full shadow-lg feed-enter pointer-events-none">
+          Perfil atualizado ✓
+        </div>
+      )}
       <div className="px-5 pt-10 pb-10">
 
         {/* Top Actions */}

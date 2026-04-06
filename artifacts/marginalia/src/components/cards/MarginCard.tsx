@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Share2, Check, MessageCircle, Bookmark, BookmarkCheck } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { canUserSeeMargin, getBlockedReason } from "@/utils/spoiler";
@@ -245,7 +245,17 @@ interface EcoarBarProps {
 }
 
 function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarProps) {
+  const [, navigate] = useLocation();
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
+
+  const handleAuthorClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (margin.userId !== "user_me") {
+      navigate(`/user/${margin.userId}`);
+    }
+  };
+
   const ecoarContent = (
     <button
       data-testid={`button-ecoar-${margin.id}`}
@@ -263,7 +273,11 @@ function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarPro
   return (
     <div className="pt-2.5 border-t border-[#454545]/6 mt-3 space-y-2">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+        <button
+          type="button"
+          onClick={handleAuthorClick}
+          className={`flex items-center gap-2.5 ${margin.userId !== "user_me" ? "hover:opacity-75 transition-opacity active:opacity-60" : ""}`}
+        >
           <div
             className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
             style={{ backgroundColor: avatarColor }}
@@ -274,7 +288,7 @@ function EcoarBar({ margin, linkToThread, avatarColor = "#697962" }: EcoarBarPro
           {totalReactions >= 8 && (
             <span className="font-sans text-[7px] text-[#AE8F7D]/60" title="Trecho muito ativo">🔥</span>
           )}
-        </div>
+        </button>
         <div className="flex items-center gap-2">
           {ecoarContent}
           <SaveButton margin={margin} />
