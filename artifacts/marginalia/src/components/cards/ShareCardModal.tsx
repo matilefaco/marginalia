@@ -361,6 +361,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
   const { getProgressForBook } = useApp();
   const previewCardRef = useRef<HTMLDivElement>(null);
   const exportCardRef = useRef<HTMLDivElement>(null);
+  const exportWrapperRef = useRef<HTMLDivElement>(null);
   const previewAreaRef = useRef<HTMLDivElement>(null);
   const [format, setFormat] = useState<Format>("stories");
   const [storyTpl, setStoryTpl] = useState<StoryTpl>("quote");
@@ -395,38 +396,60 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     return () => ro.disconnect();
   }, [cardW, cardH]);
 
-  /* Capture from the hidden export element — no CSS transform, full natural size */
+  /* ──────────────────────────────────────────────────────────────────────
+     captureCanvas — reliable full-resolution export pipeline.
+
+     Why we can't just capture off-screen at left:-9999px:
+       html2canvas computes the crop rect from the ORIGINAL element's
+       getBoundingClientRect() BEFORE invoking onclone. At x=-9999 the
+       crop is entirely off-canvas, producing a blank image.
+
+     Strategy:
+       1. Move the wrapper to (0,0) in the real DOM so the crop rect is
+          correct when html2canvas samples it.
+       2. Use onclone to hide the dark overlay (z-index 9999) in the
+          cloned document — otherwise it paints over the card.
+       3. Restore the off-screen position after capture.
+  ────────────────────────────────────────────────────────────────────── */
   const captureCanvas = useCallback(async () => {
-    if (!exportCardRef.current) return null;
+    if (!exportCardRef.current || !exportWrapperRef.current) return null;
 
-    /* Wait for fonts to be fully loaded so text renders correctly */
-    await document.fonts.ready;
-    /* Brief pause for any pending layout / paint to settle */
-    await new Promise<void>((r) => setTimeout(r, 200));
+    const wrapper = exportWrapperRef.current;
 
-    const outputScale = isStories ? 4 : 3;
+    /* 1. Bring wrapper to (0,0) in the REAL DOM */
+    wrapper.style.left = "0px";
+    wrapper.style.top  = "0px";
 
-    return html2canvas(exportCardRef.current, {
-      scale: outputScale,
-      useCORS: true,
-      allowTaint: true,
-      /* Explicit parchment background — prevents transparent-turns-black issue */
-      backgroundColor: C.parchment,
-      logging: false,
-      width: cardW,
-      height: cardH,
-      scrollX: 0,
-      scrollY: 0,
-      /* Move the clone to 0,0 before capture so html2canvas finds it on-screen */
-      onclone: (_doc, clonedEl) => {
-        const wrapper = clonedEl.parentElement;
-        if (wrapper) {
-          wrapper.style.left = "0px";
-          wrapper.style.top = "0px";
-          wrapper.style.zIndex = "999999";
-        }
-      },
-    });
+    try {
+      /* 2. Wait for web fonts + two paint frames so layout is stable */
+      await document.fonts.ready;
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const outputScale = isStories ? 4 : 3;
+
+      return await html2canvas(exportCardRef.current, {
+        scale: outputScale,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: C.parchment,
+        logging: false,
+        width:  cardW,
+        height: cardH,
+        scrollX: 0,
+        scrollY: 0,
+        /* Hide the dark modal overlay in the cloned document
+           so it doesn't paint over the card (it's at z-index 9999) */
+        onclone: (clonedDoc) => {
+          clonedDoc
+            .querySelectorAll("[data-share-overlay]")
+            .forEach((el) => ((el as HTMLElement).style.visibility = "hidden"));
+        },
+      });
+    } finally {
+      /* 3. Always restore off-screen position */
+      wrapper.style.left = "-9999px";
+      wrapper.style.top  = "0px";
+    }
   }, [isStories, cardW, cardH]);
 
   /* ── Shared download helper (no guard — called from both handlers) ── */
@@ -439,9 +462,15 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     if (!blob) throw new Error("Blob failed");
 
     const url = URL.createObjectURL(blob);
+    const slug = margin.bookTitle
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 30);
+    const tpl = isStories ? storyTpl : feedTpl;
     const a = document.createElement("a");
     a.href = url;
-    a.download = `marginalia-${isStories ? "stories" : "feed"}-${margin.id}.png`;
+    a.download = `marginalia-${isStories ? "story" : "feed"}-${tpl}-${slug}.png`;
     a.rel = "noopener";
     /* Append to body so all browsers trigger the download, then immediately remove */
     document.body.appendChild(a);
@@ -452,7 +481,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
 
     setDownloaded(true);
     setTimeout(() => setDownloaded(false), 2500);
-  }, [captureCanvas, isStories, margin.id]);
+  }, [captureCanvas, isStories, storyTpl, feedTpl, margin.bookTitle, margin.id]);
 
   const handleDownload = useCallback(async () => {
     if (exporting) return;
@@ -509,6 +538,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
   ───────────────────────────────────────────────────────────── */
   const exportPortal = createPortal(
     <div
+      ref={exportWrapperRef}
       aria-hidden="true"
       style={{
         position: "fixed",
@@ -518,7 +548,6 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
         height: cardH,
         overflow: "hidden",
         pointerEvents: "none",
-        /* No z-index: -1 — the element is off-screen, no overlap risk */
       }}
     >
       <div ref={exportCardRef} style={{ width: cardW, height: cardH }}>
@@ -534,6 +563,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
   /* ── Dark overlay modal ── */
   const modalPortal = createPortal(
     <div
+      data-share-overlay
       className="fixed inset-0 z-[9999] flex flex-col"
       style={{ background: "rgba(26,22,20,0.96)", backdropFilter: "blur(10px)" }}
       onClick={(e) => {

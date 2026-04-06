@@ -1,0 +1,270 @@
+Quero corrigir de forma definitiva o sistema de exportação, download e compartilhamento dos cards, porque hoje ele não está capturando o card real que o usuário selecionou.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Hoje, quando o usuário tenta baixar ou compartilhar um card, o sistema está falhando gravemente.
+
+Em vez de gerar a imagem real do card escolhido:
+- aparece um arquivo genérico
+- a imagem abre totalmente em branco
+- o download não corresponde ao card específico que o usuário selecionou
+- o compartilhamento não usa a arte correta
+- parece que o sistema está exportando um canvas/container vazio ou errado
+
+Ou seja:
+o app não está transformando o card específico em uma imagem real utilizável.
+
+==================================================
+2. COMPORTAMENTO CORRETO QUE EU QUERO
+==================================================
+
+Quero que cada card seja exportado individualmente como uma imagem real.
+
+### Exemplo:
+Se o usuário está vendo um card específico de:
+- uma citação
+- um eco
+- um momento
+- um card story
+- um card feed
+
+e clicar em **Baixar** ou **Compartilhar**,
+
+o sistema deve:
+- capturar exatamente aquele card específico
+- gerar uma imagem real correspondente
+- exportar essa imagem corretamente
+- e então:
+  - baixar no dispositivo
+  - ou compartilhar
+
+==================================================
+3. O CARD PRECISA VIRAR UMA IMAGEM REAL
+==================================================
+
+Quero que o card selecionado seja transformado em um arquivo de imagem real.
+
+### Preferência:
+- gerar em **JPEG** ou **PNG**
+- com boa qualidade
+- com o layout correto
+- com fundo correto
+- sem branco vazio
+- sem canvas genérico
+- sem exportar a tela errada
+
+### Resultado esperado:
+O usuário escolhe um card → o app gera uma imagem daquele card → o usuário baixa ou compartilha essa imagem.
+
+==================================================
+4. O DOWNLOAD PRECISA SER DO CARD ESPECÍFICO
+==================================================
+
+## Problema atual
+Hoje parece que o app faz download de um arquivo genérico e não do card real.
+
+## O que eu quero
+Quando o usuário apertar **Baixar**:
+- baixar exatamente o card específico que ele escolheu
+- não baixar imagem branca
+- não baixar placeholder
+- não baixar arquivo genérico
+- não baixar o fundo escuro da tela
+- não baixar uma área vazia
+
+## Regras
+- cada card deve ser exportado individualmente
+- o arquivo gerado deve corresponder ao card atualmente ativo/selecionado
+- o formato selecionado também deve ser respeitado:
+  - Stories 9:16
+  - Feed 1:1
+
+==================================================
+5. O COMPARTILHAMENTO TAMBÉM PRECISA USAR O CARD CERTO
+==================================================
+
+Quando o usuário clicar em **Compartilhar**:
+- o sistema deve usar a imagem real do card específico
+- não pode compartilhar imagem em branco
+- não pode compartilhar arquivo genérico
+- não pode compartilhar container vazio
+
+### Fluxo correto:
+1. usuário escolhe o formato
+2. usuário visualiza a prévia
+3. usuário clica em compartilhar
+4. o app gera a imagem real daquele card
+5. o share sheet nativo abre com essa imagem certa
+
+==================================================
+6. O QUE PRECISA SER REVISADO TECNICAMENTE
+==================================================
+
+Quero que você revise o pipeline inteiro de captura/exportação do card.
+
+### 6.1. Capturar o elemento certo
+Garantir que o sistema está capturando exatamente:
+- o container do card selecionado
+- e não o modal inteiro
+- e não a tela inteira
+- e não um wrapper vazio
+- e não uma área invisível
+
+### 6.2. Garantir que o card esteja totalmente renderizado antes da captura
+Pode ser que a exportação esteja acontecendo cedo demais.
+
+Então quero:
+- esperar o card renderizar completamente
+- esperar textos, layout e dimensões finais
+- esperar imagens e fontes, se houver
+- só então disparar a captura/exportação
+
+### 6.3. Verificar se há elemento invisível/fora da viewport sendo exportado
+Pode estar acontecendo uma destas coisas:
+- o ref do card está errado
+- o elemento exportado está hidden
+- o elemento exportado tem opacity 0
+- o elemento exportado não está realmente montado
+- o export está pegando um container auxiliar vazio
+
+### 6.4. Revisar a biblioteca de exportação
+Quero que você revise a biblioteca/ferramenta usada para gerar a imagem do card, por exemplo:
+- html-to-image
+- dom-to-image
+- canvas export
+- screenshot/ref export
+- ou equivalente
+
+Se a solução atual estiver falhando com elementos complexos, quero que você mude a estratégia.
+
+### 6.5. Garantir fundo correto
+O fundo da imagem final precisa ser o fundo real do card, e não:
+- transparente quebrado
+- preto
+- branco vazio
+- canvas genérico sem conteúdo
+
+==================================================
+7. GERAR ARQUIVO REAL COM NOME ADEQUADO
+==================================================
+
+Quero que o arquivo final gerado seja um arquivo real e utilizável.
+
+### Exemplos:
+- marginalia-story-citacao-a-hora-da-estrela.jpg
+- marginalia-feed-eco-dom-casmurro.jpg
+
+Não precisa ser exatamente assim, mas quero:
+- nome de arquivo coerente
+- formato consistente
+- algo melhor do que arquivo genérico sem contexto
+
+==================================================
+8. DIFERENCIAR CARD POR FORMATO
+==================================================
+
+O export precisa respeitar o formato escolhido:
+
+### Stories 9:16
+- gerar imagem vertical
+- adequada para story
+
+### Feed 1:1
+- gerar imagem quadrada
+- adequada para post/feed
+
+### Importante
+O card exportado deve ser o mesmo da prévia.
+A prévia e o arquivo final precisam corresponder.
+
+==================================================
+9. UX QUE EU QUERO
+==================================================
+
+Ao clicar em **Baixar**:
+- mostrar um pequeno loading tipo “Preparando imagem…”
+- depois salvar o arquivo correto
+- mostrar feedback tipo “Imagem salva”
+
+Ao clicar em **Compartilhar**:
+- mostrar “Preparando compartilhamento…”
+- gerar a imagem certa
+- abrir o share nativo com o arquivo correto
+
+### Não quero:
+- tela branca
+- arquivo vazio
+- export quebrado
+- impressão de que o app não sabe o que está exportando
+
+==================================================
+10. O QUE NÃO PODE MAIS ACONTECER
+==================================================
+
+Depois da correção, não pode mais acontecer:
+
+- abrir um PNG branco
+- baixar imagem vazia
+- compartilhar imagem vazia
+- exportar o card errado
+- exportar um arquivo genérico
+- exportar um elemento invisível
+- exportar o fundo da tela em vez do card
+- perder o conteúdo do card no processo
+
+==================================================
+11. TESTES QUE QUERO QUE VOCÊ FAÇA
+==================================================
+
+Depois da correção, testar:
+
+### Teste 1
+- escolher um card específico
+- clicar em Baixar
+- abrir a imagem salva
+- verificar se é exatamente aquele card
+
+### Teste 2
+- escolher outro card diferente
+- clicar em Baixar
+- verificar se baixou o card novo, e não o anterior
+
+### Teste 3
+- escolher Stories 9:16
+- baixar
+- verificar se o arquivo está no formato vertical correto
+
+### Teste 4
+- escolher Feed 1:1
+- baixar
+- verificar se o arquivo está no formato quadrado correto
+
+### Teste 5
+- clicar em Compartilhar
+- verificar se o share usa a imagem real do card
+- verificar se a imagem não está branca nem vazia
+
+==================================================
+12. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois da correção, quero que:
+
+- cada card possa ser exportado individualmente
+- o usuário consiga baixar exatamente o card que selecionou
+- o card vire uma imagem real e utilizável
+- o compartilhamento use essa mesma imagem real
+- nada saia branco, vazio ou genérico
+- a experiência pareça sólida, funcional e premium
+
+==================================================
+13. PRIORIDADE
+==================================================
+
+Isso é prioridade alta.
+
+Implemente a correção no fluxo real de geração/exportação de imagem.
+Não quero ajuste superficial na interface.
+Quero corrigir a captura do card em si.
