@@ -1,13 +1,13 @@
-import { ArrowLeft, Eye, BookOpen, Shield, LogOut } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, BookOpen, Shield, LogOut, Bell, Lock, Info } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { SPOILER_PREFERENCES, GENRES, type SpoilerPreference } from "@/data/constants";
 
-const ICONS = [Eye, BookOpen, Shield];
+const RHYTHM_ICONS = [Eye, BookOpen, Shield];
 
 export function SettingsScreen() {
-  const { currentUser, updateSpoilerPreference, updatePreferredGenres } = useApp();
+  const { currentUser, userPrefs, updateSpoilerPreference, updatePreferredGenres } = useApp();
   const { signOut } = useAuth();
   const [, navigate] = useLocation();
 
@@ -17,12 +17,18 @@ export function SettingsScreen() {
   };
 
   const toggleGenre = (genre: string) => {
-    const current = currentUser.preferredGenres;
+    const current = userPrefs.preferredGenres;
     const next = current.includes(genre)
       ? current.filter((g) => g !== genre)
       : [...current, genre];
     updatePreferredGenres(next);
   };
+
+  const accountLinks = [
+    { label: "Notificações", icon: Bell, href: "/settings/notifications" },
+    { label: "Privacidade",  icon: Lock, href: "/settings/privacy" },
+    { label: "Sobre o Marginalia", icon: Info, href: "/settings/about" },
+  ];
 
   return (
     <div className="min-h-full bg-[#FAF8F3]">
@@ -36,7 +42,8 @@ export function SettingsScreen() {
       </div>
 
       <div className="px-5 pb-8 space-y-8">
-        {/* Spoiler Preference */}
+
+        {/* Reading rhythm */}
         <section data-testid="section-spoiler-settings">
           <div className="flex items-center gap-2 mb-3">
             <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
@@ -49,8 +56,8 @@ export function SettingsScreen() {
           </p>
           <div className="space-y-2">
             {SPOILER_PREFERENCES.map((pref, i) => {
-              const Icon = ICONS[i];
-              const isSelected = currentUser.spoilerPreference === pref.id;
+              const Icon = RHYTHM_ICONS[i];
+              const isSelected = userPrefs.spoilerPreference === pref.id;
               return (
                 <button
                   key={pref.id}
@@ -90,9 +97,14 @@ export function SettingsScreen() {
             </span>
             <div className="flex-1 h-px bg-[#AE8F7D]/20" />
           </div>
+          {userPrefs.preferredGenres.length > 0 && (
+            <p className="font-sans font-light text-[10px] text-[#AE8F7D] mb-2">
+              {userPrefs.preferredGenres.length} selecionado{userPrefs.preferredGenres.length !== 1 ? "s" : ""}
+            </p>
+          )}
           <div className="flex flex-wrap gap-2">
             {GENRES.map((g) => {
-              const isSelected = currentUser.preferredGenres.includes(g);
+              const isSelected = userPrefs.preferredGenres.includes(g);
               return (
                 <button
                   key={g}
@@ -109,6 +121,9 @@ export function SettingsScreen() {
               );
             })}
           </div>
+          <p className="font-sans font-light text-[10px] text-[#454545]/30 mt-3 leading-relaxed">
+            Salvo automaticamente. Personaliza o seu feed e descobertas.
+          </p>
         </section>
 
         {/* Account */}
@@ -120,11 +135,16 @@ export function SettingsScreen() {
             <div className="flex-1 h-px bg-[#AE8F7D]/20" />
           </div>
           <div className="space-y-1">
-            {["Notificações", "Privacidade", "Sobre o Marginalia"].map((item) => (
-              <div key={item} className="flex items-center justify-between py-3.5 border-b border-[#454545]/5">
-                <span className="font-sans font-light text-[13px] text-[#454545]/65">{item}</span>
-                <span className="text-[#454545]/20">›</span>
-              </div>
+            {accountLinks.map(({ label, icon: Icon, href }) => (
+              <Link key={label} href={href}>
+                <button className="w-full flex items-center justify-between py-3.5 border-b border-[#454545]/5 hover:opacity-70 transition-opacity">
+                  <div className="flex items-center gap-2.5">
+                    <Icon className="w-4 h-4 text-[#AE8F7D]/60" />
+                    <span className="font-sans font-light text-[13px] text-[#454545]/65">{label}</span>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#454545]/20" />
+                </button>
+              </Link>
             ))}
           </div>
           <button

@@ -1,0 +1,374 @@
+Perfeito — aqui está a versão mais técnica e estruturada, pronta para você copiar e colar no Replit.
+
+⸻
+
+IMPLEMENTAÇÃO TÉCNICA — PREFERÊNCIAS, NOTIFICAÇÕES, PRIVACIDADE E SOBRE O MARGINALIA
+
+Quero transformar a tela Preferências em um sistema funcional e persistente, com armazenamento real no Supabase e sincronização com o onboarding/cadastro.
+
+⸻
+
+1. OBJETIVO GERAL
+
+A tela Preferências precisa deixar de ser apenas visual e passar a funcionar como parte real do perfil do usuário.
+
+Quero que:
+	•	as escolhas feitas no onboarding/cadastro sejam salvas no banco
+	•	a tela Preferências carregue essas escolhas reais
+	•	o usuário possa alterar essas preferências depois
+	•	essas alterações sejam persistidas no Supabase
+	•	ao fazer logout/login, refresh ou trocar de tela, tudo continue salvo
+
+⸻
+
+2. BANCO DE DADOS
+
+2.1. Estrutura recomendada
+
+Prefiro criar uma tabela específica de preferências, para não deixar a tabela profiles inflada demais.
+
+Criar tabela:
+
+user_preferences
+
+Campos sugeridos:
+	•	user_id → uuid, primary key, referência para profiles(id)
+	•	reading_visibility_mode → text
+	•	protected_mode_enabled → boolean
+	•	interest_genres → text[] ou jsonb
+	•	notify_reactions → boolean
+	•	notify_comments → boolean
+	•	notify_replies → boolean
+	•	notify_saves → boolean
+	•	notify_trending_books → boolean
+	•	notify_recommendations → boolean
+	•	notify_updates → boolean
+	•	notify_email → boolean
+	•	notify_in_app → boolean
+	•	profile_public → boolean
+	•	show_instagram → boolean
+	•	show_tiktok → boolean
+	•	show_city → boolean
+	•	show_interest_genres → boolean
+	•	show_reading_stats → boolean
+	•	show_public_ecos → boolean
+	•	show_current_books → boolean
+	•	allow_activity_based_recommendations → boolean
+	•	created_at → timestamptz
+	•	updated_at → timestamptz
+
+Regras:
+	•	um registro de preferências por usuário
+	•	criar automaticamente junto com o perfil ou no primeiro acesso às preferências
+	•	todos os campos devem ter defaults coerentes
+
+⸻
+
+3. FRONTEND — TELA PREFERÊNCIAS
+
+3.1. Ritmo da leitura
+
+As opções:
+	•	Ver tudo
+	•	Ver só o que eu já li
+	•	Modo protegido
+
+precisam virar seleção funcional real.
+
+Comportamento:
+	•	apenas uma opção principal entre:
+	•	see_all
+	•	see_only_progress
+	•	protected_mode
+	•	a opção selecionada deve ter destaque visual claro
+	•	ao tocar em outra opção, salvar imediatamente no Supabase
+	•	ao voltar para a tela, a opção salva deve aparecer corretamente marcada
+
+Implementação sugerida:
+	•	componente controlado por estado vindo do banco
+	•	reading_visibility_mode salva o modo principal
+	•	protected_mode_enabled pode ser derivado do modo ou ser um campo separado, dependendo da arquitetura escolhida
+
+⸻
+
+3.2. Gêneros de interesse
+
+Os chips devem ser multi-seleção real.
+
+Comportamento:
+	•	usuário pode marcar vários gêneros
+	•	clicar de novo remove
+	•	salvar imediatamente após alteração ou ao sair da tela
+	•	ao reabrir a tela, os chips corretos devem estar ativos
+
+Persistência:
+
+Salvar no banco em:
+	•	interest_genres como array de strings
+ou
+	•	interest_genres como jsonb
+
+Exemplo:
+
+["Romance literário", "Clássicos", "Poesia"]
+
+Importante:
+	•	a tela Preferências deve refletir o que foi escolhido no onboarding
+	•	o onboarding e as preferências precisam usar a mesma fonte de verdade
+
+⸻
+
+4. ONBOARDING / CADASTRO
+
+4.1. Sincronização com preferências
+
+Tudo o que o usuário escolher no onboarding precisa ser salvo na mesma estrutura usada pela tela Preferências.
+
+Isso significa:
+	•	gêneros escolhidos no cadastro → salvar em user_preferences.interest_genres
+	•	modo de leitura escolhido no cadastro → salvar em user_preferences.reading_visibility_mode
+	•	ao abrir Preferências depois, os valores já devem vir preenchidos
+
+Não quero:
+	•	lógica duplicada
+	•	onboarding salvando numa estrutura e Preferências lendo de outra
+
+⸻
+
+5. TELA DE NOTIFICAÇÕES
+
+5.1. Criar uma tela funcional de Notificações
+
+A opção “Notificações” deve abrir uma tela separada ou um modal dedicado.
+
+Estrutura sugerida:
+
+Atividade social
+	•	reações nos meus ecos
+	•	comentários nos meus ecos
+	•	respostas aos meus comentários
+	•	quando alguém salvar meu eco
+
+Descoberta
+	•	livros em alta
+	•	gêneros em alta
+	•	recomendações do app
+
+Conta
+	•	notificações por e-mail
+	•	notificações dentro do app
+	•	novidades e atualizações do Marginalia
+
+Comportamento:
+	•	cada item com toggle on/off
+	•	persistência imediata no banco
+	•	ao voltar à tela, manter estados salvos
+	•	feedback visual elegante ao alterar
+
+Campos do banco correspondentes:
+	•	notify_reactions
+	•	notify_comments
+	•	notify_replies
+	•	notify_saves
+	•	notify_trending_books
+	•	notify_recommendations
+	•	notify_updates
+	•	notify_email
+	•	notify_in_app
+
+⸻
+
+6. TELA DE PRIVACIDADE
+
+6.1. Criar uma tela funcional de Privacidade
+
+A opção “Privacidade” deve abrir uma tela separada ou modal com controles reais.
+
+Opções que devem existir:
+	•	perfil público
+	•	mostrar Instagram
+	•	mostrar TikTok
+	•	mostrar cidade
+	•	mostrar gêneros de interesse
+	•	mostrar estatísticas de leitura
+	•	permitir que outros vejam meus ecos
+	•	permitir que outros vejam meus livros em leitura
+	•	permitir recomendações baseadas na minha atividade
+	•	modo protegido para spoilers
+
+Comportamento:
+	•	toggles reais
+	•	salvar no banco
+	•	refletir essas escolhas na visualização pública do perfil e em outras áreas do app
+
+Exemplo:
+
+Se show_instagram = false, então o Instagram não aparece para outros usuários no perfil público.
+
+Campos correspondentes:
+	•	profile_public
+	•	show_instagram
+	•	show_tiktok
+	•	show_city
+	•	show_interest_genres
+	•	show_reading_stats
+	•	show_public_ecos
+	•	show_current_books
+	•	allow_activity_based_recommendations
+
+⸻
+
+7. TELA “SOBRE O MARGINALIA”
+
+7.1. Criar uma tela editorial informativa
+
+A opção “Sobre o Marginalia” deve abrir uma tela bonita e funcional, não apenas um placeholder.
+
+Conteúdo desejado:
+
+O que é o Marginalia
+Texto curto e refinado explicando:
+	•	leitura social
+	•	ecos
+	•	margens
+	•	conversas entre leitores
+	•	identidade do app
+
+Versão do app
+	•	versão atual
+	•	build, se disponível
+
+Legal
+	•	termos de uso
+	•	política de privacidade
+
+Contato / suporte
+	•	enviar feedback
+	•	reportar problema
+	•	falar com suporte
+	•	futuramente avaliar o app
+
+Implementação:
+	•	começar com conteúdo estático elegante
+	•	deixar a estrutura pronta para evoluir depois
+
+⸻
+
+8. LÓGICA DE PERSISTÊNCIA
+
+8.1. Fonte de verdade
+
+Quero que o Supabase seja a fonte de verdade para todas as preferências.
+
+Fluxo correto:
+	•	ao abrir Preferências → buscar user_preferences
+	•	ao alterar uma opção → salvar no banco
+	•	após salvar → atualizar estado local com os dados do banco
+	•	ao fazer login de novo → recarregar preferências reais
+
+Não quero:
+	•	preferências perdidas no refresh
+	•	estado visual que não corresponde ao banco
+	•	valores hardcoded
+
+⸻
+
+9. CRIAÇÃO INICIAL DAS PREFERÊNCIAS
+
+9.1. Novo usuário
+
+Quando um usuário for criado, ele deve ter preferências iniciais válidas.
+
+Opções:
+	•	criar automaticamente via trigger/função no Supabase
+	•	ou criar no primeiro acesso ao app, se não existir ainda
+
+Defaults sugeridos:
+	•	reading_visibility_mode = 'see_all'
+	•	protected_mode_enabled = false
+	•	interest_genres = []
+	•	notificações sociais básicas = true
+	•	perfil público = true
+	•	mostrar Instagram/TikTok/cidade = true
+	•	mostrar estatísticas = true
+
+Se o usuário já escolheu algo no onboarding, sobrescrever esses defaults com as escolhas reais.
+
+⸻
+
+10. UX E INTERAÇÃO
+
+10.1. Chips de gênero
+	•	estado ativo claro
+	•	sem excesso visual
+	•	resposta rápida ao toque
+	•	animação discreta
+
+10.2. Opções de leitura
+	•	cards ou blocos clicáveis
+	•	destaque elegante no selecionado
+	•	transição leve
+
+10.3. Telas internas
+	•	navegação suave
+	•	sem travar
+	•	com retorno fácil
+
+⸻
+
+11. RESULTADO FINAL ESPERADO
+
+Depois dessa implementação, quero que:
+
+Preferências
+	•	Ritmo da leitura funcione de verdade
+	•	Gêneros de interesse funcionem de verdade
+	•	tudo venha do banco e volte para o banco
+
+Onboarding
+	•	as escolhas feitas no cadastro apareçam depois em Preferências
+
+Notificações
+	•	tenham toggles funcionais e persistentes
+
+Privacidade
+	•	tenha controles reais do que é público ou privado
+
+Sobre o Marginalia
+	•	tenha conteúdo real e bem apresentado
+
+Persistência
+	•	nada se perca após logout/login
+	•	nada fique só no visual
+	•	tudo esteja realmente salvo
+
+⸻
+
+12. PRIORIDADE DE IMPLEMENTAÇÃO
+
+Ordem:
+	1.	criar estrutura de persistência para preferências
+	2.	tornar Ritmo da leitura funcional
+	3.	tornar Gêneros de interesse funcionais
+	4.	sincronizar com onboarding/cadastro
+	5.	criar tela de Notificações
+	6.	criar tela de Privacidade
+	7.	criar tela Sobre o Marginalia
+
+⸻
+
+13. IMPORTANTE
+
+Quero que isso seja implementado de verdade no código e integrado ao Supabase.
+
+Não quero apenas UI.
+Quero:
+	•	salvar
+	•	carregar
+	•	persistir
+	•	atualizar
+	•	refletir no app
+
+⸻
+
+Se quiser, eu também posso te fazer uma versão ainda mais específica em formato de tarefas curtinhas tipo checklist técnico, que costuma funcionar muito bem no Replit.

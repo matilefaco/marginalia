@@ -23,6 +23,9 @@ import { BookDetailScreen } from "@/screens/main/BookDetailScreen";
 import { ProfileScreen } from "@/screens/main/ProfileScreen";
 import { NotificationsScreen } from "@/screens/main/NotificationsScreen";
 import { SettingsScreen } from "@/screens/main/SettingsScreen";
+import { PreferencesNotificationsScreen } from "@/screens/main/PreferencesNotificationsScreen";
+import { PreferencesPrivacyScreen } from "@/screens/main/PreferencesPrivacyScreen";
+import { AboutScreen } from "@/screens/main/AboutScreen";
 import { ThreadScreen } from "@/screens/main/ThreadScreen";
 import { UserProfileScreen } from "@/screens/main/UserProfileScreen";
 import NotFound from "@/pages/not-found";
@@ -166,7 +169,14 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   return null;
 }
 
-const NO_NAVBAR_PATHS = ["/nova-margem", "/notifications", "/settings"];
+const NO_NAVBAR_PATHS = [
+  "/nova-margem",
+  "/notifications",
+  "/settings",
+  "/settings/notifications",
+  "/settings/privacy",
+  "/settings/about",
+];
 
 function MainApp() {
   const [location] = useLocation();
@@ -184,6 +194,9 @@ function MainApp() {
           <Route path="/profile" component={ProfileScreen} />
           <Route path="/notifications" component={NotificationsScreen} />
           <Route path="/settings" component={SettingsScreen} />
+          <Route path="/settings/notifications" component={PreferencesNotificationsScreen} />
+          <Route path="/settings/privacy" component={PreferencesPrivacyScreen} />
+          <Route path="/settings/about" component={AboutScreen} />
           <Route path="/thread/:id" component={ThreadScreen} />
           <Route path="/user/:id" component={UserProfileScreen} />
           <Route component={NotFound} />

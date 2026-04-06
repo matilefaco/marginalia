@@ -14,6 +14,64 @@ import {
 import type { SpoilerPreference } from "../data/constants";
 import { useAuth } from "./AuthContext";
 
+export interface NotificationPrefs {
+  reactions: boolean;
+  comments: boolean;
+  replies: boolean;
+  saves: boolean;
+  trendingBooks: boolean;
+  recommendations: boolean;
+  updates: boolean;
+  email: boolean;
+  inApp: boolean;
+}
+
+export interface PrivacyPrefs {
+  profilePublic: boolean;
+  showInstagram: boolean;
+  showTikTok: boolean;
+  showCity: boolean;
+  showGenres: boolean;
+  showStats: boolean;
+  showEcos: boolean;
+  showCurrentBooks: boolean;
+  allowRecommendations: boolean;
+}
+
+export interface UserPreferences {
+  spoilerPreference: SpoilerPreference;
+  preferredGenres: string[];
+  notifications: NotificationPrefs;
+  privacy: PrivacyPrefs;
+}
+
+export const DEFAULT_PREFS: UserPreferences = {
+  spoilerPreference: "all",
+  preferredGenres: [],
+  notifications: {
+    reactions: true,
+    comments: true,
+    replies: true,
+    saves: true,
+    trendingBooks: true,
+    recommendations: true,
+    updates: true,
+    email: false,
+    inApp: true,
+  },
+  privacy: {
+    profilePublic: true,
+    showInstagram: true,
+    showTikTok: true,
+    showCity: true,
+    showGenres: true,
+    showStats: true,
+    showEcos: true,
+    showCurrentBooks: true,
+    allowRecommendations: true,
+  },
+};
+
 interface AppState {
   currentUser: User;
   books: Book[];
@@ -25,11 +83,14 @@ interface AppState {
   userReactions: Record<number, string>;
   lastUsedReaction: string | null;
   savedMargins: number[];
+  userPrefs: UserPreferences;
 }
 
 interface AppActions {
   updateSpoilerPreference: (pref: SpoilerPreference) => void;
   updatePreferredGenres: (genres: string[]) => void;
+  updateNotificationPref: (key: keyof NotificationPrefs, value: boolean) => void;
+  updatePrivacyPref: (key: keyof PrivacyPrefs, value: boolean) => void;
   updateProfile: (data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string; avatarColor?: string; readerType?: string; instagram?: string; tiktok?: string }) => void;
   updateBookProgress: (bookId: number, updates: Partial<BookProgress>) => void;
   addMargin: (margin: Omit<Margin, "id" | "createdAt" | "reactions" | "commentsCount" | "userName" | "userInitials">) => void;
@@ -102,12 +163,38 @@ function saveToStorage(key: string, value: unknown) {
 export function AppProvider({ children }: { children: ReactNode }) {
   const { profile, supabaseUser } = useAuth();
 
-  const currentUser: User = useMemo(() => {
+  const baseUser: User = useMemo(() => {
     if (profile && supabaseUser) {
       return buildUserFromProfile(profile, supabaseUser.id, supabaseUser.email || "");
     }
     return mockMe;
   }, [profile, supabaseUser]);
+
+  // ── User Preferences (localStorage, inherited from onboarding) ──────────────
+  const [userPrefs, setUserPrefs] = useState<UserPreferences>(DEFAULT_PREFS);
+
+  useEffect(() => {
+    const uid = baseUser.id;
+    let prefs = loadFromStorage<UserPreferences | null>(`mg_prefs_${uid}`, null);
+
+    // First real login: inherit choices made during onboarding (stored under "user_me")
+    if (!prefs && uid !== "user_me") {
+      const pending = loadFromStorage<UserPreferences | null>("mg_prefs_user_me", null);
+      if (pending) {
+        prefs = pending;
+        saveToStorage(`mg_prefs_${uid}`, prefs);
+      }
+    }
+
+    setUserPrefs(prefs ? { ...DEFAULT_PREFS, ...prefs, notifications: { ...DEFAULT_PREFS.notifications, ...(prefs.notifications ?? {}) }, privacy: { ...DEFAULT_PREFS.privacy, ...(prefs.privacy ?? {}) } } : DEFAULT_PREFS);
+  }, [baseUser.id]);
+
+  // Merge prefs back into currentUser so spoilerPreference & preferredGenres stay live
+  const currentUser: User = useMemo(() => ({
+    ...baseUser,
+    spoilerPreference: userPrefs.spoilerPreference,
+    preferredGenres: userPrefs.preferredGenres,
+  }), [baseUser, userPrefs.spoilerPreference, userPrefs.preferredGenres]);
 
   const [books] = useState<Book[]>(MOCK_BOOKS);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
@@ -183,9 +270,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return [...userMargins, ...communityMargins];
   }, [userMargins, communityMargins]);
 
-  const updateSpoilerPreference = (_pref: SpoilerPreference) => {};
+  const savePrefs = (next: UserPreferences) => {
+    setUserPrefs(next);
+    saveToStorage(`mg_prefs_${currentUser.id}`, next);
+  };
 
-  const updatePreferredGenres = (_genres: string[]) => {};
+  const updateSpoilerPreference = (pref: SpoilerPreference) => {
+    savePrefs({ ...userPrefs, spoilerPreference: pref });
+  };
+
+  const updatePreferredGenres = (genres: string[]) => {
+    savePrefs({ ...userPrefs, preferredGenres: genres });
+  };
+
+  const updateNotificationPref = (key: keyof NotificationPrefs, value: boolean) => {
+    savePrefs({ ...userPrefs, notifications: { ...userPrefs.notifications, [key]: value } });
+  };
+
+  const updatePrivacyPref = (key: keyof PrivacyPrefs, value: boolean) => {
+    savePrefs({ ...userPrefs, privacy: { ...userPrefs.privacy, [key]: value } });
+  };
 
   const updateProfile = (_data: { firstName?: string; lastName?: string; bio?: string; username?: string; city?: string; email?: string; avatarColor?: string; readerType?: string; instagram?: string; tiktok?: string }) => {};
 
@@ -311,8 +415,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         userReactions,
         lastUsedReaction,
         savedMargins,
+        userPrefs,
         updateSpoilerPreference,
         updatePreferredGenres,
+        updateNotificationPref,
+        updatePrivacyPref,
         updateProfile,
         updateBookProgress,
         addMargin,

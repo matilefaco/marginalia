@@ -1,0 +1,348 @@
+Claro — aqui vai um texto super detalhado, claro e pronto para copiar e colar no Replit:
+
+⸻
+
+Quero melhorar completamente a tela Preferências para que ela funcione de verdade como sistema persistente de preferências do usuário, e não apenas como interface visual.
+
+OBJETIVO GERAL
+
+Quero que as opções de Preferências sejam realmente selecionáveis, salvas no banco e reaplicadas sempre que o usuário voltar para a conta.
+
+Isso inclui:
+	•	preferências escolhidas no momento do cadastro/onboarding
+	•	possibilidade de alterar essas preferências depois, na tela Preferências
+	•	persistência total dessas escolhas mesmo após logout, refresh ou novo login
+
+⸻
+
+1. TORNAR AS SESSÕES DE PREFERÊNCIAS REALMENTE SELECIONÁVEIS
+
+1.1. Ritmo da leitura
+
+Na seção Ritmo da leitura, existem as opções:
+	•	Ver tudo
+	•	Ver só o que eu já li
+	•	Modo protegido
+
+Quero que essas opções deixem de ser apenas visuais e passem a funcionar de verdade.
+
+Comportamento desejado
+
+Essas opções devem ser selecionáveis.
+
+Regras:
+	•	o usuário pode escolher uma dessas opções como preferência principal de visualização
+	•	a opção ativa deve ficar visualmente destacada
+	•	ao tocar em outra opção, a seleção muda
+	•	a nova escolha deve ser salva no banco imediatamente
+	•	ao sair e entrar na conta de novo, a mesma opção deve continuar marcada
+
+Persistência
+
+A preferência precisa ser armazenada no perfil/preferências do usuário no banco.
+
+Sugestão de campo no banco:
+
+reading_visibility_mode
+
+Valores possíveis:
+	•	see_all
+	•	see_only_progress
+	•	protected_mode
+
+Efeito prático dessas opções
+
+Ver tudo
+
+Mostrar todo o conteúdo público, inclusive trechos e discussões além do progresso informado.
+
+Ver só o que eu já li
+
+Mostrar apenas conteúdos dentro do progresso informado pelo usuário no livro.
+
+Modo protegido
+
+Ocultar automaticamente conteúdos potencialmente sensíveis/spoilers até o usuário decidir liberar.
+
+⸻
+
+1.2. Gêneros de interesse
+
+Na seção Gêneros de interesse, os chips/categorias também precisam ser realmente selecionáveis.
+
+Gêneros mostrados atualmente:
+	•	Romance literário
+	•	Clássicos
+	•	Ficção contemporânea
+	•	Poesia
+	•	Filosofia
+	•	Drama
+	•	Fantasia
+	•	Ficção científica
+	•	Terror
+	•	Não ficção
+	•	Biografia
+	•	Ensaios
+	•	Feminismo
+	•	Psicanálise
+	•	Espiritualidade
+	•	Literatura brasileira
+	•	Literatura estrangeira
+	•	Outros
+
+Comportamento desejado
+	•	o usuário pode selecionar múltiplos gêneros
+	•	o chip selecionado deve ficar visualmente destacado
+	•	ao tocar novamente em um chip já selecionado, ele deve ser removido da seleção
+	•	as escolhas devem ser salvas no banco imediatamente ou ao sair da tela
+	•	ao voltar para essa tela, os gêneros já escolhidos devem aparecer corretamente selecionados
+
+Persistência
+
+Quero que os gêneros de interesse fiquem salvos no perfil/preferências do usuário e sejam carregados sempre que ele entrar.
+
+Importante
+
+Essas preferências podem ser escolhidas:
+	•	no onboarding/cadastro
+	•	e depois alteradas manualmente em Preferências
+
+Ou seja, a tela de Preferências precisa:
+	•	refletir o que foi escolhido no cadastro
+	•	permitir atualizar isso depois
+
+⸻
+
+2. MANTER AS PREFERÊNCIAS ESCOLHIDAS NO CADASTRO/ONBOARDING
+
+Quero que as preferências escolhidas pelo usuário no ato do cadastro/onboarding sejam mantidas e sincronizadas com a tela Preferências.
+
+Isso significa:
+	•	se o usuário escolheu gêneros no cadastro, eles já devem aparecer selecionados em Preferências
+	•	se o usuário escolheu modo de visualização/ritmo de leitura, isso já deve aparecer marcado em Preferências
+	•	a tela de Preferências não pode ignorar o que foi escolhido antes
+	•	tudo deve vir do banco, e não de estado fake ou placeholder
+
+Regra geral
+
+A tela Preferências deve ser uma extensão editável do onboarding.
+
+Ou seja:
+	•	onboarding define preferências iniciais
+	•	preferências permite alterar essas escolhas depois
+	•	o banco deve ser sempre a fonte de verdade
+
+⸻
+
+3. O QUE DEFINIR PARA CADA SESSÃO: NOTIFICAÇÕES, PRIVACIDADE E SOBRE O MARGINALIA
+
+Quero que essas sessões passem a ter conteúdo real e funcional.
+
+⸻
+
+3.1. Sessão: Notificações
+
+Quero que a área Notificações abra uma tela ou modal própria com opções configuráveis.
+
+Opções que devem existir:
+	•	receber notificações quando alguém reagir ao meu eco
+	•	receber notificações quando alguém comentar meu eco
+	•	receber notificações quando alguém responder meu comentário
+	•	receber notificações quando alguém salvar meu eco
+	•	receber notificações sobre livros/gêneros em alta
+	•	receber sugestões editoriais/recomendações do app
+	•	receber novidades do app/Marginalia
+	•	receber notificações por e-mail
+	•	receber notificações dentro do app
+
+Comportamento:
+	•	cada item deve ter toggle on/off
+	•	a escolha deve ser salva no banco
+	•	ao entrar de novo, o estado deve continuar igual
+	•	manter visual elegante e discreto
+
+Sugestão de organização:
+
+Atividade social
+	•	reações
+	•	comentários
+	•	respostas
+	•	saves
+
+Descoberta
+	•	livros em alta
+	•	gêneros em alta
+	•	recomendações
+
+Conta
+	•	e-mail
+	•	notificações no app
+
+⸻
+
+3.2. Sessão: Privacidade
+
+Quero que a área Privacidade abra uma tela ou modal com configurações reais de privacidade.
+
+Opções que devem existir:
+	•	perfil público / perfil privado
+	•	mostrar ou ocultar Instagram
+	•	mostrar ou ocultar TikTok
+	•	mostrar ou ocultar cidade
+	•	mostrar ou ocultar gêneros de interesse
+	•	mostrar ou ocultar estatísticas de leitura
+	•	permitir que outros usuários vejam meus ecos
+	•	permitir que outros usuários vejam meus livros em leitura
+	•	permitir recomendações baseadas na minha atividade
+	•	modo protegido para spoilers (pode duplicar/reforçar a lógica de leitura protegida)
+
+Comportamento:
+	•	toggles reais
+	•	persistência no banco
+	•	refletir imediatamente na visualização pública do perfil quando aplicável
+
+Exemplo:
+
+Se o usuário desligar “mostrar Instagram”, o Instagram não deve aparecer no perfil público.
+
+⸻
+
+3.3. Sessão: Sobre o Marginalia
+
+Quero que a área Sobre o Marginalia abra uma tela informativa, bonita e editorial.
+
+Conteúdo sugerido:
+	•	pequeno texto sobre a proposta do app:
+	•	leitura social
+	•	ecos
+	•	margens
+	•	comunidade de leitores
+	•	versão atual do app
+	•	política de atualização / novidades recentes
+	•	créditos ou equipe, se quiser
+	•	termos de uso
+	•	política de privacidade
+	•	canal para feedback
+	•	botão de “falar com o suporte” ou “enviar sugestão”
+	•	botão para avaliar o app futuramente
+
+Estrutura sugerida:
+
+O que é o Marginalia
+Um texto curto explicando o conceito do app.
+
+Versão
+Ex: versão atual do app/build
+
+Legal
+	•	Termos
+	•	Privacidade
+
+Contato
+	•	suporte
+	•	feedback
+	•	reportar problema
+
+Essa sessão pode começar simples, mas precisa existir com conteúdo real.
+
+⸻
+
+4. NECESSIDADE DE BANCO DE DADOS / PERSISTÊNCIA
+
+Quero que tudo isso seja persistido corretamente no banco.
+
+Se necessário, criar estrutura para armazenar preferências do usuário
+
+Pode ser:
+	•	adicionando campos na tabela profiles
+ou
+	•	criando uma tabela específica de user_preferences
+
+O que eu quero que seja salvo:
+	•	modo de leitura/visibilidade
+	•	gêneros de interesse
+	•	notificações
+	•	privacidade
+	•	preferências futuras
+
+Regras:
+	•	salvar sempre no usuário autenticado
+	•	carregar ao entrar
+	•	atualizar ao alterar
+	•	nunca perder preferências após logout/login
+
+⸻
+
+5. COMPORTAMENTO DE UX
+
+Preferências deve funcionar assim:
+	•	usuário toca em uma opção
+	•	vê feedback visual imediato
+	•	preferência é salva
+	•	ao voltar depois, continua marcada
+
+Para os chips de gêneros:
+	•	estado ativo bem claro
+	•	sem poluição visual
+	•	interação leve e elegante
+
+Para as telas internas:
+	•	navegação suave
+	•	sem travamentos
+	•	com possibilidade de voltar facilmente
+
+⸻
+
+6. RESULTADO FINAL ESPERADO
+
+Depois dessas mudanças, quero que:
+
+Na tela Preferências:
+	•	Ritmo da leitura seja realmente selecionável
+	•	Gêneros de interesse sejam realmente selecionáveis
+	•	essas escolhas sejam mantidas desde o cadastro
+	•	o usuário possa alterar tudo quando quiser
+
+Em Notificações:
+	•	existam toggles reais e persistentes
+
+Em Privacidade:
+	•	existam controles reais do que fica público ou oculto
+
+Em Sobre o Marginalia:
+	•	exista uma tela bonita e funcional com informações do app
+
+E principalmente:
+	•	tudo seja salvo no banco
+	•	tudo reapareça corretamente quando o usuário voltar
+	•	a tela deixe de ser estática e passe a ser funcional de verdade
+
+⸻
+
+7. PRIORIDADE DE IMPLEMENTAÇÃO
+
+Prioridade nesta ordem:
+	1.	tornar “Ritmo da leitura” selecionável e persistente
+	2.	tornar “Gêneros de interesse” selecionáveis e persistentes
+	3.	sincronizar essas preferências com o onboarding/cadastro
+	4.	criar tela funcional de Notificações
+	5.	criar tela funcional de Privacidade
+	6.	criar tela funcional de Sobre o Marginalia
+
+⸻
+
+8. IMPORTANTE
+
+Implemente isso no código e na persistência com Supabase, não apenas visualmente.
+
+Não quero apenas mudar aparência.
+Quero comportamento real:
+	•	salvar
+	•	carregar
+	•	manter
+	•	atualizar
+
+⸻
+
+Se você quiser, depois eu também posso te montar um segundo texto ainda mais técnico, já separando em:
+frontend / backend / banco de dados / campos sugeridos, para o Replit executar com menos ambiguidade.
