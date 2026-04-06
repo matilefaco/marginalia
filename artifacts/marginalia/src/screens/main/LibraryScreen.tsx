@@ -84,7 +84,7 @@ export function LibraryScreen() {
                   data-testid={`card-library-book-${item.id}`}
                 >
                   <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[14px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 transition-colors">
-                    <BookCover title={item.title} bookColor={item.bookColor} size="sm" />
+                    <BookCover title={item.title} bookColor={item.bookColor} coverUrl={item.coverUrl} size="sm" />
                     <div className="flex-1 min-w-0">
                       <p className="font-serif text-[15px] text-[#454545] leading-tight mb-0.5 truncate">
                         {item.title}

@@ -1,9 +1,48 @@
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Search, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { MOCK_BOOKS, MOCK_USERS, MOCK_MARGINS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
+import { BookCover } from "@/components/BookCover";
 import { useApp } from "@/context/AppContext";
+
+interface GoogleBookResult {
+  externalId: string;
+  title: string;
+  author: string;
+  description: string;
+  coverUrl: string | null;
+  publishYear: number | null;
+  totalPages: number;
+  genres: string[];
+  language: string;
+}
+
+async function searchGoogleBooks(query: string): Promise<GoogleBookResult[]> {
+  if (!query.trim()) return [];
+  try {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=8&printType=books`;
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.items ?? []).map((item: { id: string; volumeInfo: { title: string; authors?: string[]; description?: string; publishedDate?: string; pageCount?: number; categories?: string[]; imageLinks?: { thumbnail?: string }; language?: string } }) => {
+      const v = item.volumeInfo;
+      return {
+        externalId: item.id,
+        title: v.title ?? "Sem título",
+        author: (v.authors ?? ["Autor desconhecido"]).join(", "),
+        description: (v.description ?? "").slice(0, 200),
+        coverUrl: v.imageLinks?.thumbnail?.replace("http://", "https://") ?? null,
+        publishYear: v.publishedDate ? parseInt(v.publishedDate.slice(0, 4), 10) : null,
+        totalPages: v.pageCount ?? 0,
+        genres: v.categories ?? [],
+        language: v.language ?? "",
+      };
+    });
+  } catch {
+    return [];
+  }
+}
 
 const GENRE_MAIN = [
   "Literatura brasileira",
@@ -38,6 +77,9 @@ export function ExploreScreen() {
   const [genreBooksLimit, setGenreBooksLimit] = useState(8);
   const [showAllGenres, setShowAllGenres] = useState(false);
   const [genreFocused, setGenreFocused] = useState(false);
+  const [googleResults, setGoogleResults] = useState<GoogleBookResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const selectGenre = (label: string) => {
     setSelectedGenre(label);
@@ -52,13 +94,33 @@ export function ExploreScreen() {
     setGenreBooksLimit(8);
   };
 
-  const searchResults = query.trim()
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!query.trim()) {
+      setGoogleResults([]);
+      setIsSearching(false);
+      return;
+    }
+    setIsSearching(true);
+    debounceRef.current = setTimeout(async () => {
+      const results = await searchGoogleBooks(query);
+      setGoogleResults(results);
+      setIsSearching(false);
+    }, 500);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query]);
+
+  const localResults = query.trim()
     ? MOCK_BOOKS.filter(
         (b) =>
           b.title.toLowerCase().includes(query.toLowerCase()) ||
           b.author.toLowerCase().includes(query.toLowerCase())
       )
     : [];
+
+  const hasSearchResults = localResults.length > 0 || googleResults.length > 0;
 
   // "For you" — books matching user's preferred genres, not already in library
   const forYouBooks = MOCK_BOOKS.filter((b) =>
@@ -109,29 +171,78 @@ export function ExploreScreen() {
 
       <div className="px-5 pb-8 space-y-8">
         {/* Search Results */}
-        {searchResults.length > 0 && (
+        {query.trim() && (
           <section>
             <div className="flex items-center gap-2 mb-3">
               <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
                 Resultados para &ldquo;{query}&rdquo;
               </span>
+              {isSearching && <Loader2 className="w-3 h-3 text-[#AE8F7D]/60 animate-spin" />}
             </div>
-            <div className="space-y-2">
-              {searchResults.map((book) => (
-                <Link key={book.id} href={`/book/${book.id}`} data-testid={`search-result-${book.id}`}>
-                  <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[12px] p-4 flex items-center gap-3 hover:border-[#AE8F7D]/35 transition-colors">
-                    <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
-                    <div>
-                      <p className="font-serif text-[15px] text-[#3D3D3D]">{book.title}</p>
-                      <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
-                      <p className="font-sans font-light text-[9px] text-[#697962]">
-                        {book.communityStats.totalMargins} margens · {book.communityStats.debates} debates
-                      </p>
+
+            {/* Local results (Marginalia catalog) */}
+            {localResults.length > 0 && (
+              <div className="space-y-2 mb-4">
+                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#454545]/35 mb-2">
+                  Na comunidade
+                </p>
+                {localResults.map((book) => (
+                  <Link key={book.id} href={`/book/${book.id}`} data-testid={`search-result-${book.id}`}>
+                    <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[12px] p-4 flex items-center gap-3 hover:border-[#AE8F7D]/35 transition-colors">
+                      <BookCover title={book.title} bookColor={book.bookColor} coverUrl={book.coverUrl} size="sm" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
+                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
+                        <p className="font-sans font-light text-[9px] text-[#697962]">
+                          {book.communityStats.totalMargins} margens · {book.communityStats.debates} debates
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Google Books results */}
+            {googleResults.length > 0 && (
+              <div className="space-y-2">
+                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#454545]/35 mb-2">
+                  Mais livros
+                </p>
+                {googleResults
+                  .filter((gr) => !localResults.some((lr) => lr.title.toLowerCase() === gr.title.toLowerCase()))
+                  .map((book) => (
+                    <div
+                      key={book.externalId}
+                      className="bg-[#FAF8F3] border border-[#AE8F7D]/10 rounded-[12px] p-4 flex items-center gap-3"
+                    >
+                      {book.coverUrl ? (
+                        <img
+                          src={book.coverUrl}
+                          alt={book.title}
+                          className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                      ) : (
+                        <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
+                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
+                        {book.publishYear && (
+                          <p className="font-sans font-light text-[9px] text-[#454545]/30">{book.publishYear}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            {!isSearching && !hasSearchResults && (
+              <p className="font-serif italic text-[13px] text-[#454545]/35 text-center py-6">
+                Nenhum resultado encontrado.
+              </p>
+            )}
           </section>
         )}
 

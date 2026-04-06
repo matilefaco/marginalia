@@ -9,6 +9,84 @@ import {
 
 const router: IRouter = Router();
 
+interface GoogleBookItem {
+  id: string;
+  volumeInfo: {
+    title: string;
+    authors?: string[];
+    description?: string;
+    publishedDate?: string;
+    pageCount?: number;
+    categories?: string[];
+    imageLinks?: {
+      thumbnail?: string;
+      smallThumbnail?: string;
+    };
+    language?: string;
+    publisher?: string;
+  };
+}
+
+function normalizeGoogleBook(item: GoogleBookItem) {
+  const v = item.volumeInfo;
+  const coverUrl = v.imageLinks?.thumbnail?.replace("http://", "https://") ??
+    v.imageLinks?.smallThumbnail?.replace("http://", "https://") ?? null;
+
+  const publishYear = v.publishedDate ? parseInt(v.publishedDate.slice(0, 4), 10) : null;
+
+  const genres = (v.categories ?? []).map((c) => {
+    const lower = c.toLowerCase();
+    if (lower.includes("fiction")) return "Ficção contemporânea";
+    if (lower.includes("poetry") || lower.includes("poesia")) return "Poesia";
+    if (lower.includes("philosophy") || lower.includes("filosof")) return "Filosofia";
+    if (lower.includes("history") || lower.includes("histor")) return "Histórico";
+    if (lower.includes("science") || lower.includes("ciência")) return "Ficção científica";
+    return c;
+  });
+
+  return {
+    externalId: item.id,
+    title: v.title,
+    author: (v.authors ?? ["Autor desconhecido"]).join(", "),
+    description: v.description?.slice(0, 300) ?? "",
+    coverUrl,
+    publishYear,
+    totalPages: v.pageCount ?? 0,
+    genres: genres.length > 0 ? genres : ["Literatura estrangeira"],
+    language: v.language ?? "pt",
+    publisher: v.publisher ?? null,
+  };
+}
+
+router.get("/books/search", async (req, res): Promise<void> => {
+  const query = typeof req.query.q === "string" ? req.query.q.trim() : "";
+  const lang = typeof req.query.lang === "string" ? req.query.lang : "";
+  const maxResults = Math.min(parseInt(String(req.query.limit ?? "12"), 10), 20);
+
+  if (!query) {
+    res.status(400).json({ error: "Query parameter 'q' is required" });
+    return;
+  }
+
+  try {
+    const langRestrict = lang ? `&langRestrict=${lang}` : "";
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}${langRestrict}&maxResults=${maxResults}&printType=books`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      res.status(502).json({ error: "Google Books API unavailable" });
+      return;
+    }
+
+    const data = (await response.json()) as { items?: GoogleBookItem[]; totalItems?: number };
+    const items = (data.items ?? []).map(normalizeGoogleBook);
+
+    res.json({ items, total: data.totalItems ?? 0, query });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch from Google Books" });
+  }
+});
+
 router.get("/books", async (_req, res): Promise<void> => {
   const books = await db.select().from(booksTable).orderBy(booksTable.createdAt);
   res.json(books);

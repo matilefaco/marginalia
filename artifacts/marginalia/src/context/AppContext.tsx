@@ -134,7 +134,7 @@ function buildUserFromProfile(
     readerType: "observador",
     readingSignature:
       profile.reading_signature || "Cada livro me deixa diferente",
-    spoilerPreference: "chapter",
+    spoilerPreference: "progress_only",
     preferredGenres: [],
     favoriteAuthors: [],
     stats: {

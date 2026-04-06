@@ -328,7 +328,7 @@ export function HomeScreen() {
                     className="flex-shrink-0 w-[280px] bg-[#FAF8F3] border border-[#AE8F7D]/20 rounded-[16px] p-4 shadow-sm"
                   >
                     <div className="flex items-start gap-3 mb-3">
-                      <BookCover title={book.title} bookColor={book.bookColor} size="sm" className="shadow-sm" />
+                      <BookCover title={book.title} bookColor={book.bookColor} coverUrl={book.coverUrl} size="sm" className="shadow-sm" />
                       <div className="flex-1 min-w-0">
                         <h2 className="font-serif italic text-[15px] text-[#3D3D3D] leading-tight mb-0.5 line-clamp-2">{book.title}</h2>
                         <p className="font-sans font-light text-[8px] tracking-[0.1em] uppercase text-[#454545]/45 mb-2">{book.author}</p>

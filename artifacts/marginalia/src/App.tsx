@@ -83,7 +83,7 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   const { signUp } = useAuth();
   const [step, setStep] = useState<OnboardingStep>("welcome");
   const [pendingGenres, setPendingGenres] = useState<string[]>([]);
-  const [pendingSpoiler, setPendingSpoiler] = useState<SpoilerPreference>("chapter");
+  const [pendingSpoiler, setPendingSpoiler] = useState<SpoilerPreference>("progress_only");
   const [signupError, setSignupError] = useState("");
 
   const finish = () => {

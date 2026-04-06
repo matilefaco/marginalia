@@ -382,7 +382,7 @@ export function BookDetailScreen() {
         {/* Book cover + Progress */}
         <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[14px] p-5 shadow-sm">
           <div className="flex items-start gap-4 mb-4">
-            <BookCover title={book.title} bookColor={book.bookColor} size="lg" className="shadow-sm" />
+            <BookCover title={book.title} bookColor={book.bookColor} coverUrl={book.coverUrl} size="lg" className="shadow-sm" />
             <div className="flex-1 min-w-0">
               <p className="font-sans font-light text-[8px] tracking-[0.14em] uppercase text-[#AE8F7D] mb-1">{statusLabel}</p>
               {prog?.status === "reading" && (
