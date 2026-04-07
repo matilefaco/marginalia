@@ -68,7 +68,7 @@ export function UserProfileScreen() {
           </div>
           <div className="flex-1 pt-1 min-w-0">
             <h1 className="font-serif text-[22px] text-[#3D3D3D] leading-tight">{fullName}</h1>
-            <p className="font-sans font-light text-[10px] text-[#AE8F7D] mt-0.5">{user.username}</p>
+            <p className="font-sans font-light text-[10px] text-[#8A8178] mt-0.5">{user.username}</p>
             {user.city && (
               <p className="font-sans font-light text-[9px] text-[#2A2A2A]/35 mt-0.5">{user.city}</p>
             )}

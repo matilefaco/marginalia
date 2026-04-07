@@ -1,0 +1,193 @@
+Perfeito — aqui está TUDO unificado em um único bloco, limpo, direto e pronto pra você copiar e colar no Replit 👇
+
+⸻
+
+:::writing{variant=“standard” id=“99821”}
+CORRIGIR SISTEMA DE NOMENCLATURA + NAVEGAÇÃO DE USUÁRIOS (VERSÃO FINAL)
+
+==================================================
+	1.	REMOVER COMPLETAMENTE A PALAVRA “ECOS”
+==================================================
+
+A palavra “ecos” NÃO deve existir em nenhuma parte do app.
+
+Substituir globalmente:
+	•	“eco” → “resposta”
+	•	“ecos” → “respostas”
+
+⸻
+
+Aplicar em:
+	•	feed
+	•	cards de livros
+	•	“momento do livro”
+	•	páginas de livro
+	•	comentários
+	•	backend (se houver)
+	•	qualquer contador
+
+⸻
+
+Regra de plural:
+	•	1 resposta
+	•	2 respostas
+
+⸻
+
+==================================================
+2. CORRIGIR CONTADORES (PADRÃO FINAL)
+
+Todos os posts devem seguir este padrão:
+
+👉 X reações · X respostas
+
+⸻
+
+Exemplo:
+
+ANTES:
+“6 ecos”
+
+DEPOIS:
+“6 respostas”
+
+⸻
+
+==================================================
+3. CORRIGIR “MOMENTO DO LIVRO HOJE”
+
+Remover contador grande lateral (ex: “6 ECOS”).
+
+Deixar apenas na linha inferior:
+
+👉 “27 reações · 6 respostas · em 50% do livro”
+
+Mais limpo, mais consistente.
+
+⸻
+
+==================================================
+4. USERNAME + NOME (PADRÃO VISUAL)
+
+Formato obrigatório:
+
+👉 Nome Sobrenome · @username
+
+⸻
+
+Exemplo:
+
+Clara Monteiro · @claramonteiro
+
+⸻
+
+Aplicar em:
+	•	feed
+	•	comentários (respostas)
+	•	página de post
+	•	cards
+	•	páginas de livro
+	•	perfil
+
+⸻
+
+==================================================
+5. USERNAME E NOME CLICÁVEIS
+
+Nome e @username devem ser clicáveis.
+
+Ao clicar:
+
+👉 redirecionar para o perfil do usuário
+
+⸻
+
+Rota padrão:
+
+👉 /perfil/:username
+
+⸻
+
+==================================================
+6. IMPLEMENTAÇÃO (CÓDIGO)
+
+React / JSX:
+
+<div onClick={() => goToProfile(user.username)} style={{cursor: 'pointer'}}>
+  <span className="name">{user.name}</span>
+  <span className="username">@{user.username}</span>
+</div>
+
+
+⸻
+
+Função:
+
+function goToProfile(username) {
+  window.location.href = `/perfil/${username}`;
+}
+
+
+⸻
+
+==================================================
+7. ESTILO VISUAL
+
+Nome:
+	•	cor: #2A2A2A
+	•	peso: Medium (500)
+
+Username:
+	•	cor: #8A8178
+	•	peso: Regular (400)
+	•	menor destaque
+
+⸻
+
+Hover:
+	•	leve mudança de opacidade
+	•	cursor: pointer
+
+⸻
+
+==================================================
+8. APLICAR EM TODO O APP
+
+Garantir funcionamento em:
+	•	feed
+	•	comentários
+	•	página de post
+	•	página de livro
+	•	perfil
+	•	qualquer lista de usuários
+
+⸻
+
+==================================================
+9. RESULTADO FINAL
+
+ANTES:
+	•	“ecos” (confuso)
+	•	nomes não clicáveis
+
+DEPOIS:
+	•	“respostas” (claro)
+	•	navegação entre perfis ativa
+	•	app mais social e intuitivo
+
+⸻
+
+==================================================
+10. REGRA PRINCIPAL
+
+Se o usuário precisa pensar → está errado
+Se ele entende instantaneamente → está certo
+
+==================================================
+:::
+
+⸻
+
+Se quiser, o próximo nível agora é:
+
+👉 transformar esse fluxo em “efeito rede” (descoberta de pessoas + perfis viciantes) — isso muda completamente o crescimento do app.

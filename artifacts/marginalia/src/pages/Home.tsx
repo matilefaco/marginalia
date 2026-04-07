@@ -79,7 +79,7 @@ export default function Home() {
         <section data-testid="section-echoes">
           <div className="flex items-center gap-2 mb-1">
             <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-              Ecos do seu momento
+              Respostas do seu momento
             </span>
             <div className="flex-1 h-px bg-[#AE8F7D]/20" />
           </div>
@@ -95,7 +95,7 @@ export default function Home() {
             </div>
           ) : feed?.echoes.length === 0 ? (
             <p className="font-serif italic text-sm text-[#454545]/40 text-center py-6">
-              Nenhum eco ainda. O texto aguarda o seu gesto.
+              Nenhuma resposta ainda. O texto aguarda o seu gesto.
             </p>
           ) : (
             <div className="space-y-3">

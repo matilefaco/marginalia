@@ -366,7 +366,7 @@ export function ProfileScreen() {
                 <h1 className="font-serif text-[22px] text-[#3D3D3D] leading-tight" data-testid="text-fullname">
                   {fullName}
                 </h1>
-                <p className="font-sans font-light text-[10px] text-[#AE8F7D] mt-0.5" data-testid="text-username">
+                <p className="font-sans font-light text-[10px] text-[#8A8178] mt-0.5" data-testid="text-username">
                   {currentUser.username}
                 </p>
               </>

@@ -577,8 +577,12 @@ export function ExploreScreen() {
                         <span className="font-sans text-[11px] text-[#FAF8F3]">{reader.initials}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="font-serif text-[14px] text-[#3D3D3D]">{reader.name}</div>
-                        <div className="font-sans font-light text-[9px] text-[#2A2A2A]/40">{reader.username} · {reader.city}</div>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-sans font-medium text-[11px] text-[#2A2A2A]">{reader.name}</span>
+                          <span className="font-sans font-light text-[9px] text-[#2A2A2A]/25">·</span>
+                          <span className="font-sans font-light text-[9px] text-[#8A8178]">{reader.username}</span>
+                        </div>
+                        <div className="font-sans font-light text-[8px] text-[#2A2A2A]/35 mt-0.5">{reader.city}</div>
                       </div>
                       {reader.compatibilityScore && (
                         <div className="text-right flex-shrink-0">

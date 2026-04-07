@@ -309,7 +309,7 @@ function CardReaderType({ userId, userName, userInitials, isSquare }: {
           <div style={{ display:"flex", gap:16 }}>
             {[
               { val: profile.stats.margins, key: "Posts" },
-              { val: profile.stats.ecos,    key: "Ecos" },
+              { val: profile.stats.ecos,    key: "Respostas" },
               { val: profile.stats.books,   key: "Livros" },
             ].map(s => (
               <div key={s.key} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>

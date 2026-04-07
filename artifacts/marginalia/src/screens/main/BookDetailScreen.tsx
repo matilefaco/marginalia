@@ -170,11 +170,11 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
               <div className="flex gap-4 text-[#FAF8F3]/80">
                 <div>
                   <span className="font-serif italic text-[13px]">{selSocBucket.ecos}</span>
-                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">ecos</span>
+                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">posts</span>
                 </div>
                 <div>
                   <span className="font-serif italic text-[13px]">{selSocBucket.comments}</span>
-                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">comentários</span>
+                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">respostas</span>
                 </div>
                 <div>
                   <span className="font-serif italic text-[13px]">{selBucket.totalReactions}</span>
@@ -238,11 +238,11 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
               <div className="flex gap-4 text-[#FAF8F3]/80">
                 <div>
                   <span className="font-serif italic text-[13px]">{selSocBucket.ecos}</span>
-                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">ecos</span>
+                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">posts</span>
                 </div>
                 <div>
                   <span className="font-serif italic text-[13px]">{selSocBucket.comments}</span>
-                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">comentários</span>
+                  <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">respostas</span>
                 </div>
               </div>
             </div>

@@ -84,18 +84,12 @@ function MomentosSection() {
                     : "bg-[#FAF8F3] border-[#AE8F7D]/12"
                 }`}
               >
-                <div className="flex items-start justify-between gap-3 mb-2.5">
-                  <div>
-                    <p className="font-sans text-[7px] font-light tracking-[0.2em] uppercase text-[#697962] mb-0.5">
-                      {idx === 0 ? "✦ Mais ativo agora" : "Em alta"}
-                    </p>
-                    <p className="font-serif italic text-[15px] text-[#3D3D3D] leading-tight">{book.title}</p>
-                    <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#2A2A2A]/35">{book.author}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="font-serif text-[22px] text-[#AE8F7D] leading-none">{count}</p>
-                    <p className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#2A2A2A]/30">ecos</p>
-                  </div>
+                <div className="mb-2.5">
+                  <p className="font-sans text-[7px] font-light tracking-[0.2em] uppercase text-[#697962] mb-0.5">
+                    {idx === 0 ? "✦ Mais ativo agora" : "Em alta"}
+                  </p>
+                  <p className="font-serif italic text-[15px] text-[#3D3D3D] leading-tight">{book.title}</p>
+                  <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#2A2A2A]/35">{book.author}</p>
                 </div>
 
                 {canSee ? (
