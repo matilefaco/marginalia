@@ -1,0 +1,451 @@
+:::writing{variant=“standard” id=“48612”}
+CORREÇÃO ESTRUTURAL DO ONBOARDING — UNIFICAR AVATAR NA TELA DE DADOS DA CONTA + IMPEDIR PULO DIRETO PARA O FEED
+
+O fluxo do cadastro continua com bug estrutural.
+
+Hoje está acontecendo isso:
+	•	a primeira tela de gêneros funciona;
+	•	a segunda tela de dados do usuário também funciona;
+	•	mas ao clicar em “Continuar” nessa segunda etapa, em vez de seguir corretamente para a próxima etapa do onboarding, o app pula direto para o feed.
+
+Isso está errado.
+
+Quero corrigir a arquitetura do onboarding para que:
+	1.	o fluxo não pule etapas;
+	2.	a escolha do avatar fique embutida na mesma tela dos dados da conta;
+	3.	o restante das telas continue funcionando na ordem correta.
+
+A nova estrutura do onboarding deve ser esta:
+
+==================================================
+ORDEM FINAL CORRETA DO ONBOARDING
+
+ETAPA 1 — GÊNEROS
+
+Obrigatória.
+O usuário deve escolher pelo menos 3 gêneros.
+
+ETAPA 2 — DADOS DA CONTA + AVATAR
+
+Obrigatória.
+Nessa mesma tela, o usuário:
+	•	preenche nome
+	•	sobrenome
+	•	username
+	•	e-mail
+	•	senha
+	•	bio opcional
+	•	escolhe seu avatar
+
+ETAPA 3 — MODO DE EXPLORAÇÃO
+
+Obrigatória.
+O usuário precisa escolher:
+	•	modo protegido
+ou
+	•	explorar livremente
+
+ETAPA 4 — ESCOLHA DE LIVROS INICIAIS
+
+Opcional.
+O usuário pode escolher alguns livros ou pode pular sem selecionar nenhum.
+
+Depois disso:
+
+FINALIZAR CADASTRO → entrar no app
+
+==================================================
+PROBLEMA ATUAL
+
+Hoje o app provavelmente está tratando a segunda etapa como se fosse a etapa final de cadastro, ou está chamando a função de finalização cedo demais.
+
+Possíveis causas:
+	•	o botão “Continuar” da etapa 2 está acionando submitSignup() em vez de apenas avançar de etapa;
+	•	existe algum if incorreto que entende que a etapa 2 já é a última;
+	•	o estado step está sendo sobrescrito;
+	•	a tela do avatar não está mais registrada no fluxo;
+	•	depois de salvar os dados básicos, o app chama redirecionamento automático para o feed;
+	•	algum listener de auth está navegando cedo demais antes do onboarding terminar.
+
+Isso precisa ser corrigido de forma arquitetural.
+
+==================================================
+PARTE 1 — NOVA ESTRUTURA DO FLUXO
+
+Quero que o onboarding tenha um controle de etapas explícito e confiável.
+
+Exemplo de estado:
+	•	step = 1 → gêneros
+	•	step = 2 → dados da conta + avatar
+	•	step = 3 → modo de exploração
+	•	step = 4 → livros iniciais
+	•	step = 5 → finalizar persistência / entrar
+
+Ou, se preferir, a etapa 5 pode nem existir como tela visual, apenas como ação final.
+
+==================================================
+1.1. REGRA PRINCIPAL
+
+Nenhuma etapa pode chamar navegação para o feed antes do onboarding inteiro terminar.
+
+Ou seja:
+	•	etapa 1 nunca navega
+	•	etapa 2 nunca navega
+	•	etapa 3 nunca navega
+	•	etapa 4 só finaliza
+	•	só depois da persistência final o app pode redirecionar
+
+==================================================
+1.2. NAVEGAÇÃO CORRETA
+
+Ao clicar em continuar:
+	•	da etapa 1 → vai para etapa 2
+	•	da etapa 2 → vai para etapa 3
+	•	da etapa 3 → vai para etapa 4
+	•	da etapa 4 → finaliza cadastro completo e só então vai para o feed
+
+==================================================
+PARTE 2 — UNIFICAR AVATAR COM OS DADOS DA CONTA
+
+Quero adotar essa mudança de UX:
+
+A escolha do avatar não será mais uma tela isolada.
+Ela deve ficar na mesma tela onde o usuário preenche:
+	•	nome
+	•	sobrenome
+	•	username
+	•	e-mail
+	•	senha
+	•	bio
+
+Isso provavelmente vai ficar melhor visualmente e também resolve o bug do fluxo.
+
+==================================================
+2.1. NOVA TELA 2 — ESTRUTURA
+
+Título:
+“Criar conta”
+
+Subtítulo:
+“Seu espaço pessoal de leitura começa aqui.”
+
+Campos:
+	•	Nome
+	•	Sobrenome
+	•	@username
+	•	E-mail
+	•	Senha
+	•	Bio opcional
+
+E na mesma tela, abaixo desses campos:
+
+seção de avatar
+
+==================================================
+2.2. BLOCO DE AVATAR DENTRO DA TELA DE DADOS
+
+Quero adicionar uma seção elegante, leve e não poluída:
+
+“Escolha seu avatar”
+
+Subtexto opcional:
+“Seu avatar acompanha você no perfil, nos posts e nas respostas.”
+
+Essa seção deve ficar visualmente integrada ao formulário, sem parecer uma tela separada improvisada.
+
+==================================================
+2.3. ESTRATÉGIA VISUAL DO AVATAR NESSA TELA
+
+Não quero 16 opções espalhadas de uma vez no formulário.
+
+Quero uma solução suave.
+
+Sugestão ideal:
+
+Estado inicial da seção
+Mostrar:
+	•	avatar atualmente selecionado em destaque
+	•	nome do avatar
+	•	botão ou link discreto: “Trocar avatar”
+
+Exemplo:
+[preview do avatar]
+A Vela
+“Trocar avatar”
+
+Ao tocar em “Trocar avatar”
+Abrir:
+	•	bottom sheet
+ou
+	•	modal parcial
+ou
+	•	expansão elegante
+
+com a seleção dos avatares.
+
+==================================================
+2.4. FORMA DE ESCOLHER O AVATAR
+
+Dentro dessa bottom sheet/modal, usar a lógica em camadas:
+
+Camada 1
+
+Mostrar as 4 famílias:
+	•	Objetos literários
+	•	Natureza & poesia
+	•	Conceitos & símbolos
+	•	Íntimos & pessoais
+
+Camada 2
+
+Ao tocar numa família:
+mostrar os 4 avatares daquela família
+
+Assim:
+	•	a tela não fica poluída
+	•	a escolha fica elegante
+	•	o usuário entende o sistema com clareza
+
+==================================================
+2.5. REGRA DE VALIDAÇÃO DO AVATAR
+
+O avatar deve ser obrigatório antes de avançar da etapa 2.
+
+Ou seja:
+a etapa 2 só fica válida quando:
+	•	todos os campos obrigatórios da conta estiverem corretos
+	•	e um avatar estiver selecionado
+
+==================================================
+2.6. PREVIEW EM TEMPO REAL
+
+Quando o usuário selecionar um avatar:
+	•	atualizar imediatamente o preview no topo da seção
+	•	sem precisar sair da tela
+	•	sem precisar salvar antes
+
+Exemplo de preview:
+[avatar]
+Matile Facó
+@matilefaco · A Vela
+
+==================================================
+PARTE 3 — ETAPA 1 CONTINUA SENDO GÊNEROS
+
+A primeira etapa deve continuar como está, mas reforço a regra:
+	•	selecionar pelo menos 3 gêneros
+	•	botão continuar desabilitado até isso acontecer
+
+Persistir temporariamente no estado do onboarding.
+
+==================================================
+PARTE 4 — ETAPA 3 CONTINUA SENDO MODO DE EXPLORAÇÃO
+
+Depois da tela de conta + avatar, a próxima etapa deve ser:
+
+“Como você prefere explorar o app?”
+
+Opções obrigatórias:
+	•	Modo protegido
+	•	Explorar livremente
+
+Regras:
+	•	o usuário precisa escolher uma das duas
+	•	não pode continuar sem escolher
+	•	o botão continuar só habilita com seleção
+
+Também quero manter um aviso discreto:
+“Você poderá alterar essa preferência a qualquer momento em Preferências.”
+
+==================================================
+PARTE 5 — ETAPA 4 CONTINUA SENDO LIVROS INICIAIS
+
+Última etapa:
+seleção opcional de livros.
+
+Muito importante:
+	•	não é obrigatório selecionar nenhum livro
+	•	o usuário pode pular
+	•	o botão final precisa funcionar com 0 livros selecionados
+
+Essa etapa é apenas para personalização inicial.
+
+==================================================
+PARTE 6 — CORREÇÃO TÉCNICA DO BUG DE PULAR PARA O FEED
+
+Quero que o Replit revise especificamente os seguintes pontos:
+
+==================================================
+6.1. BOTÃO DA ETAPA 2
+
+Verificar se o botão “Continuar” da tela de conta está chamando algo como:
+	•	submitSignup
+	•	completeOnboarding
+	•	router.push('/')
+	•	navigate('/feed')
+
+Se estiver, isso está errado.
+
+Na etapa 2, esse botão deve apenas:
+	•	validar a etapa
+	•	salvar os dados no estado local do onboarding
+	•	avançar para a etapa 3
+
+==================================================
+6.2. LISTENER DE AUTENTICAÇÃO
+
+Verificar se existe algum onAuthStateChange, useEffect ou observer que, ao detectar usuário autenticado, já redireciona para o feed imediatamente.
+
+Se existir, precisa mudar a lógica.
+
+Novo comportamento:
+	•	usuário autenticado + onboarding incompleto → continuar onboarding
+	•	usuário autenticado + onboarding completo → ir para feed
+
+Ou seja:
+não basta existir sessão/autenticação.
+É preciso verificar também:
+	•	onboarding_completed === true
+
+==================================================
+6.3. PERSISTÊNCIA PARCIAL
+
+Se os dados da conta estiverem sendo persistidos antes do fim do onboarding, isso não pode disparar navegação automática.
+
+Pode até criar/auth o usuário antes, mas o fluxo deve continuar nas etapas restantes sem sair do onboarding.
+
+==================================================
+6.4. CONTROLE DE ESTADO DO ONBOARDING
+
+Quero uma estrutura clara, algo como:
+	•	selectedGenres
+	•	accountData
+	•	selectedAvatar
+	•	explorationMode
+	•	selectedBooks
+	•	currentStep
+
+E só no final:
+	•	persistir tudo
+	•	marcar onboarding como concluído
+	•	navegar para feed
+
+==================================================
+PARTE 7 — DADOS QUE DEVEM SER SALVOS AO FINAL
+
+Ao terminar o onboarding, salvar corretamente:
+	•	gêneros escolhidos
+	•	nome
+	•	sobrenome
+	•	username
+	•	e-mail
+	•	bio
+	•	avatar escolhido
+	•	modo de exploração
+	•	livros escolhidos, se houver
+	•	status de onboarding concluído
+
+E garantir que o usuário, ao entrar no app:
+	•	já apareça com avatar correto
+	•	já esteja com preferência de visualização correta
+	•	já tenha gêneros salvos
+
+==================================================
+PARTE 8 — MICROCOPY E UX DA TELA DE CONTA + AVATAR
+
+Quero uma organização elegante nessa tela.
+
+Sugestão de ordem visual:
+	1.	título da página
+	2.	subtítulo
+	3.	campos de nome e sobrenome
+	4.	username
+	5.	e-mail
+	6.	senha
+	7.	bio opcional
+	8.	bloco “Escolha seu avatar”
+	9.	preview do avatar escolhido
+	10.	botão continuar
+
+O bloco de avatar não deve competir com os campos, mas também não pode parecer escondido.
+
+==================================================
+PARTE 9 — O QUE NÃO QUERO
+
+Não quero:
+	•	tela separada de avatar quebrando ou sumindo
+	•	cadastro pulando direto para feed
+	•	avatar opcional
+	•	onboarding incompleto
+	•	autenticação finalizando cedo demais
+	•	fluxo confuso
+
+==================================================
+PARTE 10 — TESTES OBRIGATÓRIOS
+
+Depois da correção, testar obrigatoriamente:
+
+Teste 1
+
+Etapa 1:
+	•	escolher 3 gêneros
+	•	continuar
+	•	verificar se vai para tela de dados + avatar
+
+Teste 2
+
+Etapa 2:
+	•	preencher dados
+	•	escolher avatar
+	•	clicar continuar
+	•	verificar que vai para modo de exploração
+	•	e NÃO para o feed
+
+Teste 3
+
+Etapa 3:
+	•	escolher modo protegido
+	•	continuar
+	•	verificar que vai para escolha de livros
+
+Teste 4
+
+Etapa 4:
+	•	pular seleção de livros
+	•	finalizar
+	•	verificar que só aí entra no feed
+
+Teste 5
+
+Fluxo alternativo:
+	•	escolher livros
+	•	finalizar
+	•	verificar persistência completa
+
+Teste 6
+
+Logout/login depois
+	•	garantir que avatar, gêneros e modo de exploração permaneceram salvos
+
+==================================================
+PARTE 11 — RESULTADO FINAL ESPERADO
+
+Depois dessa correção, quero que o onboarding fique assim:
+	1.	Gêneros
+	2.	Dados da conta + avatar
+	3.	Modo de exploração
+	4.	Livros opcionais
+	5.	Finalização
+
+E principalmente:
+	•	nenhuma etapa pode pular direto para o feed antes da hora
+	•	a escolha do avatar deve existir dentro da tela de dados
+	•	o fluxo inteiro deve funcionar perfeitamente
+
+==================================================
+PRIORIDADE
+
+Isso é prioridade alta.
+
+Quero que o Replit trate isso como correção estrutural do onboarding, não como ajuste superficial.
+:::

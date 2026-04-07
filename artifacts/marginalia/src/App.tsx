@@ -12,7 +12,6 @@ import { OnboardingWelcomeScreen } from "@/screens/onboarding/OnboardingWelcomeS
 import { OnboardingGenresScreen } from "@/screens/onboarding/OnboardingGenresScreen";
 import { OnboardingSpoilerScreen } from "@/screens/onboarding/OnboardingSpoilerScreen";
 import { OnboardingBooksScreen } from "@/screens/onboarding/OnboardingBooksScreen";
-import { OnboardingAvatarScreen } from "@/screens/onboarding/OnboardingAvatarScreen";
 import { SignUpScreen } from "@/screens/auth/SignUpScreen";
 import { LoginScreen } from "@/screens/auth/LoginScreen";
 
@@ -79,10 +78,10 @@ function LoadingDots() {
   );
 }
 
-type OnboardingStep = "welcome" | "genres" | "spoiler" | "login" | "signup" | "avatar" | "books";
+type OnboardingStep = "welcome" | "genres" | "signup" | "spoiler" | "books" | "login";
 
 function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
-  const { updatePreferredGenres, updateSpoilerPreference, completeOnboarding, currentUser } = useApp();
+  const { updatePreferredGenres, updateSpoilerPreference, completeOnboarding } = useApp();
   const { signUp, updateProfile } = useAuth();
   const [step, setStep] = useState<OnboardingStep>("welcome");
   const [pendingGenres, setPendingGenres] = useState<string[]>([]);
@@ -145,6 +144,7 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
             return;
           }
           updatePreferredGenres(pendingGenres);
+          await updateProfile({ avatar_id: data.avatarId });
           setStep("spoiler");
         }}
         onBack={() => setStep("genres")}
@@ -159,30 +159,15 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
         onContinue={(pref) => {
           setPendingSpoiler(pref);
           updateSpoilerPreference(pref);
-          setStep("avatar");
+          setStep("books");
         }}
         onBack={() => setStep("signup")}
       />
     );
   }
 
-  if (step === "avatar") {
-    return (
-      <OnboardingAvatarScreen
-        initials={currentUser.initials}
-        name={currentUser.name}
-        username={currentUser.username}
-        onContinue={async (avatarId) => {
-          await updateProfile({ avatar_id: avatarId });
-          setStep("books");
-        }}
-        onBack={() => setStep("spoiler")}
-      />
-    );
-  }
-
   if (step === "books") {
-    return <OnboardingBooksScreen onComplete={finish} onBack={() => setStep("avatar")} />;
+    return <OnboardingBooksScreen onComplete={finish} onBack={() => setStep("spoiler")} />;
   }
 
   return null;
@@ -231,8 +216,17 @@ function MainApp() {
 function AppContent() {
   const { session, authLoading } = useAuth();
   const [splashDone, setSplashDone] = useState(false);
-  const [authFlowDone, setAuthFlowDone] = useState(false);
   const [location] = useLocation();
+  // Determined once after auth resolves — true if user had no session on first load.
+  // Stays stable even when signUp() creates a new session mid-onboarding.
+  const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
+  const [onboardingDone, setOnboardingDone] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && needsOnboarding === null) {
+      setNeedsOnboarding(!session);
+    }
+  }, [authLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Public routes — accessible without auth, no splash */
   if (location.startsWith("/livro/")) {
@@ -249,14 +243,14 @@ function AppContent() {
     return <Splash onDone={() => setSplashDone(true)} />;
   }
 
-  if (authLoading) {
+  if (authLoading || needsOnboarding === null) {
     return <LoadingDots />;
   }
 
-  if (!session && !authFlowDone) {
+  if (needsOnboarding && !onboardingDone) {
     return (
       <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto bg-[#FAF8F3] shadow-2xl">
-        <OnboardingFlow onComplete={() => setAuthFlowDone(true)} />
+        <OnboardingFlow onComplete={() => setOnboardingDone(true)} />
       </div>
     );
   }

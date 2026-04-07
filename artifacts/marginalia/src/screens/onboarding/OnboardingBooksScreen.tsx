@@ -94,7 +94,7 @@ export function OnboardingBooksScreen({ onComplete, onBack }: Props) {
 
       <div className="mb-6">
         <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-          5 de 5
+          4 de 4
         </span>
         <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full mt-2 mb-6">
           <div className="h-full bg-[#AE8F7D] rounded-full w-full" />
