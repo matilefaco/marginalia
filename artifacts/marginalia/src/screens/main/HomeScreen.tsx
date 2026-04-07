@@ -6,7 +6,7 @@ import { LogoMark } from "@/components/LogoMark";
 import { BookCover } from "@/components/BookCover";
 import { filterMarginsForUser } from "@/utils/spoiler";
 import { canUserSeeMargin } from "@/utils/spoiler";
-import { MOCK_BOOKS, type Margin, type BookProgress } from "@/data/mockData";
+import { MOCK_BOOKS, USER_AVATAR_MAP, type Margin, type BookProgress } from "@/data/mockData";
 import { UserIdentity } from "@/components/UserIdentity";
 import { progressLabel } from "@/utils/formatting";
 import { Shield } from "lucide-react";
@@ -304,6 +304,7 @@ function CommunityFeedSection() {
                     username={handle}
                     initials={m.userInitials ?? m.userName[0]}
                     avatarColor={m.userAvatarColor ?? "#697962"}
+                    avatarId={USER_AVATAR_MAP[m.userSeedId?.replace(/^s_/, 'user_') ?? ""] ?? undefined}
                     timestamp={formatCommunityMarginAge(m.createdAt)}
                   />
                   {m.spoilerLevel !== "none" && (

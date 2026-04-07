@@ -12,6 +12,7 @@ import { OnboardingWelcomeScreen } from "@/screens/onboarding/OnboardingWelcomeS
 import { OnboardingGenresScreen } from "@/screens/onboarding/OnboardingGenresScreen";
 import { OnboardingSpoilerScreen } from "@/screens/onboarding/OnboardingSpoilerScreen";
 import { OnboardingBooksScreen } from "@/screens/onboarding/OnboardingBooksScreen";
+import { OnboardingAvatarScreen } from "@/screens/onboarding/OnboardingAvatarScreen";
 import { SignUpScreen } from "@/screens/auth/SignUpScreen";
 import { LoginScreen } from "@/screens/auth/LoginScreen";
 
@@ -78,11 +79,11 @@ function LoadingDots() {
   );
 }
 
-type OnboardingStep = "welcome" | "genres" | "spoiler" | "login" | "signup" | "books";
+type OnboardingStep = "welcome" | "genres" | "spoiler" | "login" | "signup" | "avatar" | "books";
 
 function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
-  const { updatePreferredGenres, updateSpoilerPreference, completeOnboarding } = useApp();
-  const { signUp } = useAuth();
+  const { updatePreferredGenres, updateSpoilerPreference, completeOnboarding, currentUser } = useApp();
+  const { signUp, updateProfile } = useAuth();
   const [step, setStep] = useState<OnboardingStep>("welcome");
   const [pendingGenres, setPendingGenres] = useState<string[]>([]);
   const [pendingSpoiler, setPendingSpoiler] = useState<SpoilerPreference>("progress_only");
@@ -151,15 +152,27 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
               ? `${data.firstName} ${data.lastName}`
               : data.firstName,
             bio: data.bio,
-            avatarColor: data.avatarColor,
           });
           if (error) {
             setSignupError(error);
             return;
           }
-          setStep("books");
+          setStep("avatar");
         }}
         onBack={() => setStep("spoiler")}
+      />
+    );
+  }
+
+  if (step === "avatar") {
+    return (
+      <OnboardingAvatarScreen
+        initials={currentUser.initials}
+        onContinue={async (avatarId) => {
+          await updateProfile({ avatar_id: avatarId });
+          setStep("books");
+        }}
+        onBack={() => setStep("signup")}
       />
     );
   }

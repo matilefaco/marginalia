@@ -1,0 +1,503 @@
+:::writing{variant=“standard” id=“45218”}
+IMPLEMENTAR SISTEMA DE AVATARES NO LUGAR DA “COR DA BOLINHA” + ESCOLHA NO CADASTRO E NA EDIÇÃO DE PERFIL + MIGRAÇÃO DOS PERFIS EXISTENTES
+
+Quero substituir completamente o sistema atual de “cor da bolinha” por um sistema de avatares ilustrados, mais autoral, mais elegante e mais coerente com o universo do Marginalia.
+
+A referência visual e a taxonomia dos avatares já estão definidas no material “marginalia — Avatars — Escolha sua identidade de leitura”, com 16 opções divididas em 4 famílias: Objetos literários, Natureza & poesia, Conceitos & símbolos, e Íntimos & pessoais. Também já existe uma prévia de como esses avatares aparecem ao lado do nome e do @username no perfil.  ￼
+
+==================================================
+OBJETIVO GERAL
+
+Substituir:
+	•	a bolinha com iniciais
+	•	a escolha de cor do avatar
+
+Por:
+	•	um avatar ilustrado escolhido pelo leitor
+	•	com categoria, nome e identidade simbólica
+	•	disponível tanto no cadastro quanto na edição do perfil
+	•	com visual leve, elegante e sem poluição
+
+Esse sistema precisa parecer parte central da identidade do app, não um detalhe cosmético.
+
+==================================================
+PARTE 1 — REMOVER O SISTEMA ANTIGO
+
+Quero remover da interface do usuário:
+	•	“Cor do avatar”
+	•	seletor de bolinhas coloridas
+	•	qualquer configuração visual baseada apenas em cor sólida
+	•	qualquer dependência visual da bolinha com iniciais como avatar principal
+
+A bolinha com iniciais pode até continuar existindo internamente como fallback técnico, mas não deve mais ser o avatar principal visível do produto.
+
+==================================================
+PARTE 2 — NOVO SISTEMA DE AVATARES
+
+No lugar da cor da bolinha, implementar um sistema de avatares ilustrados.
+
+Os 16 avatares disponíveis devem ser estes:
+
+⸻
+
+OBJETOS LITERÁRIOS
+	•	A Vela
+	•	A Pena
+	•	O Café
+	•	Os Óculos
+
+⸻
+
+NATUREZA & POESIA
+	•	A Folha
+	•	A Lua
+	•	A Borboleta
+	•	O Novelo
+
+⸻
+
+CONCEITOS & SÍMBOLOS
+	•	A Âncora
+	•	O Espelho
+	•	O Tempo
+	•	A Bússola
+
+⸻
+
+ÍNTIMOS & PESSOAIS
+	•	O Lacre
+	•	O Coração
+	•	A Chave
+	•	O Mapa
+
+Essas famílias e nomes já estão definidos na referência visual.  ￼
+
+==================================================
+PARTE 3 — LÓGICA SIMBÓLICA DOS AVATARES
+
+Quero manter a lógica conceitual por trás desses avatares porque isso deixa o produto mais coerente.
+
+⸻
+
+3.1. Objetos literários
+
+Representam identificação imediata com o hábito de ler.
+	•	A Vela → leitura íntima, silêncio, ritual
+	•	A Pena → escrita, anotação, refinamento
+	•	O Café → companhia de leitura, hábito, aconchego
+	•	Os Óculos → observação, atenção, nitidez
+
+⸻
+
+3.2. Natureza & poesia
+
+Representam leitores mais estéticos, contemplativos ou sensíveis.
+	•	A Folha
+	•	A Lua
+	•	A Borboleta
+	•	O Novelo
+
+⸻
+
+3.3. Conceitos & símbolos
+
+Representam leitores mais filosóficos e interpretativos.
+	•	A Âncora
+	•	O Espelho
+	•	O Tempo
+	•	A Bússola
+
+⸻
+
+3.4. Íntimos & pessoais
+
+Representam leitura como experiência pessoal e secreta.
+	•	O Lacre
+	•	O Coração
+	•	A Chave
+	•	O Mapa
+
+==================================================
+PARTE 4 — ESCOLHA DO AVATAR NO CADASTRO
+
+Quero que, durante o cadastro, o usuário já possa escolher o avatar que quiser.
+
+Esse passo precisa ser:
+	•	bonito
+	•	leve
+	•	rápido
+	•	inteligente
+	•	sem poluição
+
+⸻
+
+4.1. Onde entra no cadastro
+
+No onboarding/cadastro, inserir uma etapa própria:
+
+“Escolha sua identidade visual”
+
+ou
+
+“Escolha seu avatar”
+
+Subtítulo sugerido:
+“Seu avatar acompanha você no perfil, nos posts e nas respostas.”
+
+⸻
+
+4.2. Como essa tela deve funcionar
+
+Não quero uma grade gigante e pesada logo de cara.
+
+Quero um método fluido.
+
+Minha proposta preferida:
+
+Etapa 1 — mostrar 4 famílias
+
+Exibir primeiro as 4 famílias, com visual limpo:
+	•	Objetos literários
+	•	Natureza & poesia
+	•	Conceitos & símbolos
+	•	Íntimos & pessoais
+
+Cada família pode ter:
+	•	um título pequeno
+	•	uma mini prévia com 2 ou 4 ícones discretos
+	•	um visual tipo card ou chips grandes
+
+Etapa 2 — ao tocar numa família
+
+Abrir horizontalmente ou em bottom sheet os 4 avatares daquela família.
+
+Exemplo:
+	•	usuário toca em “Conceitos & símbolos”
+	•	aparecem:
+	•	A Âncora
+	•	O Espelho
+	•	O Tempo
+	•	A Bússola
+
+Etapa 3 — seleção
+
+Ao tocar num avatar:
+	•	ele vira o selecionado
+	•	aparece preview com nome + @username + avatar
+	•	botão “Continuar”
+
+Isso evita poluição visual e deixa a escolha mais refinada.
+
+⸻
+
+4.3. Sugestão inteligente no cadastro
+
+Quero uma sugestão inicial baseada no arquétipo do leitor, se ele já tiver sido inferido no onboarding.
+
+Exemplos:
+	•	O Observador → sugerir A Bússola ou O Espelho
+	•	O Sensível → sugerir O Coração ou A Lua
+	•	O Contemplativo → sugerir A Lua, A Folha ou O Novelo
+	•	O Analítico → sugerir Os Óculos ou O Tempo
+	•	O Introspectivo → sugerir O Lacre ou A Chave
+	•	O Imersivo → sugerir O Mapa ou A Âncora
+
+Mas isso deve ser apenas sugestão.
+O usuário escolhe livremente o que quiser.
+
+==================================================
+PARTE 5 — ESCOLHA DO AVATAR NA EDIÇÃO DE PERFIL
+
+Na página de edição do perfil, substituir o bloco “Cor do avatar” por um bloco de escolha de avatar.
+
+⸻
+
+5.1. Nova interface na edição
+
+Em vez das bolinhas coloridas, quero:
+
+seção: “Avatar”
+
+subtítulo opcional:
+“Escolha a identidade visual que acompanha sua leitura.”
+
+Ao tocar no avatar atual, abrir um seletor elegante.
+
+⸻
+
+5.2. Melhor formato para a edição
+
+Minha recomendação:
+
+usar bottom sheet / modal parcial
+
+Quando tocar no avatar atual:
+	•	abre uma bottom sheet elegante
+	•	mostra as 4 famílias
+	•	o usuário navega sem sair da tela
+	•	escolhe avatar
+	•	preview atualiza
+	•	salva
+
+Isso é melhor do que encher a própria tela de edição com 16 opções ao mesmo tempo.
+
+⸻
+
+5.3. Preview em tempo real
+
+Quando o usuário tocar num avatar:
+	•	atualizar imediatamente o preview no topo
+	•	sem precisar salvar antes para ver
+	•	ao confirmar, persistir
+
+==================================================
+PARTE 6 — ESTRATÉGIA VISUAL PARA EVITAR POLUIÇÃO
+
+Quero que a seleção seja suave e pouco poluída.
+
+Minha proposta oficial é:
+
+CADASTRO
+	•	mostrar primeiro só as 4 famílias
+	•	depois abrir 4 avatares por família
+
+EDIÇÃO DE PERFIL
+	•	abrir via bottom sheet
+	•	usar tabs/famílias no topo
+	•	mostrar no máximo 4 opções por vez
+	•	preview sempre visível
+
+⸻
+
+6.1. O que NÃO quero
+
+Não quero:
+	•	16 círculos enormes jogados na tela principal
+	•	uma tela pesada demais
+	•	visual de app genérico
+	•	excesso de elementos competindo com o restante do perfil
+
+⸻
+
+6.2. O que EU quero
+
+Quero:
+	•	seleção editorial
+	•	sensação de curadoria
+	•	movimento suave
+	•	pouco ruído visual
+	•	escolha prazerosa
+
+==================================================
+PARTE 7 — DADOS E PERSISTÊNCIA
+
+O avatar do usuário precisa ser salvo de forma permanente.
+
+Mesmo depois de:
+	•	logout
+	•	login
+	•	refresh
+	•	trocar de dispositivo
+	•	voltar ao app
+
+O avatar deve continuar sendo o mesmo.
+
+⸻
+
+7.1. O que salvar
+
+Salvar no perfil do usuário algo como:
+	•	avatar_id
+	•	avatar_family
+	•	avatar_name
+
+Exemplo:
+	•	avatar_id = “vela”
+	•	avatar_family = “objetos_literarios”
+	•	avatar_name = “A Vela”
+
+O importante é existir uma chave única estável.
+
+⸻
+
+7.2. Fallback
+
+Se por algum erro um avatar não estiver disponível:
+	•	usar fallback temporário com iniciais
+Mas isso deve ser só contingência técnica.
+
+==================================================
+PARTE 8 — MIGRAR OS PERFIS EXISTENTES
+
+Quero que os usuários já existentes no app sejam atualizados para ter avatares variados.
+
+Não quero que todos fiquem iguais.
+Não quero que todos recebam o mesmo avatar.
+Não quero que essa migração pareça artificial.
+
+⸻
+
+8.1. Estratégia de migração
+
+Atualizar os perfis existentes atribuindo avatares variados de forma distribuída.
+
+Pode ser feito assim:
+	•	percorrer todos os perfis existentes
+	•	se o usuário ainda não tiver avatar definido
+	•	atribuir um avatar automaticamente
+
+==================================================
+8.2. DISTRIBUIÇÃO DOS AVATARES EXISTENTES
+
+Quero uma distribuição equilibrada entre os 16 avatares.
+
+Evitar:
+	•	concentração excessiva em 1 ou 2 avatares
+	•	repetição exagerada
+
+Pode usar uma lógica tipo:
+	•	round-robin
+ou
+	•	hash estável por user id
+ou
+	•	distribuição pseudo-aleatória controlada
+
+Mas precisa parecer natural.
+
+⸻
+
+8.3. SE HOUVER DADOS DE PERFIL / ARQUÉTIPO, USAR COERÊNCIA
+
+Se o usuário já tiver traços ou arquétipo definidos, usar isso para sugerir ou atribuir melhor.
+
+Exemplo:
+	•	leitor contemplativo → Lua, Folha, Novelo
+	•	leitor analítico → Óculos, Espelho, Tempo
+	•	leitor sensível → Coração, Lua, Borboleta
+	•	leitor seletivo → Lacre, Chave, Pena
+	•	leitor observador → Bússola, Espelho, Óculos
+
+Se não existir dado suficiente:
+	•	atribuir de forma equilibrada.
+
+==================================================
+PARTE 9 — ONDE O AVATAR DEVE APARECER
+
+Depois de implementado, o avatar deve substituir a bolinha/iniciais em todos os lugares relevantes do app.
+
+Exemplos:
+	•	perfil do usuário
+	•	topo do perfil editável
+	•	cards de posts
+	•	respostas/comentários
+	•	listas da comunidade
+	•	sugestões de usuários
+	•	posts salvos
+	•	páginas de detalhe
+	•	qualquer lugar em que hoje aparece a bolinha com iniciais
+
+==================================================
+PARTE 10 — NOME DO AVATAR NO PERFIL
+
+Quero que, em alguns contextos, o avatar também possa aparecer com o nome.
+
+Exemplo de preview já definido:
+	•	Matile Facó
+	•	@matilefaco · A Vela
+
+Isso aparece na referência visual do preview do perfil.  ￼
+
+Esse texto pode ser usado:
+	•	no preview da edição
+	•	na tela de escolha
+	•	no cadastro
+	•	talvez em compartilhamentos, se fizer sentido
+
+Mas não precisa ficar aparecendo o tempo todo no perfil público.
+
+==================================================
+PARTE 11 — IMPLEMENTAÇÃO VISUAL
+
+Quero usar os próprios ícones/ilustrações definidos no material que enviei como base visual. As 4 famílias e os 16 nomes já estão organizados visualmente, com uma amostra de preview de perfil no documento.  ￼
+
+Se a implementação usar:
+	•	SVG inline
+	•	componente AvatarIcon por id
+	•	mapeamento de avatar_id → ilustração
+
+ótimo.
+Essa é uma boa solução.
+
+⸻
+
+11.1. RECOMENDAÇÃO TÉCNICA
+
+Criar algo como:
+	•	avatarDefinitions.ts
+	•	AvatarIcon.tsx
+	•	AvatarPicker.tsx
+
+Com estrutura tipo:
+	•	id
+	•	name
+	•	family
+	•	suggestedArchetypes
+	•	svg/component
+	•	maybe theme tokens
+
+==================================================
+PARTE 12 — NOVA UX DO BLOCO DE PERFIL
+
+No topo do perfil editável e público:
+	•	o avatar precisa ficar mais forte visualmente
+	•	elegante
+	•	coerente com a assinatura do leitor
+
+No lugar da bolinha com iniciais, o círculo deve conter o avatar ilustrado.
+
+E se necessário:
+	•	manter fundo suave por avatar
+	•	respeitar estética do app
+	•	não parecer emoji genérico
+
+==================================================
+PARTE 13 — O QUE QUERO QUE O REPLIT FAÇA NA PRÁTICA
+	1.	remover o seletor de “cor do avatar” da edição de perfil;
+	2.	implementar sistema de 16 avatares divididos em 4 famílias;
+	3.	permitir escolha do avatar no cadastro;
+	4.	permitir troca do avatar na edição do perfil;
+	5.	criar fluxo suave e não poluído para essa escolha;
+	6.	persistir o avatar corretamente no perfil do usuário;
+	7.	migrar todos os usuários existentes para avatares variados;
+	8.	substituir a bolinha com iniciais pelos avatares em todo o app;
+	9.	usar o arquétipo do leitor para sugerir avatares, quando possível;
+	10.	manter visual refinado e editorial.
+
+==================================================
+PARTE 14 — PRIORIDADE DE IMPLEMENTAÇÃO
+
+Implementar nesta ordem:
+	1.	modelagem de dados do avatar no perfil
+	2.	componentes visuais dos 16 avatares
+	3.	migração dos usuários existentes
+	4.	escolha no cadastro
+	5.	escolha na edição de perfil
+	6.	substituição da bolinha com iniciais em todo o app
+	7.	lógica de sugestão por arquétipo
+	8.	refinamento visual final
+
+==================================================
+PARTE 15 — RESULTADO FINAL ESPERADO
+
+Depois dessa mudança, quero que:
+	•	o leitor não escolha mais “uma cor”, mas uma identidade visual;
+	•	o perfil fique mais sofisticado e memorável;
+	•	cada usuário pareça mais único;
+	•	o app ganhe mais coerência estética;
+	•	a escolha do avatar seja prazerosa e intuitiva;
+	•	os avatares reforcem a identidade do Marginalia;
+	•	os perfis já existentes sejam automaticamente atualizados com avatares variados.
+
+Isso é uma mudança importante de branding e produto.
+Quero que seja tratada como feature central, não só visual.
+:::

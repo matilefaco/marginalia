@@ -6,9 +6,10 @@ import { canUserSeeMargin, getBlockedReason } from "@/utils/spoiler";
 import { formatReference, marginTypeLabel, timeAgo } from "@/utils/formatting";
 import { MARGIN_TYPES, EMOJI_REACTIONS } from "@/data/constants";
 import type { Margin } from "@/data/mockData";
-import { MOCK_BOOKS, MOCK_USERS } from "@/data/mockData";
+import { MOCK_BOOKS, MOCK_USERS, USER_AVATAR_MAP } from "@/data/mockData";
 import { ShareCardModal } from "./ShareCardModal";
 import { UserIdentity } from "@/components/UserIdentity";
+import { AvatarIcon } from "@/components/AvatarIcon";
 
 const USER_USERNAME_MAP: Record<string, string> = Object.fromEntries(
   MOCK_USERS.map((u) => [u.id, u.username])
@@ -238,6 +239,9 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
   const avatarColor = margin.userId === currentUser.id
     ? (currentUser.avatarColor || "#697962")
     : MOCK_USERS.find((u) => u.id === margin.userId)?.avatarColor || "#AE8F7D";
+  const avatarId = margin.userId === currentUser.id
+    ? currentUser.avatarId
+    : USER_AVATAR_MAP[margin.userId];
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
 
   const handleAuthorClick = (e: React.MouseEvent) => {
@@ -279,6 +283,7 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
             username={USER_USERNAME_MAP[margin.userId] ?? null}
             initials={margin.userInitials}
             avatarColor={avatarColor}
+            avatarId={avatarId}
             userId={margin.userId !== currentUser.id ? margin.userId : null}
             onNavigate={margin.userId !== currentUser.id ? handleAuthorClick : undefined}
           />
@@ -580,12 +585,11 @@ function SpoilerShieldCard({ margin, reason, inLibrary }: { margin: Margin; reas
 
           {/* Author row */}
           <div className="flex items-center gap-2 mb-3 pt-3 border-t border-[#454545]/5">
-            <div
-              className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: MOCK_USERS.find((u) => u.id === margin.userId)?.avatarColor || "#AE8F7D" }}
-            >
-              <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
-            </div>
+            <AvatarIcon
+              avatarId={USER_AVATAR_MAP[margin.userId]}
+              initials={margin.userInitials}
+              size="sm"
+            />
             <span className="font-sans font-light text-[10.5px] text-[#AE8F7D]">{margin.userName}</span>
             {authorUsername && (
               <span className="font-sans font-light text-[8.5px] text-[#454545]/30">

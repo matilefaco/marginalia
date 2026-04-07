@@ -1,11 +1,13 @@
 import React from "react";
 import { useLocation } from "wouter";
+import { AvatarIcon } from "./AvatarIcon";
 
 interface Props {
   name: string;
   username?: string | null;
   initials: string;
   avatarColor: string;
+  avatarId?: string | null;
   userId?: string | null;
   onNavigate?: (e: React.MouseEvent) => void;
   timestamp?: string | null;
@@ -18,6 +20,7 @@ export function UserIdentity({
   username,
   initials,
   avatarColor,
+  avatarId,
   userId,
   onNavigate,
   timestamp,
@@ -28,7 +31,7 @@ export function UserIdentity({
 
   const isClickable = !!(userId || onNavigate || (username && username.replace(/^@/, "")));
 
-  const avatarDim  = size === "md" ? "w-7 h-7" : "w-5 h-5";
+  const avatarSize = size === "md" ? "md" : "sm";
   const initFSize  = size === "md" ? "text-[9px]" : "text-[7px]";
   const nameFSize  = size === "md" ? "text-[11px]" : "text-[10px]";
   const userFSize  = size === "md" ? "text-[10px]" : "text-[9px]";
@@ -48,14 +51,20 @@ export function UserIdentity({
     }
   };
 
+  const avatarEl = avatarId ? (
+    <AvatarIcon avatarId={avatarId} initials={initials} size={avatarSize} />
+  ) : (
+    <div
+      className={`${size === "md" ? "w-7 h-7" : "w-5 h-5"} rounded-full flex items-center justify-center flex-shrink-0`}
+      style={{ backgroundColor: avatarColor }}
+    >
+      <span className={`font-sans ${initFSize} text-[#FAF8F3]`}>{initials}</span>
+    </div>
+  );
+
   const inner = (
     <div className={`flex items-center gap-2 min-w-0 ${className ?? ""}`}>
-      <div
-        className={`${avatarDim} rounded-full flex items-center justify-center flex-shrink-0`}
-        style={{ backgroundColor: avatarColor }}
-      >
-        <span className={`font-sans ${initFSize} text-[#FAF8F3]`}>{initials}</span>
-      </div>
+      {avatarEl}
       <div className="flex items-center gap-1 min-w-0">
         <span className={`font-sans font-medium ${nameFSize} text-[#2A2A2A] truncate`}>{name}</span>
         {username && (

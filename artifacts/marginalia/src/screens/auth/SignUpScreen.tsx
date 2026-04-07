@@ -1,15 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, ArrowLeft, Check, Loader2 } from "lucide-react";
-
-const AVATAR_COLORS = [
-  { id: "verde", label: "Verde musgo", value: "#697962" },
-  { id: "terracota", label: "Terracota", value: "#AE8F7D" },
-  { id: "bege", label: "Bege", value: "#BDAB9C" },
-  { id: "vinho", label: "Vinho", value: "#6B3A3A" },
-  { id: "azul", label: "Azul acinzentado", value: "#6A7D8A" },
-  { id: "marrom", label: "Marrom suave", value: "#8B6F5E" },
-  { id: "cinza", label: "Cinza", value: "#7A7A7A" },
-];
+import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 
 interface Props {
   onComplete: (data: {
@@ -19,7 +9,6 @@ interface Props {
     email: string;
     password: string;
     bio: string;
-    avatarColor: string;
   }) => Promise<void>;
   onBack: () => void;
   externalError?: string;
@@ -32,7 +21,6 @@ export function SignUpScreen({ onComplete, onBack, externalError }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [bio, setBio] = useState("");
-  const [avatarColor, setAvatarColor] = useState("#697962");
   const [loading, setLoading] = useState(false);
 
   const valid = firstName.trim() && email.trim() && password.trim().length >= 6;
@@ -40,7 +28,7 @@ export function SignUpScreen({ onComplete, onBack, externalError }: Props) {
   const handleSubmit = async () => {
     if (!valid || loading) return;
     setLoading(true);
-    await onComplete({ firstName, lastName, username, email, password, bio, avatarColor });
+    await onComplete({ firstName, lastName, username, email, password, bio });
     setLoading(false);
   };
 
@@ -58,10 +46,10 @@ export function SignUpScreen({ onComplete, onBack, externalError }: Props) {
 
       <div className="mb-8">
         <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-          3 de 4
+          3 de 5
         </span>
         <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full mt-2 mb-6">
-          <div className="h-full bg-[#AE8F7D] rounded-full w-3/4" />
+          <div className="h-full bg-[#AE8F7D] rounded-full w-3/5" />
         </div>
         <h2 className="font-serif italic text-[28px] text-[#454545] leading-tight mb-1">
           Criar conta
@@ -98,51 +86,6 @@ export function SignUpScreen({ onComplete, onBack, externalError }: Props) {
               placeholder="Clara"
               className="w-full font-serif italic text-[15px] text-[#454545] placeholder:text-[#454545]/20 bg-transparent border-b border-[#454545]/12 pb-2 outline-none focus:border-[#AE8F7D]/60 transition-colors"
             />
-          </div>
-        </div>
-
-        <div className="bg-[#EBE6DB]/40 border border-[#AE8F7D]/12 rounded-[12px] p-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300"
-              style={{ backgroundColor: avatarColor }}
-            >
-              <span className="font-serif italic text-[14px] text-[#FAF8F3]">
-                {firstName ? firstName.charAt(0).toUpperCase() : "A"}
-              </span>
-            </div>
-            <div>
-              <p className="font-sans text-[9px] font-light tracking-[0.16em] uppercase text-[#AE8F7D]">
-                Escolha um tom para sua presença
-              </p>
-              <p className="font-sans font-light text-[8px] text-[#454545]/35 mt-0.5">
-                Aparece no seu perfil e nos seus posts
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-2.5 flex-wrap">
-            {AVATAR_COLORS.map((color) => (
-              <button
-                key={color.id}
-                data-testid={`signup-color-${color.id}`}
-                onClick={() => setAvatarColor(color.value)}
-                className="relative w-8 h-8 rounded-full transition-all hover:scale-110 active:scale-95"
-                style={{
-                  backgroundColor: color.value,
-                  boxShadow:
-                    avatarColor === color.value
-                      ? `0 0 0 2px #FAF8F3, 0 0 0 3.5px ${color.value}`
-                      : "none",
-                }}
-                title={color.label}
-              >
-                {avatarColor === color.value && (
-                  <span className="absolute inset-0 flex items-center justify-center">
-                    <Check className="w-3.5 h-3.5 text-[#FAF8F3]" />
-                  </span>
-                )}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -219,7 +162,7 @@ export function SignUpScreen({ onComplete, onBack, externalError }: Props) {
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
             <>
-              Criar conta
+              Continuar
               <ArrowRight className="w-4 h-4" />
             </>
           )}

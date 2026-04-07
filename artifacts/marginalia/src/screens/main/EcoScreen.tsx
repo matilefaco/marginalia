@@ -6,6 +6,8 @@ import { useCommunityMargin, useCommunityReplies, formatCommunityMarginAge, tota
 import { EMOJI_REACTIONS } from "@/data/constants";
 import { marginTypeLabel } from "@/utils/formatting";
 import { UserIdentity } from "@/components/UserIdentity";
+import { AvatarIcon } from "@/components/AvatarIcon";
+import { USER_AVATAR_MAP } from "@/data/mockData";
 
 function CommentReactionBar({ commentId }: { commentId: number }) {
   const [myEmoji, setMyEmoji] = useState<string | null>(null);
@@ -222,6 +224,7 @@ export function EcoScreen() {
               username={margin.userSeedId ? `@${margin.userSeedId.replace(/^s_/, '').replace(/_/g, '')}` : null}
               initials={margin.userInitials ?? margin.userName[0]}
               avatarColor={margin.userAvatarColor ?? "#697962"}
+              avatarId={USER_AVATAR_MAP[margin.userSeedId?.replace(/^s_/, 'user_') ?? ""] ?? undefined}
               size="md"
             />
           </div>
@@ -388,6 +391,7 @@ export function EcoScreen() {
                 username={reply.userSeedId ? `@${reply.userSeedId.replace(/^s_/, '').replace(/_/g, '')}` : null}
                 initials={reply.userInitials ?? reply.userName[0]}
                 avatarColor={reply.userAvatarColor ?? "#697962"}
+                avatarId={USER_AVATAR_MAP[reply.userSeedId?.replace(/^s_/, 'user_') ?? ""] ?? undefined}
                 timestamp={formatCommunityMarginAge(reply.createdAt)}
               />
               <div className="pl-7">
@@ -408,11 +412,8 @@ export function EcoScreen() {
 
           {localReplies.map((reply, i) => (
             <div key={`local-${i}`} className="flex gap-3">
-              <div
-                className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                style={{ backgroundColor: currentUser.avatarColor || "#697962" }}
-              >
-                <span className="font-sans text-[8px] text-[#FAF8F3]">{currentUser.initials}</span>
+              <div className="flex-shrink-0 mt-0.5">
+                <AvatarIcon avatarId={currentUser.avatarId} initials={currentUser.initials} size={24} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-1.5">
@@ -431,12 +432,7 @@ export function EcoScreen() {
 
       {/* Reply input */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#FAF8F3]/96 backdrop-blur-md border-t border-[#AE8F7D]/15 px-5 py-3 flex items-center gap-3 max-w-md mx-auto">
-        <div
-          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: currentUser.avatarColor || "#697962" }}
-        >
-          <span className="font-sans text-[8px] text-[#FAF8F3]">{currentUser.initials}</span>
-        </div>
+        <AvatarIcon avatarId={currentUser.avatarId} initials={currentUser.initials} size={24} />
         <input
           ref={inputRef}
           value={replyText}

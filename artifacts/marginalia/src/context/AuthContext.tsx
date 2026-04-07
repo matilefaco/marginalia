@@ -17,6 +17,7 @@ export interface SupabaseProfile {
   instagram_handle: string | null;
   tiktok_handle: string | null;
   avatar_color: string | null;
+  avatar_id: string | null;
   email: string | null;
   reader_type_title: string | null;
   reader_type_description: string | null;
@@ -30,6 +31,7 @@ export interface SignUpParams {
   fullName: string;
   bio?: string;
   avatarColor?: string;
+  avatarId?: string;
 }
 
 interface AuthContextType {
@@ -65,6 +67,7 @@ function lsSet(key: string, value: string) {
 function persistColumnLocally(col: string, value: unknown, userId: string) {
   if (!value) return;
   if (col === "avatar_color") lsSet(`mg_avatar_color_${userId}`, value as string);
+  if (col === "avatar_id")   lsSet(`mg_avatar_id_${userId}`,    value as string);
   if (col === "email")        lsSet(`mg_email_${userId}`,        value as string);
 }
 
@@ -120,16 +123,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!error && data) {
       // Merge localStorage fallbacks for columns that may not exist in DB yet
       const localAvatarColor = lsGet(`mg_avatar_color_${userId}`);
+      const localAvatarId = lsGet(`mg_avatar_id_${userId}`);
       const localEmail = lsGet(`mg_email_${userId}`) ?? userEmail ?? null;
 
       const merged: SupabaseProfile = {
         ...data,
         avatar_color: data.avatar_color ?? localAvatarColor ?? "#697962",
+        avatar_id: data.avatar_id ?? localAvatarId ?? null,
         email: data.email ?? localEmail,
       };
 
       // Keep localStorage in sync with whatever DB returns
       if (data.avatar_color) lsSet(`mg_avatar_color_${userId}`, data.avatar_color);
+      if (data.avatar_id)    lsSet(`mg_avatar_id_${userId}`,    data.avatar_id);
       if (data.email) lsSet(`mg_email_${userId}`, data.email);
 
       setProfile(merged);
@@ -313,6 +319,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fullName,
     bio,
     avatarColor,
+    avatarId,
   }: SignUpParams) => {
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -331,6 +338,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       lsSet(`mg_userid_${username.toLowerCase()}`, userId); // for backfill during login
       lsSet(`mg_email_${userId}`, email);
       if (avatarColor) lsSet(`mg_avatar_color_${userId}`, avatarColor);
+      if (avatarId)    lsSet(`mg_avatar_id_${userId}`,    avatarId);
 
       // Server-side persistent mapping — awaited so it's reliable at signup
       try {
@@ -349,6 +357,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         full_name: fullName,
         bio: bio || null,
         avatar_color: avatarColor || "#697962",
+        avatar_id: avatarId || null,
         email,
       });
 

@@ -11,6 +11,7 @@ export interface User {
   bio: string;
   initials: string;
   avatarColor: string;
+  avatarId?: string;
   readerType?: string;
   instagram?: string;
   tiktok?: string;
@@ -3371,6 +3372,7 @@ export const MOCK_USERS: User[] = [
     bio: "Leitor compulsivo de livros e anotações.",
     initials: "LT",
     avatarColor: "#697962",
+    avatarId: "bussola",
     readerType: "observador",
     instagram: "",
     tiktok: "",
@@ -3391,6 +3393,7 @@ export const MOCK_USERS: User[] = [
     bio: "Leitora de Clarice, Neruda e qualquer coisa que me faça chorar no metrô.",
     initials: "AC",
     avatarColor: "#AE8F7D",
+    avatarId: "lua",
     readerType: "imersivo",
     instagram: "@anaclaraleitora",
     tiktok: "",
@@ -3412,6 +3415,7 @@ export const MOCK_USERS: User[] = [
     bio: "Teoria literária e café. Não necessariamente nessa ordem.",
     initials: "RM",
     avatarColor: "#454545",
+    avatarId: "oculos",
     readerType: "analista",
     instagram: "",
     tiktok: "@rafaelteoriza",
@@ -3433,6 +3437,7 @@ export const MOCK_USERS: User[] = [
     bio: "Ainda estou processando Middlemarch. E provavelmente sempre estarei.",
     initials: "JS",
     avatarColor: "#6B3A3A",
+    avatarId: "folha",
     readerType: "imersivo",
     instagram: "@juliasiqueira_livros",
     tiktok: "",
@@ -3454,6 +3459,7 @@ export const MOCK_USERS: User[] = [
     bio: "Leitora entre gêneros. Machado me criou e Clarice me desfez.",
     initials: "BS",
     avatarColor: "#BDAB9C",
+    avatarId: "ancora",
     readerType: "rebelde",
     instagram: "@biancasantos.lê",
     tiktok: "@biancabooks",
@@ -3475,6 +3481,7 @@ export const MOCK_USERS: User[] = [
     bio: "Poesia, feminismo e qualquer coisa de Adélia Prado.",
     initials: "CM",
     avatarColor: "#AE8F7D",
+    avatarId: "pena",
     readerType: "poética",
     instagram: "@carlalê",
     tiktok: "",
@@ -3496,6 +3503,7 @@ export const MOCK_USERS: User[] = [
     bio: "Clássicos, filosofia e café amargo às 23h.",
     initials: "PA",
     avatarColor: "#697962",
+    avatarId: "tempo",
     readerType: "filósofo",
     instagram: "",
     tiktok: "",
@@ -3517,6 +3525,7 @@ export const MOCK_USERS: User[] = [
     bio: "Fantasia, ficção científica e viagens intergalácticas.",
     initials: "IF",
     avatarColor: "#697962",
+    avatarId: "mapa",
     readerType: "exploradora",
     instagram: "@isabela.lê",
     tiktok: "@isafaro_reads",
@@ -3538,6 +3547,7 @@ export const MOCK_USERS: User[] = [
     bio: "Ensaio, psicanálise, mais ensaio.",
     initials: "LB",
     avatarColor: "#454545",
+    avatarId: "espelho",
     readerType: "ensaísta",
     instagram: "",
     tiktok: "@lucasbraga.pensa",
@@ -3559,6 +3569,7 @@ export const MOCK_USERS: User[] = [
     bio: "Clássicos e teatro. Às vezes ao mesmo tempo.",
     initials: "FS",
     avatarColor: "#BDAB9C",
+    avatarId: "lacre",
     readerType: "dramaturga",
     instagram: "@fersantos.lê",
     tiktok: "",
@@ -3580,6 +3591,7 @@ export const MOCK_USERS: User[] = [
     bio: "Latino-americano de coração. García Márquez me criou.",
     initials: "TC",
     avatarColor: "#AE8F7D",
+    avatarId: "borboleta",
     readerType: "mágico",
     instagram: "@thiago.realismo",
     tiktok: "",
@@ -3601,6 +3613,7 @@ export const MOCK_USERS: User[] = [
     bio: "Distopia, horror existencial e Kafka. Tudo bem.",
     initials: "BL",
     avatarColor: "#454545",
+    avatarId: "novelo",
     readerType: "sombria",
     instagram: "",
     tiktok: "@bialima.horror",
@@ -3622,6 +3635,7 @@ export const MOCK_USERS: User[] = [
     bio: "Literatura brasileira é a minha língua primeira.",
     initials: "MD",
     avatarColor: "#697962",
+    avatarId: "vela",
     readerType: "brasileiro",
     instagram: "@marcelo.literatura",
     tiktok: "",
@@ -3643,6 +3657,7 @@ export const MOCK_USERS: User[] = [
     bio: "Literatura estrangeira e tradução. Borges me curou.",
     initials: "SN",
     avatarColor: "#BDAB9C",
+    avatarId: "chave",
     readerType: "cosmopolita",
     instagram: "@sofia.traduz",
     tiktok: "",
@@ -3664,6 +3679,7 @@ export const MOCK_USERS: User[] = [
     bio: "Memórias, diários, autobiografias. Gente real.",
     initials: "LP",
     avatarColor: "#AE8F7D",
+    avatarId: "coracao",
     readerType: "memorialista",
     instagram: "@larissa.memoria",
     tiktok: "@larissap.reads",
@@ -3685,6 +3701,7 @@ export const MOCK_USERS: User[] = [
     bio: "Distopia, utopia e qualquer coisa que me faça questionar o amanhã.",
     initials: "RV",
     avatarColor: "#697962",
+    avatarId: "cafe",
     readerType: "futurista",
     instagram: "",
     tiktok: "@rodrigo.distopia",
@@ -3706,6 +3723,7 @@ export const MOCK_USERS: User[] = [
     bio: "Romance e drama. E choro em livros com a porta fechada.",
     initials: "AS",
     avatarColor: "#AE8F7D",
+    avatarId: "coracao",
     readerType: "emocional",
     instagram: "@amanda.bookstagram",
     tiktok: "@amandasena.reads",
@@ -3727,6 +3745,7 @@ export const MOCK_USERS: User[] = [
     bio: "Histórico e épico. Quanto mais grosso o livro, melhor.",
     initials: "VN",
     avatarColor: "#454545",
+    avatarId: "ancora",
     readerType: "épico",
     instagram: "",
     tiktok: "",
@@ -3748,6 +3767,7 @@ export const MOCK_USERS: User[] = [
     bio: "Poesia e silêncio. O resto é ruído.",
     initials: "CR",
     avatarColor: "#BDAB9C",
+    avatarId: "lua",
     readerType: "contemplativa",
     instagram: "@camila.verso",
     tiktok: "",
@@ -3759,6 +3779,9 @@ export const MOCK_USERS: User[] = [
     stats: { booksRead: 43, totalMargins: 187, totalHighlights: 134, debates: 22 },
   },
 ];
+
+export const USER_AVATAR_MAP: Record<string, string | undefined> = {};
+MOCK_USERS.forEach((u) => { USER_AVATAR_MAP[u.id] = u.avatarId; });
 
 export const MOCK_COLLECTIONS: Collection[] = [
   {

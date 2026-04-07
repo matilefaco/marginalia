@@ -5,6 +5,8 @@ import { MOCK_MARGINS, MOCK_BOOKS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { ArchetypeShareModal } from "@/components/cards/ArchetypeShareModal";
 import { BookCover } from "@/components/BookCover";
+import { AvatarIcon } from "@/components/AvatarIcon";
+import { AvatarPicker } from "@/components/AvatarPicker";
 import { Settings, Pencil, Check, X, Share2, Instagram, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import { EMOJI_REACTIONS, MARGIN_TYPES } from "@/data/constants";
@@ -18,13 +20,6 @@ import {
   type ArquetipoResult,
 } from "@/data/archetypes";
 
-const AVATAR_COLORS = [
-  { id: "verde", label: "Verde", value: "#697962" },
-  { id: "terracota", label: "Terracota", value: "#AE8F7D" },
-  { id: "bege", label: "Bege", value: "#BDAB9C" },
-  { id: "vinho", label: "Vinho", value: "#6B3A3A" },
-  { id: "cinza", label: "Cinza", value: "#7A7A7A" },
-];
 
 function TikTokIcon({ className }: { className?: string }) {
   return (
@@ -99,9 +94,10 @@ export function ProfileScreen() {
   const [editBio, setEditBio] = useState(currentUser.bio);
   const [editUsername, setEditUsername] = useState(currentUser.username);
   const [editAvatarColor, setEditAvatarColor] = useState(currentUser.avatarColor || "#697962");
+  const [editAvatarId, setEditAvatarId] = useState<string | null | undefined>(currentUser.avatarId ?? null);
   const [editInstagram, setEditInstagram] = useState(currentUser.instagram || "");
   const [editTikTok, setEditTikTok] = useState(currentUser.tiktok || "");
-  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -114,6 +110,7 @@ export function ProfileScreen() {
       setEditBio(currentUser.bio || "");
       setEditUsername(currentUser.username || "");
       setEditAvatarColor(currentUser.avatarColor || "#697962");
+      setEditAvatarId(currentUser.avatarId ?? null);
       setEditInstagram(currentUser.instagram || "");
       setEditTikTok(currentUser.tiktok || "");
     }
@@ -173,8 +170,6 @@ export function ProfileScreen() {
     return total > bestTotal ? m : best;
   }, null);
 
-  const avatarColor = editing ? editAvatarColor : (currentUser.avatarColor || "#697962");
-
   const saveEdit = async () => {
     if (isSaving) return;
     setIsSaving(true);
@@ -186,6 +181,7 @@ export function ProfileScreen() {
       username: editUsername.trim().replace(/^@/, "") || null,
       bio: editBio.trim() || null,
       avatar_color: editAvatarColor,
+      avatar_id: editAvatarId || null,
       instagram_handle: editInstagram.trim().replace(/^@/, "") || null,
       tiktok_handle: editTikTok.trim().replace(/^@/, "") || null,
     });
@@ -196,7 +192,7 @@ export function ProfileScreen() {
       return;
     }
     setEditing(false);
-    setShowColorPicker(false);
+    setShowAvatarPicker(false);
     setSavedToast(true);
     setTimeout(() => setSavedToast(false), 2500);
   };
@@ -207,10 +203,11 @@ export function ProfileScreen() {
     setEditBio(currentUser.bio);
     setEditUsername(currentUser.username);
     setEditAvatarColor(currentUser.avatarColor || "#697962");
+    setEditAvatarId(currentUser.avatarId ?? null);
     setEditInstagram(currentUser.instagram || "");
     setEditTikTok(currentUser.tiktok || "");
     setEditing(false);
-    setShowColorPicker(false);
+    setShowAvatarPicker(false);
   };
 
 
@@ -273,16 +270,16 @@ export function ProfileScreen() {
         {/* Identity */}
         <div className="flex items-start gap-4 mb-5">
           <div className="relative flex-shrink-0">
-            <div
-              data-testid="avatar-user"
-              className="w-[72px] h-[72px] rounded-full flex items-center justify-center transition-colors"
-              style={{ backgroundColor: avatarColor }}
-            >
-              <span className="font-serif italic text-[24px] text-[#FAF8F3]">{currentUser.initials}</span>
+            <div data-testid="avatar-user">
+              <AvatarIcon
+                avatarId={editing ? (editAvatarId ?? currentUser.avatarId) : currentUser.avatarId}
+                initials={currentUser.initials}
+                size="xl"
+              />
             </div>
             {editing && (
               <button
-                onClick={() => setShowColorPicker(!showColorPicker)}
+                onClick={() => setShowAvatarPicker(!showAvatarPicker)}
                 className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#FAF8F3] border border-[#AE8F7D]/30 flex items-center justify-center shadow-sm"
               >
                 <Pencil className="w-3 h-3 text-[#AE8F7D]" />
@@ -327,30 +324,20 @@ export function ProfileScreen() {
           </div>
         </div>
 
-        {/* Color Picker */}
-        {editing && showColorPicker && (
-          <div className="bg-[#FAF8F3] border border-[#AE8F7D]/20 rounded-[12px] p-4 mb-4">
+        {/* Avatar Picker */}
+        {editing && showAvatarPicker && (
+          <div className="bg-[#FAF8F3] border border-[#AE8F7D]/20 rounded-[16px] p-4 mb-4">
             <p className="font-sans text-[8px] font-light tracking-[0.16em] uppercase text-[#AE8F7D] mb-3">
-              Cor do avatar
+              Escolher avatar
             </p>
-            <div className="flex gap-3 justify-center">
-              {AVATAR_COLORS.map((color) => (
-                <button
-                  key={color.id}
-                  data-testid={`avatar-color-${color.id}`}
-                  onClick={() => setEditAvatarColor(color.value)}
-                  className="relative w-9 h-9 rounded-full transition-transform hover:scale-110"
-                  style={{ backgroundColor: color.value }}
-                  title={color.label}
-                >
-                  {editAvatarColor === color.value && (
-                    <span className="absolute inset-0 flex items-center justify-center">
-                      <Check className="w-4 h-4 text-[#FAF8F3]" />
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
+            <AvatarPicker
+              selected={editAvatarId}
+              onChange={(id) => {
+                setEditAvatarId(id);
+                setShowAvatarPicker(false);
+              }}
+              initials={currentUser.initials}
+            />
           </div>
         )}
 

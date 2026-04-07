@@ -2,10 +2,11 @@ import { useState, useRef } from "react";
 import { useParams, Link, useLocation } from "wouter";
 import { ArrowLeft, Send, Bookmark, BookmarkCheck } from "lucide-react";
 import { useApp } from "@/context/AppContext";
-import { MOCK_MARGINS, MOCK_REPLIES, MOCK_USERS } from "@/data/mockData";
+import { MOCK_MARGINS, MOCK_REPLIES, MOCK_USERS, USER_AVATAR_MAP } from "@/data/mockData";
 import { EMOJI_REACTIONS } from "@/data/constants";
 import { formatReference, marginTypeLabel, timeAgo } from "@/utils/formatting";
 import { UserIdentity } from "@/components/UserIdentity";
+import { AvatarIcon } from "@/components/AvatarIcon";
 
 const USER_USERNAME_MAP: Record<string, string> = Object.fromEntries(
   MOCK_USERS.map((u) => [u.id, u.username])
@@ -142,6 +143,9 @@ export function ThreadScreen() {
   const authorAvatarColor = margin.userId === currentUser.id
     ? (currentUser.avatarColor || "#697962")
     : MOCK_USERS.find((u) => u.id === margin.userId)?.avatarColor || "#697962";
+  const authorAvatarId = margin.userId === currentUser.id
+    ? currentUser.avatarId
+    : USER_AVATAR_MAP[margin.userId];
   const reactionTop = Object.entries(reactions).sort(([, a], [, b]) => b - a);
 
   const handleReply = () => {
@@ -234,6 +238,7 @@ export function ThreadScreen() {
               username={authorUsername ?? null}
               initials={margin.userInitials}
               avatarColor={authorAvatarColor}
+              avatarId={authorAvatarId}
               userId={margin.userId !== currentUser.id ? margin.userId : null}
               onNavigate={margin.userId !== currentUser.id ? handleAuthorClick : undefined}
               size="md"
@@ -408,6 +413,7 @@ export function ThreadScreen() {
                   username={replyUsername ?? null}
                   initials={reply.userInitials}
                   avatarColor={reply.avatarColor}
+                  avatarId={USER_AVATAR_MAP[reply.userId]}
                   userId={reply.userId !== currentUser.id ? reply.userId : null}
                   onNavigate={reply.userId !== currentUser.id ? (e) => { e.stopPropagation(); const u = USER_USERNAME_MAP[reply.userId]?.replace(/^@/, ""); if (u) navigate(`/perfil/${u}`); else navigate(`/user/${reply.userId}`); } : undefined}
                   timestamp={timeAgo(reply.createdAt)}
@@ -431,11 +437,8 @@ export function ThreadScreen() {
 
           {localReplies.map((reply, i) => (
             <div key={`local-${i}`} className="flex gap-3">
-              <div
-                className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                style={{ backgroundColor: currentUser.avatarColor || "#697962" }}
-              >
-                <span className="font-sans text-[8px] text-[#FAF8F3]">{currentUser.initials}</span>
+              <div className="flex-shrink-0 mt-0.5">
+                <AvatarIcon avatarId={currentUser.avatarId} initials={currentUser.initials} size={24} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-1.5">
@@ -454,12 +457,7 @@ export function ThreadScreen() {
 
       {/* Reply Input */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#FAF8F3]/96 backdrop-blur-md border-t border-[#AE8F7D]/15 px-5 py-3 flex items-center gap-3 max-w-md mx-auto">
-        <div
-          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: currentUser.avatarColor || "#697962" }}
-        >
-          <span className="font-sans text-[8px] text-[#FAF8F3]">{currentUser.initials}</span>
-        </div>
+        <AvatarIcon avatarId={currentUser.avatarId} initials={currentUser.initials} size={24} />
         <input
           ref={inputRef}
           data-testid="input-thread-reply"

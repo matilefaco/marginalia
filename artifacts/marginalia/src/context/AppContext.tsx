@@ -131,6 +131,7 @@ function buildUserFromProfile(
     instagram: profile.instagram_handle || "",
     tiktok: profile.tiktok_handle || "",
     avatarColor: profile.avatar_color || "#697962",
+    avatarId: profile.avatar_id || undefined,
     initials,
     readerType: "observador",
     readingSignature:
