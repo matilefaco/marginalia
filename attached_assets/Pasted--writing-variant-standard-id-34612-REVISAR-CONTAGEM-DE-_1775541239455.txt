@@ -1,0 +1,332 @@
+:::writing{variant=“standard” id=“34612”}
+REVISAR CONTAGEM DE POSTS DOS LIVROS + CORRIGIR INCONSISTÊNCIAS + AUMENTAR SIGNIFICATIVAMENTE OS POSTS REAIS DA COMUNIDADE
+
+Quero corrigir uma inconsistência grave entre os números exibidos no app e os dados reais dos livros.
+
+Hoje, vários livros aparecem com contagens como:
+	•	6 posts
+	•	7 posts
+	•	12 posts
+	•	etc.
+
+Mas quando o usuário clica nesses livros, a página do livro mostra:
+	•	0 posts
+ou
+	•	quase nenhum conteúdo real
+
+Isso quebra completamente a confiança do app e passa sensação de dado falso.
+
+Quero que isso seja corrigido de forma estrutural.
+
+==================================================
+PARTE 1 — PROBLEMA ATUAL
+
+Atualmente, no feed, na biblioteca e no explorar, vários livros exibem uma contagem de posts, mas essa contagem não bate com a realidade.
+
+Exemplo do erro:
+	•	o card do livro mostra “6 posts”
+	•	o usuário clica no livro
+	•	a página interna mostra “0 posts”
+	•	e a lista de posts está vazia
+
+Isso não pode acontecer.
+
+==================================================
+PARTE 2 — REGRA PRINCIPAL
+
+A contagem de posts de cada livro precisa refletir exatamente a quantidade de posts reais existentes para aquele livro.
+
+Ou seja:
+
+Se o livro mostra “6 posts”,
+então a página daquele livro precisa realmente conter 6 posts reais disponíveis.
+
+Se mostra “12 posts”,
+precisa haver 12 posts reais.
+
+Não quero mais números decorativos ou mockados que não correspondem ao conteúdo de verdade.
+
+==================================================
+PARTE 3 — REVISAR A FONTE DA CONTAGEM
+
+Quero que o Replit revise a lógica que calcula ou exibe a contagem de posts por livro.
+
+Verificar:
+	•	se a contagem está vindo de mock
+	•	se a contagem está hardcoded
+	•	se a contagem está vindo de cache antigo
+	•	se o join com posts/book_id está errado
+	•	se a UI mostra um número derivado de seed antiga
+	•	se a query da página do livro é diferente da query dos cards
+	•	se o filtro por categoria/tipo está escondendo posts reais
+	•	se o modo protegido está zerando a exibição erradamente
+	•	se a contagem considera posts protegidos mas a página não os mostra
+	•	se a página do livro está consultando a tabela errada
+	•	se a contagem está usando total bruto, mas a tela usa um filtro que exclui quase tudo
+
+==================================================
+PARTE 4 — A CONTAGEM PRECISA SER ÚNICA E CONFIÁVEL
+
+Quero uma única fonte de verdade para o total de posts de cada livro.
+
+Sugestão:
+	•	centralizar isso no banco
+	•	calcular com base em posts where book_id = x
+	•	considerar apenas posts válidos / publicados / visíveis
+
+A mesma lógica deve alimentar:
+	•	cards do feed
+	•	cards da biblioteca
+	•	cards do explorar
+	•	página interna do livro
+	•	heatmap / ritmo coletivo, se depender disso
+
+Não quero mais números diferentes em lugares diferentes.
+
+==================================================
+PARTE 5 — REVISAR A PÁGINA DO LIVRO
+
+Quero que a página de cada livro seja revisada para garantir que ela realmente carregue os posts daquele livro.
+
+Verificar especialmente:
+	•	filtro por book_id
+	•	filtros por tipo de post
+	•	filtros por visibilidade
+	•	filtro anti-spoiler
+	•	paginação
+	•	ordenação
+	•	estado vazio incorreto
+	•	query que retorna 0 mesmo quando há posts relacionados
+
+Se o livro tiver posts reais, a página precisa mostrar esses posts.
+
+==================================================
+PARTE 6 — AUMENTAR SIGNIFICATIVAMENTE O NÚMERO DE POSTS REAIS
+
+Além de corrigir a contagem, eu quero aumentar MUITO a quantidade de posts reais existentes na comunidade.
+
+Não quero que o app pareça vazio.
+
+Quero que a comunidade pareça viva.
+
+==================================================
+6.1. OBJETIVO
+
+Quero popular o app com muito mais posts reais de exemplo, distribuídos pelos livros já cadastrados.
+
+Esses posts precisam:
+	•	parecer naturais
+	•	parecer humanos
+	•	ter diversidade de estilos
+	•	ter diversidade emocional
+	•	ter diversidade de tipos de post
+	•	estar bem distribuídos entre os livros
+
+==================================================
+6.2. O QUE EU QUERO
+
+Quero que cada livro importante do app tenha uma base mínima de posts reais.
+
+Meta recomendada:
+
+livros principais / em destaque
+	•	entre 8 e 20 posts reais por livro
+
+livros secundários
+	•	entre 4 e 8 posts reais por livro
+
+livros novos ou menos centrais
+	•	pelo menos 2 a 4 posts reais por livro
+
+Isso já deixaria o app muito mais vivo.
+
+==================================================
+6.3. TIPOS DE POSTS QUE DEVEM EXISTIR
+
+Distribuir posts de tipos variados, como por exemplo:
+	•	insight
+	•	interpretação
+	•	crítica
+	•	pergunta
+	•	reação
+	•	citação favorita
+	•	conexão pessoal
+	•	leitura simbólica
+
+Não quero que todos os posts pareçam iguais.
+
+==================================================
+6.4. VARIAÇÃO DE TOM
+
+Os posts precisam variar entre:
+	•	curtos
+	•	médios
+	•	mais densos
+	•	emocionais
+	•	reflexivos
+	•	interpretativos
+	•	perguntas abertas
+	•	observações bonitas e compartilháveis
+
+Isso é importante para a comunidade parecer real.
+
+==================================================
+6.5. DISTRIBUIÇÃO POR LIVRO
+
+Quero que o Replit revise os livros que mais aparecem no app e garanta que eles tenham posts reais suficientes.
+
+Exemplos de livros que não podem parecer vazios:
+	•	A Hora da Estrela
+	•	Dom Casmurro
+	•	Grande Sertão: Veredas
+	•	Memórias Póstumas de Brás Cubas
+	•	Água Viva
+	•	Olhos d’Água
+	•	O Segundo Sexo
+	•	Crime e Castigo
+	•	O Estrangeiro
+	•	Assim Falou Zaratustra
+	•	etc.
+
+==================================================
+PARTE 7 — OS POSTS PRECISAM COMBINAR COM O NÚMERO EXIBIDO
+
+Quero duas coisas funcionando juntas:
+	1.	a contagem exibida precisa ser verdadeira
+	2.	o volume de posts reais precisa aumentar para sustentar essa contagem
+
+Ou seja:
+	•	se o app mostrar “6 posts”, precisam existir 6 posts reais
+	•	se mostrar “14 posts”, precisam existir 14 posts reais
+	•	se o app ainda não tiver posts suficientes, ou reduzir a contagem visual temporariamente, ou popular o banco de forma coerente
+
+Mas não quero mais discrepância entre promessa e realidade.
+
+==================================================
+PARTE 8 — FEED, BIBLIOTECA E EXPLORAR DEVEM BATER
+
+Quero consistência total entre estas áreas:
+	•	feed
+	•	biblioteca
+	•	explorar
+	•	página interna do livro
+
+Se um livro mostra 6 posts no explorar,
+ele precisa ter 6 posts visíveis/reais na página do livro, respeitando o modo de visualização do usuário.
+
+Se o modo protegido esconder parte do conteúdo, ainda assim:
+	•	a lógica precisa ser coerente
+	•	e a página não pode parecer vazia sem explicação
+
+==================================================
+PARTE 9 — MODO PROTEGIDO E CONTAGEM
+
+Se no modo protegido alguns posts não puderem ser exibidos abertamente, então:
+	•	eles ainda podem contar no total do livro
+	•	mas a página do livro precisa mostrar cards protegidos correspondentes
+	•	e não simplesmente “0 posts”
+
+Ou seja:
+mesmo em modo protegido, o livro não pode parecer vazio se ele tiver atividade real.
+
+Exemplo:
+	•	livro tem 8 posts
+	•	usuário só pode ver 3 completos
+	•	os outros 5 aparecem como protegidos / teasers seguros
+
+Mas nunca “0 posts” se houver atividade.
+
+==================================================
+PARTE 10 — PÁGINA DO LIVRO NÃO PODE FICAR VAZIA SE O LIVRO TIVER VIDA
+
+Quero que a página de livro sempre reflita a atividade real.
+
+Se houver posts reais:
+	•	mostrar posts completos
+ou
+	•	mostrar mistura de posts completos + protegidos
+ou
+	•	mostrar cards seguros
+
+Mas não deixar a página deserta.
+
+==================================================
+PARTE 11 — REVISÃO DE DADOS MOCKADOS / SEEDS
+
+Quero que o Replit revise o seed atual da comunidade.
+
+Se a maioria dos números estiver vindo de mock antigo:
+	•	atualizar esses dados
+	•	popular o banco com posts reais coerentes
+	•	sincronizar contagem e conteúdo
+
+Se for necessário:
+	•	criar uma rotina de seed mais rica
+	•	gerar vários posts por livro
+	•	criar comentários e reações compatíveis também
+
+==================================================
+PARTE 12 — TAMBÉM QUERO MAIS RESPOSTAS E REAÇÕES
+
+Se o número de posts aumentar, quero também que a comunidade pareça viva em torno deles.
+
+Então, quando possível, acrescentar:
+	•	respostas reais aos posts
+	•	reações rápidas variadas
+	•	alguns posts com mais atividade
+	•	alguns com menos atividade
+	•	distribuição mais natural
+
+Não quero que tudo pareça uniforme ou artificial.
+
+==================================================
+PARTE 13 — TESTES OBRIGATÓRIOS
+
+Depois da correção, testar:
+
+Teste 1
+
+Escolher um livro que mostra “6 posts” no explorar.
+Ao abrir a página do livro, verificar se realmente existem 6 conteúdos relacionados.
+
+Teste 2
+
+Escolher um livro no feed com contagem visível.
+Abrir a página interna e verificar coerência.
+
+Teste 3
+
+No modo protegido:
+verificar se os posts não desaparecem completamente;
+os conteúdos bloqueados devem virar cards protegidos, e não sumir.
+
+Teste 4
+
+No modo explorar livremente:
+verificar se o total exibido e o total carregado batem.
+
+Teste 5
+
+Revisar vários livros em sequência para garantir que não há discrepâncias.
+
+==================================================
+PARTE 14 — RESULTADO FINAL ESPERADO
+
+Depois dessa revisão, quero que:
+	1.	o número de posts mostrado em cada livro seja verdadeiro;
+	2.	a página de cada livro carregue o conteúdo real correspondente;
+	3.	a comunidade tenha muito mais posts reais distribuídos pelos livros;
+	4.	feed, biblioteca, explorar e página do livro estejam sincronizados;
+	5.	mesmo no modo protegido, a página do livro não pareça vazia se houver atividade;
+	6.	o app passe sensação de comunidade viva e confiável.
+
+==================================================
+PARTE 15 — PRIORIDADE
+
+Implementar nesta ordem:
+	1.	revisar a lógica da contagem de posts por livro
+	2.	corrigir a query / filtro da página do livro
+	3.	sincronizar contagem visual com conteúdo real
+	4.	aumentar significativamente o número de posts reais da comunidade
+	5.	adicionar também respostas e reações para sustentar a sensação de comunidade viva
+:::
