@@ -1,0 +1,147 @@
+Quero corrigir um erro crítico de navegação no catálogo de livros.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Hoje, quando o usuário clica em alguns livros, ele é direcionado para a página de um livro diferente daquele que escolheu.
+
+Ou seja:
+- o card mostrado é de um livro
+- mas a página que abre é de outro livro
+- a navegação está associando alguns cards ao detalhe errado
+
+Isso é um erro grave de experiência e confiança.
+
+==================================================
+2. COMPORTAMENTO CORRETO QUE EU QUERO
+==================================================
+
+Quando o usuário clicar em um livro específico, a página aberta deve ser exatamente a página daquele mesmo livro.
+
+Exemplo:
+- se o usuário clicar em “O Segundo Sexo”, deve abrir “O Segundo Sexo”
+- se clicar em “Água Viva”, deve abrir “Água Viva”
+- se clicar em “Assim Falou Zaratustra”, deve abrir “Assim Falou Zaratustra”
+
+Nunca pode abrir a página de outro livro por engano.
+
+==================================================
+3. O QUE PRECISA SER REVISADO
+==================================================
+
+Quero que você revise toda a lógica de clique e navegação dos livros.
+
+### Verificar especificamente:
+
+#### 3.1. Identificador do livro usado no clique
+- garantir que cada card esteja usando o `book.id` correto
+- garantir que o clique não esteja usando índice da lista (`index`) como referência principal
+- garantir que não esteja usando dados hardcoded
+- garantir que não exista reuso incorreto de props
+
+#### 3.2. Navegação para a rota/tela do livro
+- conferir se o `navigate()` / `router.push()` / `Link` está recebendo o identificador correto do livro clicado
+- garantir que o parâmetro passado na rota seja o `id` ou `slug` real do livro
+- revisar se existe mapeamento errado entre card e detalhe
+
+#### 3.3. Lista renderizada
+- revisar o `map()` das listas de livros
+- garantir que o card renderizado e o livro passado para o evento de clique sejam o mesmo objeto
+- garantir que não exista fechamento errado de variável
+- garantir que não exista reorder/filter/paginação quebrando a referência
+
+#### 3.4. Query da página de detalhe
+- garantir que a página de detalhe está buscando o livro com base no identificador recebido
+- garantir que não esteja caindo em fallback errado
+- garantir que não esteja abrindo sempre um “primeiro livro encontrado” ou “livro padrão”
+
+#### 3.5. Slug / id / external_api_id
+Se o sistema estiver misturando:
+- `id`
+- `slug`
+- `external_api_id`
+
+quero que você padronize isso.
+
+Cada livro precisa ter uma referência única, consistente e confiável para abrir a página certa.
+
+==================================================
+4. ISSO PRECISA VALER PARA TODAS AS LISTAS
+==================================================
+
+Quero que essa correção valha para todos os lugares onde livros aparecem:
+
+- explorar
+- livros por gênero
+- em alta na comunidade
+- rankings
+- biblioteca
+- sugestões
+- qualquer outra lista/carrossel de livros
+
+Não quero corrigir só uma seção.
+Quero corrigir a lógica inteira de navegação de livros.
+
+==================================================
+5. TESTES QUE QUERO QUE VOCÊ FAÇA
+==================================================
+
+Depois da correção, testar em várias listas diferentes:
+
+### Teste 1
+- clicar em um livro da seção “Em alta na comunidade”
+- verificar se abre a página correta
+
+### Teste 2
+- clicar em um livro da lista por gênero
+- verificar se abre a página correta
+
+### Teste 3
+- clicar em um livro com capa
+- verificar se abre a página correta
+
+### Teste 4
+- clicar em um livro sem capa/fallback
+- verificar se abre a página correta
+
+### Teste 5
+- testar livros em posições diferentes da lista
+- garantir que não existe erro por índice
+
+### Teste 6
+- trocar de gênero/página/lista e continuar testando
+- garantir que a navegação continue correta
+
+==================================================
+6. O QUE NÃO PODE MAIS ACONTECER
+==================================================
+
+Depois da correção, não pode mais acontecer:
+
+- clicar em um livro e abrir outro
+- card e detalhe não corresponderem
+- livro A abrir a página do livro B
+- navegação depender de índice errado
+- página de detalhe cair em livro incorreto por fallback
+
+==================================================
+7. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessa correção:
+
+- cada livro deve abrir sua própria página correta
+- o card clicado e a página aberta devem corresponder 100%
+- a navegação do catálogo deve ficar confiável
+- o usuário deve sentir que o app está consistente e bem estruturado
+
+==================================================
+8. PRIORIDADE
+==================================================
+
+Isso é prioridade alta, porque compromete a confiança básica do usuário no app.
+
+Implemente a correção na navegação e na identificação dos livros.
+Não quero apenas ajuste visual.
+Quero corrigir a lógica de roteamento e abertura da página de detalhe.
