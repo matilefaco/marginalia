@@ -82,7 +82,8 @@ type OnboardingStep = "welcome" | "genres" | "signup" | "spoiler" | "books" | "l
 
 function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   const { updatePreferredGenres, updateSpoilerPreference, completeOnboarding } = useApp();
-  const { signUp, updateProfile } = useAuth();
+  const { signUp } = useAuth();
+  const [, navigate] = useLocation();
   const [step, setStep] = useState<OnboardingStep>("welcome");
   const [pendingGenres, setPendingGenres] = useState<string[]>([]);
   const [pendingSpoiler, setPendingSpoiler] = useState<SpoilerPreference | null>(null);
@@ -90,6 +91,7 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 
   const finish = () => {
     completeOnboarding();
+    navigate("/");   // Ensure MainApp opens on the home feed, not on whatever path was last visited
     onComplete();
   };
 
@@ -138,13 +140,13 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
               ? `${data.firstName} ${data.lastName}`
               : data.firstName,
             bio: data.bio,
+            avatarId: data.avatarId, // saved in the initial profile upsert inside signUp()
           });
           if (error) {
             setSignupError(error);
             return;
           }
           updatePreferredGenres(pendingGenres);
-          await updateProfile({ avatar_id: data.avatarId });
           setStep("spoiler");
         }}
         onBack={() => setStep("genres")}

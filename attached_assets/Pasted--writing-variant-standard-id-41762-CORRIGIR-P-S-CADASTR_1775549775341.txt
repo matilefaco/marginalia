@@ -1,0 +1,210 @@
+:::writing{variant=“standard” id=“41762”}
+CORRIGIR PÓS-CADASTRO — ENTRAR NO FEED, NÃO EM PREFERÊNCIAS + PERSISTIR O AVATAR ESCOLHIDO NO ONBOARDING
+
+O fluxo do cadastro agora está melhor, mas ainda existem dois problemas importantes no comportamento final do onboarding.
+
+Quero corrigir exatamente estes pontos:
+
+==================================================
+PROBLEMA 1 — TELA ERRADA APÓS FINALIZAR O CADASTRO
+
+Hoje, assim que o leitor termina o cadastro, a primeira tela que ele vê é a de:
+
+👉 Preferências
+
+Isso está errado.
+
+A primeira tela após concluir o onboarding deve ser:
+
+👉 a tela principal do app, ou seja, o feed / início
+
+O usuário acabou de entrar no Marginalia. O destino natural dele precisa ser a experiência principal do produto, não uma tela de configuração.
+
+==================================================
+COMPORTAMENTO CORRETO PÓS-CADASTRO
+
+Depois que o usuário concluir todas as etapas do cadastro:
+	1.	salvar todos os dados do onboarding;
+	2.	marcar o onboarding como concluído;
+	3.	criar/confirmar a sessão autenticada;
+	4.	redirecionar o usuário para a tela principal do app;
+	5.	a primeira tela exibida deve ser:
+	•	Início
+	•	Feed principal
+	•	Home do app
+
+Não deve abrir:
+	•	Preferências
+	•	Perfil
+	•	edição de perfil
+	•	tela intermediária de configuração
+
+==================================================
+REGRA EXATA
+
+Ao finalizar o onboarding:
+
+❌ não navegar para /preferences
+❌ não definir a aba inicial como Preferências
+❌ não disparar nenhum modal/configuração antes do feed
+
+✅ navegar para a rota/tela principal do app
+✅ abrir no tab “Início”
+✅ exibir o feed principal como primeira experiência
+
+==================================================
+O QUE O REPLIT DEVE REVISAR
+
+Verificar onde, após a conclusão do cadastro, está sendo feito o redirecionamento final.
+
+Quero que revise:
+	•	router.push(...)
+	•	router.replace(...)
+	•	navigate(...)
+	•	setCurrentTab(...)
+	•	setInitialScreen(...)
+	•	qualquer useEffect que, após onboarding concluído, empurre o usuário para Preferências
+
+Quero alterar isso para que o destino final seja sempre o feed.
+
+Exemplo conceitual:
+	•	finalizar cadastro → navigate('/feed')
+ou
+	•	finalizar cadastro → setCurrentTab('home')
+
+A lógica final precisa ser:
+👉 onboarding concluído = abrir Início
+
+==================================================
+PROBLEMA 2 — AVATAR ESCOLHIDO NO CADASTRO NÃO FICA SALVO
+
+Hoje o usuário escolhe um avatar durante o cadastro, mas esse avatar não está ficando salvo de forma definitiva no perfil.
+
+Isso está errado.
+
+O avatar escolhido no onboarding precisa ser persistido permanentemente e reaparecer depois no perfil do usuário, inclusive após logout/login.
+
+==================================================
+COMPORTAMENTO CORRETO DO AVATAR
+
+Quando o usuário escolher o avatar no cadastro e finalizar a conta, o sistema deve:
+	1.	capturar o avatar_id escolhido;
+	2.	salvar esse avatar_id no perfil do usuário no banco;
+	3.	carregar esse avatar quando o perfil for renderizado;
+	4.	mostrar esse mesmo avatar no topo do perfil;
+	5.	manter o avatar igual depois de:
+	•	refresh
+	•	logout/login
+	•	reabertura do app
+	•	troca de tela
+
+==================================================
+O QUE PRECISA SER SALVO
+
+No perfil do usuário, persistir pelo menos:
+	•	avatar_id
+	•	opcionalmente avatar_family
+	•	opcionalmente avatar_name
+
+Exemplo:
+	•	avatar_id = 'pena'
+	•	avatar_family = 'objetos_literarios'
+	•	avatar_name = 'A Pena'
+
+Mas o mínimo obrigatório é:
+👉 avatar_id
+
+==================================================
+PONTO TÉCNICO IMPORTANTE
+
+Hoje provavelmente está acontecendo uma destas situações:
+	1.	o avatar está só no state local da tela de cadastro;
+	2.	o avatar não está sendo enviado no payload final de criação do perfil;
+	3.	o avatar está sendo sobrescrito depois por valor padrão;
+	4.	o perfil está sendo criado sem avatar_id;
+	5.	o app não está relendo o avatar salvo depois do signup;
+	6.	o onboarding salva os outros dados, mas não o avatar;
+	7.	existe fallback automático para a bolinha antiga e ele está vencendo o avatar novo.
+
+Quero que o Replit revise isso ponto por ponto.
+
+==================================================
+LÓGICA ESPERADA NO FINAL DO ONBOARDING
+
+Ao concluir o cadastro, o payload final do usuário/perfil deve incluir:
+	•	nome
+	•	sobrenome
+	•	username
+	•	email
+	•	bio
+	•	gêneros selecionados
+	•	modo de exploração
+	•	avatar_id
+	•	livros iniciais, se houver
+	•	onboarding_completed = true
+
+Ou seja:
+👉 o avatar tem que entrar no mesmo save final do onboarding
+
+==================================================
+CARREGAMENTO DO PERFIL
+
+Depois do cadastro concluído, ao abrir o perfil do usuário, o sistema deve:
+	•	buscar o perfil salvo
+	•	ler avatar_id
+	•	renderizar o componente visual correspondente
+	•	não cair em fallback incorreto
+
+Se não houver avatar salvo por algum erro, pode usar fallback temporário.
+Mas o ideal é:
+👉 o avatar já vir salvo corretamente desde o onboarding
+
+==================================================
+TESTES OBRIGATÓRIOS
+
+Quero que o Replit teste os seguintes cenários:
+
+Teste 1 — pós-cadastro
+	•	concluir todo o onboarding
+	•	verificar qual é a primeira tela exibida
+	•	resultado esperado: Feed / Início
+
+Teste 2 — avatar persistido
+	•	escolher um avatar específico no cadastro
+	•	concluir onboarding
+	•	abrir perfil
+	•	verificar se o avatar exibido é exatamente o escolhido
+
+Teste 3 — persistência real
+	•	concluir cadastro
+	•	fazer logout
+	•	fazer login novamente
+	•	abrir perfil
+	•	verificar se o mesmo avatar continua lá
+
+Teste 4 — refresh / reabertura
+	•	recarregar o app
+	•	verificar se o avatar permanece correto
+	•	verificar se o app abre normalmente no fluxo autenticado
+
+Teste 5 — sem redirecionamento indevido
+	•	concluir onboarding
+	•	garantir que não abre Preferências automaticamente
+
+==================================================
+RESULTADO FINAL ESPERADO
+
+Depois dessa correção, quero que:
+	1.	ao terminar o cadastro, o usuário entre direto no feed principal;
+	2.	a tela de Preferências não seja mais a primeira tela pós-cadastro;
+	3.	o avatar escolhido no onboarding seja salvo de verdade no perfil;
+	4.	esse avatar continue igual depois de logout/login e reabertura do app;
+	5.	a experiência final do onboarding fique coerente e profissional.
+
+==================================================
+PRIORIDADE
+
+Alta.
+
+Esses dois ajustes são importantes para a experiência de primeira entrada do usuário no app e para a consistência da identidade visual do perfil.
+:::
