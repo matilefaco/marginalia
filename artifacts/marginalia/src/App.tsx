@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -213,20 +213,33 @@ function MainApp() {
   );
 }
 
+// Three-state machine for the auth gate:
+// "loading"  — waiting for Supabase auth to resolve on mount
+// "onboarding" — no session (new user or logged-out user) → show welcome/onboarding
+// "app"      — session exists and onboarding is complete → show main feed
+type GateState = "loading" | "onboarding" | "app";
+
 function AppContent() {
   const { session, authLoading } = useAuth();
   const [splashDone, setSplashDone] = useState(false);
+  const [gate, setGate] = useState<GateState>("loading");
   const [location] = useLocation();
-  // Determined once after auth resolves — true if user had no session on first load.
-  // Stays stable even when signUp() creates a new session mid-onboarding.
-  const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
-  const [onboardingDone, setOnboardingDone] = useState(false);
+  const prevSession = useRef(session);
 
+  // On mount: once auth resolves, decide initial gate state
   useEffect(() => {
-    if (!authLoading && needsOnboarding === null) {
-      setNeedsOnboarding(!session);
+    if (!authLoading) {
+      setGate(session ? "app" : "onboarding");
     }
   }, [authLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Watch for logout: session goes from non-null → null after first load
+  useEffect(() => {
+    if (prevSession.current !== null && session === null) {
+      setGate("onboarding");
+    }
+    prevSession.current = session;
+  }, [session]);
 
   /* Public routes — accessible without auth, no splash */
   if (location.startsWith("/livro/")) {
@@ -243,14 +256,17 @@ function AppContent() {
     return <Splash onDone={() => setSplashDone(true)} />;
   }
 
-  if (authLoading || needsOnboarding === null) {
+  if (gate === "loading") {
     return <LoadingDots />;
   }
 
-  if (needsOnboarding && !onboardingDone) {
+  if (gate === "onboarding") {
     return (
       <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto bg-[#FAF8F3] shadow-2xl">
-        <OnboardingFlow onComplete={() => setOnboardingDone(true)} />
+        <OnboardingFlow
+          key={session?.user?.id ?? "logged-out"}
+          onComplete={() => setGate("app")}
+        />
       </div>
     );
   }

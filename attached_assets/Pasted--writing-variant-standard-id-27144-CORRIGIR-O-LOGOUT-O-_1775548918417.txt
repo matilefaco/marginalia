@@ -1,0 +1,217 @@
+:::writing{variant=“standard” id=“27144”}
+CORRIGIR O LOGOUT — O USUÁRIO PRECISA CONSEGUIR SAIR DA CONTA DE FORMA CONFIÁVEL
+
+O logout está quebrado.
+
+Hoje o usuário não consegue sair da conta corretamente, e isso é um erro crítico de autenticação/fluxo.
+
+Quero que o Replit revise e corrija completamente a lógica de logout do app.
+
+==================================================
+OBJETIVO
+
+Quando o usuário tocar em:
+
+👉 “Sair da conta”
+
+o app deve realmente encerrar a sessão atual e levar o usuário para a tela correta.
+
+Não pode:
+	•	parecer que saiu mas continuar logado
+	•	travar
+	•	não responder ao clique
+	•	manter dados da sessão antiga
+	•	voltar automaticamente para dentro da conta
+	•	quebrar o onboarding/login depois
+
+==================================================
+PARTE 1 — COMPORTAMENTO CORRETO DO LOGOUT
+
+Ao clicar em “Sair da conta”, o app deve:
+	1.	encerrar a sessão no Supabase/Auth
+	2.	limpar estado local do usuário autenticado
+	3.	limpar caches/snapshots temporários ligados à sessão
+	4.	redirecionar para a tela inicial de login/entrada
+	5.	impedir que a interface antiga continue aparecendo como se o usuário ainda estivesse dentro da conta
+
+==================================================
+PARTE 2 — O QUE PRECISA SER REVISADO
+
+Quero que o Replit revise estes pontos:
+
+⸻
+
+2.1. AÇÃO DO BOTÃO
+
+Verificar se o botão “Sair da conta” está realmente chamando a função de logout.
+
+Exemplo esperado:
+	•	supabase.auth.signOut()
+
+ou a função equivalente centralizada do app.
+
+Se o botão estiver só:
+	•	fechando modal
+	•	mudando tela visualmente
+	•	limpando um state local superficial
+então está errado.
+
+==================================================
+2.2. SIGNOUT REAL NO AUTH
+
+O logout precisa encerrar a sessão de verdade.
+
+Verificar se está sendo executado algo como:
+
+const { error } = await supabase.auth.signOut();
+
+Se houver erro:
+	•	tratar o erro corretamente
+	•	não fingir que saiu
+	•	mostrar feedback ao usuário
+
+==================================================
+2.3. LIMPAR ESTADO LOCAL
+
+Depois do signOut, limpar completamente estados como:
+	•	currentUser
+	•	session
+	•	profile
+	•	onboarding temp state
+	•	caches ligados ao usuário
+	•	preferências em memória da sessão atual
+	•	dados temporários da UI que pertencem ao usuário autenticado
+
+Se o app usa Context/Store/Zustand/Redux/etc., resetar corretamente.
+
+==================================================
+2.4. REDIRECIONAMENTO
+
+Depois do logout bem sucedido, redirecionar para a tela certa.
+
+Quero que vá para:
+	•	tela de entrada/login
+ou
+	•	tela inicial pública do app
+
+Mas tem que ser uma navegação limpa.
+
+Não quero:
+	•	voltar para feed
+	•	voltar para perfil
+	•	ficar numa tela quebrada
+	•	continuar vendo dados privados da conta
+
+==================================================
+2.5. LISTENER DE AUTH
+
+Revisar se o app depende de onAuthStateChange ou listener equivalente.
+
+Quando a sessão virar null, o app deve:
+	•	reconhecer isso
+	•	desmontar a área autenticada
+	•	mostrar a área deslogada
+
+Se isso não estiver acontecendo, corrigir.
+
+==================================================
+PARTE 3 — PROVÁVEIS CAUSAS DO BUG
+
+Quero que o Replit verifique se o erro vem de algum destes pontos:
+	•	botão não chama a função
+	•	função de logout não usa await
+	•	signOut() falha silenciosamente
+	•	session state não é atualizado
+	•	currentUser continua populado no Context
+	•	listener de auth não reage ao logout
+	•	roteamento automático joga o usuário de volta para dentro
+	•	cache local mantém perfil antigo
+	•	logout visual acontece, mas sessão continua ativa
+	•	algum guard de rota está mal configurado
+
+==================================================
+PARTE 4 — COMPORTAMENTO VISUAL DURANTE O LOGOUT
+
+Quero um comportamento elegante:
+
+Ao tocar em “Sair da conta”:
+	•	botão pode ficar em loading
+	•	impedir clique duplo
+	•	esperar conclusão do signOut
+	•	só depois redirecionar
+
+Exemplo:
+	•	texto do botão muda para “Saindo…”
+ou
+	•	spinner discreto
+
+==================================================
+PARTE 5 — FEEDBACK DE ERRO
+
+Se o logout falhar, o app deve informar isso.
+
+Exemplo de mensagem:
+	•	“Não foi possível sair da conta agora. Tente novamente.”
+
+Mas só mostrar erro se realmente falhar.
+
+Não pode ficar silenciosamente quebrado.
+
+==================================================
+PARTE 6 — DADOS QUE NÃO DEVEM SER APAGADOS
+
+Logout não deve apagar os dados persistidos da conta no banco.
+
+Ou seja:
+	•	progresso do leitor continua salvo
+	•	preferências continuam salvas
+	•	avatar continua salvo
+	•	gêneros continuam salvos
+	•	posts continuam salvos
+
+O logout só encerra a sessão ativa do dispositivo/app.
+
+==================================================
+PARTE 7 — TESTES OBRIGATÓRIOS
+
+Depois da correção, testar:
+
+Teste 1
+	•	entrar na conta
+	•	abrir Preferências
+	•	tocar em “Sair da conta”
+	•	verificar se vai para login/entrada
+
+Teste 2
+	•	depois do logout, tentar voltar usando navegação do navegador/app
+	•	verificar se não entra de volta na conta sem autenticar
+
+Teste 3
+	•	fazer login novamente
+	•	verificar se os dados do perfil continuam intactos
+
+Teste 4
+	•	testar logout com internet normal
+	•	testar comportamento se houver erro de rede
+
+Teste 5
+	•	garantir que depois do logout não ficam dados privados visíveis na UI
+
+==================================================
+PARTE 8 — RESULTADO FINAL ESPERADO
+
+Depois da correção, quero que:
+	1.	o botão “Sair da conta” funcione sempre;
+	2.	a sessão seja encerrada de verdade;
+	3.	o estado do usuário seja limpo corretamente;
+	4.	o app redirecione para a tela de login/entrada;
+	5.	o usuário não fique preso numa sessão fantasma;
+	6.	ao logar de novo, os dados continuem salvos normalmente.
+
+==================================================
+PRIORIDADE
+
+Alta.
+
+Isso é bug crítico de autenticação e precisa ser corrigido imediatamente.
+:::

@@ -1,5 +1,6 @@
-import { ArrowLeft, ArrowRight, Globe, Shield, LogOut, Bell, Lock, Info } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { useState } from "react";
+import { ArrowLeft, ArrowRight, Globe, Shield, LogOut, Bell, Lock, Info, Loader2 } from "lucide-react";
+import { Link } from "wouter";
 import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { SPOILER_PREFERENCES, GENRES, type SpoilerPreference } from "@/data/constants";
@@ -9,11 +10,22 @@ const RHYTHM_ICONS = [Shield, Globe];
 export function SettingsScreen() {
   const { currentUser, userPrefs, updateSpoilerPreference, updatePreferredGenres } = useApp();
   const { signOut } = useAuth();
-  const [, navigate] = useLocation();
+  const [logoutLoading, setLogoutLoading] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
 
   const handleLogout = async () => {
-    await signOut();
-    navigate("/");
+    if (logoutLoading) return;
+    setLogoutLoading(true);
+    setLogoutError("");
+    try {
+      await signOut();
+      // AppContent reacts to session becoming null and shows the welcome screen.
+      // No manual navigation needed — the auth listener handles the redirect.
+    } catch {
+      setLogoutError("Não foi possível sair da conta agora. Tente novamente.");
+    } finally {
+      setLogoutLoading(false);
+    }
   };
 
   const toggleGenre = (genre: string) => {
@@ -155,13 +167,28 @@ export function SettingsScreen() {
               </Link>
             ))}
           </div>
+          {logoutError && (
+            <p className="mt-4 text-center font-sans font-light text-[11px] text-red-400">
+              {logoutError}
+            </p>
+          )}
           <button
             data-testid="button-logout"
             onClick={handleLogout}
-            className="mt-6 w-full flex items-center justify-center gap-2 border border-red-200 text-red-400 font-sans font-light text-[12px] tracking-[0.1em] py-3.5 rounded-[10px] hover:bg-red-50 transition-colors"
+            disabled={logoutLoading}
+            className="mt-4 w-full flex items-center justify-center gap-2 border border-red-200 text-red-400 font-sans font-light text-[12px] tracking-[0.1em] py-3.5 rounded-[10px] hover:bg-red-50 disabled:opacity-50 transition-colors"
           >
-            <LogOut className="w-4 h-4" />
-            Sair da conta
+            {logoutLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Saindo…
+              </>
+            ) : (
+              <>
+                <LogOut className="w-4 h-4" />
+                Sair da conta
+              </>
+            )}
           </button>
         </section>
       </div>
