@@ -27,6 +27,7 @@ import { PreferencesNotificationsScreen } from "@/screens/main/PreferencesNotifi
 import { PreferencesPrivacyScreen } from "@/screens/main/PreferencesPrivacyScreen";
 import { AboutScreen } from "@/screens/main/AboutScreen";
 import { ThreadScreen } from "@/screens/main/ThreadScreen";
+import { EcoScreen } from "@/screens/main/EcoScreen";
 import { UserProfileScreen } from "@/screens/main/UserProfileScreen";
 import { PublicBookScreen } from "@/screens/main/PublicBookScreen";
 import NotFound from "@/pages/not-found";
@@ -181,7 +182,7 @@ const NO_NAVBAR_PATHS = [
 
 function MainApp() {
   const [location] = useLocation();
-  const hideNavbar = NO_NAVBAR_PATHS.includes(location) || location.startsWith("/thread/");
+  const hideNavbar = NO_NAVBAR_PATHS.includes(location) || location.startsWith("/thread/") || location.startsWith("/eco/");
 
   return (
     <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto relative bg-[#FAF8F3] shadow-2xl overflow-x-hidden">
@@ -199,6 +200,7 @@ function MainApp() {
           <Route path="/settings/privacy" component={PreferencesPrivacyScreen} />
           <Route path="/settings/about" component={AboutScreen} />
           <Route path="/thread/:id" component={ThreadScreen} />
+          <Route path="/eco/:id" component={EcoScreen} />
           <Route path="/user/:id" component={UserProfileScreen} />
           <Route component={NotFound} />
         </Switch>

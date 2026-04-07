@@ -160,6 +160,25 @@ export function formatCommunityMarginAge(createdAt: string): string {
   return `${Math.floor(diff / 604800)}sem`;
 }
 
+export function useCommunityMargin(id: number | null) {
+  const [margin, setMargin] = useState<CommunityMargin | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    setNotFound(false);
+    get<{ margin: CommunityMargin }>(`/community/margins/${id}`).then((data) => {
+      if (data) setMargin(data.margin);
+      else setNotFound(true);
+      setLoading(false);
+    });
+  }, [id]);
+
+  return { margin, loading, notFound };
+}
+
 export function totalReactions(reactions: Record<string, number>): number {
   return Object.values(reactions).reduce((a, b) => a + b, 0);
 }

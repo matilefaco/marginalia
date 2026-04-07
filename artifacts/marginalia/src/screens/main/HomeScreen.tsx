@@ -201,7 +201,8 @@ function CommunityFeedSection() {
         {margins.map((m) => {
           const rxTotal = totalReactions(m.reactions);
           return (
-            <div key={m.id} className="bg-[#FAF8F3] border border-[#697962]/12 rounded-[14px] p-4">
+            <Link key={m.id} href={`/eco/${m.id}`}>
+            <div className="bg-[#FAF8F3] border border-[#697962]/12 rounded-[14px] p-4 active:opacity-80 transition-opacity cursor-pointer">
               <div className="flex items-center gap-2 mb-2.5">
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-medium text-white"
@@ -240,6 +241,7 @@ function CommunityFeedSection() {
                 )}
               </div>
             </div>
+            </Link>
           );
         })}
       </div>

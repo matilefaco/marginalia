@@ -1,0 +1,201 @@
+Quero corrigir um problema importante de interação no feed e nas áreas onde aparecem ecos da comunidade.
+
+Hoje, vários desses ecos/cartões estão aparecendo visualmente, mas não estão clicáveis e não estão permitindo interação real do usuário.
+
+Isso precisa ser corrigido.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Os ecos exibidos em seções como:
+- Ecos da comunidade
+- Feed principal
+- Cards de ecos em listas
+- Ecos mostrados em livros
+- Outros blocos semelhantes
+
+não estão funcionando como elementos interativos.
+
+Ou seja:
+- o usuário toca no eco e nada acontece
+- não abre a página/detalhe do eco
+- não entra no conteúdo completo
+- não consegue interagir direito com ele
+
+Isso faz o app parecer quebrado/incompleto.
+
+==================================================
+2. COMPORTAMENTO CORRETO QUE EU QUERO
+==================================================
+
+Todo eco exibido no app deve ser clicável.
+
+Quando o usuário tocar em um eco, quero que abra a página completa daquele eco específico.
+
+Essa página do eco deve permitir:
+- ver o conteúdo completo do eco
+- ver o trecho/citação
+- ver o comentário/anotação do leitor
+- ver o livro associado
+- ver quem publicou
+- ver reações
+- ver comentários/replies
+- reagir
+- comentar
+- salvar
+- responder com margem, se essa função existir
+
+Ou seja:
+o eco precisa deixar de ser um card estático e passar a ser uma porta de entrada real para interação.
+
+==================================================
+3. O QUE PRECISA ACONTECER AO CLICAR NO ECO
+==================================================
+
+Quando o usuário tocar em qualquer card de eco:
+
+### Deve abrir:
+a página específica daquele eco
+
+### E essa página deve mostrar:
+- usuário que publicou
+- data/tempo
+- trecho citado
+- comentário/reflexão
+- livro relacionado
+- reações existentes
+- botão/área para reagir
+- comentários existentes
+- replies, se houver
+- caixa de comentário, se aplicável
+- opção de salvar
+- opção de compartilhar
+- opção de responder com margem, se essa função já existir
+
+==================================================
+4. ISSO PRECISA VALER PARA TODOS OS ECOS DO APP
+==================================================
+
+Quero que essa regra valha para todos os ecos, independentemente de onde estejam sendo exibidos.
+
+Exemplos:
+- ecos da home
+- ecos da comunidade
+- ecos em alta
+- ecos em livros
+- ecos em seções de destaque
+- ecos no perfil de outros leitores
+- ecos salvos
+- ecos em explorar
+
+Não quero que alguns sejam clicáveis e outros não.
+Quero padronização.
+
+==================================================
+5. O QUE REVISAR NO CÓDIGO
+==================================================
+
+Quero que você revise toda a lógica dos cards de eco.
+
+### Verificar especificamente:
+
+#### 5.1. Ação de clique
+- garantir que o card inteiro tenha ação de clique/toque
+- garantir que exista `onClick`, `onPress`, `Link` ou equivalente corretamente conectado
+- garantir que o clique esteja associado ao eco certo
+
+#### 5.2. Identificador do eco
+- garantir que cada eco tenha `id` correto
+- garantir que o id certo esteja sendo passado na navegação
+- garantir que não esteja usando índice da lista em vez do id real
+
+#### 5.3. Navegação
+- revisar `navigate()`, `router.push()`, `Link` ou equivalente
+- garantir que a rota de detalhe do eco receba o identificador certo
+- garantir que o usuário vá para a página correta daquele eco
+
+#### 5.4. Página de detalhe do eco
+- garantir que a tela de detalhe do eco consiga carregar qualquer eco do banco
+- não só alguns ecos específicos
+- não só mocks ou hardcodes
+
+#### 5.5. Query do eco
+Na página de detalhe, garantir que o app busque:
+- dados do eco
+- usuário autor
+- livro associado
+- reações
+- comentários
+- replies
+- se o usuário atual já reagiu
+- se o usuário atual já salvou
+
+==================================================
+6. INTERAÇÃO DENTRO DA PÁGINA DO ECO
+==================================================
+
+Quero que, dentro da página aberta do eco, o usuário possa realmente interagir.
+
+### Ações desejadas:
+- reagir com emoji
+- remover ou trocar reação
+- comentar
+- responder comentário
+- salvar eco
+- compartilhar
+- navegar para o livro associado
+- navegar para o perfil do autor do eco
+
+Se alguma dessas ações já existir parcialmente, quero conectá-las corretamente à página do eco.
+
+==================================================
+7. FEEDBACK VISUAL DE QUE O ECO É CLICÁVEL
+==================================================
+
+Hoje os cards parecem mais estáticos do que deveriam.
+
+Quero que os ecos transmitam visualmente que são interativos.
+
+### Ajustes desejados:
+- feedback de toque/press
+- leve escala ou mudança de sombra ao tocar
+- cursor/pointer equivalente onde couber
+- sensação de card vivo e navegável
+
+O usuário precisa sentir que pode tocar.
+
+==================================================
+8. O QUE NÃO PODE MAIS ACONTECER
+==================================================
+
+Depois da correção, não pode mais acontecer:
+
+- tocar no eco e nada acontecer
+- card parecer clicável mas não ser
+- eco abrir página errada
+- eco não ter detalhe próprio
+- usuário ver atividade da comunidade mas não conseguir entrar nela
+- o feed parecer só decorativo
+
+==================================================
+9. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois da correção, quero que:
+
+- todos os ecos do app sejam clicáveis
+- todos abram a página correta do eco
+- o usuário possa interagir com esses ecos
+- o feed e as seções da comunidade deixem de ser estáticos
+- o app fique mais vivo, social e funcional
+
+==================================================
+10. PRIORIDADE
+==================================================
+
+Isso é prioridade alta, porque os ecos são uma parte central da experiência do Marginalia.
+
+Implemente a correção na navegação e na interação dos ecos.
+Não quero apenas ajuste visual.
+Quero comportamento real e funcional.

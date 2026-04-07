@@ -160,6 +160,14 @@ router.get("/community/margins", async (req, res): Promise<void> => {
   res.json({ margins, page, limit });
 });
 
+router.get("/community/margins/:id", async (req, res): Promise<void> => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) { res.status(400).json({ error: "ID inválido" }); return; }
+  const [margin] = await db.select().from(communityMarginsTable).where(eq(communityMarginsTable.id, id));
+  if (!margin) { res.status(404).json({ error: "Margem não encontrada" }); return; }
+  res.json({ margin });
+});
+
 router.get("/community/margins/:id/replies", async (req, res): Promise<void> => {
   const id = parseInt(req.params.id, 10);
   if (isNaN(id)) { res.status(400).json({ error: "ID inválido" }); return; }
