@@ -3,7 +3,7 @@ import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { MOCK_MARGINS, MOCK_BOOKS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
-import { ShareCardModal } from "@/components/cards/ShareCardModal";
+import { ArchetypeShareModal } from "@/components/cards/ArchetypeShareModal";
 import { BookCover } from "@/components/BookCover";
 import { Settings, Pencil, Check, X, Share2, Instagram, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
@@ -731,13 +731,12 @@ export function ProfileScreen() {
       </div>
 
       {showShareModal && (
-        <ShareCardModal
-          context={{
-            type: "profile",
-            userId: currentUser.id,
-            userName: fullName ?? currentUser.username ?? "Leitor",
-            userInitials: currentUser.initials ?? (currentUser.firstName?.[0] ?? "L"),
-          }}
+        <ArchetypeShareModal
+          primaryArquetipo={primaryArquetipo}
+          secondaryArquetipo={secondaryArquetipo}
+          topArquetipos={topArquetipos}
+          userName={fullName ?? currentUser.username ?? "Leitor"}
+          userInitials={currentUser.initials ?? (currentUser.firstName?.[0] ?? "L")}
           onClose={() => setShowShareModal(false)}
         />
       )}

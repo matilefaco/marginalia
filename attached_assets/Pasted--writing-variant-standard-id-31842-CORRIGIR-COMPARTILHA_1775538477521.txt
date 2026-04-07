@@ -1,0 +1,284 @@
+:::writing{variant=“standard” id=“31842”}
+CORRIGIR COMPARTILHAMENTO DO CARD DE ARQUÉTIPO + ADICIONAR “MARGINALIA” NO CARD + ABRIR A TELA CERTA DE EXPORTAÇÃO EM IMAGEM
+
+Quero corrigir definitivamente o fluxo de compartilhamento do card de arquétipo / tipo de leitor.
+
+Hoje, quando o usuário aperta em compartilhar esse card, o app abre uma tela errada com outros cards antigos ou com opções que não fazem mais sentido.
+
+Isso está errado.
+
+O compartilhamento do arquétipo precisa ser direto, contextual e gerar a imagem real daquele card.
+
+==================================================
+PARTE 1 — PROBLEMA ATUAL
+
+Hoje acontece o seguinte erro:
+	•	o usuário aperta em compartilhar o card do arquétipo
+	•	o app abre uma tela antiga / errada
+	•	aparecem outros cards que não existem mais ou que não deveriam aparecer
+	•	a experiência fica confusa
+	•	o fluxo de compartilhamento perde o contexto do card clicado
+
+Isso precisa ser removido completamente.
+
+==================================================
+PARTE 2 — COMPORTAMENTO CORRETO QUE EU QUERO
+
+Quando o usuário tocar em:
+
+👉 “Compartilhar identidade de leitura”
+ou
+👉 compartilhar o card de arquétipo / tipo de leitor
+
+o app deve:
+	1.	identificar que o card clicado é o card de arquétipo
+	2.	abrir apenas a tela verdadeira de compartilhamento daquele card específico
+	3.	renderizar a prévia em imagem daquele card
+	4.	permitir escolher:
+	•	Stories 9:16
+	•	Feed 1:1
+	5.	permitir:
+	•	Baixar
+	•	Compartilhar
+
+IMPORTANTE:
+Não deve abrir um catálogo de outros cards.
+Não deve abrir cards antigos.
+Não deve misturar arquétipo com DNA de leitura, eco, citação etc. a não ser que isso seja explicitamente uma ação separada.
+
+==================================================
+PARTE 3 — FLUXO NOVO E CONTEXTUAL
+
+Quero que o fluxo seja este:
+
+Ao clicar no botão do card de arquétipo:
+	•	abrir um share modal / share screen exclusivo do arquétipo
+
+Essa tela deve conter:
+	•	título: “Compartilhar”
+	•	subtítulo discreto: “Tipo de leitor” ou “Identidade de leitura”
+	•	seletor de formato:
+	•	Stories 9:16
+	•	Feed 1:1
+	•	prévia real do card
+	•	botão Baixar
+	•	botão Compartilhar
+
+Mais nada.
+
+Sem outras variantes antigas.
+Sem hub genérico bagunçado.
+Sem “cards fantasmas”.
+
+==================================================
+PARTE 4 — O CARD DO ARQUÉTIPO PRECISA TER “MARGINALIA”
+
+Quero adicionar o nome:
+
+👉 marginalia
+
+dentro do card de arquétipo compartilhável.
+
+Esse nome deve aparecer de forma elegante e editorial.
+
+Sugestões de posição:
+	•	canto superior direito
+ou
+	•	rodapé direito
+ou
+	•	pequeno logotipo textual discreto
+
+Mas ele precisa estar no card final.
+
+Objetivo:
+	•	reforçar marca
+	•	melhorar compartilhamento externo
+	•	fazer o card circular com identidade do app
+
+==================================================
+PARTE 5 — O CARD PRECISA VIRAR IMAGEM REAL
+
+Quando o usuário apertar em compartilhar o arquétipo, ele deve ser direcionado para a tela compartilhável verdadeira daquele card em forma de imagem.
+
+Ou seja:
+	•	o card precisa ser renderizado como imagem real
+	•	a prévia precisa corresponder ao arquivo final
+	•	o botão compartilhar deve usar essa imagem real
+	•	o botão baixar deve baixar essa imagem real
+
+==================================================
+PARTE 6 — IMPLEMENTAÇÃO TÉCNICA RECOMENDADA
+
+Pode usar uma solução tipo:
+	•	html-to-image
+ou
+	•	dom-to-image
+ou equivalente
+
+Escolha a solução mais estável, mas quero um pipeline real e confiável.
+
+Minha preferência:
+👉 usar html-to-image se ela estiver estável no projeto
+
+Porque:
+	•	funciona bem com DOM renderizado
+	•	permite gerar PNG/JPEG a partir do card real
+	•	é adequada para exportar cards visuais com tipografia e layout
+
+==================================================
+PARTE 7 — PIPELINE TÉCNICO DO SHARE DO ARQUÉTIPO
+
+Quero que o sistema funcione assim:
+
+1. Renderização do card
+
+Renderizar o card de arquétipo em um container específico para exportação.
+
+Esse container deve:
+	•	conter o layout final real
+	•	conter o texto “marginalia”
+	•	conter o nome do arquétipo
+	•	conter subtítulo / frase
+	•	conter labels / tags
+	•	conter dados do usuário
+	•	respeitar o formato selecionado
+
+2. Geração da imagem
+
+Usar html-to-image para gerar:
+	•	PNG ou JPEG real
+
+Se puder escolher:
+	•	usar PNG para fidelidade visual
+	•	ou JPEG se fizer mais sentido para export final
+Mas o importante é: a imagem precisa sair correta.
+
+3. Preview
+
+A tela de compartilhamento precisa mostrar essa mesma arte.
+
+4. Ações
+	•	Baixar → salva a imagem do card
+	•	Compartilhar → abre o share nativo usando a imagem do card
+
+==================================================
+PARTE 8 — FORMATO STORIES E FEED
+
+Quero dois formatos reais para o card de arquétipo:
+
+Stories 9:16
+	•	vertical
+	•	com boa respiração
+	•	forte impacto visual
+
+Feed 1:1
+	•	quadrado
+	•	bem centralizado
+	•	adequado para post
+
+A troca entre esses formatos precisa:
+	•	alterar a prévia
+	•	alterar a imagem exportada
+	•	alterar o arquivo usado no share/download
+
+==================================================
+PARTE 9 — ARQUITETURA CORRETA DO SHARE
+
+Quero separar definitivamente o share do arquétipo do share genérico antigo.
+
+Algo nessa lógica:
+	•	openShareModal({ type: 'reader-archetype', userId })
+
+ou equivalente
+
+E NÃO:
+	•	abrir o modal universal antigo com outros cards misturados
+
+==================================================
+PARTE 10 — REMOVER O FLUXO ANTIGO / ERRADO
+
+Quero revisar o código e remover ou desativar, nesse contexto, qualquer lógica que ainda:
+	•	abra variantes antigas
+	•	carregue cards antigos
+	•	mostre opções de share que não existem mais
+	•	reutilize um modal genérico inadequado
+
+Quando o usuário clicar em compartilhar o arquétipo, o app deve saber exatamente que ele quer compartilhar:
+👉 aquele card e só aquele card
+
+==================================================
+PARTE 11 — ESTRUTURA VISUAL DO CARD DE ARQUÉTIPO
+
+O card compartilhável do arquétipo deve conter, no mínimo:
+	•	nome do app: marginalia
+	•	título do bloco: “Seu tipo de leitor” ou equivalente
+	•	nome do arquétipo
+	•	ex: O Sensível
+	•	ex: O Contemplativo
+	•	ex: O Observador
+	•	frase curta/subtítulo do arquétipo
+	•	tags relacionadas
+	•	nome ou username do usuário, se fizer sentido
+	•	pequeno rodapé/editorial da marca
+
+Se houver métricas, manter apenas as mais importantes.
+Não deixar o card poluído.
+
+==================================================
+PARTE 12 — O QUE NÃO PODE MAIS ACONTECER
+
+Depois da correção, não pode mais acontecer:
+	•	clicar em compartilhar arquétipo e abrir outros cards
+	•	aparecer tela antiga
+	•	aparecer hub genérico bagunçado
+	•	misturar arquétipo com cards que já foram removidos
+	•	compartilhar arquivo errado
+	•	baixar imagem errada
+	•	perder o contexto do card selecionado
+
+==================================================
+PARTE 13 — TESTES QUE QUERO QUE VOCÊ FAÇA
+
+Teste 1
+	•	abrir perfil
+	•	tocar em “Compartilhar identidade de leitura”
+	•	verificar se abre apenas a tela de share do arquétipo
+
+Teste 2
+	•	trocar de Stories 9:16 para Feed 1:1
+	•	verificar se a prévia muda corretamente
+
+Teste 3
+	•	clicar em Baixar
+	•	verificar se a imagem baixada é exatamente o card do arquétipo
+
+Teste 4
+	•	clicar em Compartilhar
+	•	verificar se o share nativo usa a imagem correta do arquétipo
+
+Teste 5
+	•	verificar se o nome “marginalia” aparece no card final
+
+==================================================
+PARTE 14 — RESULTADO FINAL ESPERADO
+
+Depois dessa correção, quero que:
+	1.	o botão de compartilhar do arquétipo abra apenas a tela correta daquele card;
+	2.	o card contenha o nome “marginalia” de forma elegante;
+	3.	o card seja renderizado como imagem real;
+	4.	o usuário possa compartilhar no feed ou nos stories;
+	5.	o usuário possa baixar a imagem correta;
+	6.	o fluxo seja limpo, contextual e premium.
+
+==================================================
+PARTE 15 — PRIORIDADE
+
+Isso é prioridade alta.
+
+Implementar nesta ordem:
+	1.	remover o fluxo antigo/genérico errado
+	2.	criar share modal/tela exclusiva do arquétipo
+	3.	adicionar “marginalia” ao card
+	4.	renderizar/exportar o card em imagem usando html-to-image (ou solução equivalente mais estável)
+	5.	conectar corretamente os botões Baixar e Compartilhar
+:::
