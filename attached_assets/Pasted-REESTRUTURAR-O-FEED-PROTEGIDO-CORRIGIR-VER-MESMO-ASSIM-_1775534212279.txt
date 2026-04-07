@@ -1,0 +1,421 @@
+REESTRUTURAR O FEED PROTEGIDO + CORRIGIR “VER MESMO ASSIM” + RENOMEAR SEÇÕES COM LINGUAGEM MAIS INTUITIVA
+
+Quero corrigir e reorganizar três pontos importantes do app:
+
+1. quando o usuário clica em “Ver mesmo assim”, hoje aparece só a citação/texto isolado, e isso está errado;
+2. a seção ainda usa o nome “Margens em alta esta semana”, e eu quero simplificar isso para algo mais intuitivo;
+3. a seção “Conversas da comunidade” ainda está deixando passar conteúdo de obras que o leitor não concluiu ou ainda está lendo, mesmo no modo protegido, e isso precisa ser reestruturado.
+
+Isso deve ser tratado como correção de UX + lógica de feed + anti-spoiler.
+
+==================================================
+PARTE 1 — CORRIGIR O BOTÃO “VER MESMO ASSIM”
+==================================================
+
+Hoje, quando o usuário toca em “Ver mesmo assim”, o app revela apenas a citação ou o texto.
+
+Isso está incompleto.
+
+Quando o usuário escolhe liberar manualmente um conteúdo protegido, ele deve ver o post completo, e não apenas um fragmento.
+
+--------------------------------------------------
+1.1. COMPORTAMENTO CORRETO
+--------------------------------------------------
+
+Ao tocar em “Ver mesmo assim”, o sistema deve abrir ou expandir o conteúdo completo daquele post protegido.
+
+Esse conteúdo completo precisa incluir:
+
+- trecho/citação
+- anotação/reflexão do post
+- nome de quem publicou
+- @username de quem publicou
+- avatar
+- livro/obra
+- autor da obra
+- reações
+- número de respostas
+- respostas/comentários, se existirem
+- ações do post:
+  - responder
+  - salvar
+  - compartilhar
+  - reagir
+
+Ou seja:
+“Ver mesmo assim” deve liberar o post inteiro, e não só uma linha de texto.
+
+--------------------------------------------------
+1.2. IMPLEMENTAÇÃO TÉCNICA
+--------------------------------------------------
+
+Hoje parece que o botão “Ver mesmo assim” apenas troca o estado do trecho protegido para texto visível.
+
+Quero mudar isso.
+
+Ao invés de:
+- revelar só a citação
+
+Quero que o sistema:
+- troque o card protegido por um card/post completo
+ou
+- navegue para a página completa daquele post já liberado
+
+A solução mais limpa provavelmente é esta:
+
+### Opção recomendada
+Ao tocar em “Ver mesmo assim”:
+- abrir a página completa do post
+- já com um estado “liberado manualmente”
+- registrando que aquele conteúdo foi liberado pelo usuário
+
+Assim o usuário vê a experiência completa e consistente.
+
+--------------------------------------------------
+1.3. DADOS QUE PRECISAM SER CARREGADOS
+--------------------------------------------------
+
+Quando liberar manualmente, garantir query completa com:
+- post
+- author
+- username
+- book
+- author_name do livro
+- reactions
+- comments/responses
+- visibility state
+- spoiler context
+
+==================================================
+PARTE 2 — RENOMEAR “MARGENS EM ALTA ESTA SEMANA”
+==================================================
+
+A palavra “margens” continua pouco intuitiva nesse contexto.
+
+Quero simplificar essa seção para um nome mais claro.
+
+--------------------------------------------------
+2.1. REMOVER O NOME ATUAL
+--------------------------------------------------
+
+Substituir:
+
+- “Margens em alta esta semana”
+
+Por uma alternativa mais intuitiva.
+
+--------------------------------------------------
+2.2. NOMES SUGERIDOS
+--------------------------------------------------
+
+Sugestões melhores:
+
+- Posts em alta
+- Conversas em alta
+- Trechos em alta
+- Destaques da semana
+- Mais comentados da semana
+- Em alta esta semana
+
+Minha recomendação principal:
+
+👉 “Posts em alta”
+ou
+👉 “Destaques da semana”
+
+Se quiser algo ainda mais simples e muito bom para produto:
+👉 “Em alta esta semana”
+
+--------------------------------------------------
+2.3. RECOMENDAÇÃO FINAL
+--------------------------------------------------
+
+Usar:
+
+### Título:
+Em alta esta semana
+
+### Subtítulo:
+Os posts mais reagidos da comunidade
+
+Isso fica:
+- claro
+- intuitivo
+- compatível com o resto do sistema
+
+==================================================
+PARTE 3 — REESTRUTURAR “CONVERSAS DA COMUNIDADE” NO MODO PROTEGIDO
+==================================================
+
+Hoje a seção “Conversas da comunidade” continua deixando o leitor visualizar conteúdo relacionado a obras que ele:
+- não concluiu
+- ainda está lendo
+- ou nem registrou na biblioteca
+
+Isso não pode acontecer no modo protegido.
+
+Se o conceito do app é “seu ritmo está protegido”, então o feed precisa respeitar isso de verdade.
+
+--------------------------------------------------
+3.1. PROBLEMA ATUAL
+--------------------------------------------------
+
+Mesmo no modo protegido, o leitor ainda consegue ver:
+- citações explícitas
+- trechos de livros ainda não concluídos
+- posts completos de livros em progresso
+- comentários ligados a obras que ele ainda não terminou
+
+Isso é um vazamento de spoiler.
+
+--------------------------------------------------
+3.2. NOVA REGRA DO MODO PROTEGIDO
+--------------------------------------------------
+
+No modo protegido, o usuário NÃO pode ver conteúdo explícito de:
+
+- livros que ele não adicionou
+- livros que ele adicionou, mas ainda não começou
+- livros que ele está lendo, mas cujo post está além do progresso atual
+- livros que ele ainda não concluiu, quando o conteúdo depender de trecho futuro
+
+Ou seja:
+o feed protegido não pode mostrar texto aberto de post se houver risco de spoiler.
+
+==================================================
+PARTE 4 — NOVO FORMATO DA SEÇÃO “CONVERSAS DA COMUNIDADE”
+==================================================
+
+Quero reestruturar essa seção para que ela continue interessante, curiosa e ativa, mas sem revelar spoilers.
+
+Em vez de mostrar posts completos de qualquer livro, ela deve funcionar como uma seção de DISCUSSÕES SEGURAS.
+
+--------------------------------------------------
+4.1. O QUE ESSA SEÇÃO DEVE VIRAR
+--------------------------------------------------
+
+A seção “Conversas da comunidade” precisa se tornar um espaço de descoberta protegida.
+
+Ela deve mostrar:
+
+- atividade da comunidade
+- intensidade de discussão
+- clima da conversa
+- livro/obra relacionada
+- volume de reações e respostas
+
+Mas sem revelar texto explícito quando houver risco.
+
+--------------------------------------------------
+4.2. NOVO TIPO DE CARD PARA ESSA SEÇÃO
+--------------------------------------------------
+
+Quero criar um card de “discussão protegida” para obras não concluídas ou não lidas.
+
+Esse card deve mostrar algo como:
+
+- título do livro
+- autor
+- indicador visual de proteção
+- volume de atividade:
+  - 45 reações
+  - 14 respostas
+- texto seguro, sem spoiler, por exemplo:
+  - “Leitores estão discutindo intensamente este ponto.”
+  - “Este trecho despertou surpresa e reflexão.”
+  - “Uma conversa forte está acontecendo neste livro.”
+  - “Há muita atividade da comunidade neste momento do livro.”
+
+E abaixo:
+- Adicionar à biblioteca
+- Marcar progresso
+- Ver página do livro
+- Ver mesmo assim
+
+--------------------------------------------------
+4.3. O QUE NÃO PODE APARECER NESSE CARD
+--------------------------------------------------
+
+No modo protegido, se houver risco, esse card NÃO pode mostrar:
+- trecho real
+- comentário real
+- reflexão real
+- quote aberta
+- comentário de resposta visível
+- qualquer pista textual direta do conteúdo
+
+==================================================
+PARTE 5 — DIFERENÇA ENTRE LIVROS CONCLUÍDOS, EM PROGRESSO E NÃO REGISTRADOS
+==================================================
+
+Quero que a lógica fique muito clara.
+
+--------------------------------------------------
+5.1. LIVRO CONCLUÍDO
+--------------------------------------------------
+
+Se o livro está concluído:
+- pode mostrar post completo
+- pode mostrar discussões normalmente
+- pode mostrar respostas normalmente
+
+--------------------------------------------------
+5.2. LIVRO EM PROGRESSO
+--------------------------------------------------
+
+Se o livro está em progresso:
+- só pode mostrar conteúdo até o progresso atual do usuário
+- qualquer conteúdo além disso deve virar card protegido
+- respostas também precisam respeitar isso
+
+--------------------------------------------------
+5.3. LIVRO NÃO REGISTRADO
+--------------------------------------------------
+
+Se o livro não está na biblioteca/progresso do usuário:
+- não mostrar post explícito
+- mostrar apenas descoberta segura
+- deixar o usuário decidir se quer liberar manualmente
+
+==================================================
+PARTE 6 — “VER MESMO ASSIM” NO CONTEXTO DESSA SEÇÃO
+==================================================
+
+Na seção de discussões seguras, o botão “Ver mesmo assim” deve ter comportamento consistente.
+
+Ao clicar:
+- abrir o post completo daquele item
+- com contexto completo
+- com nome do autor do post
+- com obra
+- com autor da obra
+- com comentários/respostas
+- com reações
+- com ações
+
+Não quero mais que revele só uma frase perdida.
+
+==================================================
+PARTE 7 — ORGANIZAÇÃO DO FEED PROTEGIDO
+==================================================
+
+Quero reorganizar o feed protegido para ficar assim:
+
+### 1. Posts completos seguros
+Conteúdo de livros concluídos ou dentro do progresso.
+
+### 2. Discussões protegidas
+Cards de descoberta segura de livros ainda não lidos ou ainda não concluídos.
+
+### 3. Livros em alta
+Atividade coletiva sem spoiler.
+
+### 4. Momento do livro hoje
+Mas respeitando o progresso do usuário.
+
+### 5. CTAs de biblioteca/progresso
+Para transformar curiosidade em ação.
+
+Isso mantém o feed:
+- vivo
+- curioso
+- social
+- protegido
+
+==================================================
+PARTE 8 — REVISÃO DE TEXTO / NOMENCLATURA
+==================================================
+
+Quero revisar a linguagem para deixar tudo mais claro.
+
+--------------------------------------------------
+8.1. SUBSTITUIR NOMES TÉCNICOS / RUINS
+--------------------------------------------------
+
+- “Margens em alta esta semana” → “Em alta esta semana”
+- “Conversas da comunidade” pode continuar, mas com cards protegidos corretos
+- manter “respostas” em vez de “ecos”
+- revisar textos como:
+  - “conteúdo liberado manualmente”
+  - “ver mesmo assim”
+  - “trecho protegido”
+
+--------------------------------------------------
+8.2. MICROCOPY SUGERIDA
+--------------------------------------------------
+
+Para cards protegidos:
+
+- Trecho protegido para respeitar seu ritmo
+- Algo significativo acontece neste ponto do livro
+- Leitores estão reagindo intensamente aqui
+- Você ainda não registrou este livro na sua biblioteca
+- Adicione o livro e marque seu progresso para liberar conteúdos compatíveis
+
+==================================================
+PARTE 9 — IMPLEMENTAÇÃO TÉCNICA DO FILTRO
+==================================================
+
+Quero reforçar a lógica central:
+
+Criar/usar uma função única para visibilidade do conteúdo, algo como:
+- getPostVisibilityState(user, post, mode)
+
+Essa função deve retornar:
+- full
+- protected
+- revealable
+- hidden
+
+E não apenas trocar texto na interface.
+
+--------------------------------------------------
+9.1. PARA POSTS
+--------------------------------------------------
+
+Se o post for de livro:
+- não concluído
+- além do progresso
+- ou não registrado
+
+No modo protegido:
+- retornar protected
+
+--------------------------------------------------
+9.2. PARA RESPOSTAS / COMENTÁRIOS
+--------------------------------------------------
+
+As respostas também precisam herdar a proteção do post pai.
+
+Ou seja:
+se o post está protegido,
+as respostas também não podem aparecer abertas.
+
+No máximo:
+- volume de atividade
+- número de respostas
+- clima da conversa
+- CTA para liberar
+
+==================================================
+PARTE 10 — RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessas mudanças, quero que:
+
+1. “Ver mesmo assim” abra ou revele o post completo, com todas as informações relevantes;
+2. “Margens em alta esta semana” seja substituído por um nome mais intuitivo;
+3. “Conversas da comunidade” seja reestruturada no modo protegido para mostrar apenas descoberta segura;
+4. o leitor não veja spoilers de obras não concluídas ou não registradas;
+5. a seção continue interessante, curiosa e bem organizada;
+6. o feed protegido cumpra de verdade a promessa “seu ritmo está protegido”.
+
+==================================================
+PARTE 11 — PRIORIDADE
+==================================================
+
+Implementar nesta ordem:
+1. corrigir comportamento do botão “Ver mesmo assim”
+2. renomear a seção “Margens em alta esta semana”
+3. reestruturar a seção “Conversas da comunidade” no modo protegido
+4. aplicar o filtro de proteção também às respostas/comentários

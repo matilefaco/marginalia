@@ -517,23 +517,11 @@ const ATMOSPHERIC_PHRASES = [
 ];
 
 function SpoilerShieldCard({ margin, reason, inLibrary }: { margin: Margin; reason: string; inLibrary: boolean }) {
-  const [revealed, setRevealed] = useState(false);
   const [, navigate] = useLocation();
 
   const book = MOCK_BOOKS.find((b) => b.id === margin.bookId);
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
   const phrase = ATMOSPHERIC_PHRASES[margin.id % ATMOSPHERIC_PHRASES.length];
-
-  if (revealed) {
-    return (
-      <div data-testid={`card-margin-${margin.id}-revealed`} className="bg-[#FAF8F3] rounded-[14px] border border-[#AE8F7D]/20 p-4 opacity-85">
-        <div className="border-l-2 border-[#AE8F7D]/30 pl-3 mb-2">
-          <p className="font-serif italic text-[15px] text-[#2A2A2A]/75 leading-[1.75]">&ldquo;{margin.excerpt}&rdquo;</p>
-        </div>
-        <p className="font-sans font-light text-[8px] text-[#AE8F7D]/60 tracking-[0.08em]">Conteúdo liberado manualmente</p>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -590,7 +578,7 @@ function SpoilerShieldCard({ margin, reason, inLibrary }: { margin: Margin; reas
           </button>
         )}
         <button
-          onClick={() => setRevealed(true)}
+          onClick={() => navigate(`/thread/${margin.id}`)}
           className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#2A2A2A]/35 px-3 py-1.5 hover:text-[#2A2A2A]/55 transition-colors"
         >
           Ver mesmo assim

@@ -533,12 +533,12 @@ export function ExploreScreen() {
           <section data-testid="section-trending">
             <div className="flex items-center gap-2 mb-1.5">
               <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-                Margens em alta esta semana
+                Em alta esta semana
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
             </div>
             <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
-              As mais reagidas da comunidade
+              Os posts mais reagidos da comunidade
             </p>
             <div className="space-y-3">
               {trendingMargins.map((m) => (

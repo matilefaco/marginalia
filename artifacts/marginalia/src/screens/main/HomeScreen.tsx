@@ -1,16 +1,17 @@
 import { Bell, SlidersHorizontal } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useApp } from "@/context/AppContext";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { LogoMark } from "@/components/LogoMark";
 import { BookCover } from "@/components/BookCover";
 import { filterMarginsForUser } from "@/utils/spoiler";
 import { canUserSeeMargin } from "@/utils/spoiler";
-import { MOCK_BOOKS, type Margin } from "@/data/mockData";
+import { MOCK_BOOKS, type Margin, type BookProgress } from "@/data/mockData";
 import { UserIdentity } from "@/components/UserIdentity";
 import { progressLabel } from "@/utils/formatting";
 import { Shield } from "lucide-react";
-import { useCommunityFeed, formatCommunityMarginAge, totalReactions } from "@/hooks/useCommunity";
+import { useCommunityFeed, formatCommunityMarginAge, totalReactions, type CommunityMargin } from "@/hooks/useCommunity";
+import type { SpoilerPreference } from "@/data/constants";
 
 const SUBTITLES = [
   "Seu ritmo está protegido.",
@@ -176,10 +177,99 @@ function FeedBreak({ index }: { index: number }) {
   );
 }
 
+// ─── Community feed helpers ────────────────────────────────────────────────
+
+const COMMUNITY_ATMOSPHERIC_PHRASES = [
+  "Algo significativo está sendo discutido neste ponto do livro.",
+  "Leitores estão reagindo intensamente aqui.",
+  "Uma conversa forte está acontecendo neste livro.",
+  "Este trecho despertou surpresa e reflexão na comunidade.",
+  "Há muita atividade da comunidade neste momento do livro.",
+  "Leitores estão discutindo intensamente este ponto.",
+];
+
+function canSeeCommunityMarginFull(
+  m: CommunityMargin,
+  preference: SpoilerPreference,
+  progress: BookProgress | undefined
+): boolean {
+  if (preference === "all") return true;
+  if (!progress) return false;
+  if (progress.status === "completed") return true;
+  if (m.spoilerLevel !== "none") return false;
+  return true;
+}
+
+function ProtectedCommunityCard({ m }: { m: CommunityMargin }) {
+  const [, navigate] = useLocation();
+  const rxTotal = totalReactions(m.reactions);
+  const phrase = COMMUNITY_ATMOSPHERIC_PHRASES[m.id % COMMUNITY_ATMOSPHERIC_PHRASES.length];
+
+  return (
+    <div
+      data-testid={`card-community-protected-${m.id}`}
+      className="rounded-[14px] border border-[#697962]/15 p-4 bg-[#FAF8F3]"
+    >
+      {/* Book header */}
+      <div className="flex items-start gap-2 mb-3">
+        <div className="flex-1 min-w-0">
+          <p className="font-serif italic text-[14px] text-[#3D3D3D] leading-tight truncate">{m.bookTitle}</p>
+          <p className="font-sans font-light text-[8px] tracking-[0.1em] uppercase text-[#2A2A2A]/40 mt-0.5">{m.bookAuthor}</p>
+        </div>
+        <div className="flex items-center gap-1 bg-[#697962]/8 border border-[#697962]/15 rounded-full px-2 py-1 flex-shrink-0">
+          <Shield className="w-2.5 h-2.5 text-[#697962]" />
+          <span className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#697962]">Protegido</span>
+        </div>
+      </div>
+
+      {/* Atmospheric phrase */}
+      <div className="bg-[#EBE6DB]/40 rounded-[8px] px-3 py-2.5 mb-3">
+        <p className="font-serif italic text-[13px] text-[#3D3D3D]/55 leading-relaxed">{phrase}</p>
+      </div>
+
+      {/* Activity counts */}
+      {(rxTotal > 0 || m.commentsCount > 0) && (
+        <div className="flex items-center gap-3 mb-3">
+          <span className="font-sans font-light text-[8px] text-[#697962]/70">
+            {rxTotal > 0 && `${rxTotal} reações`}
+            {rxTotal > 0 && m.commentsCount > 0 && " · "}
+            {m.commentsCount > 0 && `${m.commentsCount} ${m.commentsCount === 1 ? "resposta" : "respostas"}`}
+          </span>
+        </div>
+      )}
+
+      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3 leading-relaxed">
+        Trecho protegido para respeitar seu ritmo de leitura.
+      </p>
+
+      {/* CTAs */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <Link href={`/book/${m.bookId}`}>
+          <button className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#697962] border border-[#697962]/30 px-3 py-1.5 rounded-full hover:bg-[#697962]/8 transition-colors">
+            Ver livro
+          </button>
+        </Link>
+        <button
+          onClick={() => navigate(`/eco/${m.id}`)}
+          className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#2A2A2A]/35 px-3 py-1.5 hover:text-[#2A2A2A]/55 transition-colors"
+        >
+          Ver mesmo assim
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function CommunityFeedSection() {
+  const { currentUser, progress } = useApp();
   const { margins, loading } = useCommunityFeed(1, 8);
   if (loading) return null;
   if (margins.length === 0) return null;
+
+  const progressMap = Object.fromEntries(
+    progress.filter((p) => p.userId === currentUser.id).map((p) => [p.bookId, p])
+  );
+  const isProtected = currentUser.spoilerPreference !== "all";
 
   return (
     <section data-testid="section-community-feed">
@@ -191,50 +281,59 @@ function CommunityFeedSection() {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-[#697962]" />
         </span>
       </div>
-      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-4">O que leitores estão compartilhando agora</p>
+      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-4">
+        {isProtected ? "Discussões seguras da comunidade" : "O que leitores estão compartilhando agora"}
+      </p>
       <div className="space-y-3">
         {margins.map((m) => {
+          const bookProgress = progressMap[m.bookId] as BookProgress | undefined;
+          const canSee = canSeeCommunityMarginFull(m, currentUser.spoilerPreference, bookProgress);
+
+          if (!canSee) {
+            return <ProtectedCommunityCard key={m.id} m={m} />;
+          }
+
           const rxTotal = totalReactions(m.reactions);
           const handle = m.userSeedId ? `@${m.userSeedId.replace(/^s_/, '').replace(/_/g, '')}` : null;
           return (
             <Link key={m.id} href={`/eco/${m.id}`}>
-            <div className="bg-[#FAF8F3] border border-[#697962]/12 rounded-[14px] p-4 active:opacity-80 transition-opacity cursor-pointer">
-              <div className="flex items-start justify-between gap-2 mb-2.5">
-                <UserIdentity
-                  name={m.userName}
-                  username={handle}
-                  initials={m.userInitials ?? m.userName[0]}
-                  avatarColor={m.userAvatarColor ?? "#697962"}
-                  timestamp={formatCommunityMarginAge(m.createdAt)}
-                />
-                {m.spoilerLevel !== "none" && (
-                  <span className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/25 px-1.5 py-0.5 rounded-full flex-shrink-0">
-                    {m.spoilerLevel}
-                  </span>
+              <div className="bg-[#FAF8F3] border border-[#697962]/12 rounded-[14px] p-4 active:opacity-80 transition-opacity cursor-pointer">
+                <div className="flex items-start justify-between gap-2 mb-2.5">
+                  <UserIdentity
+                    name={m.userName}
+                    username={handle}
+                    initials={m.userInitials ?? m.userName[0]}
+                    avatarColor={m.userAvatarColor ?? "#697962"}
+                    timestamp={formatCommunityMarginAge(m.createdAt)}
+                  />
+                  {m.spoilerLevel !== "none" && (
+                    <span className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/25 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                      {m.spoilerLevel}
+                    </span>
+                  )}
+                </div>
+
+                <div className="bg-[#EBE6DB]/50 rounded-[8px] px-3 py-2 mb-2.5">
+                  <p className="font-serif italic text-[13px] text-[#3D3D3D]/80 leading-relaxed line-clamp-3">
+                    &ldquo;{m.excerpt}&rdquo;
+                  </p>
+                </div>
+
+                {m.commentary && (
+                  <p className="font-sans font-light text-[11px] text-[#2A2A2A]/60 leading-relaxed mb-2 line-clamp-2">{m.commentary}</p>
                 )}
-              </div>
 
-              <div className="bg-[#EBE6DB]/50 rounded-[8px] px-3 py-2 mb-2.5">
-                <p className="font-serif italic text-[13px] text-[#3D3D3D]/80 leading-relaxed line-clamp-3">
-                  &ldquo;{m.excerpt}&rdquo;
-                </p>
+                <div className="flex items-center gap-3">
+                  <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35 truncate flex-1">{m.bookTitle}</p>
+                  {(rxTotal > 0 || m.commentsCount > 0) && (
+                    <span className="font-sans font-light text-[8px] text-[#697962]/80 flex-shrink-0">
+                      {rxTotal > 0 && `${rxTotal} reações`}
+                      {rxTotal > 0 && m.commentsCount > 0 && " · "}
+                      {m.commentsCount > 0 && `${m.commentsCount} ${m.commentsCount === 1 ? "resposta" : "respostas"}`}
+                    </span>
+                  )}
+                </div>
               </div>
-
-              {m.commentary && (
-                <p className="font-sans font-light text-[11px] text-[#2A2A2A]/60 leading-relaxed mb-2 line-clamp-2">{m.commentary}</p>
-              )}
-
-              <div className="flex items-center gap-3">
-                <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35 truncate flex-1">{m.bookTitle}</p>
-                {(rxTotal > 0 || m.commentsCount > 0) && (
-                  <span className="font-sans font-light text-[8px] text-[#697962]/80 flex-shrink-0">
-                    {rxTotal > 0 && `${rxTotal} reações`}
-                    {rxTotal > 0 && m.commentsCount > 0 && " · "}
-                    {m.commentsCount > 0 && `${m.commentsCount} ${m.commentsCount === 1 ? "resposta" : "respostas"}`}
-                  </span>
-                )}
-              </div>
-            </div>
             </Link>
           );
         })}
