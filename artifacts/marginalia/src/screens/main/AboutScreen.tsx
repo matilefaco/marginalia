@@ -65,7 +65,7 @@ export function AboutScreen() {
             O Marginalia é uma plataforma de leitura social onde você registra os trechos que tocaram você, reage ao que outros leitores sentiram, e descobre que não estava sozinho naquela página.
           </p>
           <p className="font-sans font-light text-[12px] text-[#454545]/55 leading-relaxed mt-2">
-            Aqui, chamamos suas anotações de <span className="italic">ecos</span> — porque toda leitura ressoa de alguma forma.
+            Aqui, chamamos suas anotações de <span className="italic">posts</span> — porque toda leitura tem algo a dizer.
           </p>
         </section>
 

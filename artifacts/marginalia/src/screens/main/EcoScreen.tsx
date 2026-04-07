@@ -128,7 +128,7 @@ export function EcoScreen() {
   if (loading) {
     return (
       <div className="min-h-full flex items-center justify-center bg-[#FAF8F3]">
-        <p className="font-serif italic text-[#454545]/35">Carregando eco…</p>
+        <p className="font-serif italic text-[#454545]/35">Carregando post…</p>
       </div>
     );
   }
@@ -136,7 +136,7 @@ export function EcoScreen() {
   if (notFound || !margin) {
     return (
       <div className="min-h-full flex flex-col items-center justify-center gap-4 bg-[#FAF8F3]">
-        <p className="font-serif italic text-[14px] text-[#454545]/40">Eco não encontrado.</p>
+        <p className="font-serif italic text-[14px] text-[#454545]/40">Post não encontrado.</p>
         <Link href="/">
           <button className="font-sans font-light text-[9px] tracking-[0.14em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/30 px-4 py-2 rounded-full">
             Voltar ao início

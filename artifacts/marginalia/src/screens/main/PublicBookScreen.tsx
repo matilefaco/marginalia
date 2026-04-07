@@ -180,7 +180,7 @@ function FeaturedMargins({ bookId }: { bookId: number }) {
                         {emoji} {count}
                       </span>
                     ))}
-                    {totalReactions > 0 && <span className="font-sans text-[9px] text-[#2A2A2A]/25 ml-1">ecos</span>}
+                    {totalReactions > 0 && <span className="font-sans text-[9px] text-[#2A2A2A]/25 ml-1">respostas</span>}
                   </div>
                 )}
               </div>

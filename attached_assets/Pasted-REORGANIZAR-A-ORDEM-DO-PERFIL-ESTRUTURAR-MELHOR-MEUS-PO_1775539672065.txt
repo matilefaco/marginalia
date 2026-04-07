@@ -1,0 +1,330 @@
+REORGANIZAR A ORDEM DO PERFIL + ESTRUTURAR MELHOR “MEUS POSTS / SALVOS” + REVISAR GLOBALMENTE “ECO / ECOS”
+
+Quero reorganizar a página de perfil do usuário e também fazer uma revisão global de linguagem no app.
+
+Hoje a ordem do perfil não está ideal, porque os posts aparecem cedo demais e roubam o foco da identidade do leitor.
+
+Quero que o perfil primeiro mostre QUEM é aquele leitor, e só depois mostre O QUE ele publicou ou salvou.
+
+Além disso, quero que seja feita uma busca global no código para revisar se ainda existe a palavra “eco” ou “ecos” em qualquer lugar da interface ou da lógica textual.
+
+==================================================
+PARTE 1 — NOVA ORDEM DO PERFIL
+==================================================
+
+Quero inverter a ordem atual das informações no perfil.
+
+A prioridade da página de perfil deve ser:
+
+1. identidade do leitor
+2. traços e DNA
+3. estatísticas
+4. biblioteca/atividade resumida
+5. posts publicados
+6. posts salvos/favoritados
+
+Ou seja:
+o perfil deve começar pela identidade e terminar pelo arquivo de posts.
+
+==================================================
+1.1. NOVA ORDEM EXATA DO PERFIL
+==================================================
+
+Quero que a ordem da página fique assim:
+
+### BLOCO 1 — HEADER DO PERFIL
+- avatar / cor da bolinha
+- nome
+- @username
+- bio
+- links públicos (Instagram / TikTok, se houver)
+
+### BLOCO 2 — ARQUÉTIPO / TIPO DE LEITOR
+- card principal do arquétipo
+- assinatura de leitura
+- botão “Compartilhar identidade de leitura”
+
+### BLOCO 3 — DNA DE LEITURA
+- barras / métricas:
+  - sensível
+  - analítico
+  - intenso
+  - curioso
+- pequena descrição:
+  “Padrões que emergem dos seus posts”
+
+### BLOCO 4 — ESTATÍSTICAS DE LEITURA
+- livros lendo
+- livros concluídos/lidos
+- posts publicados
+- reações recebidas
+- reação mais usada
+- livro mais anotado
+- outros indicadores que façam sentido
+
+### BLOCO 5 — RESUMO DE ATIVIDADE / BIBLIOTECA (opcional, se fizer sentido)
+- livros em andamento
+- livros concluídos
+- salvos recentes
+- atividade recente
+
+### BLOCO 6 — POSTS PUBLICADOS
+- posts do próprio usuário
+
+### BLOCO 7 — POSTS SALVOS
+- posts favoritados / salvos
+
+Ou seja:
+posts ficam mais para baixo.
+A parte de identidade vem primeiro.
+
+==================================================
+PARTE 2 — MOTIVO DESSA MUDANÇA
+==================================================
+
+Quero que o perfil pareça um retrato do leitor, e não apenas uma lista de cards.
+
+Hoje o mais interessante no perfil é:
+- arquétipo
+- DNA
+- identidade
+- assinatura
+- estatísticas
+
+Então isso precisa vir primeiro.
+
+Os posts devem continuar existindo, mas como conteúdo secundário da página.
+
+==================================================
+PARTE 3 — COMO ORGANIZAR “POSTS PUBLICADOS” E “POSTS SALVOS”
+==================================================
+
+Quero uma organização mais limpa e menos bagunçada dessa área.
+
+Hoje isso tende a ficar confuso.
+
+==================================================
+3.1. NOVOS TÍTULOS
+==================================================
+
+Usar:
+
+### Meus posts
+Subtítulo:
+“Trechos e reflexões que você publicou”
+
+### Posts salvos
+Subtítulo:
+“Posts que tocaram você”
+
+Não usar mais:
+- Minhas margens
+- Favoritos, se ficar ambíguo
+- qualquer uso residual de “margem”
+
+==================================================
+3.2. SEPARAÇÃO VISUAL
+==================================================
+
+Quero separar “Meus posts” e “Posts salvos” como dois blocos bem distintos.
+
+Sugestão de estrutura:
+
+### Meus posts
+- seção própria
+- contagem total no canto
+- lista de cards
+
+### Posts salvos
+- seção abaixo
+- contagem total no canto
+- lista de cards
+
+Essas duas áreas não devem parecer misturadas.
+
+==================================================
+3.3. FILTROS INTERNOS (SE FIZER SENTIDO)
+==================================================
+
+Se ficar limpo, pode existir filtro dentro de cada seção:
+
+Para “Meus posts”:
+- Todos
+- Liberados
+- Protegidos
+
+Para “Posts salvos”:
+- Todos
+- Liberados
+- Protegidos
+
+Mas só manter isso se ficar realmente elegante.
+Se complicar demais, melhor não usar.
+
+==================================================
+3.4. LAYOUT SUGERIDO PARA OS POSTS NO PERFIL
+==================================================
+
+Quero que cada card dessas seções mostre de forma clara:
+
+- status de proteção, se houver
+- livro correto
+- autor correto da obra
+- trecho seguro ou trecho real
+- pequena ação principal:
+  - Abrir post
+  - Marcar progresso
+  - Ver mesmo assim
+  - Adicionar à biblioteca
+
+Mas sempre visualmente leve.
+
+==================================================
+PARTE 4 — ORDEM INTERNA DA PARTE BAIXA DO PERFIL
+==================================================
+
+Quero esta ordem final na parte baixa da página:
+
+1. Meus posts
+2. Posts salvos
+
+Se quiser acrescentar algo entre eles, que seja apenas um separador leve.
+
+Não quero que:
+- posts salvos apareçam misturados com os meus
+- protected posts de tipos diferentes se confundam
+- a parte final do perfil vire uma parede de cards
+
+==================================================
+PARTE 5 — TRATAMENTO DOS POSTS PROTEGIDOS NO PERFIL
+==================================================
+
+Quando um post meu ou salvo aparecer protegido, o card deve deixar isso claro, mas sem bagunça.
+
+Sugestão de comportamento:
+
+### Para posts protegidos meus
+- título do livro
+- autor correto
+- frase segura do sistema
+- botão:
+  - Marcar progresso
+  - Ver mesmo assim
+
+### Para posts protegidos salvos
+- mesma lógica
+- mais CTA:
+  - Adicionar à biblioteca
+  - Marcar progresso
+
+Mas SEMPRE apontando para o livro/post correto.
+
+==================================================
+PARTE 6 — REVISÃO GLOBAL DE “ECO / ECOS”
+==================================================
+
+Quero que o Replit faça uma busca global completa no código inteiro para verificar se ainda existe qualquer uso da palavra:
+
+- eco
+- ecos
+- ecoar
+- ecoado
+- ecoaram
+- ecos da comunidade
+- vozes nesse trecho, se estiver confuso
+- qualquer resquício textual que venha dessa nomenclatura antiga
+
+==================================================
+6.1. O QUE FAZER SE ENCONTRAR
+==================================================
+
+Se encontrar qualquer uso de “eco / ecos”, quero que revise e substitua pela linguagem simplificada e mais intuitiva.
+
+Padrão desejado:
+
+- eco → resposta
+- ecos → respostas
+- ecoar → responder
+- ecoado / ecoaram → responderam
+- ecos da comunidade → conversas da comunidade
+- vozes nesse trecho → respostas neste post
+  OU manter apenas se estiver muito claro e elegante
+
+==================================================
+6.2. REVISÃO NÃO SÓ VISUAL
+==================================================
+
+Essa revisão precisa acontecer em:
+
+- títulos
+- subtítulos
+- labels
+- placeholders
+- mensagens de estado vazio
+- botões
+- contadores
+- toasts
+- mensagens do sistema
+- textos de cards
+- páginas de detalhe
+- compartilhamento
+- perfil
+- feed
+- explorar
+- biblioteca
+- preferências
+- qualquer lugar da UI
+
+Se houver texto vindo do backend ou de constantes antigas, corrigir também.
+
+==================================================
+PARTE 7 — OBJETIVO DA REVISÃO DE LINGUAGEM
+==================================================
+
+Quero simplificar o app.
+
+O usuário precisa entender o sistema sem esforço.
+
+A linguagem ideal agora é:
+
+- post
+- resposta
+- salvar post
+- meus posts
+- posts salvos
+- conversas da comunidade
+- posts em alta
+- identidade de leitura
+- tipo de leitor
+- DNA de leitura
+
+Tudo precisa soar:
+- intuitivo
+- sofisticado
+- leve
+- imediatamente compreensível
+
+==================================================
+PARTE 8 — RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessas mudanças, quero que:
+
+1. o perfil comece pela identidade do leitor, não pelos posts;
+2. arquétipo, DNA e estatísticas apareçam primeiro;
+3. “Meus posts” e “Posts salvos” fiquem organizados e separados;
+4. a parte de posts não fique bagunçada;
+5. o Replit revise globalmente qualquer resquício de “eco / ecos”;
+6. a linguagem do app fique mais simples, clara e consistente.
+
+==================================================
+PARTE 9 — PRIORIDADE
+==================================================
+
+Implementar nesta ordem:
+
+1. reorganizar a ordem do perfil
+2. colocar arquétipo + DNA + estatísticas antes dos posts
+3. separar “Meus posts” e “Posts salvos” em blocos claros
+4. revisar globalmente “eco / ecos” no projeto inteiro
+5. corrigir qualquer texto residual para a nova linguagem simplificada

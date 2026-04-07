@@ -442,67 +442,6 @@ export function ProfileScreen() {
           </div>
         )}
 
-        {/* ─── Meus posts ─── */}
-        <section className="mb-7">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Meus posts</span>
-            <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-            {myMargins.length > 0 && (
-              <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{myMargins.length}</span>
-            )}
-          </div>
-          <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
-            Trechos e reflexões que você publicou
-          </p>
-          {myMargins.length === 0 ? (
-            <div className="border border-dashed border-[#AE8F7D]/20 rounded-[14px] px-5 py-8 text-center">
-              <p className="font-serif italic text-[15px] text-[#2A2A2A]/30 mb-1.5">Nenhum post ainda</p>
-              <p className="font-sans font-light text-[10px] text-[#2A2A2A]/25">
-                Seus trechos e reflexões aparecerão aqui
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {myMargins.slice(0, 5).map((m) => (
-                <MarginCard key={m.id} margin={m} showBook linkToThread />
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* ─── Posts salvos ─── */}
-        {(() => {
-          const saved = margins.filter((m) => savedMargins.includes(m.id));
-          return (
-            <section className="mb-7">
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Posts salvos</span>
-                <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-                {saved.length > 0 && (
-                  <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{saved.length}</span>
-                )}
-              </div>
-              <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
-                Posts que tocaram você
-              </p>
-              {saved.length === 0 ? (
-                <div className="border border-dashed border-[#AE8F7D]/20 rounded-[14px] px-5 py-8 text-center">
-                  <p className="font-serif italic text-[15px] text-[#2A2A2A]/30 mb-1.5">Nenhum post salvo</p>
-                  <p className="font-sans font-light text-[10px] text-[#2A2A2A]/25">
-                    Os posts que tocarem você aparecerão aqui
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {saved.slice(0, 5).map((m) => (
-                    <MarginCard key={m.id} margin={m} showBook linkToThread />
-                  ))}
-                </div>
-              )}
-            </section>
-          );
-        })()}
-
         {/* ─── Impressão de leitura — identity card with archetype colors ─── */}
         <div
           className="rounded-[16px] p-5 mb-5 relative overflow-hidden"
@@ -641,7 +580,7 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">✨</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Ecos recebidos nos seus posts</p>
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Respostas nos seus posts</p>
                   <p className="font-serif italic text-[13px] text-[#3D3D3D]">{reacoesRecebidas} {reacoesRecebidas === 1 ? "reação" : "reações"}</p>
                 </div>
               </div>
@@ -659,7 +598,7 @@ export function ProfileScreen() {
                 <span className="text-[15px] flex-shrink-0 opacity-30">🤍</span>
                 <div className="flex-1 min-w-0">
                   <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Reação mais usada</p>
-                  <p className="font-serif italic text-[12px] text-[#2A2A2A]/30">Reaja a ecos para aparecer aqui</p>
+                  <p className="font-serif italic text-[12px] text-[#2A2A2A]/30">Reaja a posts para aparecer aqui</p>
                 </div>
               </div>
             )}
@@ -678,7 +617,7 @@ export function ProfileScreen() {
                 <div className="flex items-start gap-3 px-4 py-3">
                   <span className="text-[15px] flex-shrink-0 mt-0.5">✨</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Eco mais popular · {total} reações</p>
+                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Post mais popular · {total} reações</p>
                     <p className="font-serif italic text-[12px] text-[#3D3D3D] leading-snug line-clamp-2">
                       &ldquo;{topEco.excerpt.slice(0, 80)}{topEco.excerpt.length > 80 ? "…" : ""}&rdquo;
                     </p>
@@ -703,6 +642,67 @@ export function ProfileScreen() {
             )}
           </div>
         </div>
+
+        {/* ─── Meus posts ─── */}
+        <section className="mb-7">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Meus posts</span>
+            <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+            {myMargins.length > 0 && (
+              <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{myMargins.length}</span>
+            )}
+          </div>
+          <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
+            Trechos e reflexões que você publicou
+          </p>
+          {myMargins.length === 0 ? (
+            <div className="border border-dashed border-[#AE8F7D]/20 rounded-[14px] px-5 py-8 text-center">
+              <p className="font-serif italic text-[15px] text-[#2A2A2A]/30 mb-1.5">Nenhum post ainda</p>
+              <p className="font-sans font-light text-[10px] text-[#2A2A2A]/25">
+                Seus trechos e reflexões aparecerão aqui
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {myMargins.slice(0, 5).map((m) => (
+                <MarginCard key={m.id} margin={m} showBook linkToThread />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ─── Posts salvos ─── */}
+        {(() => {
+          const saved = margins.filter((m) => savedMargins.includes(m.id));
+          return (
+            <section className="mb-7">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Posts salvos</span>
+                <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+                {saved.length > 0 && (
+                  <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{saved.length}</span>
+                )}
+              </div>
+              <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
+                Posts que tocaram você
+              </p>
+              {saved.length === 0 ? (
+                <div className="border border-dashed border-[#AE8F7D]/20 rounded-[14px] px-5 py-8 text-center">
+                  <p className="font-serif italic text-[15px] text-[#2A2A2A]/30 mb-1.5">Nenhum post salvo</p>
+                  <p className="font-sans font-light text-[10px] text-[#2A2A2A]/25">
+                    Os posts que tocarem você aparecerão aqui
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {saved.slice(0, 5).map((m) => (
+                    <MarginCard key={m.id} margin={m} showBook linkToThread />
+                  ))}
+                </div>
+              )}
+            </section>
+          );
+        })()}
 
         {/* Quero Ler — Wishlist */}
         {wishlistBooks.length > 0 && (

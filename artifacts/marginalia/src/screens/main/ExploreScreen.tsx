@@ -347,7 +347,7 @@ export function ExploreScreen() {
                       <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
                       <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1">{book.author}</p>
                       <div className="flex items-center gap-2">
-                        <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
+                        <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} posts</span>
                         {book.genres && book.genres.length > 0 && (
                           <>
                             <span className="text-[#AE8F7D]/25">·</span>
@@ -431,7 +431,7 @@ export function ExploreScreen() {
                           <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
                           <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1">{book.author}</p>
                           <div className="flex items-center gap-2">
-                            <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
+                            <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} posts</span>
                             {book.publicationYear && (<><span className="text-[#AE8F7D]/25">·</span><span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{book.publicationYear}</span></>)}
                           </div>
                         </div>
