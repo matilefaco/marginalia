@@ -26,7 +26,7 @@ export function UserIdentity({
 }: Props) {
   const [, navigate] = useLocation();
 
-  const isClickable = !!(userId || onNavigate);
+  const isClickable = !!(userId || onNavigate || (username && username.replace(/^@/, "")));
 
   const avatarDim  = size === "md" ? "w-7 h-7" : "w-5 h-5";
   const initFSize  = size === "md" ? "text-[9px]" : "text-[7px]";
@@ -34,9 +34,16 @@ export function UserIdentity({
   const userFSize  = size === "md" ? "text-[10px]" : "text-[9px]";
 
   const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (onNavigate) {
       onNavigate(e);
-    } else if (userId) {
+      return;
+    }
+    if (username) {
+      const clean = username.replace(/^@/, "");
+      if (clean) { navigate(`/perfil/${clean}`); return; }
+    }
+    if (userId) {
       navigate(`/user/${userId}`);
     }
   };

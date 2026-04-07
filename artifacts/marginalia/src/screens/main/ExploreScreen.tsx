@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { Link } from "wouter";
-import { MOCK_BOOKS, MOCK_USERS, MOCK_MARGINS } from "@/data/mockData";
+import { MOCK_BOOKS, MOCK_MARGINS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { BookCover } from "@/components/BookCover";
 import { useApp } from "@/context/AppContext";
@@ -164,8 +164,6 @@ export function ExploreScreen() {
     )
     .slice(0, 3);
 
-  const compatibleReaders = MOCK_USERS.filter((u) => u.id !== currentUser.id)
-    .sort((a, b) => (b.compatibilityScore || 0) - (a.compatibilityScore || 0));
 
   return (
     <div className="min-h-full bg-[#FAF8F3]">
@@ -550,57 +548,6 @@ export function ExploreScreen() {
           </section>
         )}
 
-        {/* Compatible Readers */}
-        {!query && (
-          <section data-testid="section-compatible-readers">
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-                Leitores parecidos com você
-              </span>
-              <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-            </div>
-            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
-              Calculado por gêneros, livros e estilo de leitura
-            </p>
-            <div className="space-y-2">
-              {compatibleReaders.map((reader) => (
-                <Link key={reader.id} href={`/user/${reader.id}`}>
-                  <div
-                    data-testid={`card-reader-${reader.id}`}
-                    className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 hover:border-[#AE8F7D]/30 transition-colors active:opacity-80"
-                  >
-                    <div className="flex items-center gap-3 mb-2.5">
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: reader.avatarColor || "#697962" }}
-                      >
-                        <span className="font-sans text-[11px] text-[#FAF8F3]">{reader.initials}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-sans font-medium text-[11px] text-[#2A2A2A]">{reader.name}</span>
-                          <span className="font-sans font-light text-[9px] text-[#2A2A2A]/25">·</span>
-                          <span className="font-sans font-light text-[9px] text-[#8A8178]">{reader.username}</span>
-                        </div>
-                        <div className="font-sans font-light text-[8px] text-[#2A2A2A]/35 mt-0.5">{reader.city}</div>
-                      </div>
-                      {reader.compatibilityScore && (
-                        <div className="text-right flex-shrink-0">
-                          <div className="font-serif text-[20px] text-[#AE8F7D] leading-none">{reader.compatibilityScore}%</div>
-                          <div className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#2A2A2A]/30">compatível</div>
-                        </div>
-                      )}
-                    </div>
-                    <p className="font-serif italic text-[11px] text-[#AE8F7D]">&ldquo;{reader.readingSignature}&rdquo;</p>
-                    {reader.bio && (
-                      <p className="font-sans font-light text-[10px] text-[#2A2A2A]/45 mt-1.5 line-clamp-2">{reader.bio}</p>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
       </div>
     </div>
   );

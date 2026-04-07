@@ -28,12 +28,12 @@ export const SPOILER_PREFERENCES = [
   {
     id: "progress_only",
     label: "Ver só o que eu já li",
-    description: "Mostrar apenas conteúdos dentro do meu progresso informado.",
+    description: "Mostrar apenas posts de livros que já registrei e apenas dentro do meu progresso.",
   },
   {
     id: "protected",
     label: "Modo protegido",
-    description: "Ocultar automaticamente conteúdos potencialmente sensíveis até eu liberar.",
+    description: "Ocultar automaticamente conteúdos de livros que ainda não registrei ou que estejam além do meu progresso, até eu decidir liberar.",
   },
 ] as const;
 

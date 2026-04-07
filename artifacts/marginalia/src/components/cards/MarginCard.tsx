@@ -243,7 +243,11 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
   const handleAuthorClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (margin.userId !== currentUser.id) navigate(`/user/${margin.userId}`);
+    if (margin.userId !== currentUser.id) {
+      const username = USER_USERNAME_MAP[margin.userId]?.replace(/^@/, "");
+      if (username) navigate(`/perfil/${username}`);
+      else navigate(`/user/${margin.userId}`);
+    }
   };
 
   const handleReplyWithMargin = (e: React.MouseEvent) => {
@@ -486,6 +490,7 @@ export function MarginCard({ margin, showBook = false, linkToThread = true }: Pr
       <SpoilerShieldCard
         margin={margin}
         reason={getBlockedReason(margin, progress, currentUser.spoilerPreference)}
+        inLibrary={!!progress}
       />
     );
   }
@@ -511,7 +516,7 @@ const ATMOSPHERIC_PHRASES = [
   "Muitos leitores pararam aqui para refletir.",
 ];
 
-function SpoilerShieldCard({ margin, reason }: { margin: Margin; reason: string }) {
+function SpoilerShieldCard({ margin, reason, inLibrary }: { margin: Margin; reason: string; inLibrary: boolean }) {
   const [revealed, setRevealed] = useState(false);
   const [, navigate] = useLocation();
 
@@ -569,12 +574,21 @@ function SpoilerShieldCard({ margin, reason }: { margin: Margin; reason: string 
 
       {/* CTAs */}
       <div className="flex gap-2 flex-wrap">
-        <button
-          onClick={() => navigate(`/book/${margin.bookId}`)}
-          className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#697962] border border-[#697962]/25 px-3 py-1.5 rounded-full hover:bg-[#697962]/5 transition-colors"
-        >
-          Ver página do livro
-        </button>
+        {!inLibrary ? (
+          <button
+            onClick={() => navigate(`/book/${margin.bookId}`)}
+            className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#697962] border border-[#697962]/25 px-3 py-1.5 rounded-full hover:bg-[#697962]/5 transition-colors"
+          >
+            Adicionar à biblioteca
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate(`/book/${margin.bookId}`)}
+            className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#697962] border border-[#697962]/25 px-3 py-1.5 rounded-full hover:bg-[#697962]/5 transition-colors"
+          >
+            Marcar progresso
+          </button>
+        )}
         <button
           onClick={() => setRevealed(true)}
           className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#2A2A2A]/35 px-3 py-1.5 hover:text-[#2A2A2A]/55 transition-colors"

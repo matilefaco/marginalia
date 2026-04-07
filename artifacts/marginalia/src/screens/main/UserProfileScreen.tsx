@@ -15,12 +15,19 @@ function TikTokIcon({ className }: { className?: string }) {
 }
 
 export function UserProfileScreen() {
-  const params = useParams<{ id: string }>();
-  const userId = params.id;
+  const params = useParams<{ id?: string; username?: string }>();
   const { currentUser } = useApp();
 
-  const user = MOCK_USERS.find((u) => u.id === userId);
-  if (!user || userId === currentUser.id) {
+  // Support both /user/:id and /perfil/:username routes
+  const user = params.id
+    ? MOCK_USERS.find((u) => u.id === params.id)
+    : MOCK_USERS.find((u) =>
+        u.username === `@${params.username}` ||
+        u.username === params.username ||
+        u.username?.replace(/^@/, "") === params.username
+      );
+
+  if (!user || user.id === currentUser.id) {
     return (
       <div className="min-h-full flex items-center justify-center screen-enter">
         <p className="font-serif italic text-[#2A2A2A]/40">Perfil não encontrado.</p>
@@ -28,6 +35,7 @@ export function UserProfileScreen() {
     );
   }
 
+  const userId = user.id;
   const archetype = READER_ARCHETYPES.find((a) => a.id === user.readerType)
     ?? READER_ARCHETYPES.find((a) => a.id === "observador")!;
 

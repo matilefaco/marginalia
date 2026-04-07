@@ -1,0 +1,446 @@
+CORRIGIR NAVEGAÇÃO DE PERFIS + REMOVER “LEITORES PARECIDOS COM VOCÊ” + REVISAR COMPLETAMENTE O SISTEMA DE VISUALIZAÇÃO / ANTI-SPOILER
+
+Quero implementar três correções prioritárias no app, porque o comportamento atual ainda está errado:
+
+1. o usuário ainda não consegue clicar no nome / @username de outras pessoas em várias telas, principalmente nas telas de post completo, respostas e conversas;
+2. quero remover totalmente a funcionalidade “Leitores parecidos com você”;
+3. quero revisar completamente o sistema de visualização de conteúdo (“Ver tudo”, “Ver só o que eu já li”, “Modo protegido”), porque hoje ele não está respeitando de verdade o progresso do leitor.
+
+Isso precisa ser corrigido de forma estrutural, e não apenas visual.
+
+==================================================
+PARTE 1 — NOME E @USERNAME CLICÁVEIS EM QUALQUER TELA
+==================================================
+
+Hoje esse comportamento ainda está falhando.
+
+Quero que, em qualquer lugar do app onde apareça:
+- nome do usuário
+- @username
+- avatar + nome + username
+
+o usuário possa tocar ali e abrir o perfil específico daquela pessoa.
+
+--------------------------------------------------
+1.1. REGRA PRINCIPAL
+--------------------------------------------------
+
+Sempre que aparecer a identidade de alguém no app, ela precisa ser clicável.
+
+Isso vale para:
+- feed
+- post completo
+- respostas / comentários
+- respostas dentro de respostas
+- cards de conversa da comunidade
+- páginas de livro
+- cards de post
+- cards compartilháveis
+- qualquer lista de pessoas
+- qualquer lugar com avatar + nome + @username
+
+--------------------------------------------------
+1.2. COMPORTAMENTO CORRETO
+--------------------------------------------------
+
+Ao tocar em:
+- nome
+- @username
+- ou idealmente no bloco inteiro da pessoa (avatar + nome + @username)
+
+abrir o perfil público daquela pessoa.
+
+Rota ideal:
+- /perfil/:username
+
+Exemplos:
+- /perfil/claramonteiro
+- /perfil/thiagoandrade
+- /perfil/larissap
+
+--------------------------------------------------
+1.3. IMPLEMENTAÇÃO TÉCNICA
+--------------------------------------------------
+
+Padronizar isso num componente reutilizável.
+
+Criar um componente único, algo como:
+- UserIdentityLink
+- ClickableUserIdentity
+- AuthorLink
+- ou equivalente
+
+Esse componente deve receber:
+- userId
+- username
+- displayName
+- avatarInitials
+- avatarColor
+- timestamp opcional
+- layout opcional (compact / regular)
+
+E renderizar:
+- avatar
+- nome
+- @username
+- tempo, se houver
+
+Com clique consistente.
+
+--------------------------------------------------
+1.4. EXEMPLO DE COMPORTAMENTO
+--------------------------------------------------
+
+Estrutura visual:
+
+Thiago Andrade · @thiago
+
+Ao tocar:
+- abrir perfil do Thiago Andrade
+
+--------------------------------------------------
+1.5. IMPORTANTE
+--------------------------------------------------
+
+Não quero mais nenhum nome “morto” na interface.
+
+Se o usuário vê outra pessoa no app, ele precisa conseguir entrar no perfil dela.
+
+==================================================
+PARTE 2 — REMOVER “LEITORES PARECIDOS COM VOCÊ”
+==================================================
+
+Quero remover completamente essa funcionalidade.
+
+A seção:
+- “Leitores parecidos com você”
+
+deve ser retirada do app.
+
+--------------------------------------------------
+2.1. REMOVER DE:
+--------------------------------------------------
+
+- perfil
+- explorar
+- qualquer tela onde essa feature esteja aparecendo
+- qualquer card derivado dessa feature
+- qualquer backend/query específica dessa lógica, se não estiver sendo usada em outro lugar
+
+--------------------------------------------------
+2.2. MOTIVO
+--------------------------------------------------
+
+Essa funcionalidade não está ajudando o produto neste momento e está ocupando espaço com uma lógica menos importante do que:
+- descoberta de livros
+- progresso de leitura
+- posts/respostas
+- comunidade
+- anti-spoiler bem executado
+
+Quero simplificar o app e focar no que realmente fortalece a experiência.
+
+==================================================
+PARTE 3 — REVISÃO COMPLETA DAS 3 OPÇÕES DE VISUALIZAÇÃO
+==================================================
+
+As três opções de visualização precisam ser revistas completamente, porque hoje não estão funcionando direito.
+
+As opções atuais são algo como:
+- Ver tudo
+- Ver só o que eu já li
+- Modo protegido
+
+Mas, na prática, mesmo quando o leitor marca o que já leu, ainda aparecem posts de livros que ele não selecionou, não marcou progresso e não concluiu.
+
+Isso está errado.
+
+==================================================
+PARTE 4 — NOVA REGRA DE VISUALIZAÇÃO (COMPORTAMENTO CORRETO)
+==================================================
+
+Quero definir de forma muito clara o que cada modo deve fazer.
+
+--------------------------------------------------
+4.1. MODO “VER TUDO”
+--------------------------------------------------
+
+Esse é o modo mais aberto.
+
+Comportamento:
+- mostrar posts de qualquer livro
+- mostrar posts completos
+- permitir descoberta ampla
+- sem restrição por progresso
+
+Esse modo é para leitores que querem ver tudo conscientemente.
+
+--------------------------------------------------
+4.2. MODO “VER SÓ O QUE EU JÁ LI”
+--------------------------------------------------
+
+Esse modo precisa ser muito mais rígido do que está hoje.
+
+REGRA:
+Só mostrar posts completos de livros que o usuário já adicionou e marcou progresso/leitura.
+
+Mais especificamente:
+
+### Se o usuário NÃO registrou o livro na biblioteca / progresso:
+- NÃO mostrar post completo daquele livro no feed
+- NÃO mostrar trecho
+- NÃO mostrar insight completo
+- NO MÁXIMO mostrar um card protegido / teaser seguro (explico abaixo)
+
+### Se o usuário registrou o livro e tem progresso:
+- mostrar conteúdo completo apenas até o ponto que ele já leu
+- ocultar conteúdos além do progresso
+
+### Se o usuário marcou livro como concluído:
+- mostrar todo o conteúdo daquele livro
+
+Esse modo precisa respeitar de verdade a biblioteca e o progresso do leitor.
+
+--------------------------------------------------
+4.3. MODO “PROTEGIDO”
+--------------------------------------------------
+
+Esse é o modo mais seguro.
+
+REGRA:
+- ocultar automaticamente qualquer conteúdo potencialmente spoiler
+- inclusive de livros adicionados, se o post estiver além do progresso
+- para livros não adicionados / não registrados:
+  - nunca mostrar trecho real
+  - nunca mostrar post completo
+  - mostrar apenas versão protegida, se fizer sentido
+
+Esse modo deve ser o mais rigoroso de todos.
+
+==================================================
+PARTE 5 — O ERRO ATUAL QUE PRECISA SUMIR
+==================================================
+
+Hoje, mesmo quando o usuário escolhe:
+- “Ver só o que eu já li”
+ou
+- “Modo protegido”
+
+ainda aparecem conteúdos de livros que ele:
+- não adicionou
+- não marcou progresso
+- não concluiu
+
+Isso precisa parar.
+
+REGRA NOVA:
+No modo “Ver só o que eu já li” e no “Modo protegido”, livros sem progresso registrado não podem aparecer como post aberto no feed.
+
+==================================================
+PARTE 6 — O QUE PODE APARECER NO LUGAR (DESCOBERTA SEM SPOILER)
+==================================================
+
+Mesmo sem mostrar post completo de livros não lidos, eu ainda quero que o feed continue interessante e desperte curiosidade.
+
+Então, em vez de mostrar o post real, quero que o sistema mostre um card protegido / teaser seguro.
+
+--------------------------------------------------
+6.1. CARD PROTEGIDO / TEASER SEGURO
+--------------------------------------------------
+
+Para livros que o usuário não leu ou não registrou, mostrar algo como:
+
+- capa do livro
+- título
+- autor
+- volume de atividade (ex: 12 reações · 4 respostas)
+- texto seguro tipo:
+  - “Leitores estão reagindo intensamente neste ponto.”
+  - “Uma conversa forte está acontecendo neste livro.”
+  - “Trecho protegido para respeitar seu ritmo.”
+  - “Marque seu progresso para liberar este conteúdo.”
+  - “Quer explorar esse livro sem spoiler?”
+
+NÃO mostrar:
+- citação real
+- post completo
+- comentário completo
+- spoiler textual
+
+--------------------------------------------------
+6.2. AÇÕES DESSE CARD PROTEGIDO
+--------------------------------------------------
+
+Esses cards protegidos devem ter CTAs como:
+- Quero ler
+- Adicionar à biblioteca
+- Marcar progresso
+- Ver página do livro
+- Liberar este conteúdo
+
+==================================================
+PARTE 7 — BOTÃO / AÇÃO PARA LIBERAR OU NÃO
+==================================================
+
+Quero que, quando um livro não lido aparecer em modo protegido ou em “ver só o que eu já li”, o usuário tenha controle.
+
+Ou seja:
+o conteúdo não deve aparecer automaticamente, mas o usuário pode escolher revelar se quiser.
+
+Exemplo de ação:
+- “Liberar este conteúdo”
+- “Ver mesmo assim”
+- “Manter protegido”
+
+Isso pode funcionar como:
+- botão inline no card protegido
+ou
+- modal de confirmação elegante
+
+==================================================
+PARTE 8 — LÓGICA TÉCNICA DO FILTRO
+==================================================
+
+Quero que isso seja resolvido na base da lógica de feed, não só escondendo visualmente.
+
+--------------------------------------------------
+8.1. CADA POST PRECISA TER METADADOS DE POSIÇÃO
+--------------------------------------------------
+
+Garantir que cada post tenha, sempre que possível:
+- book_id
+- chapter_number
+- page_number
+- progress_percent
+- spoiler_flag
+- created_by
+- visibility data
+
+--------------------------------------------------
+8.2. CADA USUÁRIO PRECISA TER PROGRESSO CONFIÁVEL
+--------------------------------------------------
+
+Na relação user_books / biblioteca do usuário, garantir persistência de:
+- current_page
+- current_chapter
+- progress_percent
+- reading_status
+- completed_at, se houver
+
+--------------------------------------------------
+8.3. FUNÇÃO CENTRAL DE VISIBILIDADE
+--------------------------------------------------
+
+Criar uma função única para decidir se o usuário pode ver o conteúdo completo.
+
+Algo como:
+- canUserSeePost(user, post, mode)
+- getPostVisibilityState(user, post, mode)
+
+Essa função deve retornar estados como:
+- full
+- protected
+- hidden
+- revealable
+
+--------------------------------------------------
+8.4. REGRAS DA FUNÇÃO
+--------------------------------------------------
+
+Se mode = "ver_tudo":
+- mostrar tudo
+
+Se mode = "ver_so_o_que_ja_li":
+- se livro não está na biblioteca/progresso do usuário:
+  - retornar protected
+- se livro está na biblioteca e post está <= progresso:
+  - retornar full
+- se livro está na biblioteca e post está > progresso:
+  - retornar protected
+- se livro está concluído:
+  - retornar full
+
+Se mode = "modo_protegido":
+- se livro não está na biblioteca:
+  - retornar protected
+- se livro está na biblioteca e post está <= progresso:
+  - retornar full
+- se livro está além do progresso:
+  - retornar protected
+- nunca mostrar trecho explicitamente sem ação do usuário
+
+==================================================
+PARTE 9 — FEED MAIS INTERESSANTE MESMO COM PROTEÇÃO
+==================================================
+
+Quero manter o feed vivo mesmo com anti-spoiler ativo.
+
+Então o feed, nos modos protegidos, deve misturar:
+- posts completos de livros já lidos / dentro do progresso
+- cards protegidos de descoberta segura
+- livros em alta
+- momentos do livro hoje
+- livros com muita atividade
+- heatmaps / atividade coletiva
+- chamadas para atualizar progresso
+
+Ou seja:
+o feed continua curioso e social, mas sem entregar spoiler automaticamente.
+
+==================================================
+PARTE 10 — AJUSTE DAS 3 OPÇÕES DE UI
+==================================================
+
+Também quero melhorar o texto dessas 3 opções para que fiquem ainda mais claras.
+
+Sugestão final:
+
+### Ver tudo
+Veja todo o conteúdo público, inclusive trechos e discussões além do seu progresso.
+
+### Ver só o que eu já li
+Mostrar apenas posts de livros que já registrei e apenas dentro do meu progresso.
+
+### Modo protegido
+Ocultar automaticamente conteúdos de livros que ainda não registrei ou que estejam além do meu progresso, até eu decidir liberar.
+
+==================================================
+PARTE 11 — O QUE NÃO PODE MAIS ACONTECER
+==================================================
+
+Depois da correção, não pode mais acontecer:
+
+- nome de usuário não clicável
+- tocar no nome e nada acontecer
+- aparecer “Leitores parecidos com você”
+- no modo “ver só o que eu já li”, aparecer post aberto de livro não registrado
+- no modo protegido, aparecer conteúdo explícito de livro não lido
+- o sistema prometer “seu ritmo está protegido” e não cumprir
+
+==================================================
+PARTE 12 — RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessas mudanças, quero que:
+
+1. o nome e o @username de qualquer usuário sejam clicáveis em qualquer tela;
+2. ao clicar, abra o perfil correto daquela pessoa;
+3. a funcionalidade “Leitores parecidos com você” seja removida completamente;
+4. o sistema de visualização respeite de verdade o progresso do leitor;
+5. no modo “ver só o que eu já li”, só apareçam posts completos de livros realmente registrados/lidos;
+6. para livros não lidos, o app mostre apenas versões protegidas e seguras;
+7. o leitor tenha opção de liberar ou não aquele conteúdo;
+8. o feed continue interessante e estimulante, mesmo com anti-spoiler ativado.
+
+==================================================
+PARTE 13 — PRIORIDADE
+==================================================
+
+Isso é prioridade alta de produto e UX.
+
+Implementar nesta ordem:
+1. corrigir clique em nome/@username em todo o app
+2. remover “Leitores parecidos com você”
+3. revisar lógica de feed por modo de visualização
+4. implementar cards protegidos / teasers seguros
+5. garantir que conteúdo de livros não registrados não apareça aberto nos modos protegidos

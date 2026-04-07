@@ -9,16 +9,17 @@ export function canUserSeeMargin(
   if (spoilerPreference === "all") return true;
 
   if (spoilerPreference === "protected") {
-    // Protected: only show content with NO spoiler level AND within progress
+    // Book not in library → always block
+    if (!progress) return false;
+    // Any spoiler level → block
     if (margin.spoilerLevel !== "none") return false;
-    if (!progress || progress.currentPercent === 0) return true;
+    // Not started yet → block (protect unstarted books)
+    if (progress.currentPercent === 0 && progress.status !== "completed") return false;
     return isWithinProgress(margin, progress);
   }
 
-  // progress_only: show content within user's progress (spoiler level ignored for within-progress)
-  if (!progress || progress.currentPercent === 0) {
-    return margin.spoilerLevel === "none";
-  }
+  // progress_only: book must be in library with registered progress
+  if (!progress) return false;
   return isWithinProgress(margin, progress);
 }
 
@@ -36,6 +37,9 @@ export function getBlockedReason(
   progress?: BookProgress,
   spoilerPreference?: SpoilerPreference
 ): string {
+  if (!progress) {
+    return "Você ainda não registrou este livro na sua biblioteca. Adicione-o e marque seu progresso para liberar conteúdos compatíveis.";
+  }
   if (margin.spoilerLevel === "ending") {
     return "Este trecho revela o final ou uma revelação central — ocultado para preservar sua experiência.";
   }
@@ -45,8 +49,8 @@ export function getBlockedReason(
   if (margin.spoilerLevel === "light" && spoilerPreference === "protected") {
     return "No modo protegido, spoilers leves também são ocultados automaticamente.";
   }
-  if (!progress || progress.currentPercent === 0) {
-    return "Você ainda não informou seu progresso neste livro. Adicione para liberar conteúdos compatíveis.";
+  if (progress.currentPercent === 0) {
+    return "Você ainda não iniciou este livro. Marque seu progresso para liberar conteúdos compatíveis.";
   }
   const percent = margin.percent ?? 100;
   return `Este conteúdo está em ${percent}% do livro — além dos seus ${Math.round(progress.currentPercent)}% atuais.`;

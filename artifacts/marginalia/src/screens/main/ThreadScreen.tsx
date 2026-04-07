@@ -168,7 +168,9 @@ export function ThreadScreen() {
     e.preventDefault();
     e.stopPropagation();
     if (margin.userId !== currentUser.id) {
-      navigate(`/user/${margin.userId}`);
+      const uname = USER_USERNAME_MAP[margin.userId]?.replace(/^@/, "");
+      if (uname) navigate(`/perfil/${uname}`);
+      else navigate(`/user/${margin.userId}`);
     }
   };
 
@@ -407,6 +409,7 @@ export function ThreadScreen() {
                   initials={reply.userInitials}
                   avatarColor={reply.avatarColor}
                   userId={reply.userId !== currentUser.id ? reply.userId : null}
+                  onNavigate={reply.userId !== currentUser.id ? (e) => { e.stopPropagation(); const u = USER_USERNAME_MAP[reply.userId]?.replace(/^@/, ""); if (u) navigate(`/perfil/${u}`); else navigate(`/user/${reply.userId}`); } : undefined}
                   timestamp={timeAgo(reply.createdAt)}
                 />
                 <div className="pl-7">

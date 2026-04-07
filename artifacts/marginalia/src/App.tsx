@@ -202,6 +202,7 @@ function MainApp() {
           <Route path="/thread/:id" component={ThreadScreen} />
           <Route path="/eco/:id" component={EcoScreen} />
           <Route path="/user/:id" component={UserProfileScreen} />
+          <Route path="/perfil/:username" component={UserProfileScreen} />
           <Route component={NotFound} />
         </Switch>
       </div>
