@@ -1,0 +1,344 @@
+:::writing{variant=“standard” id=“74126”}
+CORRIGIR “MINHAS MARGENS” + REFORMULAR A SEÇÃO + CONSERTAR POSTS ERRADOS EM “MEUS POSTS” E “SALVOS”
+
+Quero corrigir uma falha importante de navegação e também reformular a lógica da área onde aparecem os meus conteúdos e os conteúdos salvos.
+
+Hoje essa parte do app está inconsistente por 3 motivos:
+	1.	ainda usa a palavra “margem”, que eu não quero mais;
+	2.	alguns cards estão abrindo o post errado ou até um livro errado;
+	3.	a seção de posts que eu fiz e posts favoritados/salvos está puxando conteúdo errado ou inconsistente.
+
+Quero corrigir isso de forma estrutural.
+
+==================================================
+PARTE 1 — REMOVER “MINHAS MARGENS”
+
+Não quero mais a nomenclatura:
+	•	“Minhas margens”
+
+Substituir por algo mais claro e intuitivo.
+
+==================================================
+1.1. NOVO NOME DA SEÇÃO
+
+Quero usar:
+
+👉 “Meus posts”
+
+Esse deve ser o nome principal da seção onde aparecem os posts que eu publiquei.
+
+Se houver uma seção separada para os salvos, usar:
+
+👉 “Posts salvos”
+
+Ou, se preferir algo mais curto:
+	•	Meus posts
+	•	Salvos
+
+==================================================
+1.2. NOMENCLATURA GLOBAL
+
+Substituir definitivamente:
+	•	margem → post
+	•	margens → posts
+
+Inclusive em:
+	•	títulos de seção
+	•	labels
+	•	placeholders
+	•	textos vazios
+	•	botões
+	•	títulos internos
+	•	qualquer ocorrência residual
+
+==================================================
+PARTE 2 — ERRO CRÍTICO DE NAVEGAÇÃO DOS POSTS
+
+Hoje existe um erro grave:
+
+Quando eu clico em um post da minha própria seção, o app às vezes abre:
+	•	um livro errado
+	•	um post de outro livro
+	•	uma página que não corresponde ao conteúdo clicado
+
+Isso quebra a confiança do app.
+
+==================================================
+2.1. COMPORTAMENTO CORRETO
+
+Quando eu clicar em um post na seção “Meus posts”, o app deve abrir:
+
+👉 exatamente aquele post
+👉 vinculado ao livro correto
+👉 com os dados corretos
+👉 com a autoria correta
+
+Nunca pode abrir:
+	•	outro post
+	•	outro livro
+	•	outra citação
+	•	outro conteúdo salvo por engano
+
+==================================================
+2.2. O QUE REVISAR NO CÓDIGO
+
+Quero revisar toda a lógica de listagem e clique desses cards.
+
+Verificar especialmente:
+
+a) id do post
+
+Garantir que cada card está sendo renderizado com o post.id correto.
+
+b) id do livro
+
+Garantir que o livro associado ao post é realmente o book_id daquele post.
+
+c) navegação
+
+Garantir que ao clicar:
+	•	o app navega para o detalhe do post certo
+	•	e não para o detalhe de outro item por índice ou cache incorreto
+
+d) map/list rendering
+
+Revisar se o erro não está vindo de:
+	•	uso de index em vez de id
+	•	chave errada no map
+	•	referência antiga no estado
+	•	mistura de arrays
+	•	memo/cache incorreto
+	•	stale props
+
+e) dados derivados
+
+Verificar se o card está puxando:
+	•	texto de um post
+	•	mas metadados de outro
+	•	ou livro de outro
+
+Isso não pode acontecer.
+
+==================================================
+PARTE 3 — REFORMULAR A ÁREA “MEUS POSTS”
+
+Quero reorganizar essa seção para ficar mais clara e confiável.
+
+==================================================
+3.1. ESTRUTURA SUGERIDA
+
+Na área do perfil ou biblioteca pessoal, criar seções separadas:
+
+1. Meus posts
+
+Posts que eu publiquei
+
+2. Salvos
+
+Posts que eu salvei/favoritei
+
+3. Protegidos
+
+Posts que existem em livros ainda não liberados no meu progresso
+(opcional, se fizer sentido)
+
+==================================================
+3.2. ORDEM IDEAL
+
+Sugestão de organização:
+	•	Meus posts
+	•	Salvos
+	•	Identidade de leitura / DNA
+	•	Estatísticas
+
+Ou equivalente, mas quero separar claramente:
+o que é meu
+do que é salvo
+do que é protegido
+
+==================================================
+3.3. ESTADO VAZIO
+
+Se eu ainda não tiver postado nada:
+
+Mostrar algo como:
+	•	“Você ainda não publicou nenhum post.”
+	•	“Seus trechos e reflexões aparecerão aqui.”
+
+Se eu ainda não tiver salvo nada:
+	•	“Você ainda não salvou nenhum post.”
+	•	“Os posts que tocarem você aparecerão aqui.”
+
+==================================================
+PARTE 4 — CORRIGIR “POSTS SALVOS” / FAVORITADOS
+
+Quero revisar toda a lógica dos posts salvos/favoritados.
+
+Hoje alguns conteúdos que aparecem nessa sessão estão errados.
+
+==================================================
+4.1. COMPORTAMENTO CORRETO DOS SALVOS
+
+A seção “Posts salvos” deve mostrar apenas posts que eu realmente salvei.
+
+Cada item salvo deve abrir:
+	•	o post certo
+	•	do livro certo
+	•	com autor certo
+	•	com metadados certos
+
+==================================================
+4.2. REVISÃO TÉCNICA DOS SALVOS
+
+Verificar:
+	•	se a tabela ou relação de salvos está correta
+	•	se o join com posts está correto
+	•	se o join com books está correto
+	•	se não está usando array misturado entre “meus posts” e “salvos”
+	•	se o cache dos posts salvos não está contaminando a lista de meus posts
+	•	se não está reaproveitando card/state de outro item
+
+==================================================
+4.3. ABRIR O POST CERTO
+
+Tanto em “Meus posts” quanto em “Salvos”, o clique deve sempre abrir:
+
+👉 o post específico clicado
+
+e não a página do livro errado ou de outro post.
+
+==================================================
+PARTE 5 — AJUSTAR O CONTEÚDO DOS CARDS DA SEÇÃO
+
+Quero que os cards de “Meus posts” e “Salvos” fiquem consistentes.
+
+Cada card deve mostrar:
+	•	status de proteção, se houver
+	•	título do livro correto
+	•	autor da obra correto
+	•	texto seguro ou texto real, dependendo do modo
+	•	CTA correto:
+	•	Marcar progresso
+	•	Adicionar à biblioteca
+	•	Ver mesmo assim
+	•	Abrir post
+
+Mas esses dados precisam vir do item certo.
+
+==================================================
+5.1. IMPORTANTE SOBRE “VER MESMO ASSIM”
+
+Se o post protegido for meu, ainda assim o sistema deve usar o vínculo correto.
+
+Ou seja:
+mesmo quando ele estiver protegido, ao liberar ou abrir,
+o conteúdo tem que continuar apontando para:
+	•	o post correto
+	•	o livro correto
+	•	a obra correta
+
+Hoje isso está quebrado em alguns casos.
+
+==================================================
+PARTE 6 — REFORMULAÇÃO DE UX DESSA ÁREA
+
+Quero deixar essa parte mais fácil de entender.
+
+==================================================
+6.1. TÍTULOS FINAIS
+
+Usar:
+	•	Meus posts
+	•	Posts salvos
+
+Remover:
+	•	Minhas margens
+	•	Favoritos, se estiver ambíguo
+	•	qualquer resquício de “margem”
+
+==================================================
+6.2. SUBTÍTULOS SUGERIDOS
+
+Para “Meus posts”:
+	•	“Trechos e reflexões que você publicou”
+
+Para “Posts salvos”:
+	•	“Posts que tocaram você”
+
+==================================================
+6.3. FILTROS OPCIONAIS
+
+Se fizer sentido, permitir filtros internos:
+	•	Todos
+	•	Liberados
+	•	Protegidos
+
+Mas isso só se ficar limpo.
+Não quero complicar demais.
+
+==================================================
+PARTE 7 — FONTE DA VERDADE DOS DADOS
+
+Quero que essa parte pare de depender de montagem visual frouxa e passe a depender da relação real dos dados.
+
+Cada item precisa ser puxado a partir de:
+	•	post.id
+	•	post.book_id
+	•	post.author_id
+	•	saved_post_id, se for salvo
+	•	ownership (se é meu ou salvo)
+
+Ou seja:
+não quero mais cards montados com dados misturados.
+
+==================================================
+PARTE 8 — TESTES OBRIGATÓRIOS
+
+Depois da correção, testar:
+
+Teste 1
+
+Criar 2 posts em livros diferentes.
+Verificar se em “Meus posts” cada card abre o post correto.
+
+Teste 2
+
+Salvar 2 posts de outras pessoas em livros diferentes.
+Verificar se em “Posts salvos” cada card abre o item correto.
+
+Teste 3
+
+No modo protegido, abrir um post protegido em “Meus posts”.
+Verificar se o conteúdo liberado continua sendo do livro certo.
+
+Teste 4
+
+Verificar se nenhuma ocorrência de “margem” permanece nessa área.
+
+Teste 5
+
+Verificar se “Meus posts” e “Salvos” não compartilham dados entre si por engano.
+
+==================================================
+PARTE 9 — RESULTADO FINAL ESPERADO
+
+Depois dessas mudanças, quero que:
+	1.	“Minhas margens” deixe de existir e vire “Meus posts”;
+	2.	“Posts salvos” funcione corretamente;
+	3.	ao clicar em qualquer item, o app abra o post certo;
+	4.	cada post continue vinculado ao livro correto;
+	5.	não exista mais mistura de conteúdos errados nessa seção;
+	6.	a área fique muito mais clara, confiável e intuitiva.
+
+==================================================
+PARTE 10 — PRIORIDADE
+
+Isso é prioridade alta.
+
+Implementar nesta ordem:
+	1.	remover o termo “margem” dessa área
+	2.	separar claramente “Meus posts” e “Posts salvos”
+	3.	corrigir a lógica de clique e abertura
+	4.	revisar joins/cache/state para impedir mistura de livros/posts
+	5.	testar com múltiplos posts e múltiplos livros
+:::
