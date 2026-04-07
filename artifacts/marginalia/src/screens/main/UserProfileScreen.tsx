@@ -203,7 +203,7 @@ export function UserProfileScreen() {
         {userMargins.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Margens públicas</span>
+              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Posts públicos</span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
               <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{userMargins.length}</span>
             </div>
@@ -218,7 +218,7 @@ export function UserProfileScreen() {
         {userMargins.length === 0 && (
           <div className="text-center py-10 border border-dashed border-[#AE8F7D]/15 rounded-[14px]">
             <p className="font-serif italic text-[13px] text-[#2A2A2A]/35">
-              Nenhuma margem pública ainda.
+              Nenhum post público ainda.
             </p>
           </div>
         )}

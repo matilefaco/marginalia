@@ -87,7 +87,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
         <p className="font-sans text-[8px] font-light tracking-[0.2em] uppercase text-[#AE8F7D]">
           Ritmo de Leitura Coletivo
         </p>
-        <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{totalReaders} margens</p>
+        <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{totalReaders} posts</p>
       </div>
       <p className="font-serif italic text-[12px] text-[#2A2A2A]/50 mb-4">
         Veja onde os leitores mais sentiram este livro

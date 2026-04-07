@@ -20,7 +20,7 @@ export const ARQUETIPOS: Arquetipo[] = [
     numero: "01",
     nome: "O Observador",
     frase: "Você percebe o que ninguém disse.",
-    tracos: ["silêncio", "margem", "precisão"],
+    tracos: ["silêncio", "atenção", "precisão"],
     cor: "#2C2C3E",
     corTexto: "#E8E8F4",
     corAccent: "#A8A8C8",

@@ -35,7 +35,7 @@ export function OnboardingWelcomeScreen({ onStart, onLogin }: Props) {
           }}
         >
           <p className="font-serif italic text-[15px] text-[#454545]/60 leading-relaxed text-left">
-            Um espaço para registrar trechos, compartilhar margens e descobrir como outras pessoas atravessam os mesmos livros.
+            Um espaço para registrar trechos, compartilhar posts e descobrir como outras pessoas atravessam os mesmos livros.
           </p>
         </div>
       </div>

@@ -55,7 +55,7 @@ function PublicHeatmap({ bookId }: { bookId: number }) {
     <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[14px] p-5">
       <div className="flex items-center justify-between mb-1">
         <p className="font-sans text-[8px] font-light tracking-[0.2em] uppercase text-[#AE8F7D]">Ritmo de Leitura Coletivo</p>
-        <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{allMargins.length} margens</p>
+        <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{allMargins.length} posts</p>
       </div>
       <p className="font-serif italic text-[13px] text-[#2A2A2A]/50 mb-4">
         Onde os leitores mais sentiram este livro
@@ -102,7 +102,7 @@ function PublicHeatmap({ bookId }: { bookId: number }) {
           <div className="flex gap-4 text-[#FAF8F3]/80">
             <div>
               <span className="font-serif italic text-[13px]">{buckets[selectedBucket].count}</span>
-              <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">margens</span>
+              <span className="font-sans text-[8px] font-light ml-1 text-[#FAF8F3]/50">posts</span>
             </div>
             <div>
               <span className="font-serif italic text-[13px]">{buckets[selectedBucket].totalReactions}</span>
@@ -268,7 +268,7 @@ export function PublicBookScreen() {
               <div className="flex gap-4">
                 {[
                   { icon: <Users className="w-3 h-3" />, val: totalReaders, label: "leitores" },
-                  { icon: <MessageSquare className="w-3 h-3" />, val: totalMargins, label: "margens" },
+                  { icon: <MessageSquare className="w-3 h-3" />, val: totalMargins, label: "posts" },
                   { icon: <BookOpen className="w-3 h-3" />, val: totalReactions, label: "reações" },
                 ].map(s => (
                   <div key={s.label} className="flex items-center gap-1.5 text-[#2A2A2A]/40">
@@ -312,7 +312,7 @@ export function PublicBookScreen() {
       <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#FAF8F3]/95 border-t border-[#AE8F7D]/15" style={{ backdropFilter:"blur(12px)" }}>
         <div className="max-w-md mx-auto px-5 py-4">
           <p className="font-serif italic text-[14px] text-[#2A2A2A]/70 text-center mb-3">
-            Entre para deixar sua margem neste livro
+            Entre para deixar seu post neste livro
           </p>
           <div className="flex gap-2">
             <Link href="/"

@@ -213,7 +213,7 @@ export function ExploreScreen() {
                         <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
                         <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#2A2A2A]/40 mb-1">{book.author}</p>
                         <p className="font-sans font-light text-[9px] text-[#697962]">
-                          {book.communityStats.totalMargins} margens · {book.communityStats.debates} debates
+                          {book.communityStats.totalMargins} posts · {book.communityStats.debates} debates
                         </p>
                       </div>
                     </div>
@@ -241,7 +241,7 @@ export function ExploreScreen() {
                         <div className="flex-1 min-w-0">
                           <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
                           <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#2A2A2A]/40 mb-1">{book.author}</p>
-                          <p className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} margens · {book.publicationYear ?? ""}</p>
+                          <p className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} posts · {book.publicationYear ?? ""}</p>
                         </div>
                       </div>
                     </Link>
@@ -469,7 +469,7 @@ export function ExploreScreen() {
                               </span>
                               <span className="text-[#AE8F7D]/25">·</span>
                               <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
-                                {book.communityStats.totalMargins} margens
+                                {book.communityStats.totalMargins} posts
                               </span>
                             </div>
                           </div>

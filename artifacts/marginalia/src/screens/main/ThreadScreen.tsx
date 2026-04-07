@@ -126,7 +126,7 @@ export function ThreadScreen() {
   if (!margin) {
     return (
       <div className="min-h-full flex items-center justify-center">
-        <p className="font-serif italic text-[#454545]/40">Margem não encontrada.</p>
+        <p className="font-serif italic text-[#454545]/40">Post não encontrado.</p>
       </div>
     );
   }

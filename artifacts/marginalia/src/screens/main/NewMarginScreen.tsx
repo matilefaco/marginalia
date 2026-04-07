@@ -95,7 +95,7 @@ export function NewMarginScreen() {
         <div className="w-16 h-16 rounded-full bg-[#697962]/15 flex items-center justify-center mb-6 animate-in zoom-in duration-500">
           <Check className="w-8 h-8 text-[#697962]" />
         </div>
-        <h2 className="font-serif italic text-[26px] text-[#454545] mb-2">Margem publicada</h2>
+        <h2 className="font-serif italic text-[26px] text-[#454545] mb-2">Post publicado</h2>
         <p className="font-sans font-light text-[11px] text-[#454545]/40 tracking-[0.08em]">
           Guardada no seu livro para sempre.
         </p>

@@ -75,7 +75,7 @@ function getUsername(userId: string) {
 function topReactions(r: Record<string, number>, max = 2) {
   return Object.entries(r).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]).slice(0, max);
 }
-function getTypeLabel(t: string) { return MARGIN_TYPES.find(x => x.id === t)?.label ?? "Margem"; }
+function getTypeLabel(t: string) { return MARGIN_TYPES.find(x => x.id === t)?.label ?? "Post"; }
 function getTypeIcon(t: string) {
   const m: Record<string,string> = { insight:"💡", theory:"🔭", critique:"⚡", question:"❓",
     reaction:"✦", favorite_quote:"✨", personal_connection:"🤍", symbolic_reading:"⊕" };

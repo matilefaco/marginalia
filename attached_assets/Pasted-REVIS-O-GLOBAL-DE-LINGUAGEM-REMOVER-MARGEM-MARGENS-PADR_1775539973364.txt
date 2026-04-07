@@ -1,0 +1,153 @@
+REVISÃO GLOBAL DE LINGUAGEM — REMOVER “MARGEM / MARGENS” + PADRONIZAR TERMINOLOGIA DO APP
+
+Quero que seja feita uma revisão global completa no projeto para verificar se ainda existe qualquer uso das palavras:
+
+- margem  
+- margens  
+- nova margem  
+- minhas margens  
+- margem favorita  
+- qualquer variação ou derivação dessa nomenclatura  
+
+Esses termos não devem mais existir no app.
+
+==================================================
+PARTE 1 — BUSCA GLOBAL
+==================================================
+
+Fazer uma busca completa em TODO o código:
+
+- frontend (React / componentes / telas)
+- backend (se houver strings)
+- banco de dados (labels, seeds, conteúdos mockados)
+- constantes
+- textos hardcoded
+- traduções (se houver)
+- configs
+- arquivos antigos ou não utilizados
+
+==================================================
+PARTE 2 — SUBSTITUIÇÃO PADRÃO
+==================================================
+
+Substituir sistematicamente por linguagem simplificada:
+
+### REGRA PRINCIPAL
+
+- margem → post  
+- margens → posts  
+
+==================================================
+2.1. EXEMPLOS DE SUBSTITUIÇÃO
+==================================================
+
+Substituir:
+
+- “Nova margem” → “Novo post”  
+- “Minhas margens” → “Meus posts”  
+- “Margens em alta” → “Posts em alta”  
+- “Margens da comunidade” → “Posts da comunidade”  
+- “Criar margem” → “Criar post”  
+- “Publicar margem” → “Publicar post”  
+
+==================================================
+2.2. TEXTOS MAIS NATURAIS
+==================================================
+
+Se fizer mais sentido, adaptar em vez de traduzir literalmente:
+
+- “Salve esta margem” → “Salve este post”  
+- “Ver margens” → “Ver posts”  
+- “Adicionar margem” → “Adicionar post”  
+
+==================================================
+PARTE 3 — NÃO QUEBRAR A EXPERIÊNCIA
+==================================================
+
+Essa substituição NÃO pode quebrar:
+
+- lógica de navegação  
+- ids  
+- relacionamentos de dados  
+- estrutura de banco  
+- APIs  
+- rotas  
+
+Ou seja:
+👉 é uma substituição de linguagem + ajustes de UI  
+👉 NÃO alterar identificadores internos críticos sem necessidade  
+
+==================================================
+PARTE 4 — CASOS ESPECIAIS
+==================================================
+
+Se houver alguma parte onde “margem” foi usada como conceito interno:
+
+- manter internamente se necessário  
+- mas NUNCA exibir para o usuário  
+
+A interface sempre deve mostrar:
+👉 post / posts  
+
+==================================================
+PARTE 5 — REVISÃO JUNTO COM “ECO”
+==================================================
+
+Essa revisão deve acontecer junto com a revisão já solicitada de:
+
+- eco → resposta  
+- ecos → respostas  
+
+Garantir consistência total:
+
+- post  
+- resposta  
+- salvar post  
+- meus posts  
+- posts salvos  
+- conversas da comunidade  
+
+==================================================
+PARTE 6 — TESTES OBRIGATÓRIOS
+==================================================
+
+Depois da alteração:
+
+1. navegar pelo app inteiro (feed, explorar, perfil, biblioteca, preferências)  
+2. garantir que NÃO existe mais nenhuma ocorrência visível de:
+   - margem  
+   - margens  
+3. validar:
+   - criação de post  
+   - publicação  
+   - visualização  
+   - salvamento  
+   - compartilhamento  
+
+==================================================
+PARTE 7 — OBJETIVO FINAL
+==================================================
+
+Quero que o app fique:
+
+- mais simples  
+- mais intuitivo  
+- mais direto  
+- mais compreensível para qualquer usuário  
+
+A linguagem precisa ser clara à primeira vista.
+
+Sem termos conceituais difíceis.
+
+==================================================
+PRIORIDADE
+==================================================
+
+Alta.
+
+Executar junto com:
+- reorganização do perfil  
+- revisão de “eco / ecos”  
+- padronização geral de linguagem  
+
+Tudo deve sair consistente como um único sistema.
