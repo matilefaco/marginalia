@@ -8,7 +8,7 @@ import { useApp } from "@/context/AppContext";
 import { formatReference } from "@/utils/formatting";
 import { toCanvas } from "html-to-image";
 
-/* ── Brand tokens (matching HTML reference) ── */
+/* ── Brand tokens ── */
 const T = {
   albescent:  "#FAF8F3",
   heather:    "#AE8F7D",
@@ -26,11 +26,47 @@ const SANS  = "'Jost', sans-serif";
 type Template = "quote-light" | "quote-dark" | "moment" | "reader-type" | "echo" | "reading-dna";
 type Format   = "stories" | "feed";
 
+/* ── Context types — what the caller passes ── */
+export type ShareContext =
+  | { type: "eco";     margin: Margin }
+  | { type: "profile"; userId: string; userName: string; userInitials: string };
+
 /* ── Dimensions ── */
 const STORIES_W = 270; const STORIES_H = 480;
 const FEED_W    = 360; const FEED_H    = 360;
 
-interface Props { margin: Margin; onClose: () => void; }
+interface Props { context: ShareContext; onClose: () => void; }
+
+/* ── Context configuration: which templates appear, and defaults ── */
+const CONTEXT_CONFIG: Record<ShareContext["type"], {
+  templates: Template[];
+  defaultTemplate: Template;
+  defaultFormat: Format;
+  subtitle: string;
+}> = {
+  eco: {
+    templates:       ["echo", "quote-light", "quote-dark"],
+    defaultTemplate: "echo",
+    defaultFormat:   "feed",
+    subtitle:        "Eco · Citação Light · Citação Dark",
+  },
+  profile: {
+    templates:       ["reader-type", "reading-dna"],
+    defaultTemplate: "reader-type",
+    defaultFormat:   "stories",
+    subtitle:        "Tipo de Leitor · DNA de Leitura",
+  },
+};
+
+/* ── Template display metadata ── */
+const TEMPLATE_META: Record<Template, { label: string; icon: string; preferred: Format }> = {
+  "echo":         { label: "Eco / Margem",   icon: "◎",  preferred: "feed"    },
+  "quote-light":  { label: "Citação Light",  icon: "✦",  preferred: "stories" },
+  "quote-dark":   { label: "Citação Dark",   icon: "●",  preferred: "feed"    },
+  "moment":       { label: "Momento",        icon: "◦",  preferred: "stories" },
+  "reader-type":  { label: "Tipo de Leitor", icon: "🔭", preferred: "stories" },
+  "reading-dna":  { label: "DNA de Leitura", icon: "∿",  preferred: "stories" },
+};
 
 /* ── Helpers ── */
 function getUsername(userId: string) {
@@ -91,11 +127,8 @@ function CardQuoteLight({ margin, isSquare }: { margin: Margin; isSquare?: boole
     <div style={{ width: w, height: h, background: T.albescent, borderRadius: 20, overflow: "hidden",
       position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between",
       padding: isSquare ? "28px 28px" : "44px 36px", fontFamily: SANS }}>
-      {/* dot texture */}
       <div style={{ position:"absolute", inset:0, backgroundImage:"radial-gradient(circle, rgba(100,85,72,0.055) 1px, transparent 1px)", backgroundSize:"18px 18px", pointerEvents:"none" }} />
-      {/* radial tints */}
       <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 60% 40% at 15% 10%, rgba(174,143,125,0.10) 0%, transparent 70%), radial-gradient(ellipse 50% 50% at 85% 90%, rgba(105,121,98,0.07) 0%, transparent 60%)", pointerEvents:"none" }} />
-      {/* header */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", position:"relative", zIndex:2 }}>
         <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:9.5, fontWeight:500, letterSpacing:"0.14em", textTransform:"uppercase", color:T.heather }}>
           <div style={{ width:5, height:5, background:T.heather, borderRadius:"50%" }} />
@@ -103,7 +136,6 @@ function CardQuoteLight({ margin, isSquare }: { margin: Margin; isSquare?: boole
         </div>
         <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:T.doeskin, letterSpacing:"0.04em" }}>marginalia</span>
       </div>
-      {/* body */}
       <div style={{ position:"relative", zIndex:2, flex:1, display:"flex", flexDirection:"column", justifyContent:"center", padding: isSquare ? "16px 0" : "32px 0" }}>
         <div style={{ fontFamily:SERIF, fontSize: isSquare ? 38 : 52, color:T.heather, opacity:0.35, lineHeight:0.7, marginBottom:16, fontWeight:300 }}>"</div>
         <p style={{ fontFamily:SERIF, fontStyle:"italic", fontWeight:400, fontSize: isSquare ? 19 : 24, lineHeight:1.55, color:T.metal, letterSpacing:"0.01em", margin:0 }}>{excerpt}</p>
@@ -114,7 +146,6 @@ function CardQuoteLight({ margin, isSquare }: { margin: Margin; isSquare?: boole
           </span>
         </div>
       </div>
-      {/* footer */}
       <div style={{ position:"relative", zIndex:2, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div style={{ display:"flex", alignItems:"center", gap:9 }}>
           <div style={{ width:28, height:28, borderRadius:"50%", background:T.heather, display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -236,29 +267,27 @@ function CardMoment({ margin, isSquare }: { margin: Margin; isSquare?: boolean }
 /* ─────────────────────────────────────────── */
 /* CARD 4 — Tipo de Leitor                     */
 /* ─────────────────────────────────────────── */
-function CardReaderType({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) {
+function CardReaderType({ userId, userName, userInitials, isSquare }: {
+  userId: string; userName: string; userInitials: string; isSquare?: boolean;
+}) {
   const w = isSquare ? FEED_W : STORIES_W;
   const h = isSquare ? FEED_H : STORIES_H;
-  const profile = computeReaderProfile(margin.userId);
+  const profile = computeReaderProfile(userId);
   return (
     <div style={{ width: w, height: h, background: T.creamMid, borderRadius: 20, overflow: "hidden",
       position: "relative", display: "flex", flexDirection: "column", fontFamily: SANS }}>
-      {/* top ornament */}
       <div style={{ position:"absolute", top:0, left:0, right:0, height:"55%", background:T.heather, clipPath:"ellipse(65% 100% at 50% 0%)", opacity:0.12, zIndex:0 }} />
       <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 100% 60% at 50% 0%, rgba(174,143,125,0.15) 0%, transparent 60%), radial-gradient(ellipse 80% 80% at 100% 100%, rgba(105,121,98,0.10) 0%, transparent 50%)", pointerEvents:"none", zIndex:1 }} />
       <div style={{ position:"relative", zIndex:2, padding: isSquare ? "28px 28px" : "44px 36px", display:"flex", flexDirection:"column", height:"100%", justifyContent:"space-between" }}>
-        {/* header */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
           <span style={{ fontFamily:SANS, fontSize:9.5, fontWeight:500, letterSpacing:"0.18em", textTransform:"uppercase", color:T.heather }}>Seu tipo de leitor</span>
           <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:T.doeskin, letterSpacing:"0.04em" }}>marginalia</span>
         </div>
-        {/* emoji */}
         {!isSquare && (
           <div style={{ display:"flex", justifyContent:"center", alignItems:"center", flex:1 }}>
             <span style={{ fontSize:80, filter:"saturate(0.7)", opacity:0.9 }}>{profile.archetype.emoji}</span>
           </div>
         )}
-        {/* main */}
         <div style={{ textAlign:"center", paddingBottom: isSquare ? 0 : 8 }}>
           {isSquare && (
             <div style={{ fontSize:56, filter:"saturate(0.7)", opacity:0.9, marginBottom:8 }}>{profile.archetype.emoji}</div>
@@ -276,7 +305,6 @@ function CardReaderType({ margin, isSquare }: { margin: Margin; isSquare?: boole
             ))}
           </div>
         </div>
-        {/* footer */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:16, borderTop:`0.5px solid rgba(174,143,125,0.25)` }}>
           <div style={{ display:"flex", gap:16 }}>
             {[
@@ -290,7 +318,10 @@ function CardReaderType({ margin, isSquare }: { margin: Margin; isSquare?: boole
               </div>
             ))}
           </div>
-          <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:T.doeskin }}>marginalia</span>
+          <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:3 }}>
+            <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:T.doeskin }}>marginalia</span>
+            <span style={{ fontFamily:SANS, fontSize:8, fontWeight:400, letterSpacing:"0.10em", textTransform:"uppercase", color:T.doeskin, opacity:0.5 }}>{userName || userInitials}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -314,7 +345,6 @@ function CardEcho({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) 
       position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between",
       padding: isSquare ? "28px 28px" : "36px 32px", border: "0.5px solid rgba(174,143,125,0.2)", fontFamily: SANS }}>
       <div style={{ position:"absolute", inset:0, backgroundImage:"radial-gradient(circle, rgba(100,85,72,0.04) 1px, transparent 1px)", backgroundSize:"16px 16px", pointerEvents:"none" }} />
-      {/* header */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", position:"relative", zIndex:2, marginBottom: isSquare ? 16 : 28 }}>
         <div style={{ display:"flex", alignItems:"center", gap:6, fontFamily:SANS, fontSize:9, fontWeight:500, letterSpacing:"0.16em", textTransform:"uppercase", color:T.oldVine }}>
           <span style={{ fontSize:11 }}>{typeIcon}</span>
@@ -322,7 +352,6 @@ function CardEcho({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) 
         </div>
         <span style={{ fontFamily:SANS, fontSize:9, fontWeight:400, letterSpacing:"0.10em", textTransform:"uppercase", color:T.doeskin }}>{margin.bookTitle}</span>
       </div>
-      {/* body */}
       <div style={{ position:"relative", zIndex:2, flex:1 }}>
         <div style={{ position:"relative", paddingLeft:20 }}>
           <div style={{ position:"absolute", left:0, top:0, bottom:0, width:2, background:T.heather, opacity:0.4, borderRadius:2 }} />
@@ -334,7 +363,6 @@ function CardEcho({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) 
           <p style={{ fontFamily:SANS, fontSize: isSquare ? 12 : 13, fontWeight:300, color:T.metalLight, lineHeight:1.65, letterSpacing:"0.01em" }}>{annotation}</p>
         )}
       </div>
-      {/* footer */}
       <div style={{ position:"relative", zIndex:2, marginTop:28, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div style={{ display:"flex", flexDirection:"column", gap:3 }}>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -365,29 +393,26 @@ function CardEcho({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) 
 /* ─────────────────────────────────────────── */
 /* CARD 6 — DNA de Leitura                     */
 /* ─────────────────────────────────────────── */
-function CardReadingDNA({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) {
+function CardReadingDNA({ userId, userName, isSquare }: {
+  userId: string; userName: string; isSquare?: boolean;
+}) {
   const w = isSquare ? FEED_W : STORIES_W;
   const h = isSquare ? FEED_H : STORIES_H;
-  const profile = computeReaderProfile(margin.userId);
-  const user    = MOCK_USERS.find(u => u.id === margin.userId);
-  const name    = user?.name || margin.userName;
-  const parts   = name.trim().split(" ");
-  const firstName = parts[0] ?? name;
+  const profile = computeReaderProfile(userId);
+  const parts   = userName.trim().split(" ");
+  const firstName = parts[0] ?? userName;
   const lastName  = parts.slice(1).join(" ");
   const year = new Date().getFullYear();
   return (
     <div style={{ width: w, height: h, background: "#100E0C", borderRadius: 20, overflow: "hidden",
       position: "relative", display: "flex", flexDirection: "column", padding: isSquare ? "28px 28px" : "44px 36px", fontFamily: SANS }}>
-      {/* bg rings */}
       <div style={{ position:"absolute", top:"-30%", left:"-20%", width:"80%", height:"120%", border:"0.5px solid rgba(174,143,125,0.08)", borderRadius:"50%", transform:"rotate(-15deg)" }} />
       <div style={{ position:"absolute", bottom:"-20%", right:"-10%", width:"70%", height:"100%", border:"0.5px solid rgba(105,121,98,0.08)", borderRadius:"50%", transform:"rotate(20deg)" }} />
       <div style={{ position:"relative", zIndex:2, display:"flex", flexDirection:"column", height:"100%", justifyContent:"space-between" }}>
-        {/* header */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
           <span style={{ fontFamily:SANS, fontSize:9, fontWeight:500, letterSpacing:"0.20em", textTransform:"uppercase", color:"rgba(174,143,125,0.5)" }}>DNA de leitura</span>
           <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:"rgba(174,143,125,0.4)", letterSpacing:"0.04em" }}>marginalia</span>
         </div>
-        {/* name */}
         <div>
           <div style={{ fontFamily:SERIF, fontWeight:300, fontSize: isSquare ? 30 : 42, lineHeight:1.05, color:T.albescent, letterSpacing:"-0.02em", marginBottom:6 }}>
             {firstName}{lastName && <> <em style={{ fontStyle:"italic", color:T.heather }}>{lastName}</em></>}
@@ -396,7 +421,6 @@ function CardReadingDNA({ margin, isSquare }: { margin: Margin; isSquare?: boole
             perfil de leitor · {year}
           </div>
         </div>
-        {/* traits */}
         <div style={{ display:"flex", flexDirection:"column", gap: isSquare ? 8 : 12 }}>
           {profile.traits.map(trait => (
             <div key={trait.name} style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -408,7 +432,6 @@ function CardReadingDNA({ margin, isSquare }: { margin: Margin; isSquare?: boole
             </div>
           ))}
         </div>
-        {/* books */}
         {profile.books.length > 0 && (
           <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
             {profile.books.map(b => (
@@ -418,7 +441,6 @@ function CardReadingDNA({ margin, isSquare }: { margin: Margin; isSquare?: boole
             ))}
           </div>
         )}
-        {/* footer */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:16, borderTop:"0.5px solid rgba(255,255,255,0.06)" }}>
           <div>
             <div style={{ fontFamily:SANS, fontSize:9, fontWeight:400, letterSpacing:"0.14em", textTransform:"uppercase", color:"rgba(250,248,243,0.2)" }}>Impressão digital</div>
@@ -432,40 +454,42 @@ function CardReadingDNA({ margin, isSquare }: { margin: Margin; isSquare?: boole
   );
 }
 
-/* ─────────────────────────────────────────── */
-/* Template metadata                           */
-/* ─────────────────────────────────────────── */
-const TEMPLATES: { id: Template; label: string; icon: string; preferred: Format }[] = [
-  { id: "quote-light",  label: "Citação Light",  icon: "✦",  preferred: "stories" },
-  { id: "quote-dark",   label: "Citação Dark",   icon: "●",  preferred: "feed"    },
-  { id: "moment",       label: "Momento",         icon: "◦",  preferred: "stories" },
-  { id: "reader-type",  label: "Tipo de Leitor",  icon: "🔭", preferred: "stories" },
-  { id: "echo",         label: "Eco / Margem",    icon: "◎",  preferred: "feed"    },
-  { id: "reading-dna",  label: "DNA de Leitura",  icon: "∿",  preferred: "stories" },
-];
-
-function renderCard(tpl: Template, margin: Margin, isSquare: boolean) {
-  switch(tpl) {
-    case "quote-light":  return <CardQuoteLight  margin={margin} isSquare={isSquare} />;
-    case "quote-dark":   return <CardQuoteDark   margin={margin} isSquare={isSquare} />;
-    case "moment":       return <CardMoment      margin={margin} isSquare={isSquare} />;
-    case "reader-type":  return <CardReaderType  margin={margin} isSquare={isSquare} />;
-    case "echo":         return <CardEcho        margin={margin} isSquare={isSquare} />;
-    case "reading-dna":  return <CardReadingDNA  margin={margin} isSquare={isSquare} />;
+/* ── Render dispatcher ── */
+function renderCard(tpl: Template, ctx: ShareContext, isSquare: boolean) {
+  if (tpl === "reader-type") {
+    const userId = ctx.type === "profile" ? ctx.userId : ctx.margin.userId;
+    const userName = ctx.type === "profile" ? ctx.userName : ctx.margin.userName;
+    const userInitials = ctx.type === "profile" ? ctx.userInitials : ctx.margin.userInitials;
+    return <CardReaderType userId={userId} userName={userName} userInitials={userInitials} isSquare={isSquare} />;
+  }
+  if (tpl === "reading-dna") {
+    const userId = ctx.type === "profile" ? ctx.userId : ctx.margin.userId;
+    const userName = ctx.type === "profile" ? ctx.userName : ctx.margin.userName;
+    return <CardReadingDNA userId={userId} userName={userName} isSquare={isSquare} />;
+  }
+  if (ctx.type !== "eco") return null;
+  switch (tpl) {
+    case "quote-light": return <CardQuoteLight margin={ctx.margin} isSquare={isSquare} />;
+    case "quote-dark":  return <CardQuoteDark  margin={ctx.margin} isSquare={isSquare} />;
+    case "moment":      return <CardMoment     margin={ctx.margin} isSquare={isSquare} />;
+    case "echo":        return <CardEcho       margin={ctx.margin} isSquare={isSquare} />;
   }
 }
 
 /* ─────────────────────────────────────────── */
 /* MAIN MODAL                                  */
 /* ─────────────────────────────────────────── */
-export function ShareCardModal({ margin, onClose }: Props) {
+export function ShareCardModal({ context, onClose }: Props) {
   useApp();
-  const previewCardRef  = useRef<HTMLDivElement>(null);
-  const exportCardRef   = useRef<HTMLDivElement>(null);
+  const cfg = CONTEXT_CONFIG[context.type];
+
+  const previewCardRef   = useRef<HTMLDivElement>(null);
+  const exportCardRef    = useRef<HTMLDivElement>(null);
   const exportWrapperRef = useRef<HTMLDivElement>(null);
-  const previewAreaRef  = useRef<HTMLDivElement>(null);
-  const [template, setTemplate] = useState<Template>("quote-light");
-  const [format, setFormat]     = useState<Format>("stories");
+  const previewAreaRef   = useRef<HTMLDivElement>(null);
+
+  const [template, setTemplate] = useState<Template>(cfg.defaultTemplate);
+  const [format, setFormat]     = useState<Format>(cfg.defaultFormat);
   const [exporting, setExporting] = useState(false);
   const [shared, setShared]     = useState(false);
   const [downloaded, setDownloaded] = useState(false);
@@ -474,6 +498,12 @@ export function ShareCardModal({ margin, onClose }: Props) {
   const isSquare = format === "feed";
   const cardW = isSquare ? FEED_W : STORIES_W;
   const cardH = isSquare ? FEED_H : STORIES_H;
+
+  /* Sync format when template changes to its preferred format */
+  const handleSetTemplate = (tpl: Template) => {
+    setTemplate(tpl);
+    setFormat(TEMPLATE_META[tpl].preferred);
+  };
 
   useEffect(() => {
     const area = previewAreaRef.current;
@@ -490,6 +520,16 @@ export function ShareCardModal({ margin, onClose }: Props) {
     return () => ro.disconnect();
   }, [cardW, cardH]);
 
+  /* File slug for download */
+  const fileSlug = context.type === "eco"
+    ? context.margin.bookTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30)
+    : context.userName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 20);
+
+  /* Share text for navigator.share */
+  const shareText = context.type === "eco"
+    ? `"${context.margin.excerpt.slice(0, 100)}" — ${context.margin.bookTitle}`
+    : `${context.userName} · Perfil de leitura — Marginalia`;
+
   const captureCanvas = useCallback(async () => {
     if (!exportCardRef.current || !exportWrapperRef.current) return null;
     exportWrapperRef.current.style.left = "0px";
@@ -499,7 +539,7 @@ export function ShareCardModal({ margin, onClose }: Props) {
       const pixelRatio = isSquare ? 3 : 4;
       return await toCanvas(exportCardRef.current, {
         pixelRatio,
-        backgroundColor: isSquare ? T.albescent : T.albescent,
+        backgroundColor: T.albescent,
         width: cardW,
         height: cardH,
         cacheBust: true,
@@ -516,13 +556,12 @@ export function ShareCardModal({ margin, onClose }: Props) {
     const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, "image/jpeg", 0.93));
     if (!blob) throw new Error("Blob failed");
     const url = URL.createObjectURL(blob);
-    const slug = margin.bookTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30);
     const a = document.createElement("a");
-    a.href = url; a.download = `marginalia-${format}-${template}-${slug}.jpg`; a.rel = "noopener";
+    a.href = url; a.download = `marginalia-${format}-${template}-${fileSlug}.jpg`; a.rel = "noopener";
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 3000);
     setDownloaded(true); setTimeout(() => setDownloaded(false), 2500);
-  }, [captureCanvas, format, template, margin.bookTitle]);
+  }, [captureCanvas, format, template, fileSlug]);
 
   const handleDownload = useCallback(async () => {
     if (exporting) return;
@@ -539,10 +578,9 @@ export function ShareCardModal({ margin, onClose }: Props) {
       if (!canvas) return;
       const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, "image/jpeg", 0.93));
       if (!blob) return;
-      const slug = margin.bookTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30);
-      const file = new File([blob], `marginalia-${format}-${template}-${slug}.jpg`, { type: "image/jpeg" });
+      const file = new File([blob], `marginalia-${format}-${template}-${fileSlug}.jpg`, { type: "image/jpeg" });
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: "Marginalia", text: `"${margin.excerpt.slice(0,100)}" — ${margin.bookTitle}` });
+        await navigator.share({ files: [file], title: "Marginalia", text: shareText });
         setShared(true); setTimeout(() => setShared(false), 2500);
       } else {
         await doDownload();
@@ -550,17 +588,20 @@ export function ShareCardModal({ margin, onClose }: Props) {
     } catch(err) {
       if ((err as Error)?.name !== "AbortError") await doDownload();
     } finally { setExporting(false); }
-  }, [exporting, captureCanvas, format, template, margin, doDownload]);
+  }, [exporting, captureCanvas, format, template, fileSlug, shareText, doDownload]);
 
-  /* Export portal */
+  /* Export portal (off-screen, full-res render) */
   const exportPortal = createPortal(
     <div ref={exportWrapperRef} aria-hidden="true" style={{ position:"fixed", top:0, left:"-9999px", width:cardW, height:cardH, overflow:"hidden", pointerEvents:"none" }}>
       <div ref={exportCardRef} style={{ width:cardW, height:cardH }}>
-        {renderCard(template, margin, isSquare)}
+        {renderCard(template, context, isSquare)}
       </div>
     </div>,
     document.body
   );
+
+  const allowedTemplates = cfg.templates;
+  const showTemplateSelector = allowedTemplates.length > 1;
 
   const modalPortal = createPortal(
     <div data-share-overlay className="fixed inset-0 z-[9999] flex flex-col"
@@ -570,9 +611,9 @@ export function ShareCardModal({ margin, onClose }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-5 pb-3 flex-shrink-0">
         <div>
-          <p className="font-serif italic text-[17px] text-[#FAF8F3]">Compartilhar</p>
-          <p className="font-sans font-light text-[9px] tracking-[0.22em] uppercase text-[#FAF8F3]/30 mt-0.5">
-            6 variantes · Stories · Feed
+          <p className="font-serif italic text-[18px] text-[#FAF8F3]">Compartilhar</p>
+          <p className="font-sans font-light text-[9px] tracking-[0.20em] uppercase text-[#FAF8F3]/30 mt-0.5">
+            {cfg.subtitle}
           </p>
         </div>
         <button onClick={onClose} className="w-8 h-8 rounded-full border border-[#FAF8F3]/10 flex items-center justify-center text-[#FAF8F3]/40 hover:text-[#FAF8F3]/70 transition-colors">
@@ -580,23 +621,28 @@ export function ShareCardModal({ margin, onClose }: Props) {
         </button>
       </div>
 
-      {/* Template selector */}
-      <div className="px-5 mb-3 flex-shrink-0">
-        <p className="font-sans text-[8px] tracking-[0.18em] uppercase text-[#FAF8F3]/20 mb-2">Estilo do card</p>
-        <div className="flex gap-1.5 flex-wrap">
-          {TEMPLATES.map(t => (
-            <button key={t.id} onClick={() => { setTemplate(t.id); if (t.preferred !== format) setFormat(t.preferred); }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-sans text-[9px] tracking-[0.12em] transition-all duration-200 ${
-                template === t.id
-                  ? "bg-[#AE8F7D] text-[#100E0C] shadow-md"
-                  : "border border-[#FAF8F3]/12 text-[#FAF8F3]/40 hover:border-[#FAF8F3]/28 hover:text-[#FAF8F3]/65"
-              }`}>
-              <span>{t.icon}</span>
-              <span>{t.label}</span>
-            </button>
-          ))}
+      {/* Template selector — only shown when context has multiple options */}
+      {showTemplateSelector && (
+        <div className="px-5 mb-3 flex-shrink-0">
+          <p className="font-sans text-[8px] tracking-[0.18em] uppercase text-[#FAF8F3]/20 mb-2">Estilo do card</p>
+          <div className="flex gap-1.5">
+            {allowedTemplates.map(tpl => {
+              const meta = TEMPLATE_META[tpl];
+              return (
+                <button key={tpl} onClick={() => handleSetTemplate(tpl)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-sans text-[9px] tracking-[0.12em] transition-all duration-200 ${
+                    template === tpl
+                      ? "bg-[#AE8F7D] text-[#100E0C] shadow-md"
+                      : "border border-[#FAF8F3]/12 text-[#FAF8F3]/40 hover:border-[#FAF8F3]/28 hover:text-[#FAF8F3]/65"
+                  }`}>
+                  <span>{meta.icon}</span>
+                  <span>{meta.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Format toggle */}
       <div className="px-5 mb-3 flex-shrink-0 flex items-center gap-2">
@@ -617,7 +663,7 @@ export function ShareCardModal({ margin, onClose }: Props) {
       <div ref={previewAreaRef} className="flex-1 flex items-center justify-center min-h-0 overflow-hidden px-5">
         <div style={{ width: cardW * previewScale, height: cardH * previewScale, position:"relative", flexShrink:0, transition:"width 0.2s ease, height 0.2s ease" }}>
           <div ref={previewCardRef} style={{ width:cardW, height:cardH, position:"absolute", top:0, left:0, transform:`scale(${previewScale})`, transformOrigin:"top left", transition:"transform 0.2s ease" }} className="shadow-2xl rounded-2xl overflow-hidden">
-            {renderCard(template, margin, isSquare)}
+            {renderCard(template, context, isSquare)}
           </div>
         </div>
       </div>

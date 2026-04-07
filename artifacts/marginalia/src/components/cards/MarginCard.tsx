@@ -49,7 +49,7 @@ function ShareButton({ margin }: { margin: Margin }) {
         <Share2 className="w-3 h-3" />
       </button>
       {modalOpen && (
-        <ShareCardModal margin={margin} onClose={() => setModalOpen(false)} />
+        <ShareCardModal context={{ type: "eco", margin }} onClose={() => setModalOpen(false)} />
       )}
     </>
   );

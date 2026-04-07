@@ -3,6 +3,7 @@ import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { MOCK_MARGINS, MOCK_BOOKS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
+import { ShareCardModal } from "@/components/cards/ShareCardModal";
 import { BookCover } from "@/components/BookCover";
 import { Settings, Pencil, Check, X, Share2, Instagram, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
@@ -149,7 +150,7 @@ export function ProfileScreen() {
   const [editInstagram, setEditInstagram] = useState(currentUser.instagram || "");
   const [editTikTok, setEditTikTok] = useState(currentUser.tiktok || "");
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [shared, setShared] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [savedToast, setSavedToast] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -259,16 +260,6 @@ export function ProfileScreen() {
     setShowColorPicker(false);
   };
 
-  const handleShare = () => {
-    const text = `${fullName}\n${archetype.label}\n"${currentUser.readingSignature}"\n\nvia Marginalia`;
-    if (navigator.share) {
-      navigator.share({ title: "Meu perfil de leitura — Marginalia", text });
-    } else {
-      navigator.clipboard.writeText(text).catch(() => {});
-    }
-    setShared(true);
-    setTimeout(() => setShared(false), 2000);
-  };
 
   return (
     <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden screen-enter">
@@ -535,16 +526,12 @@ export function ProfileScreen() {
             </p>
 
             <button
-              onClick={handleShare}
-              className="flex items-center gap-2 bg-[#454545] text-[#FAF8F3] rounded-[8px] px-4 py-2.5 transition-colors hover:bg-[#3D3D3D]"
+              onClick={() => setShowShareModal(true)}
+              className="flex items-center gap-2 bg-[#2A2A2A] text-[#FAF8F3] rounded-[8px] px-4 py-2.5 transition-colors hover:bg-[#3A3A3A]"
             >
-              {shared ? (
-                <Check className="w-3.5 h-3.5" />
-              ) : (
-                <Share2 className="w-3.5 h-3.5" />
-              )}
+              <Share2 className="w-3.5 h-3.5" />
               <span className="font-sans text-[9px] font-light tracking-[0.12em]">
-                {shared ? "Copiado!" : "Compartilhar meu perfil de leitura"}
+                Compartilhar meu perfil de leitura
               </span>
             </button>
           </div>
@@ -739,6 +726,18 @@ export function ProfileScreen() {
           </section>
         )}
       </div>
+
+      {showShareModal && (
+        <ShareCardModal
+          context={{
+            type: "profile",
+            userId: currentUser.id,
+            userName: fullName ?? currentUser.username ?? "Leitor",
+            userInitials: currentUser.initials ?? (currentUser.firstName?.[0] ?? "L"),
+          }}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 }

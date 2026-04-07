@@ -1,0 +1,274 @@
+Quero reorganizar completamente a experiência de compartilhamento dos cards no app, porque hoje ela está confusa e bagunçada.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Hoje, quando o usuário clica para compartilhar um card específico, o app abre uma tela de compartilhamento mostrando várias outras variantes e vários outros cards possíveis ao mesmo tempo.
+
+Exemplo:
+- o usuário clica para compartilhar o card “Tipo de Leitor” no perfil
+- mas a tela mostra também DNA de Leitura, Citação Light, Citação Dark, Momento, Eco / Margem e outras variantes
+
+Isso está errado para a experiência que eu quero.
+
+Essa lógica deixa tudo:
+- confuso
+- bagunçado
+- misturado demais
+- pouco intuitivo
+- com cara de “editor de templates”, quando na verdade deveria parecer uma ação direta e refinada
+
+==================================================
+2. O QUE EU QUERO
+==================================================
+
+Quero que o compartilhamento seja contextual e específico.
+
+Ou seja:
+
+### Regra principal
+Quando o usuário clicar para compartilhar um card específico, a tela de compartilhamento deve abrir preparada para compartilhar **somente aquele card específico**.
+
+Não quero que apareçam todos os outros cards disponíveis misturados.
+
+==================================================
+3. EXEMPLOS DE COMPORTAMENTO CORRETO
+==================================================
+
+### Exemplo 1 — Tipo de Leitor
+Se o usuário clicar em compartilhar o card “Tipo de Leitor” no perfil:
+- abrir a tela de compartilhamento daquele card
+- mostrar somente o card Tipo de Leitor
+- permitir apenas escolher o formato (Stories 9:16 ou Feed 1:1), se isso fizer sentido
+- não mostrar DNA de Leitura, Citação, Momento, Eco / Margem etc.
+
+### Exemplo 2 — DNA de Leitura
+Se o usuário clicar em compartilhar o card “DNA de Leitura”:
+- abrir a tela desse card específico
+- mostrar apenas o DNA de Leitura
+- sem misturar com os outros
+
+### Exemplo 3 — Citação
+Se o usuário clicar em compartilhar uma citação:
+- abrir diretamente a tela de compartilhamento daquela citação
+- mostrar apenas a variante específica daquela citação
+- sem exibir cards de perfil ou outros tipos
+
+### Exemplo 4 — Eco / Margem
+Se o usuário clicar em compartilhar uma margem/eco:
+- abrir só o compartilhamento daquela margem
+- mostrar somente aquele card
+- sem abrir um catálogo de variantes desconexas
+
+==================================================
+4. NOVA REGRA DE ARQUITETURA DO COMPARTILHAMENTO
+==================================================
+
+Quero mudar a lógica do sistema de compartilhar para este modelo:
+
+### Antes
+Um “hub” genérico de compartilhamento com todas as variantes misturadas
+
+### Agora
+Um fluxo contextual, em que cada ponto do app abre seu próprio compartilhamento específico
+
+==================================================
+5. COMO EU QUERO ORGANIZAR ISSO
+==================================================
+
+Quero que cada card compartilhável tenha seu próprio ponto de entrada e sua própria experiência de share.
+
+## Regra
+Cada tipo de card deve abrir um modal/tela de share focado nele mesmo.
+
+### Tipos:
+- Tipo de Leitor
+- DNA de Leitura
+- Citação Favorita
+- Citação Dark, se aplicável
+- Eco / Margem
+- Momento
+- outros cards específicos que existirem
+
+Mas sempre:
+- um card por vez
+- uma intenção por vez
+- sem mostrar todo o catálogo de cards disponíveis
+
+==================================================
+6. O QUE A TELA DE COMPARTILHAMENTO DEVE MOSTRAR
+==================================================
+
+Quando abrir o share de um card específico, quero uma interface muito mais limpa.
+
+## A tela deve mostrar:
+- título “Compartilhar”
+- subtítulo discreto do tipo de conteúdo, se necessário
+- prévia grande do card selecionado
+- opção de formato:
+  - Stories 9:16
+  - Feed 1:1
+- botão Baixar
+- botão Compartilhar
+
+## A tela NÃO deve mostrar:
+- lista de todas as outras variantes
+- catálogo completo de tipos de card
+- opções desconectadas do contexto do usuário
+- mistura de cards de perfil com cards de eco e cards de citação
+
+==================================================
+7. MANTER SOMENTE O QUE FAZ SENTIDO NO CONTEXTO
+==================================================
+
+Quero que a ação de compartilhar seja sempre contextual.
+
+### Exemplo:
+Se estou no perfil e clico em “Compartilhar meu perfil de leitura”, posso até escolher entre:
+- Tipo de Leitor
+- DNA de Leitura
+
+Mas isso precisa ser apresentado de forma muito organizada e só se fizer sentido dentro daquele contexto.
+
+### Mesmo assim:
+não quero mostrar cards de eco, citação ou momento nessa mesma tela.
+
+## Sugestão de organização
+### Contexto Perfil
+Pode permitir compartilhar apenas:
+- Tipo de Leitor
+- DNA de Leitura
+- talvez Perfil de Leitura completo, se existir
+
+### Contexto Eco / Margem
+Pode permitir compartilhar apenas:
+- aquele eco
+- talvez a mesma margem em visual light ou dark, se fizer sentido
+- mas sem mostrar cards de perfil
+
+### Contexto Citação
+Pode permitir apenas:
+- a citação em visual próprio
+- talvez escolher light ou dark
+- mas sem misturar com cards de DNA ou Tipo de Leitor
+
+==================================================
+8. NOVA LÓGICA DE UX
+==================================================
+
+Quero que o app funcione assim:
+
+### Ao clicar em compartilhar em qualquer lugar do app:
+1. o sistema identifica qual card foi acionado
+2. abre o modal/tela já com aquele conteúdo específico
+3. mostra a prévia grande daquele card
+4. permite escolher somente as variações pertinentes ao contexto
+5. permite baixar ou compartilhar
+
+## Resultado
+A experiência deve parecer:
+- direta
+- elegante
+- focada
+- premium
+- sem ruído
+
+==================================================
+9. O QUE REVISAR NO CÓDIGO
+==================================================
+
+Quero que você revise toda a arquitetura de share.
+
+### Verificar especificamente:
+- se existe um “share modal” genérico com todas as variantes misturadas
+- se o app está sempre abrindo o mesmo compartilhador universal, independentemente do contexto
+- se falta passar o tipo/contexto do card ao abrir a tela
+- se falta separar componentes de share por contexto
+
+## Quero que você implemente:
+- compartilhamento por contexto
+- um fluxo de share baseado no card selecionado
+- filtros para que só apareçam variantes relevantes
+- ou, preferencialmente, nenhuma outra variante além da específica clicada
+
+==================================================
+10. ESTRUTURA DE IMPLEMENTAÇÃO SUGERIDA
+==================================================
+
+Quero algo nessa lógica:
+
+### Contexto perfil
+- `openShareModal({ type: 'reader-type', profileId })`
+- `openShareModal({ type: 'reading-dna', profileId })`
+
+### Contexto eco
+- `openShareModal({ type: 'echo', ecoId })`
+
+### Contexto citação
+- `openShareModal({ type: 'quote', quoteId })`
+
+### Contexto momento
+- `openShareModal({ type: 'moment', momentId })`
+
+Ou equivalente.
+
+O importante é:
+- o modal receber o tipo certo
+- renderizar apenas o card certo
+- não abrir um catálogo completo de variantes irrelevantes
+
+==================================================
+11. ORGANIZAÇÃO VISUAL DE CADA SHARE MODAL
+==================================================
+
+Quero que o modal/tela de compartilhar fique assim:
+
+### topo
+- título “Compartilhar”
+- botão fechar
+
+### corpo
+- prévia do card específico
+- seletor de formato (se fizer sentido)
+
+### base
+- botão Baixar
+- botão Compartilhar
+
+Mais nada, além do essencial.
+
+==================================================
+12. O QUE NÃO PODE MAIS ACONTECER
+==================================================
+
+Depois dessa correção, não pode mais acontecer:
+
+- clicar em compartilhar um card específico e aparecer um monte de outros cards
+- misturar cards de perfil com cards de citação
+- misturar cards de eco com cards de DNA
+- parecer uma galeria de templates bagunçada
+- deixar o usuário sem saber exatamente o que está compartilhando
+
+==================================================
+13. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois da correção, quero que:
+
+- cada card compartilhável tenha seu fluxo próprio e contextual
+- o compartilhamento fique limpo e organizado
+- quando o usuário clicar em um card específico, apareça somente esse card
+- no máximo apareçam variantes diretamente relacionadas àquele mesmo contexto
+- o app passe sensação de sofisticação e clareza
+- a experiência de share fique muito mais premium
+
+==================================================
+14. PRIORIDADE
+==================================================
+
+Isso é prioridade alta de UX.
+
+Implemente essa reorganização no código e na arquitetura do sistema de compartilhamento.
+Não quero apenas reorganização visual superficial.
+Quero corrigir a lógica da experiência de share para que ela seja contextual, específica e organizada.
