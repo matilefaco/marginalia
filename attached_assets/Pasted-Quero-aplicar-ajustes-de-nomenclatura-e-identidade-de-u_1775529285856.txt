@@ -1,0 +1,182 @@
+Quero aplicar ajustes de nomenclatura e identidade de usuário para melhorar a clareza e a navegação dentro do app.
+
+==================================================
+1. SUBSTITUIR “ECOS” DEFINITIVAMENTE
+==================================================
+
+A palavra “ecos” ainda aparece no app (ex: “5 ecos”).
+
+Isso deve ser removido completamente, pois não é intuitivo.
+
+Substituir por:
+
+👉 “respostas”
+
+---
+
+### Alterações obrigatórias:
+
+- “5 ecos” → “5 respostas”
+- “1 ecos” → “1 resposta”
+- “Ecos da comunidade” → “Conversas da comunidade”
+- qualquer uso interno de “eco” → “resposta”
+
+---
+
+### Regra:
+
+Sempre usar plural corretamente:
+- 1 resposta
+- 2 respostas
+
+---
+
+==================================================
+2. PADRÃO FINAL DE INTERAÇÃO
+==================================================
+
+Todo post deve exibir:
+
+- X reações
+- X respostas
+
+Exemplo final:
+
+👉 “32 reações · 5 respostas”
+
+Isso deixa instantaneamente claro:
+- pessoas reagiram
+- pessoas responderam
+
+---
+
+==================================================
+3. USERNAME VISÍVEL AO LADO DO NOME
+==================================================
+
+Quero que todo usuário tenha:
+
+- Nome (ex: Clara Monteiro)
+- Username (ex: @claramonteiro)
+
+E que apareçam juntos na UI.
+
+---
+
+### Formato padrão:
+
+Clara Monteiro  
+@claramonteiro
+
+OU (mais compacto):
+
+Clara Monteiro · @claramonteiro
+
+---
+
+### Aplicar em:
+
+- feed
+- comentários (respostas)
+- citações
+- cards
+- tela de post completo
+- qualquer lugar com avatar
+
+---
+
+==================================================
+4. USERNAME CLICÁVEL
+==================================================
+
+O username deve ser clicável SEMPRE.
+
+Ao clicar:
+
+👉 abrir o perfil daquele usuário
+
+---
+
+### Regra de clique:
+
+Tanto o nome quanto o @username devem ser clicáveis.
+
+Exemplo:
+
+[Clara Monteiro · @claramonteiro] → clicável
+
+---
+
+==================================================
+5. COMPORTAMENTO VISUAL DO USERNAME
+==================================================
+
+Para diferenciar bem:
+
+Nome:
+- cor: #2A2A2A (forte)
+- peso: Medium
+
+Username:
+- cor: #8A8178 (mais suave)
+- peso: Regular
+- menor destaque
+
+---
+
+==================================================
+6. ESTRUTURA DE COMPONENTE (IMPORTANTE)
+==================================================
+
+Cada item de usuário deve seguir:
+
+[Avatar] [Nome + @username] [tempo]
+
+Exemplo:
+
+(AC) Clara Monteiro · @claramonteiro · 3d
+
+---
+
+==================================================
+7. BENEFÍCIO DESSA MUDANÇA
+==================================================
+
+- melhora MUITO a clareza do sistema
+- elimina confusão conceitual (“eco”)
+- deixa o app mais próximo de padrões conhecidos
+- aumenta navegação entre perfis
+- fortalece aspecto social (descoberta de pessoas)
+
+---
+
+==================================================
+8. RESULTADO FINAL
+==================================================
+
+Antes:
+“5 ecos” → abstrato
+
+Depois:
+“5 respostas” → óbvio
+
+Antes:
+nome solto
+
+Depois:
+nome + identidade + navegação
+
+---
+
+==================================================
+9. REGRA PRINCIPAL
+==================================================
+
+Tudo no app deve ser entendido sem esforço.
+
+Se precisar pensar → está errado  
+Se bater o olho e entender → está certo
+
+==================================================
+
+Aplicar isso em todo o app imediatamente.

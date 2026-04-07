@@ -222,7 +222,12 @@ export function EcoScreen() {
             >
               <span className="font-sans text-[9px] text-[#FAF8F3]">{margin.userInitials}</span>
             </div>
-            <span className="font-sans font-light text-[11px] text-[#AE8F7D]">{margin.userName}</span>
+            <span className="font-sans font-medium text-[11px] text-[#2A2A2A]">{margin.userName}</span>
+            {margin.userSeedId && (
+              <span className="font-sans font-light text-[10px] text-[#8A8178]">
+                @{margin.userSeedId.replace(/^s_/, '').replace(/_/g, '')}
+              </span>
+            )}
           </div>
 
           {/* Reaction block */}
@@ -390,7 +395,12 @@ export function EcoScreen() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
-                  <span className="font-sans font-light text-[10.5px] text-[#AE8F7D]">{reply.userName}</span>
+                  <span className="font-sans font-medium text-[10.5px] text-[#2A2A2A]">{reply.userName}</span>
+                  {reply.userSeedId && (
+                    <span className="font-sans font-light text-[9px] text-[#8A8178]">
+                      @{reply.userSeedId.replace(/^s_/, '').replace(/_/g, '')}
+                    </span>
+                  )}
                   <span className="font-sans font-light text-[8px] text-[#454545]/25">· {formatCommunityMarginAge(reply.createdAt)}</span>
                 </div>
                 <p className="font-serif text-[14px] text-[#454545]/78 leading-[1.65]">{reply.body}</p>

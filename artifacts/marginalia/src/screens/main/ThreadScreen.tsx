@@ -236,9 +236,9 @@ export function ThreadScreen() {
             >
               <span className="font-sans text-[9px] text-[#FAF8F3]">{margin.userInitials}</span>
             </div>
-            <span className="font-sans font-light text-[11px] text-[#AE8F7D]">{margin.userName}</span>
+            <span className="font-sans font-medium text-[11px] text-[#2A2A2A]">{margin.userName}</span>
             {authorUsername && (
-              <span className="font-sans font-light text-[9px] text-[#454545]/30">{authorUsername}</span>
+              <span className="font-sans font-light text-[9px] text-[#8A8178]">{authorUsername}</span>
             )}
           </button>
 
@@ -422,12 +422,12 @@ export function ThreadScreen() {
                     <button
                       type="button"
                       onClick={() => { if (reply.userId !== currentUser.id) navigate(`/user/${reply.userId}`); }}
-                      className="font-sans font-light text-[10.5px] text-[#AE8F7D] hover:opacity-70 transition-opacity"
+                      className="font-sans font-medium text-[10.5px] text-[#2A2A2A] hover:opacity-70 transition-opacity"
                     >
                       {reply.userName}
                     </button>
                     {replyUsername && (
-                      <span className="font-sans font-light text-[8.5px] text-[#454545]/28">{replyUsername}</span>
+                      <span className="font-sans font-light text-[8.5px] text-[#8A8178]">{replyUsername}</span>
                     )}
                     <span className="font-sans font-light text-[8px] text-[#454545]/25">· {timeAgo(reply.createdAt)}</span>
                   </div>

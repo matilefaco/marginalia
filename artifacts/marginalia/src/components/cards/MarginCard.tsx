@@ -259,10 +259,10 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
       className="flex items-center gap-1.5 font-sans text-[8.5px] font-light tracking-[0.1em] text-[#2A2A2A]/45 hover:text-[#AE8F7D] transition-colors"
     >
       <MessageCircle className="w-3 h-3" />
-      <span>Comente</span>
-      {margin.commentsCount > 0 && (
-        <span className="text-[#2A2A2A]/28">· {margin.commentsCount}</span>
-      )}
+      {margin.commentsCount > 0
+        ? <span>{margin.commentsCount} {margin.commentsCount === 1 ? "resposta" : "respostas"}</span>
+        : <span>Responder</span>
+      }
     </button>
   );
 
@@ -280,9 +280,9 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
           >
             <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
           </div>
-          <span className="font-sans font-light text-[10px] text-[#AE8F7D]">{margin.userName}</span>
+          <span className="font-sans font-medium text-[10px] text-[#2A2A2A]">{margin.userName}</span>
           {USER_USERNAME_MAP[margin.userId] && (
-            <span className="font-sans font-light text-[9px] text-[#2A2A2A]/30">
+            <span className="font-sans font-light text-[9px] text-[#8A8178]">
               {USER_USERNAME_MAP[margin.userId]}
             </span>
           )}

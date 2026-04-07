@@ -200,6 +200,7 @@ function CommunityFeedSection() {
       <div className="space-y-3">
         {margins.map((m) => {
           const rxTotal = totalReactions(m.reactions);
+          const handle = m.userSeedId ? `@${m.userSeedId.replace(/^s_/, '').replace(/_/g, '')}` : null;
           return (
             <Link key={m.id} href={`/eco/${m.id}`}>
             <div className="bg-[#FAF8F3] border border-[#697962]/12 rounded-[14px] p-4 active:opacity-80 transition-opacity cursor-pointer">
@@ -211,7 +212,10 @@ function CommunityFeedSection() {
                   {m.userInitials?.[0] ?? "?"}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans font-light text-[10px] text-[#3D3D3D] truncate">{m.userName}</p>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <p className="font-sans font-medium text-[10px] text-[#2A2A2A] truncate">{m.userName}</p>
+                    {handle && <p className="font-sans font-light text-[9px] text-[#8A8178] flex-shrink-0">{handle}</p>}
+                  </div>
                   <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35">{formatCommunityMarginAge(m.createdAt)}</p>
                 </div>
                 {m.spoilerLevel !== "none" && (
@@ -233,11 +237,12 @@ function CommunityFeedSection() {
 
               <div className="flex items-center gap-3">
                 <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35 truncate flex-1">{m.bookTitle}</p>
-                {rxTotal > 0 && (
-                  <span className="font-sans font-light text-[8px] text-[#697962]">{rxTotal} reações</span>
-                )}
-                {m.commentsCount > 0 && (
-                  <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{m.commentsCount} ecos</span>
+                {(rxTotal > 0 || m.commentsCount > 0) && (
+                  <span className="font-sans font-light text-[8px] text-[#697962]/80 flex-shrink-0">
+                    {rxTotal > 0 && `${rxTotal} reações`}
+                    {rxTotal > 0 && m.commentsCount > 0 && " · "}
+                    {m.commentsCount > 0 && `${m.commentsCount} ${m.commentsCount === 1 ? "resposta" : "respostas"}`}
+                  </span>
                 )}
               </div>
             </div>
