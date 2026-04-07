@@ -1,0 +1,308 @@
+:::writing{variant=“standard” id=“60341”}
+CORRIGIR COMPLETAMENTE A ORDEM E A LÓGICA DO ONBOARDING / CADASTRO
+
+A etapa de cadastro continua errada.
+
+Quero reorganizar o onboarding inteiro com a ordem correta das telas, com as validações corretas e com revisão completa de funcionamento.
+
+A nova estrutura do cadastro deve ser exatamente esta:
+
+==================================================
+ORDEM CORRETA DAS TELAS DO CADASTRO
+
+TELA 1 — ESCOLHA DE GÊNEROS
+
+Essa deve ser a primeira tela.
+
+O usuário precisa escolher seus gêneros de interesse logo no início.
+
+Regras:
+	•	mostrar os gêneros de forma bonita e clara
+	•	o usuário precisa selecionar pelo menos 3 gêneros
+	•	só depois disso o botão “Continuar” pode ser habilitado
+
+Exemplos de gêneros:
+	•	Romance literário
+	•	Clássicos
+	•	Poesia
+	•	Filosofia
+	•	Drama
+	•	Fantasia
+	•	Ficção científica
+	•	Terror
+	•	Não ficção
+	•	Biografia
+	•	Ensaios
+	•	Feminismo
+	•	Psicanálise
+	•	Espiritualidade
+	•	Literatura brasileira
+	•	Literatura estrangeira
+	•	Outros
+
+Validação:
+	•	mínimo obrigatório: 3 gêneros
+
+Se o usuário tiver selecionado menos de 3:
+	•	botão continuar desabilitado
+	•	ou mostrar aviso discreto: “Escolha pelo menos 3 gêneros para continuar”
+
+Estado sugerido:
+	•	selectedGenres: string[]
+
+==================================================
+TELA 2 — DADOS DA CONTA
+
+Essa deve ser a segunda tela.
+
+Campos:
+	•	nome
+	•	sobrenome
+	•	username
+	•	e-mail
+	•	senha
+	•	bio opcional
+
+Validações:
+	•	nome obrigatório
+	•	sobrenome obrigatório
+	•	username obrigatório e único
+	•	e-mail obrigatório e válido
+	•	senha obrigatória
+	•	bio opcional
+
+Importante:
+	•	o username deve continuar sendo único
+	•	o botão continuar só habilita quando os campos obrigatórios estiverem válidos
+
+==================================================
+TELA 3 — MODO DE VISUALIZAÇÃO / EXPLORAÇÃO
+
+Essa deve ser a terceira tela.
+
+Título pode continuar algo como:
+“Como você prefere explorar o app?”
+
+Opções:
+	•	Modo protegido
+	•	Explorar livremente
+
+Regras:
+	•	o usuário é obrigado a escolher UMA das duas opções
+	•	sem escolha, não pode continuar
+	•	botão continuar deve ficar desabilitado até selecionar uma opção
+
+Também quero um aviso discreto na tela dizendo algo como:
+“Você poderá alterar essa preferência a qualquer momento em Preferências.”
+
+Essa tela é obrigatória e não pode desaparecer do fluxo.
+
+Estado sugerido:
+	•	explorationMode: 'protected' | 'free' | null
+
+==================================================
+TELA 4 — ESCOLHA DE AVATAR
+
+Essa deve ser a quarta tela.
+
+O usuário deve escolher seu avatar nessa etapa.
+
+Não quero uma tela poluída.
+
+Quero uma seleção:
+	•	suave
+	•	elegante
+	•	inteligente
+	•	sem excesso visual
+
+Estratégia ideal:
+	1.	mostrar primeiro as categorias de avatar
+	2.	ao tocar em uma categoria, mostrar só os avatares daquela categoria
+	3.	ao selecionar um avatar, mostrar preview do usuário com aquele avatar
+
+Categorias:
+	•	Objetos literários
+	•	Natureza & poesia
+	•	Conceitos & símbolos
+	•	Íntimos & pessoais
+
+Importante:
+	•	o usuário deve escolher 1 avatar para continuar
+	•	o avatar precisa ser salvo no perfil
+	•	essa etapa não pode sumir do cadastro
+
+Estado sugerido:
+	•	selectedAvatarId: string | null
+
+==================================================
+TELA 5 — ESCOLHA DE LIVROS
+
+Essa deve ser a última tela do onboarding.
+
+Aqui o usuário pode selecionar livros para começar sua experiência no app.
+
+Mas atenção:
+👉 NESSA ETAPA NÃO É OBRIGATÓRIO ESCOLHER NENHUM LIVRO
+
+Isso é muito importante.
+
+Regras:
+	•	o usuário pode selecionar livros, se quiser
+	•	ou pode pular sem selecionar nenhum
+	•	o botão de continuar/finalizar precisa funcionar mesmo com zero livros selecionados
+
+Ou seja:
+	•	essa etapa é opcional
+	•	selecionar livros é recomendação, não obrigação
+
+Pode ter dois CTAs:
+	•	“Continuar”
+	•	“Pular por agora”
+
+ou um botão único que finalize mesmo sem seleção.
+
+Estado sugerido:
+	•	selectedBooks: string[]
+
+==================================================
+RESUMO DA ORDEM FINAL
+
+Quero exatamente esta ordem:
+	1.	Gêneros
+	2.	Dados da conta
+	3.	Modo de visualização
+	4.	Avatar
+	5.	Livros opcionais
+
+Essa é a ordem correta.
+
+==================================================
+LÓGICA DE VALIDAÇÃO POR ETAPA
+
+Etapa 1 — Gêneros
+	•	obrigatório selecionar pelo menos 3
+
+Etapa 2 — Dados da conta
+	•	obrigatório preencher campos principais corretamente
+
+Etapa 3 — Modo de visualização
+	•	obrigatório escolher 1 opção
+
+Etapa 4 — Avatar
+	•	obrigatório escolher 1 avatar
+
+Etapa 5 — Livros
+	•	opcional
+	•	pode finalizar sem escolher nenhum
+
+==================================================
+IMPLEMENTAÇÃO TÉCNICA ESPERADA
+
+Quero que o fluxo seja controlado por step real.
+
+Exemplo:
+	•	step = 1 → gêneros
+	•	step = 2 → dados da conta
+	•	step = 3 → modo de visualização
+	•	step = 4 → avatar
+	•	step = 5 → livros
+
+Renderização esperada:
+	•	step === 1 → tela de gêneros
+	•	step === 2 → tela de conta
+	•	step === 3 → tela de modo
+	•	step === 4 → tela de avatar
+	•	step === 5 → tela de livros
+
+Cada botão “Continuar” deve:
+	•	validar a etapa atual
+	•	só então avançar
+
+==================================================
+PERSISTÊNCIA DOS DADOS DO ONBOARDING
+
+Ao final do cadastro, salvar corretamente no perfil do usuário:
+	•	gêneros selecionados
+	•	nome
+	•	sobrenome
+	•	username
+	•	e-mail
+	•	senha/auth
+	•	bio
+	•	modo de visualização
+	•	avatar selecionado
+	•	livros selecionados, se houver
+
+Nada disso pode ser perdido.
+
+==================================================
+REVISÃO GERAL DE FUNCIONAMENTO
+
+Além de reorganizar as telas, quero que o Replit revise se TODAS as etapas estão funcionando perfeitamente.
+
+Revisar:
+	1.	se todas as telas aparecem na ordem correta
+	2.	se o botão continuar está funcionando em cada etapa
+	3.	se as validações estão corretas
+	4.	se o progresso visual do onboarding está correto
+	5.	se nenhuma etapa está sumindo
+	6.	se a etapa finaliza corretamente
+	7.	se os dados estão realmente sendo salvos
+	8.	se ao criar a conta o usuário entra no app com o perfil inicial correto
+	9.	se o avatar selecionado aparece depois no perfil
+	10.	se o modo de visualização escolhido realmente é aplicado
+	11.	se os gêneros escolhidos impactam o feed inicial
+	12.	se escolher zero livros na última etapa não quebra nada
+
+==================================================
+TESTES OBRIGATÓRIOS
+
+Quero que sejam testados pelo menos estes fluxos:
+
+Fluxo 1
+	•	escolher 3 gêneros
+	•	preencher conta
+	•	escolher modo protegido
+	•	escolher avatar
+	•	pular livros
+	•	finalizar
+
+Fluxo 2
+	•	escolher mais de 3 gêneros
+	•	preencher conta
+	•	escolher explorar livremente
+	•	escolher avatar
+	•	selecionar alguns livros
+	•	finalizar
+
+Fluxo 3
+	•	tentar avançar com menos de 3 gêneros
+	•	tentar avançar sem escolher modo
+	•	tentar avançar sem escolher avatar
+	•	garantir que o sistema bloqueia corretamente
+
+Fluxo 4
+	•	finalizar conta
+	•	sair
+	•	entrar de novo
+	•	verificar se tudo foi salvo corretamente
+
+==================================================
+RESULTADO FINAL ESPERADO
+
+Depois dessa correção, quero que o onboarding:
+	•	tenha a ordem correta
+	•	esteja bonito e fluido
+	•	funcione sem falhas
+	•	reflita a lógica do Marginalia
+	•	respeite o anti-spoiler
+	•	permita personalização desde o início
+	•	não force a escolha de livro na última etapa
+
+==================================================
+PRIORIDADE
+
+Alta.
+
+Quero que isso seja corrigido como prioridade, porque o onboarding é a porta de entrada do app e hoje ele está estruturalmente errado.
+:::

@@ -30,10 +30,10 @@ export function OnboardingSpoilerScreen({ selected: initial, onContinue, onBack 
 
       <div className="mb-7">
         <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-          2 de 5
+          3 de 5
         </span>
         <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full mt-2 mb-6">
-          <div className="h-full bg-[#AE8F7D] rounded-full w-2/5" />
+          <div className="h-full bg-[#AE8F7D] rounded-full w-3/5" />
         </div>
         <h2 className="font-serif italic text-[28px] text-[#454545] leading-tight mb-2">
           Como você prefere explorar o app?

@@ -97,7 +97,7 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   if (step === "welcome") {
     return (
       <OnboardingWelcomeScreen
-        onStart={() => setStep("signup")}
+        onStart={() => setStep("genres")}
         onLogin={() => setStep("login")}
       />
     );
@@ -107,6 +107,19 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
     return (
       <LoginScreen
         onLogin={finish}
+        onBack={() => setStep("welcome")}
+      />
+    );
+  }
+
+  if (step === "genres") {
+    return (
+      <OnboardingGenresScreen
+        selected={pendingGenres}
+        onContinue={(genres) => {
+          setPendingGenres(genres);
+          setStep("signup");
+        }}
         onBack={() => setStep("welcome")}
       />
     );
@@ -131,9 +144,10 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
             setSignupError(error);
             return;
           }
+          updatePreferredGenres(pendingGenres);
           setStep("spoiler");
         }}
-        onBack={() => setStep("welcome")}
+        onBack={() => setStep("genres")}
       />
     );
   }
@@ -160,29 +174,15 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
         username={currentUser.username}
         onContinue={async (avatarId) => {
           await updateProfile({ avatar_id: avatarId });
-          setStep("genres");
+          setStep("books");
         }}
         onBack={() => setStep("spoiler")}
       />
     );
   }
 
-  if (step === "genres") {
-    return (
-      <OnboardingGenresScreen
-        selected={pendingGenres}
-        onContinue={(genres) => {
-          setPendingGenres(genres);
-          updatePreferredGenres(genres);
-          setStep("books");
-        }}
-        onBack={() => setStep("avatar")}
-      />
-    );
-  }
-
   if (step === "books") {
-    return <OnboardingBooksScreen onComplete={finish} onBack={() => setStep("genres")} />;
+    return <OnboardingBooksScreen onComplete={finish} onBack={() => setStep("avatar")} />;
   }
 
   return null;

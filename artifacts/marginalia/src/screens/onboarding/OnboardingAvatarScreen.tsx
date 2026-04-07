@@ -30,10 +30,10 @@ export function OnboardingAvatarScreen({ initials, name, username, onContinue, o
 
       <div className="mb-5">
         <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-          3 de 5
+          4 de 5
         </span>
         <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full mt-2 mb-6">
-          <div className="h-full bg-[#AE8F7D] rounded-full w-3/5" />
+          <div className="h-full bg-[#AE8F7D] rounded-full w-4/5" />
         </div>
         <h2 className="font-serif italic text-[28px] text-[#454545] leading-tight mb-1">
           Escolha seu avatar

@@ -44,7 +44,6 @@ export function OnboardingBooksScreen({ onComplete, onBack }: Props) {
   );
 
   const selectedCount = Object.keys(selections).length;
-  const canContinue = selectedCount >= 1;
 
   const toggleBook = (bookId: number) => {
     setSelections((prev) => {
@@ -224,20 +223,24 @@ export function OnboardingBooksScreen({ onComplete, onBack }: Props) {
       </div>
 
       <div>
-        {!canContinue && (
-          <p className="font-sans font-light text-[10px] text-[#AE8F7D]/70 text-center mb-3 tracking-[0.06em]">
-            Selecione pelo menos um livro para continuar
-          </p>
-        )}
         <button
           data-testid="button-books-complete"
           onClick={handleComplete}
-          disabled={!canContinue}
-          className="w-full flex items-center justify-center gap-2 bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#454545]/90 active:scale-[0.99] transition-all"
+          className="w-full flex items-center justify-center gap-2 bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] hover:bg-[#454545]/90 active:scale-[0.99] transition-all"
         >
-          {selectedCount > 0 ? `Entrar no Marginalia · ${selectedCount} ${selectedCount === 1 ? "livro" : "livros"}` : "Entrar no Marginalia"}
+          {selectedCount > 0
+            ? `Entrar no Marginalia · ${selectedCount} ${selectedCount === 1 ? "livro" : "livros"}`
+            : "Entrar no Marginalia"}
           <ArrowRight className="w-4 h-4" />
         </button>
+        {selectedCount === 0 && (
+          <button
+            onClick={handleComplete}
+            className="w-full text-[#454545]/30 font-sans font-light text-[10px] tracking-[0.08em] py-2 mt-1"
+          >
+            Pular por agora
+          </button>
+        )}
       </div>
     </div>
   );
