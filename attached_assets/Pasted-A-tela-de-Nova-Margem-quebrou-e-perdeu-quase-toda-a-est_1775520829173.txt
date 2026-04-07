@@ -1,0 +1,200 @@
+A tela de **Nova Margem** quebrou e perdeu quase toda a estrutura que existia antes.
+
+Hoje ela está aparecendo praticamente vazia, simplificada demais e sem os blocos/campos importantes que davam contexto e completavam a experiência.
+
+Quero corrigir isso e restaurar a tela corretamente.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Na tela “Nova Margem”:
+- quase tudo sumiu
+- a experiência ficou pobre/incompleta
+- parece que só restaram:
+  - campo do trecho
+  - livro
+  - botão publicar
+
+Mas antes existiam muito mais partes importantes na experiência, e eu quero isso de volta.
+
+==================================================
+2. OBJETIVO
+==================================================
+
+Quero restaurar a tela de **Nova Margem** para que ela volte a ser uma experiência rica, completa e funcional.
+
+Não quero uma versão simplificada demais.
+
+Quero recuperar a estrutura que existia antes, mantendo o que fazia sentido e sem perder refinamento visual.
+
+==================================================
+3. O QUE PRECISA VOLTAR / SER RESTAURADO
+==================================================
+
+Quero que a tela de Nova Margem volte a incluir, de forma organizada:
+
+### 3.1. Trecho
+- campo principal do trecho
+- com boa área de escrita
+- respeitando o limite e feedback de caracteres
+- mantendo o cuidado com direitos autorais
+
+### 3.2. Livro
+- livro selecionado
+- capa (quando houver)
+- título
+- autor
+- ação de trocar livro
+
+### 3.3. Tipo de margem
+Quero que volte a existir a escolha do tipo de margem, como por exemplo:
+- Citação
+- Insight
+- Leitura simbólica
+- Crítica
+- Pergunta
+- Interpretação / Teoria
+
+Esse bloco é importante porque organiza o tipo de conteúdo que o usuário está publicando.
+
+### 3.4. Referência do trecho
+Quero que volte a parte de referência, para que o usuário possa informar:
+- página
+- capítulo
+- ou outra referência equivalente
+
+Isso é essencial para o app manter sua identidade de leitura situada dentro do livro.
+
+### 3.5. Comentário/reflexão do leitor
+Quero que volte o espaço onde o usuário desenvolve sua própria leitura sobre o trecho.
+
+Ou seja:
+- não só guardar a frase
+- mas também dizer o que aquilo abriu nele
+
+### 3.6. Configurações relevantes da margem
+Quero que volte o que fazia sentido nessa área, por exemplo:
+- spoiler ou não
+- visibilidade, se isso ainda existir
+- opções coerentes com o estado atual do app
+
+==================================================
+4. SE EXISTIA UM FLUXO “INTELIGENTE”, MANTER
+==================================================
+
+Se a intenção recente foi simplificar a UX de entrada, tudo bem, mas isso não pode destruir a tela.
+
+Quero um equilíbrio:
+
+- entrada simples
+- mas com expansão progressiva dos campos
+- sem desaparecer com os elementos essenciais
+
+Então, se necessário, pode ser assim:
+1. trecho primeiro
+2. livro
+3. depois expandir:
+   - tipo de margem
+   - referência
+   - comentário
+   - configurações
+
+Mas tudo isso precisa existir.
+
+==================================================
+5. NÃO QUERO UMA TELA “CAPADA”
+==================================================
+
+A tela atual parece incompleta e empobrecida.
+
+Não quero uma Nova Margem resumida ao mínimo.
+
+Quero que ela volte a parecer:
+- uma ferramenta real de anotação
+- uma experiência editorial
+- uma criação de margem rica e intencional
+
+==================================================
+6. REVISAR O QUE FOI REMOVIDO
+==================================================
+
+Quero que você revise o histórico recente dessa tela e recupere os blocos/componentes que foram retirados.
+
+Se algo foi removido em refactor ou simplificação de UX, traga de volta o que for essencial.
+
+Especialmente:
+- blocos de contexto
+- campos de classificação
+- estrutura de publicação
+- seções de referência e comentário
+
+==================================================
+7. ESTRUTURA DESEJADA DA TELA
+==================================================
+
+Quero algo nessa lógica:
+
+### topo
+- título “Nova Margem”
+- subtítulo / contexto editorial
+
+### corpo
+1. trecho
+2. livro
+3. tipo de margem
+4. referência (página/capítulo)
+5. comentário do leitor
+6. opções complementares
+
+### base
+- botão “Publicar Margem”
+
+==================================================
+8. IMPORTANTE SOBRE UX
+==================================================
+
+Mesmo restaurando tudo, quero manter:
+- limpeza visual
+- boa hierarquia
+- campos com respiro
+- sensação elegante
+- fluxo intuitivo
+
+Ou seja:
+quero voltar com a estrutura rica, mas sem virar formulário pesado.
+
+==================================================
+9. VERIFICAR SE A TELA NÃO QUEBROU POR CONDIÇÃO DE RENDERIZAÇÃO
+==================================================
+
+Quero que você confira se esses blocos sumiram por algum motivo como:
+- condição errada de renderização
+- estado quebrado
+- componente não montando
+- problema de feature flag
+- lógica de expansão/colapso errada
+- erro de CSS/layout escondendo elementos
+
+Se for isso, corrigir.
+
+==================================================
+10. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois da correção, a tela de Nova Margem deve:
+- voltar a exibir os blocos importantes que existiam antes
+- voltar a parecer completa
+- permitir criar uma margem rica, com contexto
+- manter o refinamento visual
+- não parecer vazia ou reduzida demais
+
+==================================================
+11. PRIORIDADE
+==================================================
+
+Isso é prioridade alta, porque a criação de margem é uma das funções centrais do app.
+
+Quero restaurar essa tela corretamente no código.
+Não quero apenas ajuste visual superficial.
+Quero recuperar a estrutura funcional que foi perdida.

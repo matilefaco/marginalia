@@ -29,15 +29,17 @@ export function NewMarginScreen() {
   const [spoilerLevel, setSpoilerLevel] = useState<SpoilerLevel>("none");
   const [visibility, setVisibility] = useState<Visibility>("public");
   const [published, setPublished] = useState(false);
-  const [showSecondary, setShowSecondary] = useState(false);
+  const [showSecondary, setShowSecondary] = useState<boolean>(
+    preBookId !== null || replyToMargin?.bookId != null
+  );
   const excerptRef = useRef<HTMLTextAreaElement>(null);
 
-  // Progressive disclosure: show secondary fields once excerpt has enough content
+  // Progressive disclosure: secondary fields appear as soon as a book is selected
   useEffect(() => {
-    if (excerpt.trim().length >= 10 && bookId !== null) {
+    if (bookId !== null) {
       setShowSecondary(true);
     }
-  }, [excerpt, bookId]);
+  }, [bookId]);
 
   // Autofocus excerpt
   useEffect(() => {
@@ -163,9 +165,8 @@ export function NewMarginScreen() {
           </p>
         </div>
 
-        {/* STEP 2: Book — appears once excerpt starts */}
-        {(excerpt.trim().length >= 3 || bookId !== null) && (
-          <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+        {/* STEP 2: Book — always visible */}
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
             <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
               Livro
             </p>
@@ -231,26 +232,10 @@ export function NewMarginScreen() {
               </div>
             )}
           </div>
-        )}
 
         {/* STEP 3: Secondary fields — progressive disclosure */}
         {showSecondary && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-400">
-
-            {/* Sua margem (commentary) */}
-            <div>
-              <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-                Sua margem
-              </p>
-              <textarea
-                data-testid="input-commentary"
-                value={commentary}
-                onChange={(e) => setCommentary(e.target.value)}
-                placeholder="O que esse trecho abriu em você?"
-                className="w-full font-serif text-[15px] text-[#2A2A2A]/80 placeholder:text-[#454545]/22 bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[10px] p-4 outline-none focus:border-[#AE8F7D]/40 transition-colors resize-none leading-[1.75]"
-                rows={3}
-              />
-            </div>
 
             {/* Type */}
             <div>
@@ -316,6 +301,21 @@ export function NewMarginScreen() {
                   className="w-full font-serif italic text-[17px] text-[#454545] placeholder:text-[#454545]/20 bg-transparent border-b border-[#454545]/12 pb-2 outline-none focus:border-[#AE8F7D]/60 transition-colors"
                 />
               )}
+            </div>
+
+            {/* Sua margem (commentary) */}
+            <div>
+              <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+                Sua margem
+              </p>
+              <textarea
+                data-testid="input-commentary"
+                value={commentary}
+                onChange={(e) => setCommentary(e.target.value)}
+                placeholder="O que esse trecho abriu em você?"
+                className="w-full font-serif text-[15px] text-[#2A2A2A]/80 placeholder:text-[#454545]/22 bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[10px] p-4 outline-none focus:border-[#AE8F7D]/40 transition-colors resize-none leading-[1.75]"
+                rows={3}
+              />
             </div>
 
             {/* Spoiler + Visibility */}
