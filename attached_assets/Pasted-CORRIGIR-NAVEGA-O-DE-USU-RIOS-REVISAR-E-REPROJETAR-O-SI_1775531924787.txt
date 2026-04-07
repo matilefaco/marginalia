@@ -1,0 +1,523 @@
+CORRIGIR NAVEGAÇÃO DE USUÁRIOS + REVISAR E REPROJETAR O SISTEMA ANTI-SPOILER (VERSÃO COMPLETA)
+
+Quero implementar duas melhorias importantes no app:
+
+1. tornar o nome e o @username de qualquer usuário clicáveis em qualquer tela do app, sempre redirecionando para o perfil daquele usuário;
+2. revisar completamente o sistema anti-spoiler para que ele continue protegendo o leitor, mas sem matar o feed nem reduzir a descoberta de novos livros.
+
+Isso precisa ser tratado como uma melhoria estrutural de produto, UX e lógica de feed.
+
+==================================================
+PARTE 1 — NOME E @USERNAME CLICÁVEIS EM TODO O APP
+==================================================
+
+Hoje o nome de alguns usuários e o @username já aparecem em várias telas, mas quero padronizar isso completamente.
+
+REGRA PRINCIPAL:
+Sempre que o nome de um usuário ou o @username aparecer no app, ele deve ser clicável e levar ao perfil público daquele usuário.
+
+Isso precisa valer em qualquer contexto, sem exceção.
+
+--------------------------------------------------
+1.1. ONDE ISSO DEVE FUNCIONAR
+--------------------------------------------------
+
+Aplicar em todas estas áreas:
+
+- feed principal
+- post completo
+- respostas / comentários
+- respostas dentro de posts
+- cards de conversa da comunidade
+- páginas de livro
+- perfil público de outros usuários
+- cards compartilháveis
+- salvos
+- qualquer lista que exiba avatar + nome + username
+- qualquer lugar onde apareça “Nome Sobrenome · @username”
+
+--------------------------------------------------
+1.2. COMPORTAMENTO DE NAVEGAÇÃO
+--------------------------------------------------
+
+Ao tocar em:
+- nome
+- @username
+- ou idealmente o bloco inteiro de identidade (avatar + nome + @username)
+
+o app deve abrir o perfil público daquele usuário.
+
+Rota sugerida:
+- /perfil/:username
+
+Se a arquitetura atual usar id interno, tudo bem, mas a URL pública idealmente deve ser orientada por username.
+
+Exemplo:
+- /perfil/claramonteiro
+- /perfil/rafaelm
+- /perfil/matilefaco
+
+--------------------------------------------------
+1.3. IMPLEMENTAÇÃO DE COMPONENTE
+--------------------------------------------------
+
+Quero padronizar isso em um componente reutilizável, por exemplo:
+
+- UserIdentityInline
+- UserLink
+- AuthorIdentity
+- ou equivalente
+
+Esse componente deve receber:
+- name
+- username
+- avatar
+- avatarColor
+- userId ou username
+- timestamp opcional
+
+E renderizar:
+- avatar
+- nome
+- @username
+- tempo, se houver
+
+Tudo isso com clique consistente.
+
+--------------------------------------------------
+1.4. UX / VISUAL
+--------------------------------------------------
+
+Formato visual padrão:
+
+Nome Sobrenome · @username
+
+Exemplo:
+Clara Monteiro · @claramonteiro
+
+ou
+
+Rafael M. · @rafaelm
+
+O nome deve ter mais peso visual.
+O @username deve ter menos peso, mas continuar claro.
+
+Sugestão:
+- nome: #2A2A2A / weight 500
+- @username: #8A8178 / weight 400
+
+Feedback visual:
+- cursor/pointer onde couber
+- leve mudança de opacidade no toque
+- sem sublinhado feio
+- visual elegante e discreto
+
+--------------------------------------------------
+1.5. REGRA GLOBAL
+--------------------------------------------------
+
+Não quero mais nenhum nome de usuário “morto” na UI.
+
+Se o usuário vê uma pessoa no app, ele deve conseguir entrar no perfil dela.
+
+Isso fortalece:
+- descoberta de leitores
+- navegação social
+- sensação de rede
+- vínculo entre perfis e posts
+
+==================================================
+PARTE 2 — REVISÃO COMPLETA DO SISTEMA ANTI-SPOILER
+==================================================
+
+O conceito do app é excelente:
+“O seu ritmo está protegido.”
+
+Mas hoje o sistema precisa ser revisto estrategicamente para equilibrar duas coisas:
+
+1. proteger o leitor de spoilers
+2. manter o feed interessante, vivo e curioso, mesmo com proteção ativada
+
+Não quero um anti-spoiler que mate a experiência.
+Quero um anti-spoiler inteligente, sofisticado e engajador.
+
+==================================================
+PARTE 3 — PRINCÍPIO CENTRAL DO NOVO ANTI-SPOILER
+==================================================
+
+Quero que o sistema deixe de ser apenas um bloqueio duro e passe a funcionar como um filtro inteligente de descoberta.
+
+Ou seja:
+- o usuário não vê spoilers indevidos
+- mas continua vendo sinais de que existem conversas interessantes acontecendo
+- e continua sendo estimulado a explorar livros, autores e atmosferas sem ter a experiência arruinada
+
+O sistema precisa proteger sem esvaziar o feed.
+
+==================================================
+PARTE 4 — AS 3 OPÇÕES DE PREFERÊNCIA DE LEITURA
+==================================================
+
+Quero manter a ideia das 3 opções de preferência, mas torná-las mais claras e mais técnicas.
+
+As três opções devem virar modos oficiais de feed, com comportamento bem definido.
+
+--------------------------------------------------
+4.1. OPÇÃO 1 — VER TUDO
+--------------------------------------------------
+
+Nome sugerido:
+- Ver tudo
+
+Descrição:
+- Veja todo o conteúdo público, inclusive trechos e discussões além do seu progresso.
+
+Comportamento técnico:
+- não aplicar bloqueio por progresso
+- exibir posts normalmente
+- ainda manter filtros básicos de segurança de conteúdo sensível, se houver
+- esse modo é para leitores que aceitam navegar sem proteção total de spoiler
+
+Uso:
+- leitor que quer máxima exploração
+- leitor que não se importa em cruzar com trechos avançados
+
+--------------------------------------------------
+4.2. OPÇÃO 2 — VER SÓ O QUE EU JÁ LI
+--------------------------------------------------
+
+Nome sugerido:
+- Ver só o que eu já li
+
+Descrição:
+- Mostrar apenas conteúdos dentro do meu progresso informado.
+
+Comportamento técnico:
+- para livros que o usuário marcou com progresso:
+  - só mostrar posts cuja referência (página/capítulo/progresso estimado) seja menor ou igual ao progresso do usuário
+- para livros sem progresso registrado:
+  - não mostrar trecho explícito do conteúdo
+  - permitir mostrar versões protegidas e teasers seguros (detalho abaixo)
+
+Esse deve ser o modo padrão recomendado do app.
+
+--------------------------------------------------
+4.3. OPÇÃO 3 — MODO PROTEGIDO
+--------------------------------------------------
+
+Nome sugerido:
+- Modo protegido
+
+Descrição:
+- Ocultar automaticamente conteúdos potencialmente sensíveis até eu liberar.
+
+Comportamento técnico:
+- esconder trechos explícitos de livros não lidos ou sem progresso
+- esconder posts além do progresso do usuário
+- mostrar apenas metadados seguros, atmosfera, tags emocionais e convites à descoberta
+- exigir ação intencional para revelar conteúdo potencialmente spoiler
+
+Esse é o modo mais seguro.
+
+==================================================
+PARTE 5 — COMO O FEED DEVE CONTINUAR INTERESSANTE MESMO COM ANTI-SPOILER
+==================================================
+
+Aqui está o ponto principal:
+Não quero que o feed protegido vire um feed vazio ou sem graça.
+
+Quero um sistema criativo em que o leitor continue curioso mesmo sem ver spoilers.
+
+==================================================
+PARTE 6 — NOVA ESTRUTURA DE CONTEÚDO DO FEED PROTEGIDO
+==================================================
+
+Quando um post for bloqueado pelo sistema anti-spoiler, NÃO quero simplesmente sumir com ele.
+
+Quero substituir por um “card protegido inteligente”.
+
+Esse card protegido deve manter o interesse do leitor sem revelar o conteúdo.
+
+--------------------------------------------------
+6.1. CARD PROTEGIDO INTELIGENTE
+--------------------------------------------------
+
+Em vez de mostrar o trecho completo, mostrar algo como:
+
+- Livro: O Iluminado
+- Autor: Stephen King
+- Em 62% do livro
+- 18 reações · 7 respostas
+- “Leitores estão reagindo intensamente neste ponto.”
+- “Este trecho despertou surpresa e tensão.”
+- “Uma conversa forte está acontecendo aqui.”
+- CTA: “Marque seu progresso para liberar”
+- CTA secundário: “Quero ler este livro”
+
+Ou seja:
+o usuário entende que existe vida naquele livro, mas sem ver o spoiler.
+
+--------------------------------------------------
+6.2. O QUE O CARD PROTEGIDO PODE MOSTRAR
+--------------------------------------------------
+
+Permitido mostrar sem spoiler:
+- capa
+- título
+- autor
+- gênero
+- tags emocionais abstratas (surpresa, tensão, beleza, reflexão)
+- volume de atividade (reações, respostas)
+- posição geral no livro (ex: “na segunda metade do livro”) se isso não estragar demais
+- ranking de interesse / calor da conversa
+- texto seguro, gerado pelo sistema, sem conteúdo explícito do trecho
+
+Não permitido mostrar:
+- trecho real
+- resumo explícito de evento
+- comentário que revele fato importante
+- citações textuais além do progresso do usuário
+
+==================================================
+PARTE 7 — DESCOBERTA DE LIVROS SEM SPOILER
+==================================================
+
+Quero que o feed também desperte curiosidade sobre livros que o leitor ainda não leu ou não registrou.
+
+Para isso, o sistema deve introduzir uma camada de descoberta “segura”.
+
+--------------------------------------------------
+7.1. CARDS DE DESCOBERTA SEGURA
+--------------------------------------------------
+
+Criar cards como:
+
+- “Este livro está fazendo leitores pararem no capítulo 5”
+- “Leitores estão reagindo muito a este ponto”
+- “Uma conversa forte está acontecendo em O Segundo Sexo”
+- “Este livro despertou muitos posts reflexivos hoje”
+- “4 leitores salvaram passagens deste livro hoje”
+
+Sem mostrar trecho real se houver risco.
+
+--------------------------------------------------
+7.2. CTA DE DESCOBERTA
+--------------------------------------------------
+
+Esses cards devem ter ações como:
+- Quero ler
+- Adicionar à biblioteca
+- Marcar progresso
+- Ver página pública do livro
+- Explorar sem spoiler
+
+==================================================
+PARTE 8 — PÁGINA PÚBLICA DO LIVRO COMO SAÍDA NATURAL DO FEED PROTEGIDO
+==================================================
+
+Quando um livro estiver protegido no feed, quero que o principal caminho de exploração seja a página pública do livro.
+
+Nessa página, o leitor pode ver:
+- capa
+- título
+- autor
+- descrição
+- gênero
+- heatmap coletivo
+- zonas de atividade
+- clima da comunidade
+- destaques seguros sem spoiler
+- CTA para adicionar à biblioteca ou marcar progresso
+
+Ou seja:
+o feed não precisa mostrar tudo.
+Ele pode abrir a curiosidade e empurrar o leitor para a página pública do livro.
+
+==================================================
+PARTE 9 — LÓGICA TÉCNICA DO ANTI-SPOILER
+==================================================
+
+Quero que o sistema seja revisado de forma técnica e consistente.
+
+--------------------------------------------------
+9.1. CADA POST DEVE TER METADADOS DE POSIÇÃO
+--------------------------------------------------
+
+Cada post precisa ter pelo menos um dos seguintes campos:
+- chapter_number
+- page_number
+- progress_percent
+- spoiler_level (opcional)
+- spoiler_flag (boolean)
+- visibility_mode (opcional)
+
+Isso é essencial para o filtro funcionar bem.
+
+--------------------------------------------------
+9.2. CADA USER-BOOK PRECISA TER PROGRESSO CONFIÁVEL
+--------------------------------------------------
+
+Na tabela de relação usuário x livro, garantir persistência correta de:
+- current_page
+- current_chapter
+- progress_percent
+- reading_status
+- updated_at
+
+Sem isso, o anti-spoiler não tem base real.
+
+--------------------------------------------------
+9.3. FUNÇÃO DE ELEGIBILIDADE DO POST NO FEED
+--------------------------------------------------
+
+Criar uma lógica central, algo como:
+
+canUserSeePost(user, post, preferenceMode)
+
+Essa função decide:
+
+- se o post é visível completo
+- se o post deve aparecer protegido
+- se o post deve ser ocultado
+- se o post pode aparecer como descoberta segura
+
+--------------------------------------------------
+9.4. LÓGICA SUGERIDA
+--------------------------------------------------
+
+Se preferenceMode = "ver_tudo":
+- mostrar tudo
+
+Se preferenceMode = "so_o_que_ja_li":
+- se user tem progresso registrado para aquele livro:
+  - mostrar post completo apenas se post.progress <= user.progress
+  - senão mostrar versão protegida
+- se user não tem progresso para aquele livro:
+  - mostrar versão protegida / descoberta segura
+  - nunca mostrar trecho explícito
+
+Se preferenceMode = "modo_protegido":
+- mostrar post completo apenas quando claramente dentro do progresso
+- senão mostrar teaser seguro ou ocultar
+- sempre bloquear texto explícito além do progresso
+
+==================================================
+PARTE 10 — DESIGN DO FEED PROTEGIDO
+==================================================
+
+Quero que o feed protegido seja bonito e sofisticado.
+
+Não quero caixas agressivas de “conteúdo bloqueado”.
+
+Quero algo editorial, elegante e curioso.
+
+Exemplos de microcopy:
+- “Trecho protegido para respeitar seu ritmo.”
+- “Leitores estão sentindo muito neste ponto.”
+- “Uma conversa forte está acontecendo aqui.”
+- “Marque seu progresso para continuar.”
+- “Quer explorar este livro sem spoiler? Veja a página pública.”
+
+==================================================
+PARTE 11 — MANTER O FEED VIVO
+==================================================
+
+Mesmo no modo protegido, o feed deve continuar misturando:
+
+- posts completos de livros dentro do progresso do usuário
+- posts seguros de descoberta
+- cards de livros em alta
+- heatmaps públicos
+- recomendações alinhadas aos gêneros de interesse
+- momentos do livro hoje
+- livros com muita atividade da comunidade
+
+Ou seja:
+o feed protegido continua cheio de vida, só que com camadas de revelação controladas.
+
+==================================================
+PARTE 12 — CTA PARA REGISTRAR LEITURA
+==================================================
+
+O anti-spoiler também deve incentivar o usuário a registrar o que já leu.
+
+Quando um post estiver bloqueado, quero CTAs elegantes como:
+- Atualizar meu progresso
+- Adicionar este livro à minha biblioteca
+- Quero ler
+- Ver página pública do livro
+- Liberar posts dentro do meu ritmo
+
+Isso transforma o anti-spoiler em motor de retenção, não em barreira.
+
+==================================================
+PARTE 13 — AJUSTES DE NOMENCLATURA NA UI
+==================================================
+
+Ainda existem resquícios de linguagem antiga.
+
+Corrigir definitivamente:
+
+- “ecos” → “respostas”
+- “Vozes nesse trecho” pode continuar, se for poético e compreensível
+  OU pode virar “Respostas neste post” se quiser mais clareza
+- revisar labels como:
+  - CITACAO_FAVORITA → “Citação favorita”
+  - REACAO → “Reação”
+  - evitar formatos técnicos ou com underscore visível
+
+Quero revisão textual completa para deixar tudo claro, elegante e natural.
+
+==================================================
+PARTE 14 — IMPLEMENTAÇÃO DE PERFIL CLICÁVEL EM QUALQUER TELA
+==================================================
+
+Além do anti-spoiler, reforço novamente:
+
+Sempre que nome e @username aparecerem no app, devem ser clicáveis e levar ao perfil público do usuário.
+
+Aplicar em:
+- feed
+- post completo
+- respostas/comentários
+- páginas de livro
+- cards de conversa
+- qualquer lista com avatar + nome
+
+Estrutura visual padrão:
+Nome Sobrenome · @username
+
+Com clique no bloco inteiro:
+- avatar
+- nome
+- @username
+
+Destino:
+- /perfil/:username
+
+==================================================
+PARTE 15 — RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessas mudanças, quero que:
+
+1. qualquer nome de usuário seja clicável e leve ao perfil correto;
+2. o sistema anti-spoiler seja revisado tecnicamente de ponta a ponta;
+3. o feed continue interessante mesmo com proteção ativada;
+4. livros não lidos continuem despertando curiosidade sem revelar spoilers;
+5. o usuário seja incentivado a explorar livros, adicionar à biblioteca e registrar progresso;
+6. a promessa “seu ritmo está protegido” continue verdadeira, mas sem matar a experiência;
+7. o app fique mais claro, inteligente e viciante.
+
+==================================================
+PARTE 16 — PRIORIDADE
+==================================================
+
+Isso é prioridade alta de produto.
+
+Implementar:
+1. navegação de usuários clicável em todo o app
+2. revisão completa da linguagem residual
+3. reprojeto técnico do anti-spoiler
+4. novo sistema de feed protegido com descoberta segura
+5. integração com progresso do usuário e página pública do livro

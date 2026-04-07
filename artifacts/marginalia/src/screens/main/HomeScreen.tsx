@@ -7,6 +7,7 @@ import { BookCover } from "@/components/BookCover";
 import { filterMarginsForUser } from "@/utils/spoiler";
 import { canUserSeeMargin } from "@/utils/spoiler";
 import { MOCK_BOOKS, type Margin } from "@/data/mockData";
+import { UserIdentity } from "@/components/UserIdentity";
 import { progressLabel } from "@/utils/formatting";
 import { Shield } from "lucide-react";
 import { useCommunityFeed, formatCommunityMarginAge, totalReactions } from "@/hooks/useCommunity";
@@ -198,22 +199,16 @@ function CommunityFeedSection() {
           return (
             <Link key={m.id} href={`/eco/${m.id}`}>
             <div className="bg-[#FAF8F3] border border-[#697962]/12 rounded-[14px] p-4 active:opacity-80 transition-opacity cursor-pointer">
-              <div className="flex items-center gap-2 mb-2.5">
-                <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-medium text-white"
-                  style={{ backgroundColor: m.userAvatarColor ?? "#697962" }}
-                >
-                  {m.userInitials?.[0] ?? "?"}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <p className="font-sans font-medium text-[10px] text-[#2A2A2A] truncate">{m.userName}</p>
-                    {handle && <p className="font-sans font-light text-[9px] text-[#8A8178] flex-shrink-0">{handle}</p>}
-                  </div>
-                  <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35">{formatCommunityMarginAge(m.createdAt)}</p>
-                </div>
+              <div className="flex items-start justify-between gap-2 mb-2.5">
+                <UserIdentity
+                  name={m.userName}
+                  username={handle}
+                  initials={m.userInitials ?? m.userName[0]}
+                  avatarColor={m.userAvatarColor ?? "#697962"}
+                  timestamp={formatCommunityMarginAge(m.createdAt)}
+                />
                 {m.spoilerLevel !== "none" && (
-                  <span className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/25 px-1.5 py-0.5 rounded-full">
+                  <span className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/25 px-1.5 py-0.5 rounded-full flex-shrink-0">
                     {m.spoilerLevel}
                   </span>
                 )}

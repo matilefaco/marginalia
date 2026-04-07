@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Share2, Check, MessageCircle, Bookmark, BookmarkCheck, CornerUpRight } from "lucide-react";
+import { Share2, Check, MessageCircle, Bookmark, BookmarkCheck, CornerUpRight, Shield } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { canUserSeeMargin, getBlockedReason } from "@/utils/spoiler";
 import { formatReference, marginTypeLabel, timeAgo } from "@/utils/formatting";
-import { Shield } from "lucide-react";
 import { MARGIN_TYPES, EMOJI_REACTIONS } from "@/data/constants";
 import type { Margin } from "@/data/mockData";
 import { MOCK_BOOKS, MOCK_USERS } from "@/data/mockData";
 import { ShareCardModal } from "./ShareCardModal";
+import { UserIdentity } from "@/components/UserIdentity";
 
 const USER_USERNAME_MAP: Record<string, string> = Object.fromEntries(
   MOCK_USERS.map((u) => [u.id, u.username])
@@ -269,27 +269,19 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
   return (
     <div className="pt-3 border-t border-[#454545]/6 mt-4 space-y-2.5">
       <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={handleAuthorClick}
-          className={`flex items-center gap-2.5 ${margin.userId !== currentUser.id ? "hover:opacity-75 transition-opacity active:opacity-60" : ""}`}
-        >
-          <div
-            className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{ backgroundColor: avatarColor }}
-          >
-            <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
-          </div>
-          <span className="font-sans font-medium text-[10px] text-[#2A2A2A]">{margin.userName}</span>
-          {USER_USERNAME_MAP[margin.userId] && (
-            <span className="font-sans font-light text-[9px] text-[#8A8178]">
-              {USER_USERNAME_MAP[margin.userId]}
-            </span>
-          )}
+        <div className="flex items-center gap-1.5 min-w-0">
+          <UserIdentity
+            name={margin.userName}
+            username={USER_USERNAME_MAP[margin.userId] ?? null}
+            initials={margin.userInitials}
+            avatarColor={avatarColor}
+            userId={margin.userId !== currentUser.id ? margin.userId : null}
+            onNavigate={margin.userId !== currentUser.id ? handleAuthorClick : undefined}
+          />
           {totalReactions >= 8 && (
             <span className="font-sans text-[7px] text-[#AE8F7D]/60" title="Trecho muito ativo">🔥</span>
           )}
-        </button>
+        </div>
         <div className="flex items-center gap-2">
           {ecoarContent}
           <button
@@ -510,11 +502,26 @@ export function MarginCard({ margin, showBook = false, linkToThread = true }: Pr
   return <StandardCard margin={margin} showBook={showBook} linkToThread={linkToThread} bookColor={bookColor} />;
 }
 
+const ATMOSPHERIC_PHRASES = [
+  "Leitores estão sentindo muito neste ponto.",
+  "Uma conversa forte está acontecendo aqui.",
+  "Este trecho tocou muitos leitores.",
+  "A comunidade reagiu intensamente aqui.",
+  "Algo significativo acontece neste ponto do livro.",
+  "Muitos leitores pararam aqui para refletir.",
+];
+
 function SpoilerShieldCard({ margin, reason }: { margin: Margin; reason: string }) {
   const [revealed, setRevealed] = useState(false);
+  const [, navigate] = useLocation();
+
+  const book = MOCK_BOOKS.find((b) => b.id === margin.bookId);
+  const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
+  const phrase = ATMOSPHERIC_PHRASES[margin.id % ATMOSPHERIC_PHRASES.length];
+
   if (revealed) {
     return (
-      <div data-testid={`card-margin-${margin.id}-revealed`} className="bg-[#FAF8F3] rounded-[14px] border border-[#AE8F7D]/20 p-4 opacity-80">
+      <div data-testid={`card-margin-${margin.id}-revealed`} className="bg-[#FAF8F3] rounded-[14px] border border-[#AE8F7D]/20 p-4 opacity-85">
         <div className="border-l-2 border-[#AE8F7D]/30 pl-3 mb-2">
           <p className="font-serif italic text-[15px] text-[#2A2A2A]/75 leading-[1.75]">&ldquo;{margin.excerpt}&rdquo;</p>
         </div>
@@ -522,28 +529,58 @@ function SpoilerShieldCard({ margin, reason }: { margin: Margin; reason: string 
       </div>
     );
   }
+
   return (
     <div
       data-testid={`card-spoiler-shield-${margin.id}`}
-      className="rounded-[14px] border border-[#AE8F7D]/10 p-4 bg-[#EBE6DB]/25"
-      style={{ backgroundImage: "repeating-linear-gradient(135deg, transparent, transparent 4px, rgba(174,143,125,0.03) 4px, rgba(174,143,125,0.03) 5px)" }}
+      className="rounded-[14px] border border-[#AE8F7D]/12 p-4 bg-[#FAF8F3]"
     >
-      <div className="flex items-start gap-3">
-        <div className="w-8 h-8 rounded-full bg-[#EBE6DB] flex items-center justify-center flex-shrink-0 mt-0.5">
-          <Shield className="w-3.5 h-3.5 text-[#AE8F7D]/60" />
-        </div>
+      {/* Book info + shield icon */}
+      <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex-1 min-w-0">
-          <p className="font-serif italic text-[14px] text-[#2A2A2A]/60 mb-1">Trecho ocultado para preservar sua leitura</p>
-          <p className="font-sans font-light text-[11px] text-[#2A2A2A]/45 leading-relaxed mb-3">{reason}</p>
-          <div className="flex gap-2 flex-wrap">
-            <button className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/25 px-3 py-1.5 rounded-full hover:bg-[#AE8F7D]/5 transition-colors">
-              Atualizar progresso
-            </button>
-            <button onClick={() => setRevealed(true)} className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#2A2A2A]/45 px-3 py-1.5 hover:text-[#2A2A2A]/65 transition-colors">
-              Ver mesmo assim
-            </button>
-          </div>
+          <p className="font-sans text-[7px] font-light tracking-[0.18em] uppercase text-[#AE8F7D]/65 mb-0.5">
+            Trecho protegido · {margin.bookTitle}
+          </p>
+          {book && (
+            <p className="font-sans font-light text-[8.5px] tracking-[0.06em] uppercase text-[#2A2A2A]/30">
+              {book.author}
+            </p>
+          )}
         </div>
+        <div className="w-7 h-7 rounded-full bg-[#EBE6DB]/70 flex items-center justify-center flex-shrink-0">
+          <Shield className="w-3 h-3 text-[#AE8F7D]/45" />
+        </div>
+      </div>
+
+      {/* Atmospheric signal */}
+      <div className="bg-[#EBE6DB]/40 rounded-[10px] px-3 py-2.5 mb-3">
+        <p className="font-serif italic text-[12.5px] text-[#2A2A2A]/55 leading-relaxed">{phrase}</p>
+        {(totalReactions > 0 || margin.commentsCount > 0) && (
+          <p className="font-sans font-light text-[8px] text-[#697962]/75 mt-1.5">
+            {totalReactions > 0 && `${totalReactions} reações`}
+            {totalReactions > 0 && margin.commentsCount > 0 && " · "}
+            {margin.commentsCount > 0 && `${margin.commentsCount} ${margin.commentsCount === 1 ? "resposta" : "respostas"}`}
+          </p>
+        )}
+      </div>
+
+      {/* Why it's hidden */}
+      <p className="font-sans font-light text-[10px] text-[#2A2A2A]/38 leading-relaxed mb-3">{reason}</p>
+
+      {/* CTAs */}
+      <div className="flex gap-2 flex-wrap">
+        <button
+          onClick={() => navigate(`/book/${margin.bookId}`)}
+          className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#697962] border border-[#697962]/25 px-3 py-1.5 rounded-full hover:bg-[#697962]/5 transition-colors"
+        >
+          Ver página do livro
+        </button>
+        <button
+          onClick={() => setRevealed(true)}
+          className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#2A2A2A]/35 px-3 py-1.5 hover:text-[#2A2A2A]/55 transition-colors"
+        >
+          Ver mesmo assim
+        </button>
       </div>
     </div>
   );

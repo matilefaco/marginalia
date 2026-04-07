@@ -5,6 +5,7 @@ import { useApp } from "@/context/AppContext";
 import { useCommunityMargin, useCommunityReplies, formatCommunityMarginAge, totalReactions } from "@/hooks/useCommunity";
 import { EMOJI_REACTIONS } from "@/data/constants";
 import { marginTypeLabel } from "@/utils/formatting";
+import { UserIdentity } from "@/components/UserIdentity";
 
 function CommentReactionBar({ commentId }: { commentId: number }) {
   const [myEmoji, setMyEmoji] = useState<string | null>(null);
@@ -215,19 +216,14 @@ export function EcoScreen() {
           )}
 
           {/* Author */}
-          <div className="flex items-center gap-2 mb-5">
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: margin.userAvatarColor ?? "#697962" }}
-            >
-              <span className="font-sans text-[9px] text-[#FAF8F3]">{margin.userInitials}</span>
-            </div>
-            <span className="font-sans font-medium text-[11px] text-[#2A2A2A]">{margin.userName}</span>
-            {margin.userSeedId && (
-              <span className="font-sans font-light text-[10px] text-[#8A8178]">
-                @{margin.userSeedId.replace(/^s_/, '').replace(/_/g, '')}
-              </span>
-            )}
+          <div className="mb-5">
+            <UserIdentity
+              name={margin.userName}
+              username={margin.userSeedId ? `@${margin.userSeedId.replace(/^s_/, '').replace(/_/g, '')}` : null}
+              initials={margin.userInitials ?? margin.userName[0]}
+              avatarColor={margin.userAvatarColor ?? "#697962"}
+              size="md"
+            />
           </div>
 
           {/* Reaction block */}
@@ -386,23 +382,15 @@ export function EcoScreen() {
           )}
 
           {visibleReplies.map((reply) => (
-            <div key={reply.id} className="flex gap-3">
-              <div
-                className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                style={{ backgroundColor: reply.userAvatarColor ?? "#697962" }}
-              >
-                <span className="font-sans text-[8px] text-[#FAF8F3]">{reply.userInitials}</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
-                  <span className="font-sans font-medium text-[10.5px] text-[#2A2A2A]">{reply.userName}</span>
-                  {reply.userSeedId && (
-                    <span className="font-sans font-light text-[9px] text-[#8A8178]">
-                      @{reply.userSeedId.replace(/^s_/, '').replace(/_/g, '')}
-                    </span>
-                  )}
-                  <span className="font-sans font-light text-[8px] text-[#454545]/25">· {formatCommunityMarginAge(reply.createdAt)}</span>
-                </div>
+            <div key={reply.id} className="space-y-1.5">
+              <UserIdentity
+                name={reply.userName}
+                username={reply.userSeedId ? `@${reply.userSeedId.replace(/^s_/, '').replace(/_/g, '')}` : null}
+                initials={reply.userInitials ?? reply.userName[0]}
+                avatarColor={reply.userAvatarColor ?? "#697962"}
+                timestamp={formatCommunityMarginAge(reply.createdAt)}
+              />
+              <div className="pl-7">
                 <p className="font-serif text-[14px] text-[#454545]/78 leading-[1.65]">{reply.body}</p>
                 <CommentReactionBar commentId={reply.id} />
               </div>

@@ -5,6 +5,7 @@ import { useApp } from "@/context/AppContext";
 import { MOCK_MARGINS, MOCK_REPLIES, MOCK_USERS } from "@/data/mockData";
 import { EMOJI_REACTIONS } from "@/data/constants";
 import { formatReference, marginTypeLabel, timeAgo } from "@/utils/formatting";
+import { UserIdentity } from "@/components/UserIdentity";
 
 const USER_USERNAME_MAP: Record<string, string> = Object.fromEntries(
   MOCK_USERS.map((u) => [u.id, u.username])
@@ -225,22 +226,17 @@ export function ThreadScreen() {
           )}
 
           {/* Author */}
-          <button
-            type="button"
-            onClick={handleAuthorClick}
-            className={`flex items-center gap-2 mb-5 ${margin.userId !== currentUser.id ? "hover:opacity-75 transition-opacity" : ""}`}
-          >
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: authorAvatarColor }}
-            >
-              <span className="font-sans text-[9px] text-[#FAF8F3]">{margin.userInitials}</span>
-            </div>
-            <span className="font-sans font-medium text-[11px] text-[#2A2A2A]">{margin.userName}</span>
-            {authorUsername && (
-              <span className="font-sans font-light text-[9px] text-[#8A8178]">{authorUsername}</span>
-            )}
-          </button>
+          <div className="mb-5">
+            <UserIdentity
+              name={margin.userName}
+              username={authorUsername ?? null}
+              initials={margin.userInitials}
+              avatarColor={authorAvatarColor}
+              userId={margin.userId !== currentUser.id ? margin.userId : null}
+              onNavigate={margin.userId !== currentUser.id ? handleAuthorClick : undefined}
+              size="md"
+            />
+          </div>
 
           {/* Compact Reaction Row + Full Picker */}
           <div className="bg-[#EBE6DB]/35 rounded-[12px] p-3.5" onClick={(e) => e.stopPropagation()}>
@@ -404,33 +400,16 @@ export function ThreadScreen() {
           {visibleMockReplies.map((reply) => {
             const replyUsername = USER_USERNAME_MAP[reply.userId];
             return (
-              <div key={reply.id} className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => { if (reply.userId !== currentUser.id) navigate(`/user/${reply.userId}`); }}
-                  className="flex-shrink-0 mt-0.5"
-                >
-                  <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: reply.avatarColor }}
-                  >
-                    <span className="font-sans text-[8px] text-[#FAF8F3]">{reply.userInitials}</span>
-                  </div>
-                </button>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => { if (reply.userId !== currentUser.id) navigate(`/user/${reply.userId}`); }}
-                      className="font-sans font-medium text-[10.5px] text-[#2A2A2A] hover:opacity-70 transition-opacity"
-                    >
-                      {reply.userName}
-                    </button>
-                    {replyUsername && (
-                      <span className="font-sans font-light text-[8.5px] text-[#8A8178]">{replyUsername}</span>
-                    )}
-                    <span className="font-sans font-light text-[8px] text-[#454545]/25">· {timeAgo(reply.createdAt)}</span>
-                  </div>
+              <div key={reply.id} className="space-y-1.5">
+                <UserIdentity
+                  name={reply.userName}
+                  username={replyUsername ?? null}
+                  initials={reply.userInitials}
+                  avatarColor={reply.avatarColor}
+                  userId={reply.userId !== currentUser.id ? reply.userId : null}
+                  timestamp={timeAgo(reply.createdAt)}
+                />
+                <div className="pl-7">
                   <p className="font-serif text-[14px] text-[#454545]/78 leading-[1.65]">{reply.text}</p>
                   <CommentReactionBar commentId={reply.id} />
                 </div>
