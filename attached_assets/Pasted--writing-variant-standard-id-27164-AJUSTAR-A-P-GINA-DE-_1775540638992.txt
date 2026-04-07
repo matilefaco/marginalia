@@ -1,0 +1,221 @@
+:::writing{variant=“standard” id=“27164”}
+AJUSTAR A PÁGINA DE GÊNERO / EXPLORAR LIVROS — REMOVER “TAMBÉM EM MARGINALIA” E REORGANIZAR A LISTA DE LIVROS
+
+Quero refinar a experiência da página de gênero para ficar mais limpa, sofisticada e menos poluída visualmente.
+
+Hoje, quando o usuário seleciona um gênero, a tela começa bem, mas depois fica excessiva e repetitiva, especialmente por causa da seção “Também em Marginalia”.
+
+Quero corrigir isso.
+
+==================================================
+PARTE 1 — REMOVER A SEÇÃO “TAMBÉM EM MARGINALIA” QUANDO UM GÊNERO ESTIVER SELECIONADO
+
+Quando o usuário selecionar um gênero específico, como por exemplo:
+	•	Clássicos
+	•	Filosofia
+	•	Poesia
+	•	Romance literário
+
+quero que a seção:
+
+👉 “Também em Marginalia”
+
+não apareça mais nessa tela.
+
+⸻
+
+1.1. MOTIVO
+
+Essa seção está gerando:
+	•	poluição visual
+	•	repetição de informação
+	•	excesso de cards na mesma tela
+	•	perda de foco no gênero escolhido
+
+Quando o usuário já escolheu um gênero, ele quer explorar aquele gênero.
+Não faz sentido misturar isso com outra lista genérica logo abaixo.
+
+⸻
+
+1.2. REGRA
+
+Se selectedGenre existir:
+	•	esconder completamente a seção “Também em Marginalia”
+
+Se nenhum gênero estiver selecionado:
+	•	aí essa seção pode existir em outros contextos, se fizer sentido
+
+Mas dentro da visualização específica de gênero:
+👉 remover.
+
+==================================================
+PARTE 2 — QUANTIDADE DE LIVROS POR PÁGINA
+
+Quero que os livros dentro do gênero selecionado apareçam:
+
+👉 de 6 em 6
+
+Isso deve valer para qualquer gênero.
+
+Exemplos:
+	•	Clássicos → mostrar 6 livros por página
+	•	Filosofia → mostrar 6 livros por página
+	•	Poesia → mostrar 6 livros por página
+
+==================================================
+PARTE 3 — FORMA DE NAVEGAÇÃO ENTRE ESSES BLOCOS DE 6
+
+Quero que você implemente da forma mais bonita e elegante visualmente.
+
+Você pode escolher entre duas abordagens:
+
+OPÇÃO A — PAGINAÇÃO
+	•	mostrar 6 livros
+	•	botões discretos de próxima / anterior
+	•	indicador de página
+	•	experiência mais organizada
+
+OPÇÃO B — CARROSSEL HORIZONTAL POR PÁGINAS
+	•	6 livros por conjunto
+	•	swipe / arrastar para o lado entre grupos
+	•	visual mais fluido e mais mobile-first
+
+⸻
+
+3.1. MINHA PREFERÊNCIA
+
+Minha sugestão principal é:
+
+👉 usar carrossel horizontal por grupos de 6
+
+Porque:
+	•	fica mais bonito no mobile
+	•	parece mais premium
+	•	ocupa menos espaço vertical
+	•	combina melhor com o estilo do app
+	•	reduz a sensação de lista infinita cansativa
+
+Mas isso precisa ser feito com organização.
+
+==================================================
+PARTE 4 — LAYOUT IDEAL DOS 6 LIVROS
+
+Quero que cada grupo de 6 livros fique visualmente elegante.
+
+Sugestão de organização:
+
+Em mobile
+	•	6 cards em lista vertical curta
+OU
+	•	2 colunas x 3 linhas, se ficar bonito
+OU
+	•	1 card por linha, mas apenas 6 por grupo com swipe/paginação
+
+⸻
+
+4.1. RECOMENDAÇÃO DE UX
+
+A melhor solução estética provavelmente é:
+
+👉 manter 1 card por linha
+👉 6 livros por grupo
+👉 e navegação horizontal entre grupos
+
+Isso preserva:
+	•	legibilidade
+	•	capa do livro
+	•	título
+	•	autor
+	•	quantidade de posts
+	•	ano
+	•	clique confortável
+
+==================================================
+PARTE 5 — CABEÇALHO DA SEÇÃO DO GÊNERO
+
+Quero que a parte de gênero fique mais focada.
+
+Estrutura ideal:
+	•	título do gênero selecionado
+	•	botão discreto “Trocar gênero”
+	•	abaixo:
+“6 livros” ou “16 livros”, mas com paginação/agrupamento bonito
+	•	depois os grupos de 6
+
+⸻
+
+5.1. TEXTO DA SEÇÃO
+
+Exemplo:
+
+Clássicos
+
+16 livros
+
+ou
+
+Livros em Clássicos
+
+Página 1 de 3
+
+Mas sem excesso de informação.
+
+==================================================
+PARTE 6 — COMPORTAMENTO DE CLIQUE DOS LIVROS
+
+Cada livro listado nessa visualização precisa continuar:
+	•	clicável
+	•	abrindo a página correta daquele livro
+	•	com informações completas
+	•	com interações da comunidade daquele livro
+
+Ou seja:
+a reorganização visual não pode quebrar o clique nem a navegação.
+
+==================================================
+PARTE 7 — RESPONSIVIDADE E LIMPEZA VISUAL
+
+Quero que essa tela fique visualmente mais respirada.
+
+Ao remover “Também em Marginalia”, a página deve ficar:
+	•	mais focada
+	•	mais curta
+	•	menos redundante
+	•	com sensação editorial melhor
+
+Também quero:
+	•	mais espaçamento entre cabeçalho do gênero e lista de livros
+	•	evitar sobreposição de muitas seções longas seguidas
+	•	manter a tela elegante
+
+==================================================
+PARTE 8 — O QUE NÃO QUERO MAIS
+
+Depois dessa mudança, não quero mais:
+	•	gênero selecionado + lista específica + outra lista genérica embaixo
+	•	sensação de excesso de cards
+	•	continuação confusa da tela
+	•	repetição visual
+	•	poluição na exploração
+
+==================================================
+PARTE 9 — RESULTADO FINAL ESPERADO
+
+Depois dessa alteração, quero que:
+	1.	ao selecionar um gênero, a seção “Também em Marginalia” desapareça;
+	2.	a página fique focada somente naquele gênero;
+	3.	os livros apareçam de 6 em 6;
+	4.	a navegação entre os grupos fique elegante e mobile-friendly;
+	5.	a experiência visual fique mais limpa e sofisticada;
+	6.	os livros continuem clicáveis e abrindo a página correta.
+
+==================================================
+PARTE 10 — PRIORIDADE
+
+Implementar nesta ordem:
+	1.	remover “Também em Marginalia” da visualização de gênero selecionado
+	2.	limitar a exibição para grupos de 6 livros
+	3.	implementar a navegação mais estética (preferencialmente carrossel horizontal por grupos de 6)
+	4.	manter o clique correto dos livros
+	5.	revisar espaçamento e limpeza visual da tela
+:::

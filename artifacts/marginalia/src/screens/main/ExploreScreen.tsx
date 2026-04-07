@@ -75,7 +75,7 @@ export function ExploreScreen() {
   const { currentUser } = useApp();
   const [query, setQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-  const [genreBooksLimit, setGenreBooksLimit] = useState(8);
+  const [genrePage, setGenrePage] = useState(0);
   const [showAllGenres, setShowAllGenres] = useState(false);
   const [genreFocused, setGenreFocused] = useState(false);
   const [googleResults, setGoogleResults] = useState<GoogleBookResult[]>([]);
@@ -88,7 +88,7 @@ export function ExploreScreen() {
 
   const selectGenre = (label: string) => {
     setSelectedGenre(label);
-    setGenreBooksLimit(8);
+    setGenrePage(0);
     setGenreFocused(true);
     setShowAllGenres(false);
     setCommunityGenreBooks([]);
@@ -103,7 +103,7 @@ export function ExploreScreen() {
   const exitGenreFocus = () => {
     setGenreFocused(false);
     setSelectedGenre(null);
-    setGenreBooksLimit(8);
+    setGenrePage(0);
     setCommunityGenreBooks([]);
   };
 
@@ -365,17 +365,51 @@ export function ExploreScreen() {
 
         {/* Principais gêneros — focused mode */}
         {!query && genreFocused && selectedGenre && (() => {
-          const allGenreBooks = MOCK_BOOKS.filter((b) =>
+          const PAGE_SIZE = 6;
+          const mockBooks = MOCK_BOOKS.filter((b) =>
             b.genres.some((g) =>
               g.toLowerCase().includes(selectedGenre.toLowerCase()) ||
               selectedGenre.toLowerCase().includes(g.toLowerCase())
             )
           );
-          const visibleBooks = allGenreBooks.slice(0, genreBooksLimit);
-          const hasMore = allGenreBooks.length > genreBooksLimit;
+          const communityTitles = new Set(communityGenreBooks.map((b) => b.title.toLowerCase()));
+          const extraMockBooks = mockBooks.filter((b) => !communityTitles.has(b.title.toLowerCase()));
+          type UnifiedBook = {
+            id: string | number;
+            title: string;
+            author: string;
+            coverUrl?: string | null;
+            bookColor?: string;
+            marginCount?: number;
+            publicationYear?: number | null;
+          };
+          const allBooks: UnifiedBook[] = [
+            ...communityGenreBooks.map((b) => ({
+              id: b.id,
+              title: b.title,
+              author: b.author,
+              coverUrl: b.coverUrl,
+              bookColor: b.bookColor,
+              marginCount: b.marginCount,
+              publicationYear: b.publicationYear,
+            })),
+            ...extraMockBooks.map((b) => ({
+              id: b.id,
+              title: b.title,
+              author: b.author,
+              coverUrl: null as null,
+              bookColor: b.bookColor,
+              marginCount: b.marginCount,
+              publicationYear: b.publicationYear,
+            })),
+          ];
+          const totalPages = Math.max(1, Math.ceil(allBooks.length / PAGE_SIZE));
+          const safePage = Math.min(genrePage, totalPages - 1);
+          const pageBooks = allBooks.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
+
           return (
             <section data-testid="section-genres-trending" className="feed-enter">
-              {/* Genre header in focus mode */}
+              {/* Genre header */}
               <div className="flex items-center gap-2 mb-3">
                 <button
                   onClick={exitGenreFocus}
@@ -389,8 +423,8 @@ export function ExploreScreen() {
                 </span>
               </div>
 
-              {/* Selected genre chip */}
-              <div className="flex items-center justify-between bg-[#AE8F7D]/10 border border-[#AE8F7D]/30 rounded-[10px] py-3 px-4 mb-4">
+              {/* Genre chip */}
+              <div className="flex items-center justify-between bg-[#AE8F7D]/10 border border-[#AE8F7D]/30 rounded-[10px] py-3 px-4 mb-5">
                 <span className="font-sans font-light text-[14px] text-[#3D3D3D]">{selectedGenre}</span>
                 <button
                   onClick={exitGenreFocus}
@@ -400,96 +434,105 @@ export function ExploreScreen() {
                 </button>
               </div>
 
-              {/* Books list */}
-              <div className="flex items-center justify-between mb-3">
-                <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D]">
-                  Livros em {selectedGenre}
-                </p>
-                <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30">
-                  {allGenreBooks.length} {allGenreBooks.length === 1 ? "livro" : "livros"}
-                </p>
-              </div>
-
               {communityGenreLoading && (
-                <div className="flex items-center justify-center py-6 gap-2">
+                <div className="flex items-center justify-center py-8 gap-2">
                   <Loader2 className="w-4 h-4 text-[#AE8F7D]/50 animate-spin" />
                   <span className="font-sans font-light text-[10px] text-[#2A2A2A]/30">Buscando livros...</span>
                 </div>
               )}
 
-              {!communityGenreLoading && communityGenreBooks.length > 0 && (
-                <div className="space-y-2 mb-4">
-                  {communityGenreBooks.map((book) => (
-                    <Link key={book.id} href={`/book/${book.id}`} data-testid={`genre-community-book-${book.id}`}>
-                      <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 active:opacity-75 transition-all">
-                        {book.coverUrl ? (
-                          <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                        ) : (
-                          <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                          <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1">{book.author}</p>
-                          <div className="flex items-center gap-2">
-                            <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} posts</span>
-                            {book.publicationYear && (<><span className="text-[#AE8F7D]/25">·</span><span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{book.publicationYear}</span></>)}
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
-
-              {!communityGenreLoading && communityGenreBooks.length === 0 && allGenreBooks.length === 0 && (
+              {!communityGenreLoading && allBooks.length === 0 && (
                 <p className="font-serif italic text-[13px] text-[#2A2A2A]/35 text-center py-6">
                   Nenhum livro encontrado neste gênero ainda.
                 </p>
               )}
 
-              {allGenreBooks.length > 0 && (
+              {!communityGenreLoading && allBooks.length > 0 && (
                 <>
-                  {communityGenreBooks.length > 0 && (
-                    <p className="font-sans font-light text-[8px] uppercase tracking-[0.14em] text-[#AE8F7D]/60 mb-2">Também em Marginalia</p>
-                  )}
-                  <div className="space-y-2">
-                    {visibleBooks.map((book) => (
-                      <Link key={book.id} href={`/book/${book.id}`}>
-                        <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 transition-colors">
-                          <div
-                            className="w-10 h-14 rounded-[5px] flex-shrink-0"
-                            style={{ backgroundColor: book.bookColor }}
-                          />
+                  {/* Count + page info */}
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D]">
+                      {allBooks.length} {allBooks.length === 1 ? "livro" : "livros"}
+                    </p>
+                    {totalPages > 1 && (
+                      <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30">
+                        página {safePage + 1} de {totalPages}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Book list — current page */}
+                  <div className="space-y-2 mb-5">
+                    {pageBooks.map((book) => (
+                      <Link key={`${book.id}`} href={`/book/${book.id}`} data-testid={`genre-book-${book.id}`}>
+                        <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 active:opacity-75 transition-all">
+                          {book.coverUrl ? (
+                            <img
+                              src={book.coverUrl}
+                              alt={book.title}
+                              className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]"
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                            />
+                          ) : (
+                            <div
+                              className="w-10 h-14 rounded-[5px] flex-shrink-0"
+                              style={{ backgroundColor: book.bookColor ?? "#EBE6DB" }}
+                            />
+                          )}
                           <div className="flex-1 min-w-0">
                             <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
                             <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1">{book.author}</p>
                             <div className="flex items-center gap-2">
-                              <span className="font-sans font-light text-[8px] text-[#697962]">
-                                {book.communityStats.activeReaders} leitores
-                              </span>
-                              <span className="text-[#AE8F7D]/25">·</span>
-                              <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
-                                {book.communityStats.totalMargins} posts
-                              </span>
+                              {(book.marginCount ?? 0) > 0 && (
+                                <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} posts</span>
+                              )}
+                              {book.publicationYear && (
+                                <>
+                                  <span className="text-[#AE8F7D]/25">·</span>
+                                  <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{book.publicationYear}</span>
+                                </>
+                              )}
                             </div>
                           </div>
                         </div>
                       </Link>
                     ))}
                   </div>
-                  {hasMore && (
-                    <button
-                      type="button"
-                      onClick={() => setGenreBooksLimit((l) => l + 8)}
-                      className="w-full mt-3 py-2.5 border border-dashed border-[#AE8F7D]/30 rounded-[10px] font-sans font-light text-[10px] tracking-[0.1em] text-[#AE8F7D] hover:bg-[#AE8F7D]/5 transition-colors"
-                    >
-                      Carregar mais · {allGenreBooks.length - genreBooksLimit} restantes
-                    </button>
-                  )}
-                  {!hasMore && allGenreBooks.length > 0 && (
-                    <p className="font-sans font-light text-[9px] text-[#2A2A2A]/30 text-center mt-3">
-                      Todos os livros deste gênero
-                    </p>
+
+                  {/* Page navigation */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => setGenrePage((p) => Math.max(0, p - 1))}
+                        disabled={safePage === 0}
+                        className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#AE8F7D] disabled:text-[#2A2A2A]/20 border border-[#AE8F7D]/25 disabled:border-[#2A2A2A]/10 rounded-full px-4 py-2 hover:bg-[#AE8F7D]/5 disabled:cursor-not-allowed transition-all"
+                      >
+                        ← anterior
+                      </button>
+                      <div className="flex gap-1.5 items-center">
+                        {Array.from({ length: totalPages }).map((_, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setGenrePage(i)}
+                            className={`rounded-full transition-all duration-200 ${
+                              i === safePage
+                                ? "w-4 h-1.5 bg-[#AE8F7D]"
+                                : "w-1.5 h-1.5 bg-[#AE8F7D]/25 hover:bg-[#AE8F7D]/50"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setGenrePage((p) => Math.min(totalPages - 1, p + 1))}
+                        disabled={safePage === totalPages - 1}
+                        className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#AE8F7D] disabled:text-[#2A2A2A]/20 border border-[#AE8F7D]/25 disabled:border-[#2A2A2A]/10 rounded-full px-4 py-2 hover:bg-[#AE8F7D]/5 disabled:cursor-not-allowed transition-all"
+                      >
+                        próxima →
+                      </button>
+                    </div>
                   )}
                 </>
               )}
