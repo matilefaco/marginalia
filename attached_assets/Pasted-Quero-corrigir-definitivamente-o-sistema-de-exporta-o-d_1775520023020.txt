@@ -1,0 +1,246 @@
+Quero corrigir definitivamente o sistema de exportação/download/compartilhamento dos cards.
+
+O problema continua acontecendo:
+- o card específico selecionado pelo usuário não está sendo transformado corretamente em imagem
+- quando o usuário baixa ou compartilha, a imagem sai em branco / vazia / incorreta
+- o arquivo final não corresponde ao card que o usuário escolheu
+
+Isso precisa ser corrigido de forma real no pipeline de captura/exportação.
+
+==================================================
+1. COMPORTAMENTO CORRETO QUE EU QUERO
+==================================================
+
+Quando o usuário selecionar um card específico e tocar em:
+
+- Baixar
+ou
+- Compartilhar
+
+o sistema deve:
+
+1. identificar exatamente qual card foi selecionado
+2. renderizar esse card corretamente em um container de exportação
+3. transformar esse card em uma imagem real
+4. gerar essa imagem em **JPEG**
+5. usar essa imagem:
+   - no download
+   - no compartilhamento
+
+==================================================
+2. O CARD PRECISA VIRAR JPEG REAL
+==================================================
+
+Quero que o card selecionado seja exportado como um arquivo **JPEG real**, e não como um canvas vazio, tela branca ou imagem genérica.
+
+### Resultado esperado:
+- o arquivo final precisa conter exatamente o card escolhido
+- o conteúdo precisa aparecer de verdade
+- o fundo precisa aparecer corretamente
+- tipografia, citações, avatar, nome, reações e metadados precisam estar visíveis
+- nada pode sair em branco
+
+### Formato:
+- preferencialmente `image/jpeg`
+- com qualidade boa
+- com nome de arquivo coerente
+
+Exemplos:
+- `marginalia-story-a-hora-da-estrela.jpg`
+- `marginalia-feed-dom-casmurro.jpg`
+
+==================================================
+3. O CARD ESPECÍFICO SELECIONADO DEVE SER O EXPORTADO
+==================================================
+
+Isso é muito importante:
+
+Não quero export genérico.
+Não quero export da tela inteira.
+Não quero export de um container vazio.
+
+Quero exportar **o card exato que o usuário escolheu**.
+
+Ou seja:
+- se o usuário escolheu uma citação específica, exportar essa citação específica
+- se escolheu outro card, exportar aquele outro card
+- se trocou de formato, exportar o card correspondente àquele formato
+
+A imagem final deve ser exatamente a prévia que ele está vendo.
+
+==================================================
+4. REVISAR O PIPELINE DE CAPTURA
+==================================================
+
+Quero que você revise o pipeline inteiro de captura/exportação.
+
+### Verificar especificamente:
+
+#### 4.1. Elemento certo
+Garantir que o `ref` ou o seletor usado para exportação aponta para:
+- o card real visível
+- e não para um wrapper vazio
+- e não para o fundo do modal
+- e não para um container sem conteúdo
+
+#### 4.2. Renderização completa antes do export
+A captura não pode acontecer antes do card terminar de renderizar.
+
+Então quero:
+- esperar o card ficar completamente pronto
+- esperar fontes carregarem
+- esperar layout final
+- esperar avatar/reação/texto aparecerem
+- só depois chamar a função de export
+
+#### 4.3. Exportar o card em área isolada
+Se necessário, criar um container de export específico e invisível, mas corretamente renderizado, com:
+- largura fixa
+- altura fixa
+- fundo correto
+- conteúdo correto
+- sem dependência do modal escuro
+
+Esse container deve servir apenas para gerar a imagem final.
+
+#### 4.4. Garantir fundo correto
+Hoje parece que o sistema exporta um fundo vazio/branco sem conteúdo.
+
+Quero garantir:
+- fundo correto do card
+- sem tela vazia
+- sem canvas sem conteúdo
+- sem exportar antes da pintura visual do elemento
+
+==================================================
+5. MESMO PIPELINE PARA BAIXAR E COMPARTILHAR
+==================================================
+
+Quero que os botões **Baixar** e **Compartilhar** usem exatamente a mesma imagem gerada.
+
+### Fluxo correto:
+1. gerar JPEG do card selecionado
+2. se clicar em Baixar → salvar esse JPEG no dispositivo
+3. se clicar em Compartilhar → abrir share nativo com esse mesmo JPEG
+
+Não quero dois fluxos separados e inconsistentes.
+
+==================================================
+6. O BOTÃO BAIXAR DEVE FUNCIONAR ASSIM
+==================================================
+
+Quando o usuário clicar em **Baixar**:
+- gerar JPEG do card específico selecionado
+- baixar/salvar esse JPEG no dispositivo
+- o arquivo salvo precisa abrir normalmente
+- a imagem precisa estar correta
+- não pode ser arquivo branco
+- não pode ser arquivo genérico
+- não pode ser canvas vazio
+
+Se necessário, mostrar feedback:
+- “Preparando imagem…”
+- depois “Imagem salva”
+
+==================================================
+7. O BOTÃO COMPARTILHAR DEVE FUNCIONAR ASSIM
+==================================================
+
+Quando o usuário clicar em **Compartilhar**:
+- gerar JPEG do card específico selecionado
+- abrir o share nativo usando esse JPEG
+- não compartilhar imagem branca
+- não compartilhar arquivo vazio
+- não compartilhar arquivo genérico
+
+Se o formato selecionado for:
+- Stories 9:16 → exportar nesse formato
+- Feed 1:1 → exportar nesse formato
+
+==================================================
+8. FORMATOS DEVEM SER RESPEITADOS
+==================================================
+
+Quero que o arquivo final respeite o formato escolhido:
+
+### Stories 9:16
+- export vertical
+- resolução coerente com story
+
+### Feed 1:1
+- export quadrado
+- resolução coerente com feed
+
+Mas em ambos os casos:
+- o conteúdo precisa aparecer corretamente
+- o card não pode sair vazio
+- o arquivo deve corresponder à prévia
+
+==================================================
+9. O QUE NÃO PODE MAIS ACONTECER
+==================================================
+
+Depois dessa correção, não pode mais acontecer:
+
+- imagem branca
+- card invisível
+- arquivo vazio
+- export genérico
+- compartilhar sem o conteúdo real
+- baixar um arquivo que não mostra o card
+- exportar só o fundo
+- exportar o elemento errado
+
+==================================================
+10. TESTES QUE QUERO QUE VOCÊ FAÇA
+==================================================
+
+Depois da correção, testar:
+
+### Teste 1
+- selecionar um card específico
+- clicar em Baixar
+- abrir o arquivo baixado
+- verificar se mostra exatamente o card escolhido
+
+### Teste 2
+- selecionar outro card diferente
+- clicar em Baixar
+- verificar se o arquivo mudou e corresponde ao novo card
+
+### Teste 3
+- selecionar Stories 9:16
+- baixar
+- verificar se o JPEG vertical contém o card corretamente
+
+### Teste 4
+- selecionar Feed 1:1
+- baixar
+- verificar se o JPEG quadrado contém o card corretamente
+
+### Teste 5
+- clicar em Compartilhar
+- verificar se o share nativo usa a imagem correta
+- verificar se a imagem não está em branco
+
+==================================================
+11. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois da correção:
+
+- qualquer card selecionado deve poder ser exportado individualmente
+- o card deve virar um JPEG real
+- esse JPEG deve conter exatamente o conteúdo do card selecionado
+- o botão Baixar deve salvar esse JPEG corretamente
+- o botão Compartilhar deve compartilhar esse JPEG corretamente
+- nada pode sair branco, vazio ou genérico
+
+==================================================
+12. PRIORIDADE
+==================================================
+
+Isso é prioridade alta.
+
+Quero correção real no fluxo de geração da imagem, não apenas ajuste visual.
+O problema está na captura/exportação do card em si, e isso precisa ser resolvido de forma definitiva.

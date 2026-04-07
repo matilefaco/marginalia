@@ -6,7 +6,7 @@ import { MOCK_USERS } from "@/data/mockData";
 import { MARGIN_TYPES } from "@/data/constants";
 import { useApp } from "@/context/AppContext";
 import { formatReference } from "@/utils/formatting";
-import html2canvas from "html2canvas";
+import { toCanvas } from "html-to-image";
 
 const C = {
   parchment: "#FAF7F2",
@@ -397,58 +397,44 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
   }, [cardW, cardH]);
 
   /* ──────────────────────────────────────────────────────────────────────
-     captureCanvas — reliable full-resolution export pipeline.
+     captureCanvas — uses html-to-image (not html2canvas).
 
-     Why we can't just capture off-screen at left:-9999px:
-       html2canvas computes the crop rect from the ORIGINAL element's
-       getBoundingClientRect() BEFORE invoking onclone. At x=-9999 the
-       crop is entirely off-canvas, producing a blank image.
+     html-to-image serialises only the TARGET element's own style tree into
+     an SVG foreignObject and draws it to a canvas.  It never renders the
+     full page, so the dark overlay, z-index stacking and off-screen
+     position are completely irrelevant.
 
-     Strategy:
-       1. Move the wrapper to (0,0) in the real DOM so the crop rect is
-          correct when html2canvas samples it.
-       2. Use onclone to hide the dark overlay (z-index 9999) in the
-          cloned document — otherwise it paints over the card.
-       3. Restore the off-screen position after capture.
+     We do still move the wrapper to (0,0) first because some browsers
+     refuse to measure elements at left:-9999px.
   ────────────────────────────────────────────────────────────────────── */
   const captureCanvas = useCallback(async () => {
     if (!exportCardRef.current || !exportWrapperRef.current) return null;
 
     const wrapper = exportWrapperRef.current;
 
-    /* 1. Bring wrapper to (0,0) in the REAL DOM */
+    /* Bring on-screen briefly so the browser measures layout correctly */
     wrapper.style.left = "0px";
-    wrapper.style.top  = "0px";
 
     try {
-      /* 2. Wait for web fonts + two paint frames so layout is stable */
+      /* Wait for web fonts + two paint frames */
       await document.fonts.ready;
       await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      const outputScale = isStories ? 4 : 3;
+      const pixelRatio = isStories ? 4 : 3;
 
-      return await html2canvas(exportCardRef.current, {
-        scale: outputScale,
-        useCORS: true,
-        allowTaint: true,
+      return await toCanvas(exportCardRef.current, {
+        pixelRatio,
         backgroundColor: C.parchment,
-        logging: false,
         width:  cardW,
         height: cardH,
-        scrollX: 0,
-        scrollY: 0,
-        /* Hide the dark modal overlay in the cloned document
-           so it doesn't paint over the card (it's at z-index 9999) */
-        onclone: (clonedDoc) => {
-          clonedDoc
-            .querySelectorAll("[data-share-overlay]")
-            .forEach((el) => ((el as HTMLElement).style.visibility = "hidden"));
-        },
+        /* Force a cache-bust so html-to-image always re-reads styles */
+        cacheBust: true,
+        /* Skip embedding external font faces — fonts are already loaded */
+        skipFonts: false,
       });
     } finally {
-      /* 3. Always restore off-screen position */
+      /* Always restore off-screen */
       wrapper.style.left = "-9999px";
-      wrapper.style.top  = "0px";
     }
   }, [isStories, cardW, cardH]);
 
@@ -457,7 +443,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     const canvas = await captureCanvas();
     if (!canvas) throw new Error("Capture failed");
     const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/png")
+      canvas.toBlob(resolve, "image/jpeg", 0.93)
     );
     if (!blob) throw new Error("Blob failed");
 
@@ -470,7 +456,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     const tpl = isStories ? storyTpl : feedTpl;
     const a = document.createElement("a");
     a.href = url;
-    a.download = `marginalia-${isStories ? "story" : "feed"}-${tpl}-${slug}.png`;
+    a.download = `marginalia-${isStories ? "story" : "feed"}-${tpl}-${slug}.jpg`;
     a.rel = "noopener";
     /* Append to body so all browsers trigger the download, then immediately remove */
     document.body.appendChild(a);
@@ -502,12 +488,18 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
       const canvas = await captureCanvas();
       if (!canvas) return;
       const blob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob(resolve, "image/png")
+        canvas.toBlob(resolve, "image/jpeg", 0.93)
       );
       if (!blob) return;
 
-      const filename = `marginalia-${isStories ? "stories" : "feed"}-${margin.id}.png`;
-      const file = new File([blob], filename, { type: "image/png" });
+      const slug = margin.bookTitle
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")
+        .slice(0, 30);
+      const tpl = isStories ? storyTpl : feedTpl;
+      const filename = `marginalia-${isStories ? "story" : "feed"}-${tpl}-${slug}.jpg`;
+      const file = new File([blob], filename, { type: "image/jpeg" });
 
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({
@@ -529,7 +521,7 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     } finally {
       setExporting(false);
     }
-  }, [exporting, captureCanvas, isStories, margin, doDownload]);
+  }, [exporting, captureCanvas, isStories, storyTpl, feedTpl, margin, doDownload]);
 
   /* ─────────────────────────────────────────────────────────────
      Export container is a SEPARATE portal — direct child of body.
