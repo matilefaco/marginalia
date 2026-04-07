@@ -1,0 +1,480 @@
+Quero fazer uma rodada de refinamento visual e estrutural no Marginalia, com foco em:
+
+- legibilidade real
+- consistência tipográfica
+- cards de compartilhamento com mais identidade e potencial viral
+- fortalecimento da página pública do livro como porta de entrada do app
+- manutenção do tom editorial, sofisticado e emocional do produto
+
+Abaixo estão as diretrizes que quero implementar no app.
+
+==================================================
+1. SISTEMA TIPOGRÁFICO — USO CORRETO DE CORMORANT E JOST
+==================================================
+
+Quero padronizar a tipografia do app de forma mais inteligente.
+
+## Diretriz geral
+- **Cormorant Garamond** deve ser reservada para momentos de impacto, emoção e editorialidade
+- **Jost** deve ser usada para toda a camada funcional, interface e texto utilitário
+
+## Regra de uso
+
+### Cormorant Garamond
+Usar apenas em:
+- citações destacadas
+- títulos de seção grandes
+- nome do app
+- títulos editoriais de alto impacto
+- momentos em que a interface precisa parecer literária/emocional
+
+### Jost Regular / Medium
+Usar em:
+- labels
+- corpo de texto funcional
+- descrições
+- metadados
+- botões
+- textos de interface
+- navegação
+- informações auxiliares
+- campos de formulário
+- UI em geral
+
+## Ajuste de contraste
+Quero escurecer levemente a cor base do texto funcional para melhorar legibilidade sem mudar a identidade do app.
+
+### Nova cor sugerida
+- usar algo próximo de **#2A2A2A** como “Metal” mais escuro
+
+### Objetivo
+- melhorar contraste
+- reduzir fadiga visual
+- manter a elegância neutra do app
+- não deixar o app “apagado” demais
+
+==================================================
+2. REGRA DE HIERARQUIA VISUAL
+==================================================
+
+Quero que a tipografia passe a comunicar melhor a função de cada elemento.
+
+## Regra prática
+- tudo que for “sentir” → Cormorant
+- tudo que for “usar” → Jost
+
+## Exemplos
+### Cormorant
+- “Nova Margem”
+- citações centrais dos cards
+- “Bem-vindo de volta”
+- nome do app
+- títulos grandes de seções
+
+### Jost
+- subtítulos
+- labels em caps
+- dados do livro
+- informações de usuário
+- botões
+- descrição das seções
+- metadados
+- UI funcional
+
+==================================================
+3. CARDS DE COMPARTILHAMENTO — SISTEMA VISUAL OFICIAL
+==================================================
+
+Quero consolidar um sistema de cards de compartilhamento com identidade forte, coerente e altamente compartilhável.
+
+A proposta visual enviada em HTML/CSS deve servir como base de implementação.
+
+Quero transformar isso em componentes reais do app.
+
+==================================================
+4. VARIANTE 1 — CITAÇÃO FAVORITA LIGHT
+==================================================
+
+## Conceito
+Card claro, delicado, editorial e muito estético.
+
+## Direção visual
+- fundo Albescent
+- textura dot-matrix sutil
+- aspas grandes decorativas
+- citação central em Cormorant
+- atribuição do livro em spaced caps
+- sensação clean, estética, “BookTok-ready”
+
+## Uso
+- stories 9:16
+- compartilhamento de citações favoritas
+- posts delicados e refinados
+
+## Detalhes
+- quote principal em Cormorant, tamanho generoso
+- metadados em Jost
+- pequeno logo “marginalia”
+- avatar/handle e reações no rodapé
+
+==================================================
+5. VARIANTE 2 — CITAÇÃO DARK
+==================================================
+
+## Conceito
+Versão escura, com contraste alto e impacto forte em feed.
+
+## Direção visual
+- fundo quase preto
+- mesma estrutura da light
+- contraste máximo
+- tom mais dramático e elegante
+
+## Uso
+- feed do Instagram
+- compartilhamentos de citações com mais presença
+- posts mais cinematográficos
+
+## Regra
+Manter mesma estrutura da light, mas com linguagem mais intensa e silenciosa.
+
+==================================================
+6. VARIANTE 3 — TIPO DE LEITOR
+==================================================
+
+## Conceito
+Este deve ser um dos cards mais compartilháveis do app.
+
+## Estrutura
+- nome do tipo de leitor grande em Cormorant
+- emoji centralizado
+- tags de personalidade em pills
+- stats de leitura no rodapé
+- fundo claro com ornamentação sutil
+
+## Objetivo
+Fazer a pessoa querer compartilhar porque o card “fala sobre ela”.
+
+## Conteúdo possível
+- nome do tipo: “O Observador”, “A Intensa”, “O Analítico” etc.
+- descrição curta do tipo
+- tags tipo:
+  - leitor sensível
+  - criterioso
+  - tocado por detalhes
+  - simbólico
+  - curioso
+- estatísticas:
+  - margens
+  - ecos
+  - livros
+
+## Resultado esperado
+Card altamente viral, com cara de identidade pessoal.
+
+==================================================
+7. VARIANTE 4 — ECO / MARGEM
+==================================================
+
+## Conceito
+Card derivado do feed, compartilhável individualmente.
+
+## Estrutura
+- barra lateral de acento
+- trecho em itálico grande
+- anotação em Jost mais leve
+- referência de capítulo/página
+- badge de spoiler, quando aplicável
+- usuário e reações no rodapé
+
+## Objetivo
+Transformar uma margem/eco individual em conteúdo compartilhável fora do app.
+
+## Regras visuais
+- trecho com forte presença editorial
+- anotação legível
+- acento lateral coerente com o tipo de margem
+- manter elegância e respiro
+
+==================================================
+8. VARIANTE 5 — DNA DE LEITURA
+==================================================
+
+## Conceito
+Card em linguagem “Wrapped”, com alto potencial viral.
+
+## Estrutura
+- nome do usuário em destaque
+- traços/barras do perfil de leitura
+- sensível / analítico / crítico / curioso
+- chips com livros lidos
+- resumo final tipo “impressão digital de leitura”
+
+## Objetivo
+Virar peça de compartilhamento forte, especialmente em:
+- retrospectivas
+- fim de ano
+- marcos pessoais de leitura
+- perfis públicos
+
+## Visual
+- fundo escuro
+- linguagem elegante
+- barras sutis
+- uso de Cormorant para títulos e Jost para dados
+
+==================================================
+9. VARIANTE 6 — MOMENTO
+==================================================
+
+## Conceito
+O card mais minimalista e impactante dos escuros.
+
+## Estrutura
+- fundo quase black
+- silêncio visual máximo
+- somente citação e anotação
+- presença de poucos elementos
+- sensação contemplativa
+
+## Objetivo
+Criar o tipo de card que faz a pessoa parar o scroll.
+
+## Regra
+Menos ruído, mais atmosfera.
+
+==================================================
+10. TRANSFORMAR ESSES CARDS EM COMPONENTES REAIS
+==================================================
+
+Quero que o HTML/CSS enviado sirva como referência visual, mas a implementação final precisa virar um sistema real dentro do app.
+
+## O que fazer
+- criar componentes reutilizáveis para cada variante
+- permitir trocar conteúdo dinamicamente
+- permitir exportar em:
+  - Stories 9:16
+  - Feed 1:1
+- usar os dados reais do app:
+  - livro
+  - citação
+  - autor
+  - usuário
+  - reações
+  - tipo de leitor
+  - DNA de leitura
+  - momento
+  - eco
+
+## Importante
+Cada card deve:
+- manter integridade visual
+- exportar corretamente
+- respeitar formato selecionado
+- continuar com identidade premium
+
+==================================================
+11. SISTEMA DE EXPORTAÇÃO DOS CARDS
+==================================================
+
+Quero que essas variantes sejam a base oficial do compartilhamento do app.
+
+## Quando o usuário quiser compartilhar:
+- selecionar o tipo de card
+- selecionar o formato (story ou feed)
+- gerar a arte correta
+- baixar ou compartilhar com essa aparência
+
+## O export precisa:
+- respeitar o design final
+- preservar tipografia
+- preservar espaçamento
+- preservar fundo
+- preservar avatar, quote, metadados, reações
+- nunca gerar imagem branca ou vazia
+
+==================================================
+12. FEED E CARDS — HIERARQUIA CROMÁTICA SUTIL
+==================================================
+
+Além disso, quero reforçar uma ideia de diferenciação dos tipos de margem.
+
+## Regra
+Cada tipo de margem pode ter um acento cromático sutil:
+- Citação → Dusty Rose
+- Leitura simbólica → Sage
+- Teoria / Interpretação → Ink
+- outros tipos → tons discretos coerentes
+
+## Aplicação
+- barra lateral
+- micro badge
+- marcador superior
+- nunca de forma gritante
+
+==================================================
+13. PÁGINA PÚBLICA DO LIVRO COM HEATMAP VISÍVEL SEM LOGIN
+==================================================
+
+Quero desenvolver essa ideia de forma forte, porque ela pode ser uma das melhores portas de entrada do app.
+
+## Conceito
+A página pública do livro deve poder ser visualizada sem login.
+
+Ou seja:
+uma pessoa pode cair na página de um livro via link compartilhado, busca ou rede social e já ter uma experiência real do Marginalia, mesmo sem conta.
+
+## O que essa página pública deve mostrar
+### Dados do livro
+- capa
+- título
+- autor
+- descrição
+- ano / páginas, se houver
+
+### Heatmap visível
+Quero que o **heatmap/ritmo de leitura coletivo** apareça publicamente, sem exigir login.
+
+## Por que isso é importante
+O heatmap mostra imediatamente:
+- que aquele livro está vivo no app
+- que leitores estão reagindo em pontos específicos
+- que existe inteligência coletiva de leitura
+- que o Marginalia não é só uma estante, mas uma camada social sobre os livros
+
+## Isso é um convite perfeito para novos usuários
+Porque a pessoa entende, sem criar conta:
+- onde o livro pulsa mais
+- em que trechos houve mais emoção/debate
+- que existe comunidade lendo junto
+
+==================================================
+14. COMO A PÁGINA PÚBLICA DO LIVRO DEVE FUNCIONAR
+==================================================
+
+## Visível sem login
+Quero que usuários não autenticados consigam ver:
+- informações do livro
+- heatmap coletivo
+- indicadores resumidos do tipo:
+  - trecho mais comentado
+  - pico emocional
+  - parte mais ecoada
+- algumas margens em destaque, se fizer sentido
+- convite elegante para entrar/criar conta
+
+## O que NÃO precisa liberar sem login
+- escrever comentário
+- reagir
+- publicar margem
+- salvar eco
+- atualizar progresso pessoal
+
+Essas ações podem exigir login.
+
+## Estratégia de conversão
+A página pública deve funcionar como landing page viva de cada livro.
+
+### Exemplos de CTA:
+- “Veja o que leitores sentiram neste trecho”
+- “Entre para deixar sua margem”
+- “Descubra onde este livro pulsa”
+- “Crie sua leitura dentro da leitura dos outros”
+
+==================================================
+15. O QUE O HEATMAP PRECISA COMUNICAR
+==================================================
+
+O heatmap não deve parecer apenas um gráfico decorativo.
+
+Quero que ele comunique:
+- intensidade emocional da comunidade
+- zonas mais anotadas
+- trechos mais discutidos
+- clima de leitura coletiva
+
+## Regra
+Ele deve ser:
+- bonito
+- legível
+- intuitivo
+- compartilhável
+
+## Ideal
+Ao ver a página, a pessoa deve pensar:
+“quero entrar nesse app só para ver o meu livro assim também”
+
+==================================================
+16. EXPERIÊNCIA DE USUÁRIO SEM LOGIN
+==================================================
+
+Quero que a experiência sem login seja boa o suficiente para gerar desejo, mas limitada o suficiente para incentivar cadastro.
+
+## Usuário sem login pode:
+- explorar livro
+- ver capa e descrição
+- ver heatmap
+- ver destaques da comunidade
+- entender a proposta do app
+
+## Usuário sem login não pode:
+- publicar margem
+- reagir
+- comentar
+- salvar
+- atualizar progresso
+
+## CTA final
+Inserir um convite elegante no fim ou em pontos estratégicos:
+- “Entre para deixar sua margem”
+- “Faça parte da leitura coletiva”
+- “Crie seu perfil e acompanhe este livro com a comunidade”
+
+==================================================
+17. CONSISTÊNCIA VISUAL COM O APP
+==================================================
+
+Tudo isso precisa manter:
+- a identidade editorial do Marginalia
+- o silêncio visual
+- a sofisticação
+- o respiro
+- o contraste melhorado com Jost no funcional e Cormorant no emocional
+
+==================================================
+18. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessas mudanças, quero que:
+
+- a tipografia do app fique muito mais legível e consistente
+- Cormorant seja usada apenas onde ela realmente brilha
+- Jost assuma a UI funcional de forma limpa
+- os cards de compartilhamento tenham sistema visual oficial e forte
+- existam 6 variantes implementadas de forma reutilizável
+- a página pública do livro sem login se torne uma porta de entrada poderosa para novos usuários
+- o heatmap visível sem login ajude a converter curiosidade em cadastro
+
+==================================================
+19. PRIORIDADE DE IMPLEMENTAÇÃO
+==================================================
+
+Implementar nesta ordem:
+
+1. corrigir sistema tipográfico global
+2. transformar as 6 variantes de cards em componentes reais
+3. integrar essas variantes ao sistema de compartilhamento/export
+4. desenvolver a página pública do livro sem login
+5. tornar o heatmap visível e atraente como ferramenta de conversão
+
+==================================================
+20. IMPORTANTE
+==================================================
+
+Não quero só referência visual estática.
+Quero implementação real no app, com:
+- componentes
+- regras tipográficas
+- uso coerente de estilos
+- página pública funcional
+- heatmap como parte estratégica da experiência

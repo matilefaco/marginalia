@@ -34,9 +34,9 @@ export function LibraryScreen() {
     <div className="min-h-full bg-[#FAF8F3] overflow-x-hidden screen-enter">
       <div className="px-5 pt-8 pb-4">
         <div className="flex items-center justify-between mb-5">
-          <h1 className="font-serif italic text-[26px] text-[#454545]">Biblioteca</h1>
+          <h1 className="font-serif italic text-[26px] text-[#2A2A2A]">Biblioteca</h1>
           <Link href="/nova-margem">
-            <button className="text-[#454545]/35 hover:text-[#454545]/60 transition-colors">
+            <button className="text-[#2A2A2A]/35 hover:text-[#2A2A2A]/60 transition-colors">
               <Plus className="w-5 h-5" />
             </button>
           </Link>
@@ -51,7 +51,7 @@ export function LibraryScreen() {
               className={`flex-shrink-0 font-sans text-[9px] font-light tracking-[0.12em] uppercase px-4 py-2 rounded-full border transition-all ${
                 activeFilter === f.id
                   ? "bg-[#454545] text-[#FAF8F3] border-transparent"
-                  : "bg-transparent text-[#454545]/45 border-[#454545]/12 hover:border-[#AE8F7D]/30"
+                  : "bg-transparent text-[#2A2A2A]/45 border-[#454545]/12 hover:border-[#AE8F7D]/30"
               }`}
             >
               {f.label}
@@ -63,7 +63,7 @@ export function LibraryScreen() {
       <div className="px-5 pb-8">
         {filtered.length === 0 ? (
           <div className="text-center py-16">
-            <p className="font-serif italic text-[15px] text-[#454545]/35 mb-4">
+            <p className="font-serif italic text-[15px] text-[#2A2A2A]/35 mb-4">
               Nenhum livro aqui ainda.
             </p>
             <Link href="/explore">
@@ -86,10 +86,10 @@ export function LibraryScreen() {
                   <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[14px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 transition-colors">
                     <BookCover title={item.title} bookColor={item.bookColor} coverUrl={item.coverUrl} size="sm" />
                     <div className="flex-1 min-w-0">
-                      <p className="font-serif text-[15px] text-[#454545] leading-tight mb-0.5 truncate">
+                      <p className="font-serif text-[15px] text-[#2A2A2A] leading-tight mb-0.5 truncate">
                         {item.title}
                       </p>
-                      <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-2">
+                      <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#2A2A2A]/40 mb-2">
                         {item.author}
                       </p>
 
@@ -105,11 +105,11 @@ export function LibraryScreen() {
                       )}
 
                       <div className="flex items-center gap-3">
-                        <span className="font-sans font-light text-[8px] text-[#454545]/35">
+                        <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
                           {progressLabel(p)}
                         </span>
                         <span className="text-[#AE8F7D]/20">·</span>
-                        <span className="font-sans font-light text-[8px] text-[#454545]/35">
+                        <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
                           {item.myMargins} {item.myMargins === 1 ? "margem" : "margens"}
                         </span>
                         <span className="text-[#AE8F7D]/20">·</span>

@@ -2,393 +2,487 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Download, Share2, Loader2, CheckCircle } from "lucide-react";
 import type { Margin } from "@/data/mockData";
-import { MOCK_USERS } from "@/data/mockData";
+import { MOCK_USERS, MOCK_MARGINS } from "@/data/mockData";
 import { MARGIN_TYPES } from "@/data/constants";
 import { useApp } from "@/context/AppContext";
 import { formatReference } from "@/utils/formatting";
 import { toCanvas } from "html-to-image";
 
-const C = {
-  parchment: "#FAF7F2",
-  parchmentWarm: "#F5F0E8",
-  ink: "#2A2420",
-  inkSoft: "#4A3F38",
-  rose: "#C9A99A",
-  roseLight: "#E8D5CD",
-  roseDark: "#A07868",
-  sage: "#8A9E8C",
-  border: "rgba(42,36,32,0.08)",
+/* ── Brand tokens (matching HTML reference) ── */
+const T = {
+  albescent:  "#FAF8F3",
+  heather:    "#AE8F7D",
+  oldVine:    "#697962",
+  doeskin:    "#BDAB9C",
+  metal:      "#2A2A2A",
+  metalLight: "#5A5450",
+  creamMid:   "#F0EDE6",
+  parchment:  "#E8E3D9",
 } as const;
 
-const SERIF = "'Cormorant Garamond', 'EB Garamond', Georgia, serif";
-const SANS = "'Jost', 'Raleway', sans-serif";
+const SERIF = "'Cormorant Garamond', Georgia, serif";
+const SANS  = "'Jost', sans-serif";
 
-type Format = "stories" | "feed";
-type StoryTpl = "quote" | "moment";
-type FeedTpl = "reaction" | "symbolic";
+type Template = "quote-light" | "quote-dark" | "moment" | "reader-type" | "echo" | "reading-dna";
+type Format   = "stories" | "feed";
 
-interface ShareCardModalProps {
-  margin: Margin;
-  onClose: () => void;
-}
+/* ── Dimensions ── */
+const STORIES_W = 270; const STORIES_H = 480;
+const FEED_W    = 360; const FEED_H    = 360;
 
+interface Props { margin: Margin; onClose: () => void; }
+
+/* ── Helpers ── */
 function getUsername(userId: string) {
-  const u = MOCK_USERS.find((u) => u.id === userId);
-  return u ? u.username : "@leitor";
+  return MOCK_USERS.find(u => u.id === userId)?.username ?? "@leitor";
+}
+function topReactions(r: Record<string, number>, max = 2) {
+  return Object.entries(r).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]).slice(0, max);
+}
+function getTypeLabel(t: string) { return MARGIN_TYPES.find(x => x.id === t)?.label ?? "Margem"; }
+function getTypeIcon(t: string) {
+  const m: Record<string,string> = { insight:"💡", theory:"🔭", critique:"⚡", question:"❓",
+    reaction:"✦", favorite_quote:"✨", personal_connection:"🤍", symbolic_reading:"⊕" };
+  return m[t] ?? "✦";
 }
 
-function topReactions(reactions: Record<string, number>, max = 2) {
-  return Object.entries(reactions)
-    .filter(([, v]) => v > 0)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, max);
-}
-
-function getTypeLabel(postType: string) {
-  return MARGIN_TYPES.find((t) => t.id === postType)?.label ?? "Margem";
-}
-
-function getTypeIcon(postType: string) {
-  const icons: Record<string, string> = {
-    insight: "💡",
-    theory: "🔭",
-    critique: "⚡",
-    question: "❓",
-    reaction: "✦",
-    favorite_quote: "✨",
-    personal_connection: "🤍",
-    symbolic_reading: "⊕",
+/* ── Reader profile computation ── */
+function computeReaderProfile(userId: string) {
+  const margins = MOCK_MARGINS.filter(m => m.userId === userId);
+  const total   = margins.length || 1;
+  const cnt = (types: string[]) => margins.filter(m => types.includes(m.postType)).length;
+  const scores = {
+    sensivel:  cnt(["reaction","personal_connection","favorite_quote"]),
+    analitico: cnt(["insight","theory"]),
+    critico:   cnt(["critique"]),
+    curioso:   cnt(["question"]),
+    simbolico: cnt(["symbolic_reading"]),
   };
-  return icons[postType] ?? "✦";
+  const dominant = (Object.entries(scores).sort((a,b) => b[1]-a[1])[0]?.[0] ?? "sensivel") as keyof typeof scores;
+  const archetypes = {
+    sensivel:  { name: "O Sensível",   desc: "Deixa as palavras tocarem fundo.", emoji: "🤍", tags: ["Leitor emocional","Tocado por detalhes","Curioso"] },
+    analitico: { name: "O Analítico",  desc: "Encontra padrões onde outros veem história.", emoji: "🔭", tags: ["Leitor atento","Criterioso","Observador"] },
+    critico:   { name: "O Crítico",    desc: "Lê com olhar afiado e voz precisa.", emoji: "⚡", tags: ["Opinativo","Criterioso","Preciso"] },
+    curioso:   { name: "O Curioso",    desc: "Cada página levanta uma nova pergunta.", emoji: "❓", tags: ["Investigativo","Aberto","Perguntador"] },
+    simbolico: { name: "O Simbólico",  desc: "Lê entre as linhas com olhar poético.", emoji: "⊕", tags: ["Simbólico","Interpretativo","Profundo"] },
+  };
+  const archetype = archetypes[dominant] ?? archetypes.sensivel;
+  const books = [...new Set(margins.map(m => m.bookTitle))].slice(0, 4);
+  const totalEcos = margins.reduce((s, m) => s + Object.values(m.reactions as Record<string,number>).reduce((a,b) => a+b, 0), 0);
+  const traits = [
+    { name: "Sensível",  value: Math.max(12, Math.round(scores.sensivel  / total * 100)) },
+    { name: "Analítico", value: Math.max(10, Math.round(scores.analitico / total * 100)) },
+    { name: "Crítico",   value: Math.max(6,  Math.round(scores.critico   / total * 100)) },
+    { name: "Curioso",   value: Math.max(12, Math.round(scores.curioso   / total * 100)) },
+  ];
+  return { archetype, traits, books, stats: { margins: margins.length, ecos: totalEcos, books: books.length } };
 }
 
-/* ───────────────────────────────────────── */
-/* CARD 1 — Stories · Citação (light)       */
-/* ───────────────────────────────────────── */
-function QuoteStoryCard({ margin }: { margin: Margin }) {
+/* ─────────────────────────────────────────── */
+/* CARD 1 — Citação Favorita Light             */
+/* ─────────────────────────────────────────── */
+function CardQuoteLight({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) {
+  const w = isSquare ? FEED_W : STORIES_W;
+  const h = isSquare ? FEED_H : STORIES_H;
   const username = getUsername(margin.userId);
   const reactions = topReactions(margin.reactions);
+  const excerpt = margin.excerpt.length > (isSquare ? 140 : 200) ? margin.excerpt.slice(0, isSquare ? 140 : 200) + "…" : margin.excerpt;
   return (
-    <div
-      style={{
-        width: 270,
-        height: 480,
-        background: C.parchment,
-        borderRadius: 20,
-        overflow: "hidden",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        fontFamily: SANS,
-      }}
-    >
-      {/* paper grain */}
-      <div style={{ position: "absolute", inset: 0, background: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")", pointerEvents: "none", zIndex: 10 }} />
-      {/* accent line */}
-      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: `linear-gradient(to bottom, ${C.roseLight}, ${C.rose}, ${C.roseLight})` }} />
-      {/* corner bracket */}
-      <span style={{ position: "absolute", top: -10, left: 12, fontFamily: SERIF, fontSize: 64, color: C.roseLight, opacity: 0.3, lineHeight: 1, zIndex: 1 }}>[</span>
-
-      {/* top bar */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "24px 22px 0 22px" }}>
-        <span style={{ fontSize: 7, letterSpacing: "0.28em", textTransform: "uppercase", color: C.roseDark, display: "flex", alignItems: "center", gap: 4 }}>
-          ✦ Citação favorita
-        </span>
-        <span style={{ fontFamily: SERIF, fontSize: 9.5, letterSpacing: "0.18em", color: `${C.ink}55`, fontStyle: "italic" }}>marginalia</span>
+    <div style={{ width: w, height: h, background: T.albescent, borderRadius: 20, overflow: "hidden",
+      position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between",
+      padding: isSquare ? "28px 28px" : "44px 36px", fontFamily: SANS }}>
+      {/* dot texture */}
+      <div style={{ position:"absolute", inset:0, backgroundImage:"radial-gradient(circle, rgba(100,85,72,0.055) 1px, transparent 1px)", backgroundSize:"18px 18px", pointerEvents:"none" }} />
+      {/* radial tints */}
+      <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 60% 40% at 15% 10%, rgba(174,143,125,0.10) 0%, transparent 70%), radial-gradient(ellipse 50% 50% at 85% 90%, rgba(105,121,98,0.07) 0%, transparent 60%)", pointerEvents:"none" }} />
+      {/* header */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", position:"relative", zIndex:2 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:9.5, fontWeight:500, letterSpacing:"0.14em", textTransform:"uppercase", color:T.heather }}>
+          <div style={{ width:5, height:5, background:T.heather, borderRadius:"50%" }} />
+          Citação favorita
+        </div>
+        <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:T.doeskin, letterSpacing:"0.04em" }}>marginalia</span>
       </div>
-
       {/* body */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "20px 28px 12px 28px" }}>
-        <span style={{ fontFamily: SERIF, fontSize: 48, color: C.roseLight, lineHeight: 1, marginBottom: -6, display: "block" }}>"</span>
-        <p style={{ fontFamily: SERIF, fontSize: 16.5, fontStyle: "italic", lineHeight: 1.55, color: C.ink, letterSpacing: "0.01em", margin: 0 }}>
-          {margin.excerpt.length > 180 ? margin.excerpt.slice(0, 180) + "…" : margin.excerpt}
-        </p>
-        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 2 }}>
-          <span style={{ fontSize: 7.5, letterSpacing: "0.22em", textTransform: "uppercase", color: C.inkSoft, opacity: 0.6 }}>{margin.bookTitle}</span>
-          <span style={{ fontSize: 7, letterSpacing: "0.18em", textTransform: "uppercase", color: C.rose, opacity: 0.75 }}>
+      <div style={{ position:"relative", zIndex:2, flex:1, display:"flex", flexDirection:"column", justifyContent:"center", padding: isSquare ? "16px 0" : "32px 0" }}>
+        <div style={{ fontFamily:SERIF, fontSize: isSquare ? 38 : 52, color:T.heather, opacity:0.35, lineHeight:0.7, marginBottom:16, fontWeight:300 }}>"</div>
+        <p style={{ fontFamily:SERIF, fontStyle:"italic", fontWeight:400, fontSize: isSquare ? 19 : 24, lineHeight:1.55, color:T.metal, letterSpacing:"0.01em", margin:0 }}>{excerpt}</p>
+        <div style={{ marginTop:20, display:"flex", flexDirection:"column", gap:3 }}>
+          <span style={{ fontFamily:SANS, fontSize:10, fontWeight:500, letterSpacing:"0.14em", textTransform:"uppercase", color:T.metalLight }}>{margin.bookTitle}</span>
+          <span style={{ fontFamily:SANS, fontSize:10, fontWeight:300, letterSpacing:"0.10em", textTransform:"uppercase", color:T.doeskin }}>
             {margin.bookAuthor}{formatReference(margin) ? ` · ${formatReference(margin)}` : ""}
           </span>
         </div>
       </div>
-
       {/* footer */}
-      <div style={{ borderTop: `1px solid ${C.border}`, padding: "14px 22px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ width: 26, height: 26, borderRadius: "50%", background: C.ink, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <span style={{ fontFamily: SANS, fontSize: 8, fontWeight: 600, color: C.parchment, letterSpacing: "0.04em" }}>{margin.userInitials}</span>
+      <div style={{ position:"relative", zIndex:2, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:9 }}>
+          <div style={{ width:28, height:28, borderRadius:"50%", background:T.heather, display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <span style={{ fontFamily:SANS, fontSize:10, fontWeight:500, color:"white" }}>{margin.userInitials}</span>
           </div>
-          <div>
-            <span style={{ fontSize: 9.5, fontWeight: 500, color: C.ink, display: "block" }}>{margin.userName}</span>
-            <span style={{ fontSize: 8, color: `${C.ink}55`, letterSpacing: "0.04em" }}>{username}</span>
-          </div>
+          <span style={{ fontFamily:SANS, fontSize:11, fontWeight:400, color:T.metalLight, letterSpacing:"0.06em" }}>{username}</span>
         </div>
         {reactions.length > 0 && (
-          <div style={{ display: "flex", gap: 3 }}>
+          <div style={{ display:"flex", gap:6 }}>
             {reactions.map(([emoji, count]) => (
-              <div key={emoji} style={{ background: C.parchmentWarm, border: `1px solid ${C.border}`, borderRadius: 20, padding: "2.5px 7px", fontSize: 10, display: "flex", alignItems: "center", gap: 2 }}>
-                {emoji} <span style={{ fontSize: 7, color: C.inkSoft, opacity: 0.6 }}>{count}</span>
+              <div key={emoji} style={{ background:T.parchment, borderRadius:20, padding:"4px 10px", fontSize:11, color:T.metalLight, display:"flex", alignItems:"center", gap:4 }}>
+                {emoji} <span style={{ fontSize:9 }}>{count}</span>
               </div>
             ))}
           </div>
         )}
       </div>
-
-      {/* corner bracket bottom */}
-      <span style={{ position: "absolute", bottom: -18, right: 12, fontFamily: SERIF, fontSize: 64, color: C.roseLight, opacity: 0.3, lineHeight: 1, transform: "rotate(180deg)" }}>[</span>
     </div>
   );
 }
 
-/* ───────────────────────────────────────── */
-/* CARD 2 — Stories · Momento (dark)         */
-/* ───────────────────────────────────────── */
-function MomentStoryCard({ margin, progressPct }: { margin: Margin; progressPct: number }) {
+/* ─────────────────────────────────────────── */
+/* CARD 2 — Citação Dark                       */
+/* ─────────────────────────────────────────── */
+function CardQuoteDark({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) {
+  const w = isSquare ? FEED_W : STORIES_W;
+  const h = isSquare ? FEED_H : STORIES_H;
   const username = getUsername(margin.userId);
-  const ecosCount = Object.values(margin.reactions).reduce((a, b) => a + b, 0);
+  const reactions = topReactions(margin.reactions);
+  const excerpt = margin.excerpt.length > (isSquare ? 140 : 200) ? margin.excerpt.slice(0, isSquare ? 140 : 200) + "…" : margin.excerpt;
   return (
-    <div
-      style={{
-        width: 270,
-        height: 480,
-        background: "linear-gradient(145deg, #2A2420 0%, #1A1614 100%)",
-        borderRadius: 20,
-        overflow: "hidden",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        fontFamily: SANS,
-      }}
-    >
-      <div style={{ position: "absolute", inset: 0, background: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E\")", pointerEvents: "none", zIndex: 1 }} />
-      <div style={{ position: "relative", zIndex: 2, flex: 1, display: "flex", flexDirection: "column", padding: "24px 22px" }}>
-        {/* top */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
-          <span style={{ fontSize: 7.5, letterSpacing: "0.28em", textTransform: "uppercase", color: `${C.parchment}50` }}>Minha leitura agora</span>
-          <span style={{ fontFamily: SERIF, fontSize: 9.5, letterSpacing: "0.18em", color: `${C.parchment}33`, fontStyle: "italic" }}>marginalia</span>
+    <div style={{ width: w, height: h, background: "#100E0C", borderRadius: 20, overflow: "hidden",
+      position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between",
+      padding: isSquare ? "28px 28px" : "44px 36px", fontFamily: SANS }}>
+      <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 50% at 50% 50%, rgba(174,143,125,0.06) 0%, transparent 65%), radial-gradient(ellipse 30% 40% at 0% 100%, rgba(105,121,98,0.08) 0%, transparent 50%)", pointerEvents:"none" }} />
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", position:"relative", zIndex:2 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:9.5, fontWeight:500, letterSpacing:"0.14em", textTransform:"uppercase", color:T.doeskin, opacity:0.6 }}>
+          <div style={{ width:5, height:5, background:T.doeskin, opacity:0.6, borderRadius:"50%" }} />
+          Citação favorita
         </div>
+        <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:"#6B5E54", letterSpacing:"0.04em" }}>marginalia</span>
+      </div>
+      <div style={{ position:"relative", zIndex:2, flex:1, display:"flex", flexDirection:"column", justifyContent:"center", padding: isSquare ? "16px 0" : "32px 0" }}>
+        <div style={{ fontFamily:SERIF, fontSize: isSquare ? 38 : 52, color:T.heather, opacity:0.18, lineHeight:0.7, marginBottom:16, fontWeight:300 }}>"</div>
+        <p style={{ fontFamily:SERIF, fontStyle:"italic", fontWeight:400, fontSize: isSquare ? 19 : 24, lineHeight:1.55, color:T.albescent, letterSpacing:"0.01em", margin:0 }}>{excerpt}</p>
+        <div style={{ marginTop:20, display:"flex", flexDirection:"column", gap:3 }}>
+          <span style={{ fontFamily:SANS, fontSize:10, fontWeight:500, letterSpacing:"0.14em", textTransform:"uppercase", color:"rgba(250,248,243,0.5)" }}>{margin.bookTitle}</span>
+          <span style={{ fontFamily:SANS, fontSize:10, fontWeight:300, letterSpacing:"0.10em", textTransform:"uppercase", color:T.heather, opacity:0.7 }}>
+            {margin.bookAuthor}{formatReference(margin) ? ` · ${formatReference(margin)}` : ""}
+          </span>
+        </div>
+      </div>
+      <div style={{ position:"relative", zIndex:2, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:9 }}>
+          <div style={{ width:28, height:28, borderRadius:"50%", background:"#3D3530", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <span style={{ fontFamily:SANS, fontSize:10, fontWeight:500, color:T.heather }}>{margin.userInitials}</span>
+          </div>
+          <span style={{ fontFamily:SANS, fontSize:11, fontWeight:400, color:"rgba(250,248,243,0.35)", letterSpacing:"0.06em" }}>{username}</span>
+        </div>
+        {reactions.length > 0 && (
+          <div style={{ display:"flex", gap:6 }}>
+            {reactions.map(([emoji, count]) => (
+              <div key={emoji} style={{ background:"rgba(255,255,255,0.06)", borderRadius:20, padding:"4px 10px", fontSize:11, color:"rgba(250,248,243,0.4)", display:"flex", alignItems:"center", gap:4 }}>
+                {emoji} <span style={{ fontSize:9 }}>{count}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-        {/* book */}
-        <p style={{ fontFamily: SERIF, fontSize: 26, fontStyle: "italic", fontWeight: 400, color: C.parchment, lineHeight: 1.15, marginBottom: 4 }}>
-          {margin.bookTitle}
+/* ─────────────────────────────────────────── */
+/* CARD 3 — Momento (dark minimalist)          */
+/* ─────────────────────────────────────────── */
+function CardMoment({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) {
+  const w = isSquare ? FEED_W : STORIES_W;
+  const h = isSquare ? FEED_H : STORIES_H;
+  const username = getUsername(margin.userId);
+  const excerpt = margin.excerpt.length > (isSquare ? 120 : 180) ? margin.excerpt.slice(0, isSquare ? 120 : 180) + "…" : margin.excerpt;
+  const annotation = margin.commentary ? (margin.commentary.length > (isSquare ? 100 : 140) ? margin.commentary.slice(0, isSquare ? 100 : 140) + "…" : margin.commentary) : null;
+  return (
+    <div style={{ width: w, height: h, background: "#0D0B09", borderRadius: 20, overflow: "hidden",
+      position: "relative", display: "flex", flexDirection: "column", justifyContent: "center",
+      alignItems: "center", padding: isSquare ? "36px 32px" : "48px 36px", fontFamily: SANS }}>
+      <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 80% 60% at 50% 30%, rgba(174,143,125,0.08) 0%, transparent 60%)", pointerEvents:"none" }} />
+      <div style={{ position:"relative", zIndex:2, textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", width:"100%" }}>
+        <div style={{ display:"flex", gap:6, alignItems:"center", marginBottom: isSquare ? 28 : 48 }}>
+          <div style={{ width:4, height:4, borderRadius:"50%", background:T.heather, opacity:0.4 }} />
+          <span style={{ fontFamily:SANS, fontSize:9, fontWeight:400, letterSpacing:"0.18em", textTransform:"uppercase", color:"rgba(174,143,125,0.4)" }}>
+            {margin.bookTitle} · {margin.bookAuthor}
+          </span>
+          <div style={{ width:4, height:4, borderRadius:"50%", background:T.heather, opacity:0.4 }} />
+        </div>
+        <p style={{ fontFamily:SERIF, fontStyle:"italic", fontWeight:300, fontSize: isSquare ? 21 : 28, lineHeight:1.5, color:T.albescent, letterSpacing:"0.01em", textAlign:"center", maxWidth: isSquare ? 300 : 240, marginBottom: isSquare ? 24 : 40 }}>
+          "{excerpt}"
         </p>
-        <p style={{ fontSize: 7.5, letterSpacing: "0.22em", textTransform: "uppercase", color: `${C.parchment}50`, marginBottom: 20 }}>{margin.bookAuthor}</p>
-
-        {/* progress */}
-        {progressPct > 0 && (
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 7 }}>
-              <span style={{ fontSize: 7.5, letterSpacing: "0.18em", textTransform: "uppercase", color: `${C.parchment}50` }}>Progresso</span>
-              <span style={{ fontFamily: SERIF, fontSize: 15, fontStyle: "italic", color: C.roseLight }}>{progressPct}%</span>
-            </div>
-            <div style={{ height: 2, background: `${C.parchment}14`, borderRadius: 2, overflow: "hidden" }}>
-              <div style={{ height: "100%", background: `linear-gradient(to right, ${C.roseDark}, ${C.roseLight})`, width: `${progressPct}%`, borderRadius: 2 }} />
-            </div>
-          </div>
-        )}
-
-        {/* passage */}
-        <div style={{ flex: 1, borderLeft: `2px solid ${C.rose}55`, paddingLeft: 14, marginBottom: 20 }}>
-          <p style={{ fontFamily: SERIF, fontSize: 14, fontStyle: "italic", lineHeight: 1.6, color: `${C.parchment}C0`, margin: 0 }}>
-            {margin.excerpt.length > 160 ? `"${margin.excerpt.slice(0, 160)}…"` : `"${margin.excerpt}"`}
+        <div style={{ width:1, height: isSquare ? 20 : 32, background:"linear-gradient(to bottom, transparent, rgba(174,143,125,0.4), transparent)", marginBottom: isSquare ? 24 : 40 }} />
+        {annotation && (
+          <p style={{ fontFamily:SANS, fontSize: isSquare ? 12 : 13, fontWeight:300, color:"rgba(250,248,243,0.45)", lineHeight:1.7, textAlign:"center", maxWidth: isSquare ? 300 : 260, letterSpacing:"0.01em", fontStyle:"italic" }}>
+            {annotation}
           </p>
-          {formatReference(margin) && (
-            <p style={{ marginTop: 8, fontSize: 7, letterSpacing: "0.18em", textTransform: "uppercase", color: `${C.parchment}33` }}>{formatReference(margin)}</p>
-          )}
+        )}
+      </div>
+      <div style={{ position:"absolute", bottom: isSquare ? 28 : 40, left: isSquare ? 28 : 36, right: isSquare ? 28 : 36, zIndex:3, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+          <div style={{ width:26, height:26, borderRadius:"50%", background:"rgba(174,143,125,0.3)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <span style={{ fontFamily:SANS, fontSize:9, color:T.heather, fontWeight:500 }}>{margin.userInitials}</span>
+          </div>
+          <span style={{ fontFamily:SANS, fontSize:11, fontWeight:300, color:"rgba(250,248,243,0.25)", letterSpacing:"0.06em" }}>{username}</span>
         </div>
-
-        {/* footer */}
-        <div style={{ borderTop: `1px solid ${C.parchment}10`, paddingTop: 14, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontSize: 9.5, color: `${C.parchment}66` }}>{username}</span>
-          {ecosCount > 0 && (
-            <span style={{ fontSize: 7.5, letterSpacing: "0.16em", textTransform: "uppercase", background: `${C.rose}20`, color: C.roseLight, padding: "4px 10px", borderRadius: 20, border: `1px solid ${C.rose}25` }}>
-              {ecosCount} ecos
-            </span>
-          )}
-        </div>
+        <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:14, color:"rgba(174,143,125,0.3)", letterSpacing:"0.04em" }}>marginalia</span>
       </div>
     </div>
   );
 }
 
-/* ───────────────────────────────────────── */
-/* CARD 3 — Feed · Reação (light)            */
-/* ───────────────────────────────────────── */
-function ReactionFeedCard({ margin }: { margin: Margin }) {
-  const username = getUsername(margin.userId);
-  const reactions = topReactions(margin.reactions, 3);
-  const typeLabel = getTypeLabel(margin.postType);
-  const typeIcon = getTypeIcon(margin.postType);
+/* ─────────────────────────────────────────── */
+/* CARD 4 — Tipo de Leitor                     */
+/* ─────────────────────────────────────────── */
+function CardReaderType({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) {
+  const w = isSquare ? FEED_W : STORIES_W;
+  const h = isSquare ? FEED_H : STORIES_H;
+  const profile = computeReaderProfile(margin.userId);
   return (
-    <div
-      style={{
-        width: 360,
-        height: 360,
-        background: C.parchment,
-        borderRadius: 16,
-        overflow: "hidden",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: 24,
-        fontFamily: SANS,
-      }}
-    >
-      <div style={{ position: "absolute", inset: 0, background: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")", pointerEvents: "none", zIndex: 10 }} />
-      <span style={{ position: "absolute", top: -8, left: 10, fontFamily: SERIF, fontSize: 54, color: C.roseLight, opacity: 0.15, lineHeight: 1, zIndex: 1 }}>[</span>
-
-      {/* header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontSize: 7, letterSpacing: "0.24em", textTransform: "uppercase", color: C.roseDark }}>
-          {typeIcon} {typeLabel}{formatReference(margin) ? ` · ${formatReference(margin)}` : ""}
-        </span>
-        <span style={{ fontFamily: SERIF, fontSize: 9.5, fontStyle: "italic", color: `${C.ink}40`, letterSpacing: "0.14em" }}>marginalia</span>
-      </div>
-
-      {/* quote */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: 12 }}>
-        <blockquote style={{ fontFamily: SERIF, fontSize: 16, fontStyle: "italic", lineHeight: 1.55, color: C.ink, borderLeft: `2px solid ${C.rose}`, paddingLeft: 14, margin: "0 0 12px 0" }}>
-          {margin.excerpt.length > 160 ? `"${margin.excerpt.slice(0, 160)}…"` : `"${margin.excerpt}"`}
-        </blockquote>
-        {margin.commentary && (
-          <p style={{ fontSize: 11, lineHeight: 1.6, color: C.inkSoft, opacity: 0.8, margin: "0 0 8px 0" }}>
-            {margin.commentary.length > 140 ? margin.commentary.slice(0, 140) + "…" : margin.commentary}
-          </p>
-        )}
-        <span style={{ fontSize: 7, letterSpacing: "0.18em", textTransform: "uppercase", color: `${C.ink}55` }}>
-          {margin.bookTitle} · {margin.bookAuthor}
-        </span>
-      </div>
-
-      {/* footer */}
-      <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-          <div style={{ width: 22, height: 22, borderRadius: "50%", background: C.ink, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <span style={{ fontSize: 7, fontWeight: 600, color: C.parchment }}>{margin.userInitials}</span>
+    <div style={{ width: w, height: h, background: T.creamMid, borderRadius: 20, overflow: "hidden",
+      position: "relative", display: "flex", flexDirection: "column", fontFamily: SANS }}>
+      {/* top ornament */}
+      <div style={{ position:"absolute", top:0, left:0, right:0, height:"55%", background:T.heather, clipPath:"ellipse(65% 100% at 50% 0%)", opacity:0.12, zIndex:0 }} />
+      <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 100% 60% at 50% 0%, rgba(174,143,125,0.15) 0%, transparent 60%), radial-gradient(ellipse 80% 80% at 100% 100%, rgba(105,121,98,0.10) 0%, transparent 50%)", pointerEvents:"none", zIndex:1 }} />
+      <div style={{ position:"relative", zIndex:2, padding: isSquare ? "28px 28px" : "44px 36px", display:"flex", flexDirection:"column", height:"100%", justifyContent:"space-between" }}>
+        {/* header */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+          <span style={{ fontFamily:SANS, fontSize:9.5, fontWeight:500, letterSpacing:"0.18em", textTransform:"uppercase", color:T.heather }}>Seu tipo de leitor</span>
+          <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:T.doeskin, letterSpacing:"0.04em" }}>marginalia</span>
+        </div>
+        {/* emoji */}
+        {!isSquare && (
+          <div style={{ display:"flex", justifyContent:"center", alignItems:"center", flex:1 }}>
+            <span style={{ fontSize:80, filter:"saturate(0.7)", opacity:0.9 }}>{profile.archetype.emoji}</span>
           </div>
-          <div>
-            <span style={{ fontSize: 9, fontWeight: 500, color: C.ink, display: "block" }}>{margin.userName}</span>
-            <span style={{ fontSize: 7.5, color: `${C.ink}55` }}>{username}</span>
+        )}
+        {/* main */}
+        <div style={{ textAlign:"center", paddingBottom: isSquare ? 0 : 8 }}>
+          {isSquare && (
+            <div style={{ fontSize:56, filter:"saturate(0.7)", opacity:0.9, marginBottom:8 }}>{profile.archetype.emoji}</div>
+          )}
+          <div style={{ fontFamily:SERIF, fontWeight:400, fontSize: isSquare ? 28 : 38, color:T.metal, lineHeight:1.1, letterSpacing:"-0.01em", marginBottom:8 }}>
+            {profile.archetype.name}
+          </div>
+          <div style={{ fontFamily:SERIF, fontStyle:"italic", fontWeight:300, fontSize: isSquare ? 13 : 16, color:T.metalLight, lineHeight:1.5, letterSpacing:"0.01em", maxWidth:240, margin:"0 auto" }}>
+            {profile.archetype.desc}
+          </div>
+          <div style={{ width:32, height:0.5, background:T.doeskin, margin: isSquare ? "12px auto" : "18px auto", opacity:0.6 }} />
+          <div style={{ display:"flex", justifyContent:"center", gap:8, flexWrap:"wrap", marginBottom:8 }}>
+            {profile.archetype.tags.map(tag => (
+              <span key={tag} style={{ fontFamily:SANS, fontSize:9.5, fontWeight:400, letterSpacing:"0.12em", textTransform:"uppercase", color:T.heather, padding:"4px 10px", border:`0.5px solid ${T.doeskin}`, borderRadius:20, opacity:0.8 }}>{tag}</span>
+            ))}
           </div>
         </div>
-        {reactions.length > 0 && (
-          <div style={{ display: "flex", gap: 2 }}>
-            {reactions.map(([emoji, count]) => (
-              <div key={emoji} style={{ background: C.parchmentWarm, border: `1px solid ${C.border}`, borderRadius: 20, padding: "2px 6px", fontSize: 9.5 }}>
-                {emoji} <span style={{ fontSize: 7, color: C.inkSoft, opacity: 0.6 }}>{count}</span>
+        {/* footer */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:16, borderTop:`0.5px solid rgba(174,143,125,0.25)` }}>
+          <div style={{ display:"flex", gap:16 }}>
+            {[
+              { val: profile.stats.margins, key: "Margens" },
+              { val: profile.stats.ecos,    key: "Ecos" },
+              { val: profile.stats.books,   key: "Livros" },
+            ].map(s => (
+              <div key={s.key} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+                <span style={{ fontFamily:SERIF, fontSize:18, fontWeight:400, color:T.metal }}>{s.val}</span>
+                <span style={{ fontFamily:SANS, fontSize:8, fontWeight:400, letterSpacing:"0.14em", textTransform:"uppercase", color:T.doeskin }}>{s.key}</span>
               </div>
             ))}
           </div>
-        )}
+          <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:T.doeskin }}>marginalia</span>
+        </div>
       </div>
     </div>
   );
 }
 
-/* ───────────────────────────────────────── */
-/* CARD 4 — Feed · Simbólica (warm/sage)     */
-/* ───────────────────────────────────────── */
-function SymbolicFeedCard({ margin }: { margin: Margin }) {
-  const username = getUsername(margin.userId);
-  const ecosCount = Object.values(margin.reactions).reduce((a, b) => a + b, 0);
+/* ─────────────────────────────────────────── */
+/* CARD 5 — Eco / Margem                       */
+/* ─────────────────────────────────────────── */
+function CardEcho({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) {
+  const w = isSquare ? FEED_W : STORIES_W;
+  const h = isSquare ? FEED_H : STORIES_H;
+  const reactions = topReactions(margin.reactions, 2);
+  const typeIcon  = getTypeIcon(margin.postType);
   const typeLabel = getTypeLabel(margin.postType);
+  const passage   = margin.excerpt.length > (isSquare ? 130 : 180) ? margin.excerpt.slice(0, isSquare ? 130 : 180) + "…" : margin.excerpt;
+  const annotation = margin.commentary ? (margin.commentary.length > (isSquare ? 120 : 160) ? margin.commentary.slice(0, isSquare ? 120 : 160) + "…" : margin.commentary) : null;
+  const ref = formatReference(margin);
   return (
-    <div
-      style={{
-        width: 360,
-        height: 360,
-        background: C.parchmentWarm,
-        borderRadius: 16,
-        overflow: "hidden",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: 24,
-        fontFamily: SANS,
-      }}
-    >
-      <div style={{ position: "absolute", inset: 0, background: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")", pointerEvents: "none", zIndex: 10 }} />
-      <span style={{ position: "absolute", top: -8, left: 10, fontFamily: SERIF, fontSize: 54, color: C.roseLight, opacity: 0.12, lineHeight: 1, zIndex: 1 }}>[</span>
-
+    <div style={{ width: w, height: h, background: T.albescent, borderRadius: 20, overflow: "hidden",
+      position: "relative", display: "flex", flexDirection: "column", justifyContent: "space-between",
+      padding: isSquare ? "28px 28px" : "36px 32px", border: "0.5px solid rgba(174,143,125,0.2)", fontFamily: SANS }}>
+      <div style={{ position:"absolute", inset:0, backgroundImage:"radial-gradient(circle, rgba(100,85,72,0.04) 1px, transparent 1px)", backgroundSize:"16px 16px", pointerEvents:"none" }} />
       {/* header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontSize: 7, letterSpacing: "0.24em", textTransform: "uppercase", color: C.sage }}>
-          ⊕ {typeLabel}{formatReference(margin) ? ` · ${formatReference(margin)}` : ""}
-        </span>
-        <span style={{ fontFamily: SERIF, fontSize: 9.5, fontStyle: "italic", color: `${C.ink}40`, letterSpacing: "0.14em" }}>marginalia</span>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", position:"relative", zIndex:2, marginBottom: isSquare ? 16 : 28 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:6, fontFamily:SANS, fontSize:9, fontWeight:500, letterSpacing:"0.16em", textTransform:"uppercase", color:T.oldVine }}>
+          <span style={{ fontSize:11 }}>{typeIcon}</span>
+          <span>{typeLabel}</span>
+        </div>
+        <span style={{ fontFamily:SANS, fontSize:9, fontWeight:400, letterSpacing:"0.10em", textTransform:"uppercase", color:T.doeskin }}>{margin.bookTitle}</span>
       </div>
-
-      {/* quote */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", paddingTop: 12 }}>
-        <blockquote style={{ fontFamily: SERIF, fontSize: 16, fontStyle: "italic", lineHeight: 1.55, color: C.ink, borderLeft: `2px solid ${C.sage}`, paddingLeft: 14, margin: "0 0 12px 0" }}>
-          {margin.excerpt.length > 160 ? `"${margin.excerpt.slice(0, 160)}…"` : `"${margin.excerpt}"`}
-        </blockquote>
-        {margin.commentary && (
-          <p style={{ fontSize: 11, lineHeight: 1.6, color: C.inkSoft, opacity: 0.8, margin: "0 0 8px 0" }}>
-            {margin.commentary.length > 140 ? margin.commentary.slice(0, 140) + "…" : margin.commentary}
+      {/* body */}
+      <div style={{ position:"relative", zIndex:2, flex:1 }}>
+        <div style={{ position:"relative", paddingLeft:20 }}>
+          <div style={{ position:"absolute", left:0, top:0, bottom:0, width:2, background:T.heather, opacity:0.4, borderRadius:2 }} />
+          <p style={{ fontFamily:SERIF, fontStyle:"italic", fontWeight:400, fontSize: isSquare ? 17 : 21, lineHeight:1.6, color:T.metal, letterSpacing:"0.01em", marginBottom:16 }}>
+            "{passage}"
           </p>
+        </div>
+        {annotation && (
+          <p style={{ fontFamily:SANS, fontSize: isSquare ? 12 : 13, fontWeight:300, color:T.metalLight, lineHeight:1.65, letterSpacing:"0.01em" }}>{annotation}</p>
         )}
-        <span style={{ fontSize: 7, letterSpacing: "0.18em", textTransform: "uppercase", color: `${C.ink}55` }}>
-          {margin.bookTitle} · {margin.bookAuthor}
-        </span>
       </div>
-
       {/* footer */}
-      <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-          <div style={{ width: 22, height: 22, borderRadius: "50%", background: C.sage, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <span style={{ fontSize: 7, fontWeight: 600, color: C.parchment }}>{margin.userInitials}</span>
+      <div style={{ position:"relative", zIndex:2, marginTop:28, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:3 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+            <div style={{ width:24, height:24, borderRadius:"50%", background:T.oldVine, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:500, color:"white", fontFamily:SANS }}>{margin.userInitials}</div>
+            <span style={{ fontFamily:SANS, fontSize:11, fontWeight:400, color:T.metalLight, letterSpacing:"0.04em" }}>
+              {getUsername(margin.userId)}
+            </span>
           </div>
-          <div>
-            <span style={{ fontSize: 9, fontWeight: 500, color: C.ink, display: "block" }}>{margin.userName}</span>
-            <span style={{ fontSize: 7.5, color: `${C.ink}55` }}>{username}</span>
+          {ref && <span style={{ fontFamily:SANS, fontSize:9, fontWeight:400, letterSpacing:"0.12em", textTransform:"uppercase", color:T.doeskin, marginTop:10 }}>{ref}</span>}
+        </div>
+        <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:6 }}>
+          {reactions.length > 0 && (
+            <div style={{ display:"flex", gap:5 }}>
+              {reactions.map(([emoji, count]) => (
+                <div key={emoji} style={{ background:T.parchment, borderRadius:20, padding:"3px 8px", fontSize:10, color:T.metalLight, display:"flex", alignItems:"center", gap:3 }}>
+                  {emoji} <span style={{ fontSize:8 }}>{count}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:12, color:T.doeskin, opacity:0.6, letterSpacing:"0.04em" }}>marginalia</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────── */
+/* CARD 6 — DNA de Leitura                     */
+/* ─────────────────────────────────────────── */
+function CardReadingDNA({ margin, isSquare }: { margin: Margin; isSquare?: boolean }) {
+  const w = isSquare ? FEED_W : STORIES_W;
+  const h = isSquare ? FEED_H : STORIES_H;
+  const profile = computeReaderProfile(margin.userId);
+  const user    = MOCK_USERS.find(u => u.id === margin.userId);
+  const name    = user?.name || margin.userName;
+  const parts   = name.trim().split(" ");
+  const firstName = parts[0] ?? name;
+  const lastName  = parts.slice(1).join(" ");
+  const year = new Date().getFullYear();
+  return (
+    <div style={{ width: w, height: h, background: "#100E0C", borderRadius: 20, overflow: "hidden",
+      position: "relative", display: "flex", flexDirection: "column", padding: isSquare ? "28px 28px" : "44px 36px", fontFamily: SANS }}>
+      {/* bg rings */}
+      <div style={{ position:"absolute", top:"-30%", left:"-20%", width:"80%", height:"120%", border:"0.5px solid rgba(174,143,125,0.08)", borderRadius:"50%", transform:"rotate(-15deg)" }} />
+      <div style={{ position:"absolute", bottom:"-20%", right:"-10%", width:"70%", height:"100%", border:"0.5px solid rgba(105,121,98,0.08)", borderRadius:"50%", transform:"rotate(20deg)" }} />
+      <div style={{ position:"relative", zIndex:2, display:"flex", flexDirection:"column", height:"100%", justifyContent:"space-between" }}>
+        {/* header */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+          <span style={{ fontFamily:SANS, fontSize:9, fontWeight:500, letterSpacing:"0.20em", textTransform:"uppercase", color:"rgba(174,143,125,0.5)" }}>DNA de leitura</span>
+          <span style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:13, color:"rgba(174,143,125,0.4)", letterSpacing:"0.04em" }}>marginalia</span>
+        </div>
+        {/* name */}
+        <div>
+          <div style={{ fontFamily:SERIF, fontWeight:300, fontSize: isSquare ? 30 : 42, lineHeight:1.05, color:T.albescent, letterSpacing:"-0.02em", marginBottom:6 }}>
+            {firstName}{lastName && <> <em style={{ fontStyle:"italic", color:T.heather }}>{lastName}</em></>}
+          </div>
+          <div style={{ fontFamily:SANS, fontSize:11, fontWeight:300, color:"rgba(250,248,243,0.35)", letterSpacing:"0.10em", textTransform:"uppercase" }}>
+            perfil de leitor · {year}
           </div>
         </div>
-        {ecosCount > 0 && (
-          <span style={{ fontSize: 9, color: `${C.ink}55`, letterSpacing: "0.08em" }}>{ecosCount} ecoaram isso</span>
+        {/* traits */}
+        <div style={{ display:"flex", flexDirection:"column", gap: isSquare ? 8 : 12 }}>
+          {profile.traits.map(trait => (
+            <div key={trait.name} style={{ display:"flex", alignItems:"center", gap:12 }}>
+              <span style={{ fontFamily:SANS, fontSize:11, fontWeight:400, color:"rgba(250,248,243,0.5)", letterSpacing:"0.06em", minWidth:90 }}>{trait.name}</span>
+              <div style={{ flex:1, height:2, background:"rgba(255,255,255,0.06)", borderRadius:2, overflow:"hidden" }}>
+                <div style={{ height:"100%", background:`linear-gradient(90deg, ${T.heather}, ${T.oldVine})`, borderRadius:2, opacity:0.7, width:`${trait.value}%` }} />
+              </div>
+              <span style={{ fontFamily:SERIF, fontSize:14, color:"rgba(250,248,243,0.4)", minWidth:30, textAlign:"right" }}>{trait.value}</span>
+            </div>
+          ))}
+        </div>
+        {/* books */}
+        {profile.books.length > 0 && (
+          <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+            {profile.books.map(b => (
+              <span key={b} style={{ fontFamily:SANS, fontSize:9.5, fontWeight:400, letterSpacing:"0.10em", color:"rgba(250,248,243,0.35)", border:"0.5px solid rgba(255,255,255,0.10)", padding:"5px 10px", borderRadius:20 }}>
+                {b.length > 22 ? b.slice(0, 22) + "…" : b}
+              </span>
+            ))}
+          </div>
         )}
+        {/* footer */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:16, borderTop:"0.5px solid rgba(255,255,255,0.06)" }}>
+          <div>
+            <div style={{ fontFamily:SANS, fontSize:9, fontWeight:400, letterSpacing:"0.14em", textTransform:"uppercase", color:"rgba(250,248,243,0.2)" }}>Impressão digital</div>
+            <div style={{ fontFamily:SERIF, fontStyle:"italic", fontSize:12, color:"rgba(174,143,125,0.4)" }}>
+              {profile.archetype.name} · {profile.archetype.emoji}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-/* ───────────────────────────────────────── */
-/* MAIN MODAL                                */
-/* ───────────────────────────────────────── */
-export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
-  const { getProgressForBook } = useApp();
-  const previewCardRef = useRef<HTMLDivElement>(null);
-  const exportCardRef = useRef<HTMLDivElement>(null);
+/* ─────────────────────────────────────────── */
+/* Template metadata                           */
+/* ─────────────────────────────────────────── */
+const TEMPLATES: { id: Template; label: string; icon: string; preferred: Format }[] = [
+  { id: "quote-light",  label: "Citação Light",  icon: "✦",  preferred: "stories" },
+  { id: "quote-dark",   label: "Citação Dark",   icon: "●",  preferred: "feed"    },
+  { id: "moment",       label: "Momento",         icon: "◦",  preferred: "stories" },
+  { id: "reader-type",  label: "Tipo de Leitor",  icon: "🔭", preferred: "stories" },
+  { id: "echo",         label: "Eco / Margem",    icon: "◎",  preferred: "feed"    },
+  { id: "reading-dna",  label: "DNA de Leitura",  icon: "∿",  preferred: "stories" },
+];
+
+function renderCard(tpl: Template, margin: Margin, isSquare: boolean) {
+  switch(tpl) {
+    case "quote-light":  return <CardQuoteLight  margin={margin} isSquare={isSquare} />;
+    case "quote-dark":   return <CardQuoteDark   margin={margin} isSquare={isSquare} />;
+    case "moment":       return <CardMoment      margin={margin} isSquare={isSquare} />;
+    case "reader-type":  return <CardReaderType  margin={margin} isSquare={isSquare} />;
+    case "echo":         return <CardEcho        margin={margin} isSquare={isSquare} />;
+    case "reading-dna":  return <CardReadingDNA  margin={margin} isSquare={isSquare} />;
+  }
+}
+
+/* ─────────────────────────────────────────── */
+/* MAIN MODAL                                  */
+/* ─────────────────────────────────────────── */
+export function ShareCardModal({ margin, onClose }: Props) {
+  useApp();
+  const previewCardRef  = useRef<HTMLDivElement>(null);
+  const exportCardRef   = useRef<HTMLDivElement>(null);
   const exportWrapperRef = useRef<HTMLDivElement>(null);
-  const previewAreaRef = useRef<HTMLDivElement>(null);
-  const [format, setFormat] = useState<Format>("stories");
-  const [storyTpl, setStoryTpl] = useState<StoryTpl>("quote");
-  const [feedTpl, setFeedTpl] = useState<FeedTpl>("reaction");
+  const previewAreaRef  = useRef<HTMLDivElement>(null);
+  const [template, setTemplate] = useState<Template>("quote-light");
+  const [format, setFormat]     = useState<Format>("stories");
   const [exporting, setExporting] = useState(false);
-  const [shared, setShared] = useState(false);
+  const [shared, setShared]     = useState(false);
   const [downloaded, setDownloaded] = useState(false);
   const [previewScale, setPreviewScale] = useState(1);
 
-  const progress = getProgressForBook(margin.bookId);
-  const progressPct = progress?.status === "reading" ? (progress.currentPercent ?? 0) : 0;
+  const isSquare = format === "feed";
+  const cardW = isSquare ? FEED_W : STORIES_W;
+  const cardH = isSquare ? FEED_H : STORIES_H;
 
-  const isStories = format === "stories";
-  const cardW = isStories ? 270 : 360;
-  const cardH = isStories ? 480 : 360;
-
-  /* recompute scale whenever the preview area or card dims change */
   useEffect(() => {
     const area = previewAreaRef.current;
     if (!area) return;
     const compute = () => {
       const { width, height } = area.getBoundingClientRect();
-      const availW = width - 40; // 20px padding each side
-      const availH = height - 16; // small breathing room
-      const scaleH = availH / cardH;
-      const scaleW = availW / cardW;
-      setPreviewScale(Math.min(1, scaleH, scaleW));
+      const availW = width - 40;
+      const availH = height - 16;
+      setPreviewScale(Math.min(1, availH / cardH, availW / cardW));
     };
     compute();
     const ro = new ResizeObserver(compute);
@@ -396,89 +490,45 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     return () => ro.disconnect();
   }, [cardW, cardH]);
 
-  /* ──────────────────────────────────────────────────────────────────────
-     captureCanvas — uses html-to-image (not html2canvas).
-
-     html-to-image serialises only the TARGET element's own style tree into
-     an SVG foreignObject and draws it to a canvas.  It never renders the
-     full page, so the dark overlay, z-index stacking and off-screen
-     position are completely irrelevant.
-
-     We do still move the wrapper to (0,0) first because some browsers
-     refuse to measure elements at left:-9999px.
-  ────────────────────────────────────────────────────────────────────── */
   const captureCanvas = useCallback(async () => {
     if (!exportCardRef.current || !exportWrapperRef.current) return null;
-
-    const wrapper = exportWrapperRef.current;
-
-    /* Bring on-screen briefly so the browser measures layout correctly */
-    wrapper.style.left = "0px";
-
+    exportWrapperRef.current.style.left = "0px";
     try {
-      /* Wait for web fonts + two paint frames */
       await document.fonts.ready;
-      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-      const pixelRatio = isStories ? 4 : 3;
-
+      await new Promise<void>(resolve => { requestAnimationFrame(() => requestAnimationFrame(() => resolve())); });
+      const pixelRatio = isSquare ? 3 : 4;
       return await toCanvas(exportCardRef.current, {
         pixelRatio,
-        backgroundColor: C.parchment,
-        width:  cardW,
+        backgroundColor: isSquare ? T.albescent : T.albescent,
+        width: cardW,
         height: cardH,
-        /* Force a cache-bust so html-to-image always re-reads styles */
         cacheBust: true,
-        /* Skip embedding external font faces — fonts are already loaded */
         skipFonts: false,
       });
     } finally {
-      /* Always restore off-screen */
-      wrapper.style.left = "-9999px";
+      exportWrapperRef.current.style.left = "-9999px";
     }
-  }, [isStories, cardW, cardH]);
+  }, [isSquare, cardW, cardH]);
 
-  /* ── Shared download helper (no guard — called from both handlers) ── */
   const doDownload = useCallback(async () => {
     const canvas = await captureCanvas();
     if (!canvas) throw new Error("Capture failed");
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/jpeg", 0.93)
-    );
+    const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, "image/jpeg", 0.93));
     if (!blob) throw new Error("Blob failed");
-
     const url = URL.createObjectURL(blob);
-    const slug = margin.bookTitle
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "")
-      .slice(0, 30);
-    const tpl = isStories ? storyTpl : feedTpl;
+    const slug = margin.bookTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = `marginalia-${isStories ? "story" : "feed"}-${tpl}-${slug}.jpg`;
-    a.rel = "noopener";
-    /* Append to body so all browsers trigger the download, then immediately remove */
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    /* Revoke async so the file is still available during save dialog */
+    a.href = url; a.download = `marginalia-${format}-${template}-${slug}.jpg`; a.rel = "noopener";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 3000);
-
-    setDownloaded(true);
-    setTimeout(() => setDownloaded(false), 2500);
-  }, [captureCanvas, isStories, storyTpl, feedTpl, margin.bookTitle, margin.id]);
+    setDownloaded(true); setTimeout(() => setDownloaded(false), 2500);
+  }, [captureCanvas, format, template, margin.bookTitle]);
 
   const handleDownload = useCallback(async () => {
     if (exporting) return;
     setExporting(true);
-    try {
-      await doDownload();
-    } catch (e) {
-      console.error("[ShareCard] download error:", e);
-    } finally {
-      setExporting(false);
-    }
+    try { await doDownload(); } catch(e) { console.error("[ShareCard] download error:", e); }
+    finally { setExporting(false); }
   }, [exporting, doDownload]);
 
   const handleShare = useCallback(async () => {
@@ -487,235 +537,114 @@ export function ShareCardModal({ margin, onClose }: ShareCardModalProps) {
     try {
       const canvas = await captureCanvas();
       if (!canvas) return;
-      const blob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob(resolve, "image/jpeg", 0.93)
-      );
+      const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, "image/jpeg", 0.93));
       if (!blob) return;
-
-      const slug = margin.bookTitle
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "")
-        .slice(0, 30);
-      const tpl = isStories ? storyTpl : feedTpl;
-      const filename = `marginalia-${isStories ? "story" : "feed"}-${tpl}-${slug}.jpg`;
-      const file = new File([blob], filename, { type: "image/jpeg" });
-
+      const slug = margin.bookTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30);
+      const file = new File([blob], `marginalia-${format}-${template}-${slug}.jpg`, { type: "image/jpeg" });
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: "Marginalia",
-          text: `"${margin.excerpt.slice(0, 100)}" — ${margin.bookTitle}`,
-        });
-        setShared(true);
-        setTimeout(() => setShared(false), 2500);
+        await navigator.share({ files: [file], title: "Marginalia", text: `"${margin.excerpt.slice(0,100)}" — ${margin.bookTitle}` });
+        setShared(true); setTimeout(() => setShared(false), 2500);
       } else {
-        /* Native share unavailable — fall back to download */
         await doDownload();
       }
-    } catch (err) {
-      /* AbortError = user dismissed the share sheet — not an error */
-      if ((err as Error)?.name !== "AbortError") {
-        await doDownload();
-      }
-    } finally {
-      setExporting(false);
-    }
-  }, [exporting, captureCanvas, isStories, storyTpl, feedTpl, margin, doDownload]);
+    } catch(err) {
+      if ((err as Error)?.name !== "AbortError") await doDownload();
+    } finally { setExporting(false); }
+  }, [exporting, captureCanvas, format, template, margin, doDownload]);
 
-  /* ─────────────────────────────────────────────────────────────
-     Export container is a SEPARATE portal — direct child of body.
-     No dark overlay ancestor, no z-index: -1.
-     This guarantees html2canvas captures the card on a clean background.
-  ───────────────────────────────────────────────────────────── */
+  /* Export portal */
   const exportPortal = createPortal(
-    <div
-      ref={exportWrapperRef}
-      aria-hidden="true"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: "-9999px",
-        width: cardW,
-        height: cardH,
-        overflow: "hidden",
-        pointerEvents: "none",
-      }}
-    >
-      <div ref={exportCardRef} style={{ width: cardW, height: cardH }}>
-        {isStories && storyTpl === "quote" && <QuoteStoryCard margin={margin} />}
-        {isStories && storyTpl === "moment" && <MomentStoryCard margin={margin} progressPct={progressPct} />}
-        {!isStories && feedTpl === "reaction" && <ReactionFeedCard margin={margin} />}
-        {!isStories && feedTpl === "symbolic" && <SymbolicFeedCard margin={margin} />}
+    <div ref={exportWrapperRef} aria-hidden="true" style={{ position:"fixed", top:0, left:"-9999px", width:cardW, height:cardH, overflow:"hidden", pointerEvents:"none" }}>
+      <div ref={exportCardRef} style={{ width:cardW, height:cardH }}>
+        {renderCard(template, margin, isSquare)}
       </div>
     </div>,
     document.body
   );
 
-  /* ── Dark overlay modal ── */
   const modalPortal = createPortal(
-    <div
-      data-share-overlay
-      className="fixed inset-0 z-[9999] flex flex-col"
-      style={{ background: "rgba(26,22,20,0.96)", backdropFilter: "blur(10px)" }}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      {/* ── Header ── */}
-      <div className="flex items-center justify-between px-5 pt-safe-top pb-3 flex-shrink-0 pt-5">
+    <div data-share-overlay className="fixed inset-0 z-[9999] flex flex-col"
+      style={{ background:"rgba(16,13,11,0.97)", backdropFilter:"blur(10px)" }}
+      onClick={e => { e.stopPropagation(); if (e.target === e.currentTarget) onClose(); }}>
+
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 pt-5 pb-3 flex-shrink-0">
         <div>
-          <p className="font-serif italic text-[17px] text-[#FAF7F2]">Compartilhar</p>
-          <p className="font-sans font-light text-[9px] tracking-[0.22em] uppercase text-[#FAF7F2]/30 mt-0.5">
-            Stories · Feed · Instagram
+          <p className="font-serif italic text-[17px] text-[#FAF8F3]">Compartilhar</p>
+          <p className="font-sans font-light text-[9px] tracking-[0.22em] uppercase text-[#FAF8F3]/30 mt-0.5">
+            6 variantes · Stories · Feed
           </p>
         </div>
-        <button
-          onClick={onClose}
-          className="w-8 h-8 rounded-full border border-[#FAF7F2]/10 flex items-center justify-center text-[#FAF7F2]/40 hover:text-[#FAF7F2]/70 transition-colors"
-        >
+        <button onClick={onClose} className="w-8 h-8 rounded-full border border-[#FAF8F3]/10 flex items-center justify-center text-[#FAF8F3]/40 hover:text-[#FAF8F3]/70 transition-colors">
           <X className="w-4 h-4" />
         </button>
       </div>
 
-      {/* ── Format tabs ── */}
-      <div className="flex gap-2 px-5 mb-3 flex-shrink-0">
-        {(["stories", "feed"] as Format[]).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFormat(f)}
-            className={`px-4 py-2 rounded-full font-sans text-[9px] tracking-[0.2em] uppercase transition-all duration-200 ${
+      {/* Template selector */}
+      <div className="px-5 mb-3 flex-shrink-0">
+        <p className="font-sans text-[8px] tracking-[0.18em] uppercase text-[#FAF8F3]/20 mb-2">Estilo do card</p>
+        <div className="flex gap-1.5 flex-wrap">
+          {TEMPLATES.map(t => (
+            <button key={t.id} onClick={() => { setTemplate(t.id); if (t.preferred !== format) setFormat(t.preferred); }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full font-sans text-[9px] tracking-[0.12em] transition-all duration-200 ${
+                template === t.id
+                  ? "bg-[#AE8F7D] text-[#100E0C] shadow-md"
+                  : "border border-[#FAF8F3]/12 text-[#FAF8F3]/40 hover:border-[#FAF8F3]/28 hover:text-[#FAF8F3]/65"
+              }`}>
+              <span>{t.icon}</span>
+              <span>{t.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Format toggle */}
+      <div className="px-5 mb-3 flex-shrink-0 flex items-center gap-2">
+        <p className="font-sans text-[8px] tracking-[0.18em] uppercase text-[#FAF8F3]/20 mr-1">Formato</p>
+        {(["stories", "feed"] as Format[]).map(f => (
+          <button key={f} onClick={() => setFormat(f)}
+            className={`px-4 py-1.5 rounded-full font-sans text-[9px] tracking-[0.18em] uppercase transition-all duration-200 ${
               format === f
-                ? "bg-[#C9A99A] text-[#2A2420] shadow-lg"
-                : "border border-[#FAF7F2]/15 text-[#FAF7F2]/45 hover:border-[#FAF7F2]/30 hover:text-[#FAF7F2]/65"
-            }`}
-          >
+                ? "bg-[#697962] text-[#FAF8F3] shadow-md"
+                : "border border-[#FAF8F3]/15 text-[#FAF8F3]/35 hover:border-[#FAF8F3]/30"
+            }`}>
             {f === "stories" ? "Stories 9:16" : "Feed 1:1"}
           </button>
         ))}
       </div>
 
-      {/* ── Template sub-selector ── */}
-      <div className="flex gap-2 px-5 mb-3 flex-shrink-0">
-        {isStories ? (
-          <>
-            {(["quote", "moment"] as StoryTpl[]).map((t) => (
-              <button
-                key={t}
-                onClick={() => setStoryTpl(t)}
-                className={`px-3 py-1 rounded-full font-sans text-[8px] tracking-[0.15em] uppercase transition-all duration-200 ${
-                  storyTpl === t
-                    ? "bg-[#FAF7F2]/12 text-[#FAF7F2]/85 border border-[#FAF7F2]/22"
-                    : "text-[#FAF7F2]/30 hover:text-[#FAF7F2]/55"
-                }`}
-              >
-                {t === "quote" ? "Citação" : "Momento"}
-              </button>
-            ))}
-          </>
-        ) : (
-          <>
-            {(["reaction", "symbolic"] as FeedTpl[]).map((t) => (
-              <button
-                key={t}
-                onClick={() => setFeedTpl(t)}
-                className={`px-3 py-1 rounded-full font-sans text-[8px] tracking-[0.15em] uppercase transition-all duration-200 ${
-                  feedTpl === t
-                    ? "bg-[#FAF7F2]/12 text-[#FAF7F2]/85 border border-[#FAF7F2]/22"
-                    : "text-[#FAF7F2]/30 hover:text-[#FAF7F2]/55"
-                }`}
-              >
-                {t === "reaction" ? "Reação" : "Simbólica"}
-              </button>
-            ))}
-          </>
-        )}
-      </div>
-
-      {/* ── Card preview — grows to fill remaining space ── */}
-      <div
-        ref={previewAreaRef}
-        className="flex-1 flex items-center justify-center min-h-0 overflow-hidden px-5"
-      >
-        <div
-          style={{
-            width: cardW * previewScale,
-            height: cardH * previewScale,
-            position: "relative",
-            flexShrink: 0,
-            transition: "width 0.2s ease, height 0.2s ease",
-          }}
-        >
-          <div
-            ref={previewCardRef}
-            style={{
-              width: cardW,
-              height: cardH,
-              position: "absolute",
-              top: 0,
-              left: 0,
-              transform: `scale(${previewScale})`,
-              transformOrigin: "top left",
-              transition: "transform 0.2s ease",
-            }}
-            className="shadow-2xl"
-          >
-            {isStories && storyTpl === "quote" && <QuoteStoryCard margin={margin} />}
-            {isStories && storyTpl === "moment" && <MomentStoryCard margin={margin} progressPct={progressPct} />}
-            {!isStories && feedTpl === "reaction" && <ReactionFeedCard margin={margin} />}
-            {!isStories && feedTpl === "symbolic" && <SymbolicFeedCard margin={margin} />}
+      {/* Preview */}
+      <div ref={previewAreaRef} className="flex-1 flex items-center justify-center min-h-0 overflow-hidden px-5">
+        <div style={{ width: cardW * previewScale, height: cardH * previewScale, position:"relative", flexShrink:0, transition:"width 0.2s ease, height 0.2s ease" }}>
+          <div ref={previewCardRef} style={{ width:cardW, height:cardH, position:"absolute", top:0, left:0, transform:`scale(${previewScale})`, transformOrigin:"top left", transition:"transform 0.2s ease" }} className="shadow-2xl rounded-2xl overflow-hidden">
+            {renderCard(template, margin, isSquare)}
           </div>
         </div>
       </div>
 
-      {/* ── Format label ── */}
+      {/* Format label */}
       <div className="text-center py-2 flex-shrink-0">
-        <span className="font-sans text-[8px] tracking-[0.2em] uppercase text-[#FAF7F2]/20">
-          {isStories ? "1080 × 1920 px · Instagram Stories" : "1080 × 1080 px · Instagram Feed"}
+        <span className="font-sans text-[8px] tracking-[0.2em] uppercase text-[#FAF8F3]/18">
+          {isSquare ? "1080 × 1080 px" : "1080 × 1920 px"}
         </span>
       </div>
 
-      {/* ── Action buttons ── */}
-      <div
-        className="flex gap-3 px-5 flex-shrink-0"
-        style={{ paddingBottom: "max(32px, env(safe-area-inset-bottom, 16px) + 16px)" }}
-      >
-        <button
-          onClick={(e) => { e.stopPropagation(); handleDownload(); }}
-          disabled={exporting}
-          className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-[12px] transition-all duration-150 font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-35 active:scale-95 ${
-            downloaded
-              ? "border border-[#8A9E8C]/60 text-[#8A9E8C]"
-              : "border border-[#FAF7F2]/15 text-[#FAF7F2]/60 hover:border-[#FAF7F2]/30 hover:text-[#FAF7F2]/85"
-          }`}
-        >
-          {exporting && !shared ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : downloaded ? (
-            <CheckCircle className="w-3.5 h-3.5" />
-          ) : (
-            <Download className="w-3.5 h-3.5" />
-          )}
-          {exporting && !shared ? "Salvando…" : downloaded ? "Imagem salva!" : "Baixar"}
+      {/* Actions */}
+      <div className="px-5 pb-6 flex gap-3 flex-shrink-0">
+        <button onClick={handleDownload} disabled={exporting}
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-[12px] font-sans text-[10px] tracking-[0.18em] uppercase transition-all border border-[#FAF8F3]/15 text-[#FAF8F3]/55 hover:border-[#FAF8F3]/30 hover:text-[#FAF8F3]/80 disabled:opacity-40">
+          {exporting && !shared ? <Loader2 className="w-4 h-4 animate-spin" /> : downloaded ? <CheckCircle className="w-4 h-4 text-[#697962]" /> : <Download className="w-4 h-4" />}
+          {downloaded ? "Baixado!" : "Baixar"}
         </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); handleShare(); }}
-          disabled={exporting}
-          className="flex-[2] flex items-center justify-center gap-2 py-3.5 rounded-[12px] bg-[#C9A99A] text-[#2A2420] hover:bg-[#D4B5A8] active:scale-95 active:bg-[#BFA090] transition-all duration-150 font-sans text-[10px] tracking-[0.18em] uppercase disabled:opacity-35 font-medium shadow-lg"
-        >
-          {exporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />}
-          {exporting && !downloaded ? "Preparando arte…" : shared ? "Compartilhado!" : "Compartilhar"}
+        <button onClick={handleShare} disabled={exporting}
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-[12px] font-sans text-[10px] tracking-[0.18em] uppercase bg-[#AE8F7D] text-[#100E0C] hover:bg-[#C4A28C] transition-all disabled:opacity-40">
+          {exporting && !downloaded ? <Loader2 className="w-4 h-4 animate-spin" /> : shared ? <CheckCircle className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+          {shared ? "Compartilhado!" : "Compartilhar"}
         </button>
       </div>
     </div>,
     document.body
   );
 
-  return (
-    <>
-      {exportPortal}
-      {modalPortal}
-    </>
-  );
+  return <>{exportPortal}{modalPortal}</>;
 }

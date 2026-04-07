@@ -87,9 +87,9 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
         <p className="font-sans text-[8px] font-light tracking-[0.2em] uppercase text-[#AE8F7D]">
           Ritmo de Leitura Coletivo
         </p>
-        <p className="font-sans font-light text-[8px] text-[#454545]/30">{totalReaders} margens</p>
+        <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{totalReaders} margens</p>
       </div>
-      <p className="font-serif italic text-[12px] text-[#454545]/50 mb-4">
+      <p className="font-serif italic text-[12px] text-[#2A2A2A]/50 mb-4">
         Veja onde os leitores mais sentiram este livro
       </p>
 
@@ -101,8 +101,8 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
             onClick={() => { setActiveTab(id); setSelectedBucket(null); }}
             className={`flex-1 font-sans text-[9px] font-light tracking-[0.08em] py-1.5 rounded-[8px] transition-all ${
               activeTab === id
-                ? "bg-[#FAF8F3] text-[#454545] shadow-sm"
-                : "text-[#454545]/45 hover:text-[#454545]/70"
+                ? "bg-[#FAF8F3] text-[#2A2A2A] shadow-sm"
+                : "text-[#2A2A2A]/45 hover:text-[#2A2A2A]/70"
             }`}
           >
             {label}
@@ -154,8 +154,8 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
             })}
           </div>
           <div className="flex justify-between mb-3">
-            <span className="font-sans font-light text-[7px] text-[#454545]/25">início</span>
-            <span className="font-sans font-light text-[7px] text-[#454545]/25">final</span>
+            <span className="font-sans font-light text-[7px] text-[#2A2A2A]/25">início</span>
+            <span className="font-sans font-light text-[7px] text-[#2A2A2A]/25">final</span>
           </div>
 
           {/* Tooltip for selected bucket */}
@@ -184,7 +184,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
             </div>
           )}
           {!selBucket && (
-            <p className="font-sans font-light text-[8px] text-[#454545]/25 text-center mb-3">
+            <p className="font-sans font-light text-[8px] text-[#2A2A2A]/25 text-center mb-3">
               Toque em uma barra para ver detalhes
             </p>
           )}
@@ -225,8 +225,8 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
             })}
           </div>
           <div className="flex justify-between mb-3">
-            <span className="font-sans font-light text-[7px] text-[#454545]/25">início</span>
-            <span className="font-sans font-light text-[7px] text-[#454545]/25">final</span>
+            <span className="font-sans font-light text-[7px] text-[#2A2A2A]/25">início</span>
+            <span className="font-sans font-light text-[7px] text-[#2A2A2A]/25">final</span>
           </div>
 
           {/* Social tooltip */}
@@ -248,7 +248,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
             </div>
           )}
           {selectedBucket === null && (
-            <p className="font-sans font-light text-[8px] text-[#454545]/25 text-center mb-3">
+            <p className="font-sans font-light text-[8px] text-[#2A2A2A]/25 text-center mb-3">
               Toque em uma barra para ver detalhes
             </p>
           )}
@@ -262,7 +262,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
             className="rounded-[10px] px-3.5 py-2.5"
             style={{ backgroundColor: `${REACTION_CATEGORY_CONFIG[peakEmoBucket.category].color}18` }}
           >
-            <p className="font-sans font-light text-[9px] text-[#454545]/70 leading-relaxed">
+            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/70 leading-relaxed">
               <span className="mr-1">🔥</span>
               <strong>Pico emocional</strong>{" "}
               {peakEmoBucket.dominant && <span className="mx-0.5">{peakEmoBucket.dominant}</span>}
@@ -272,7 +272,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
         )}
         {mostCommentedBucket.comments > 0 && (
           <div className="bg-[#EBE6DB]/50 rounded-[10px] px-3.5 py-2.5">
-            <p className="font-sans font-light text-[9px] text-[#454545]/70 leading-relaxed">
+            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/70 leading-relaxed">
               <span className="mr-1">💬</span>
               <strong>Mais comentado</strong> entre {mostCommentedBucket.lo}–{mostCommentedBucket.hi}%
               {" "}· {mostCommentedBucket.comments} comentários
@@ -281,7 +281,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
         )}
         {mostEcoadoBucket.ecos > 0 && mostEcoadoBucket.lo !== mostCommentedBucket.lo && (
           <div className="bg-[#EBE6DB]/50 rounded-[10px] px-3.5 py-2.5">
-            <p className="font-sans font-light text-[9px] text-[#454545]/70 leading-relaxed">
+            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/70 leading-relaxed">
               <span className="mr-1">✍</span>
               <strong>Mais ecoado</strong> entre {mostEcoadoBucket.lo}–{mostEcoadoBucket.hi}%
               {" "}· {mostEcoadoBucket.ecos} ecos
@@ -290,7 +290,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
         )}
         {userPercent > 0 && peakSocBucket.ecos > 0 && userPercent < peakSocBucket.lo && (
           <div className="bg-[#EBE6DB]/30 border border-[#AE8F7D]/10 rounded-[10px] px-3.5 py-2.5">
-            <p className="font-sans font-light text-[9px] text-[#454545]/55 leading-relaxed">
+            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/55 leading-relaxed">
               <span className="mr-1">👤</span>
               Você está em {userPercent}% — o pico de atividade é em {peakSocBucket.lo}–{peakSocBucket.hi}%.
               Ainda há muito pela frente.
@@ -331,13 +331,13 @@ export function BookDetailScreen() {
     return (
       <div className="min-h-full bg-[#FAF8F3] flex flex-col">
         <div className="flex items-center gap-3 px-5 pt-8 pb-4">
-          <button onClick={goBack} className="text-[#454545]/40" data-testid="button-back">
+          <button onClick={goBack} className="text-[#2A2A2A]/40" data-testid="button-back">
             <ArrowLeft className="w-5 h-5" />
           </button>
         </div>
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <p className="font-serif italic text-[32px] text-[#AE8F7D]/40 mb-4">Livro não encontrado</p>
-          <p className="font-sans font-light text-[11px] text-[#454545]/35 mb-8">
+          <p className="font-sans font-light text-[11px] text-[#2A2A2A]/35 mb-8">
             Este livro ainda não está no catálogo do Marginalia.
           </p>
           <button
@@ -398,12 +398,12 @@ export function BookDetailScreen() {
     <div className="min-h-full bg-[#FAF8F3]">
       {/* Header */}
       <div className="flex items-center gap-3 px-5 pt-8 pb-4">
-        <button onClick={goBack} data-testid="button-back" className="text-[#454545]/40 hover:text-[#454545]/70 transition-colors">
+        <button onClick={goBack} data-testid="button-back" className="text-[#2A2A2A]/40 hover:text-[#2A2A2A]/70 transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex-1 min-w-0">
           <h1 className="font-serif italic text-[18px] text-[#3D3D3D] leading-tight truncate">{book.title}</h1>
-          <p className="font-sans font-light text-[9px] tracking-[0.12em] uppercase text-[#454545]/40">{book.author}</p>
+          <p className="font-sans font-light text-[9px] tracking-[0.12em] uppercase text-[#2A2A2A]/40">{book.author}</p>
         </div>
       </div>
 
@@ -420,10 +420,10 @@ export function BookDetailScreen() {
                     <span className="font-serif italic text-[34px] leading-none text-[#AE8F7D]">
                       {Math.round(prog.currentPercent)}
                     </span>
-                    <span className="font-sans font-light text-sm text-[#454545]/40 mb-0.5">%</span>
+                    <span className="font-sans font-light text-sm text-[#2A2A2A]/40 mb-0.5">%</span>
                   </div>
                   {prog.currentPage > 0 && book.totalPages > 0 && (
-                    <p className="font-sans font-light text-[9px] text-[#454545]/35 mb-1">
+                    <p className="font-sans font-light text-[9px] text-[#2A2A2A]/35 mb-1">
                       p. {prog.currentPage} de {book.totalPages}
                       {prog.currentChapter ? ` · cap. ${prog.currentChapter}` : ""}
                     </p>
@@ -443,7 +443,7 @@ export function BookDetailScreen() {
               ) : (
                 <button
                   onClick={() => setEditingProgress(false)}
-                  className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#454545]/35 hover:text-[#AE8F7D] transition-colors mt-1"
+                  className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#2A2A2A]/35 hover:text-[#AE8F7D] transition-colors mt-1"
                 >
                   Cancelar
                 </button>
@@ -462,7 +462,7 @@ export function BookDetailScreen() {
                     className={`flex-1 font-sans text-[9px] font-light tracking-[0.1em] py-1.5 rounded-full border transition-all ${
                       prog?.status === s
                         ? "bg-[#454545] text-[#FAF8F3] border-transparent"
-                        : "text-[#454545]/50 border-[#454545]/12"
+                        : "text-[#2A2A2A]/50 border-[#454545]/12"
                     }`}
                   >
                     {s === "wishlist" ? "Quero ler" : s === "reading" ? "Lendo" : "Concluído"}
@@ -488,7 +488,7 @@ export function BookDetailScreen() {
                           className={`font-sans text-[8px] font-light py-2 rounded-[8px] border transition-all text-center ${
                             progressMode === m.id
                               ? "bg-[#454545] text-[#FAF8F3] border-transparent"
-                              : "text-[#454545]/50 border-[#454545]/12"
+                              : "text-[#2A2A2A]/50 border-[#454545]/12"
                           }`}
                         >
                           {m.label}
@@ -507,7 +507,7 @@ export function BookDetailScreen() {
                           className="w-full font-serif italic text-[20px] text-[#AE8F7D] text-center bg-[#EBE6DB]/30 rounded-[8px] py-2 outline-none border border-[#AE8F7D]/15 focus:border-[#AE8F7D]/40"
                         />
                         {pageInput && book.totalPages > 0 && (
-                          <p className="font-sans font-light text-[9px] text-[#454545]/45 mt-1 text-center">
+                          <p className="font-sans font-light text-[9px] text-[#2A2A2A]/45 mt-1 text-center">
                             p. {pageInput} de {book.totalPages} → <span className="text-[#AE8F7D]">{Math.round((parseInt(pageInput) / book.totalPages) * 100)}%</span>
                           </p>
                         )}
@@ -525,7 +525,7 @@ export function BookDetailScreen() {
                           className="w-full font-serif italic text-[20px] text-[#AE8F7D] text-center bg-[#EBE6DB]/30 rounded-[8px] py-2 outline-none border border-[#AE8F7D]/15 focus:border-[#AE8F7D]/40"
                         />
                         {chapterInput && book.totalChapters > 0 && !isNaN(parseInt(chapterInput)) && (
-                          <p className="font-sans font-light text-[9px] text-[#454545]/45 mt-1 text-center">
+                          <p className="font-sans font-light text-[9px] text-[#2A2A2A]/45 mt-1 text-center">
                             cap. {chapterInput} de {book.totalChapters} → <span className="text-[#AE8F7D]">{Math.round((parseInt(chapterInput) / book.totalChapters) * 100)}%</span>
                           </p>
                         )}
@@ -554,7 +554,7 @@ export function BookDetailScreen() {
             ].map((stat) => (
               <div key={stat.label} className="bg-[#EBE6DB]/40 rounded-[8px] py-2.5 text-center">
                 <div className="font-serif text-[16px] text-[#3D3D3D]">{stat.value}</div>
-                <div className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#454545]/35">{stat.label}</div>
+                <div className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#2A2A2A]/35">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -577,8 +577,8 @@ export function BookDetailScreen() {
               ...(book.totalChapters > 0 ? [{ label: "Capítulos", value: `${book.totalChapters} capítulos` }] : []),
             ].map(({ label, value }) => (
               <div key={label} className="flex justify-between items-baseline">
-                <span className="font-sans font-light text-[9px] tracking-[0.1em] uppercase text-[#454545]/35">{label}</span>
-                <span className="font-sans font-light text-[11px] text-[#454545]/60">{value}</span>
+                <span className="font-sans font-light text-[9px] tracking-[0.1em] uppercase text-[#2A2A2A]/35">{label}</span>
+                <span className="font-sans font-light text-[11px] text-[#2A2A2A]/60">{value}</span>
               </div>
             ))}
           </div>
@@ -592,7 +592,7 @@ export function BookDetailScreen() {
           <div data-testid="spoiler-banner" className="flex items-center gap-3 bg-[#EBE6DB]/40 border border-[#AE8F7D]/15 rounded-[12px] px-4 py-3">
             <Shield className="w-4 h-4 text-[#AE8F7D] flex-shrink-0" />
             <div className="flex-1">
-              <p className="font-sans font-light text-[10px] text-[#454545]/60">
+              <p className="font-sans font-light text-[10px] text-[#2A2A2A]/60">
                 {blockedCount} {blockedCount === 1 ? "conteúdo ocultado" : "conteúdos ocultados"} — seu ritmo está protegido
               </p>
               <p className="font-sans font-light text-[8px] text-[#AE8F7D] mt-0.5">
@@ -615,7 +615,7 @@ export function BookDetailScreen() {
                   className={`flex-shrink-0 font-sans text-[9px] font-light tracking-[0.12em] uppercase px-3 py-2 rounded-full border transition-all ${
                     activeTab === tab.id
                       ? "bg-[#AE8F7D] text-[#FAF8F3] border-transparent"
-                      : "bg-transparent text-[#454545]/45 border-[#454545]/10 hover:border-[#AE8F7D]/25"
+                      : "bg-transparent text-[#2A2A2A]/45 border-[#454545]/10 hover:border-[#AE8F7D]/25"
                   }`}
                 >
                   {tab.label}{count > 0 ? ` · ${count}` : ""}
@@ -627,10 +627,10 @@ export function BookDetailScreen() {
           <div key={feedKey} className="space-y-3 feed-enter">
             {(tabMargins[activeTab] ?? []).length === 0 ? (
               <div className="text-center py-10 border border-dashed border-[#AE8F7D]/15 rounded-[14px]">
-                <p className="font-serif italic text-[13px] text-[#454545]/35 mb-1">
+                <p className="font-serif italic text-[13px] text-[#2A2A2A]/35 mb-1">
                   Nenhuma margem nesta categoria ainda.
                 </p>
-                <p className="font-sans font-light text-[9px] text-[#454545]/25">
+                <p className="font-sans font-light text-[9px] text-[#2A2A2A]/25">
                   Seja o primeiro a registrar um pensamento aqui.
                 </p>
               </div>

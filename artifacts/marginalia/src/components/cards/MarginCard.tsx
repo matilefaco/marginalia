@@ -43,7 +43,7 @@ function ShareButton({ margin }: { margin: Margin }) {
       <button
         data-testid={`button-share-margin-${margin.id}`}
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setModalOpen(true); }}
-        className="flex items-center gap-1 font-sans text-[7.5px] font-light tracking-[0.06em] text-[#454545]/28 hover:text-[#AE8F7D] transition-colors py-1 px-1"
+        className="flex items-center gap-1 font-sans text-[7.5px] font-light tracking-[0.06em] text-[#2A2A2A]/28 hover:text-[#AE8F7D] transition-colors py-1 px-1"
         title="Compartilhar"
       >
         <Share2 className="w-3 h-3" />
@@ -63,7 +63,7 @@ function SaveButton({ margin }: { margin: Margin }) {
       data-testid={`button-save-margin-${margin.id}`}
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleSaveMargin(margin.id); }}
       title={isSaved ? "Salvo" : "Salvar eco"}
-      className={`transition-all active:scale-90 ${isSaved ? "text-[#AE8F7D]" : "text-[#454545]/25 hover:text-[#AE8F7D]/60"}`}
+      className={`transition-all active:scale-90 ${isSaved ? "text-[#AE8F7D]" : "text-[#2A2A2A]/25 hover:text-[#AE8F7D]/60"}`}
     >
       {isSaved ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
     </button>
@@ -189,7 +189,7 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
               ? "emoji-pop"
               : myEmoji
               ? "bg-[#AE8F7D]/12 border-[#AE8F7D]/35"
-              : "border-dashed border-[#454545]/15 hover:border-[#AE8F7D]/30 text-[#454545]/35"
+              : "border-dashed border-[#454545]/15 hover:border-[#AE8F7D]/30 text-[#2A2A2A]/35"
           }`}
           title={myEmoji ? "Toque para remover · segure para trocar" : "Segure para reagir"}
         >
@@ -215,7 +215,7 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
             {emoji}
             <span
               key={count}
-              className={`font-sans font-light text-[8px] count-pulse ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/55"}`}
+              className={`font-sans font-light text-[8px] count-pulse ${isMine ? "text-[#AE8F7D]" : "text-[#2A2A2A]/55"}`}
             >
               {count}
             </span>
@@ -223,10 +223,10 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
         );
       })}
       {extraCount > 0 && (
-        <span className="font-sans font-light text-[8px] text-[#454545]/30">+{extraCount}</span>
+        <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">+{extraCount}</span>
       )}
       {top3.length === 0 && (
-        <span className="font-sans font-light text-[8px] text-[#454545]/25 italic">sem reações</span>
+        <span className="font-sans font-light text-[8px] text-[#2A2A2A]/25 italic">sem reações</span>
       )}
     </div>
   );
@@ -256,12 +256,12 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
     <button
       data-testid={`button-ecoar-${margin.id}`}
       onClick={(e) => { if (!linkToThread) { e.preventDefault(); e.stopPropagation(); } }}
-      className="flex items-center gap-1.5 font-sans text-[8.5px] font-light tracking-[0.1em] text-[#454545]/45 hover:text-[#AE8F7D] transition-colors"
+      className="flex items-center gap-1.5 font-sans text-[8.5px] font-light tracking-[0.1em] text-[#2A2A2A]/45 hover:text-[#AE8F7D] transition-colors"
     >
       <MessageCircle className="w-3 h-3" />
       <span>Comente</span>
       {margin.commentsCount > 0 && (
-        <span className="text-[#454545]/28">· {margin.commentsCount}</span>
+        <span className="text-[#2A2A2A]/28">· {margin.commentsCount}</span>
       )}
     </button>
   );
@@ -282,7 +282,7 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
           </div>
           <span className="font-sans font-light text-[10px] text-[#AE8F7D]">{margin.userName}</span>
           {USER_USERNAME_MAP[margin.userId] && (
-            <span className="font-sans font-light text-[9px] text-[#454545]/30">
+            <span className="font-sans font-light text-[9px] text-[#2A2A2A]/30">
               {USER_USERNAME_MAP[margin.userId]}
             </span>
           )}
@@ -295,7 +295,7 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
           <button
             title="Responder com sua margem"
             onClick={handleReplyWithMargin}
-            className="flex items-center gap-1 text-[#454545]/22 hover:text-[#697962] transition-colors"
+            className="flex items-center gap-1 text-[#2A2A2A]/22 hover:text-[#697962] transition-colors"
           >
             <CornerUpRight className="w-3 h-3" />
           </button>
@@ -325,7 +325,7 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <span className="font-sans text-[7.5px] font-light tracking-[0.22em] uppercase" style={{ color: a.label }}>
           ✦ Citação favorita
         </span>
-        <span className="font-sans font-light text-[7px] text-[#454545]/25">{timeAgo(margin.createdAt)}</span>
+        <span className="font-sans font-light text-[7px] text-[#2A2A2A]/25">{timeAgo(margin.createdAt)}</span>
       </div>
       <div className="text-center py-4 mb-3.5">
         <p className="font-serif italic text-[18px] text-[#2A2A2A] leading-[1.75]">
@@ -333,7 +333,7 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
         </p>
       </div>
       {showBook && (
-        <p className="font-sans font-light text-[8.5px] tracking-[0.1em] uppercase text-[#454545]/40 text-center mb-4">
+        <p className="font-sans font-light text-[8.5px] tracking-[0.1em] uppercase text-[#2A2A2A]/40 text-center mb-4">
           {margin.bookTitle} {ref && `· ${ref}`}
         </p>
       )}
@@ -363,9 +363,9 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
     >
       <div className="flex items-center gap-2 mb-3.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase" style={{ color: a.label }}>❓ Pergunta</span>
-        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#454545]/45 truncate max-w-[100px]">{margin.bookTitle}</span></>}
-        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#454545]/35">{ref}</span></>}
-        <span className="ml-auto font-sans text-[7px] font-light text-[#454545]/25">{timeAgo(margin.createdAt)}</span>
+        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/45 truncate max-w-[100px]">{margin.bookTitle}</span></>}
+        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/35">{ref}</span></>}
+        <span className="ml-auto font-sans text-[7px] font-light text-[#2A2A2A]/25">{timeAgo(margin.createdAt)}</span>
       </div>
       <div className="bg-[#FAF8F3]/80 pl-4 mb-4" style={{ borderLeft: `2px solid ${a.border}88` }}>
         <p className="font-serif italic text-[15px] text-[#2A2A2A] leading-[1.75]">
@@ -373,7 +373,7 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
         </p>
       </div>
       {margin.commentary && (
-        <p className="font-serif text-[15px] text-[#454545]/72 leading-[1.75] mb-4">{margin.commentary}</p>
+        <p className="font-serif text-[15px] text-[#2A2A2A]/72 leading-[1.75] mb-4">{margin.commentary}</p>
       )}
       <div className="mb-3">
         <EmojiReactionBar margin={margin} />
@@ -401,11 +401,11 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
     >
       <div className="flex items-center gap-2 mb-3.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase" style={{ color: a.label }}>🔭 Teoria</span>
-        {showBook && <><span style={{ color: `${a.border}40` }}>·</span><span className="font-sans text-[8px] font-light text-[#454545]/45 truncate max-w-[90px]">{margin.bookTitle}</span></>}
-        <span className="ml-auto font-sans text-[7px] font-light text-[#454545]/25">{timeAgo(margin.createdAt)}</span>
+        {showBook && <><span style={{ color: `${a.border}40` }}>·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/45 truncate max-w-[90px]">{margin.bookTitle}</span></>}
+        <span className="ml-auto font-sans text-[7px] font-light text-[#2A2A2A]/25">{timeAgo(margin.createdAt)}</span>
       </div>
       <div className="pl-3 mb-4" style={{ borderLeft: `2px solid ${a.border}50` }}>
-        <p className="font-serif italic text-[14px] text-[#454545]/60 leading-[1.75] line-clamp-3">
+        <p className="font-serif italic text-[14px] text-[#2A2A2A]/60 leading-[1.75] line-clamp-3">
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
@@ -447,9 +447,9 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
           <span>{typeIcon}</span>
           <span>{marginTypeLabel(margin.postType)}</span>
         </span>
-        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#454545]/45">{ref}</span></>}
-        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#454545]/45 truncate max-w-[100px]">{margin.bookTitle}</span></>}
-        <span className="ml-auto font-sans text-[7px] font-light text-[#454545]/25 flex-shrink-0">{timeAgo(margin.createdAt)}</span>
+        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/45">{ref}</span></>}
+        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/45 truncate max-w-[100px]">{margin.bookTitle}</span></>}
+        <span className="ml-auto font-sans text-[7px] font-light text-[#2A2A2A]/25 flex-shrink-0">{timeAgo(margin.createdAt)}</span>
       </div>
 
       {/* Quote block */}
@@ -461,7 +461,7 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
 
       {/* Commentary — visually separated from the quote */}
       {margin.commentary && (
-        <p className="font-serif text-[15px] text-[#454545]/72 leading-[1.75] mb-4">
+        <p className="font-serif text-[15px] text-[#2A2A2A]/72 leading-[1.75] mb-4">
           {margin.commentary}
         </p>
       )}
@@ -470,7 +470,7 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <EmojiReactionBar margin={margin} />
       </div>
       {totalReactions > 0 && (
-        <p className="font-sans font-light text-[8px] text-[#454545]/35 mb-1">
+        <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35 mb-1">
           {totalReactions} {totalReactions === 1 ? "leitor ecoou" : "leitores ecoaram"} isso
         </p>
       )}
@@ -533,13 +533,13 @@ function SpoilerShieldCard({ margin, reason }: { margin: Margin; reason: string 
           <Shield className="w-3.5 h-3.5 text-[#AE8F7D]/60" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-serif italic text-[14px] text-[#454545]/60 mb-1">Trecho ocultado para preservar sua leitura</p>
-          <p className="font-sans font-light text-[11px] text-[#454545]/45 leading-relaxed mb-3">{reason}</p>
+          <p className="font-serif italic text-[14px] text-[#2A2A2A]/60 mb-1">Trecho ocultado para preservar sua leitura</p>
+          <p className="font-sans font-light text-[11px] text-[#2A2A2A]/45 leading-relaxed mb-3">{reason}</p>
           <div className="flex gap-2 flex-wrap">
             <button className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/25 px-3 py-1.5 rounded-full hover:bg-[#AE8F7D]/5 transition-colors">
               Atualizar progresso
             </button>
-            <button onClick={() => setRevealed(true)} className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#454545]/45 px-3 py-1.5 hover:text-[#454545]/65 transition-colors">
+            <button onClick={() => setRevealed(true)} className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#2A2A2A]/45 px-3 py-1.5 hover:text-[#2A2A2A]/65 transition-colors">
               Ver mesmo assim
             </button>
           </div>

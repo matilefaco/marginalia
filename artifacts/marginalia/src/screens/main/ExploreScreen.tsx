@@ -171,21 +171,21 @@ export function ExploreScreen() {
     <div className="min-h-full bg-[#FAF8F3]">
       <div className="px-5 pt-10 pb-3">
         <h1 className="font-serif italic text-[28px] text-[#3D3D3D] mb-1">Explorar</h1>
-        <p className="font-sans font-light text-[10px] text-[#454545]/40 mb-5 tracking-[0.04em]">
+        <p className="font-sans font-light text-[10px] text-[#2A2A2A]/40 mb-5 tracking-[0.04em]">
           Descubra além do que você já conhece.
         </p>
 
         <div className="flex items-center gap-3 bg-[#EBE6DB]/70 rounded-[12px] px-4 py-3 mb-2 border border-[#AE8F7D]/10">
-          <Search className="w-4 h-4 text-[#454545]/35 flex-shrink-0" />
+          <Search className="w-4 h-4 text-[#2A2A2A]/35 flex-shrink-0" />
           <input
             data-testid="input-explore-search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Livros, autores, trechos..."
-            className="flex-1 bg-transparent font-sans font-light text-[13px] text-[#454545] placeholder:text-[#454545]/30 outline-none"
+            className="flex-1 bg-transparent font-sans font-light text-[13px] text-[#2A2A2A] placeholder:text-[#2A2A2A]/30 outline-none"
           />
           {query && (
-            <button onClick={() => setQuery("")} className="text-[#454545]/30 text-xs">✕</button>
+            <button onClick={() => setQuery("")} className="text-[#2A2A2A]/30 text-xs">✕</button>
           )}
         </div>
       </div>
@@ -204,7 +204,7 @@ export function ExploreScreen() {
             {/* Local results (Marginalia catalog) */}
             {localResults.length > 0 && (
               <div className="space-y-2 mb-4">
-                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#454545]/35 mb-2">
+                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#2A2A2A]/35 mb-2">
                   Na comunidade
                 </p>
                 {localResults.map((book) => (
@@ -213,7 +213,7 @@ export function ExploreScreen() {
                       <BookCover title={book.title} bookColor={book.bookColor} coverUrl={book.coverUrl} size="sm" />
                       <div className="flex-1 min-w-0">
                         <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
-                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
+                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#2A2A2A]/40 mb-1">{book.author}</p>
                         <p className="font-sans font-light text-[9px] text-[#697962]">
                           {book.communityStats.totalMargins} margens · {book.communityStats.debates} debates
                         </p>
@@ -227,7 +227,7 @@ export function ExploreScreen() {
             {/* Community catalog results */}
             {communitySearchResults.filter((cr) => !localResults.some((lr) => lr.title.toLowerCase() === cr.title.toLowerCase())).length > 0 && (
               <div className="space-y-2 mb-4">
-                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#454545]/35 mb-2">
+                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#2A2A2A]/35 mb-2">
                   Na comunidade
                 </p>
                 {communitySearchResults
@@ -242,7 +242,7 @@ export function ExploreScreen() {
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
-                          <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
+                          <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#2A2A2A]/40 mb-1">{book.author}</p>
                           <p className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} margens · {book.publicationYear ?? ""}</p>
                         </div>
                       </div>
@@ -254,7 +254,7 @@ export function ExploreScreen() {
             {/* Google Books results — discovery only, not yet in catalog */}
             {googleResults.length > 0 && (
               <div className="space-y-2">
-                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#454545]/35 mb-2">
+                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#2A2A2A]/35 mb-2">
                   Descobertos fora do catálogo
                 </p>
                 {googleResults
@@ -276,7 +276,7 @@ export function ExploreScreen() {
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
-                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
+                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#2A2A2A]/40 mb-1">{book.author}</p>
                         <p className="font-sans font-light text-[8px] text-[#AE8F7D]/60 italic">
                           Ainda não está no Marginalia
                         </p>
@@ -287,7 +287,7 @@ export function ExploreScreen() {
             )}
 
             {!isSearching && !hasSearchResults && (
-              <p className="font-serif italic text-[13px] text-[#454545]/35 text-center py-6">
+              <p className="font-serif italic text-[13px] text-[#2A2A2A]/35 text-center py-6">
                 Nenhum resultado encontrado.
               </p>
             )}
@@ -303,7 +303,7 @@ export function ExploreScreen() {
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
             </div>
-            <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
               Baseado nos seus gêneros favoritos
             </p>
             <div className="grid grid-cols-2 gap-3">
@@ -313,7 +313,7 @@ export function ExploreScreen() {
                     <div className="h-24 bg-gradient-to-b from-[#EBE6DB] to-[#BDAB9C]/40" />
                     <div className="p-3">
                       <p className="font-serif text-[13px] text-[#3D3D3D] leading-tight line-clamp-2 mb-0.5">{book.title}</p>
-                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1.5">{book.author}</p>
+                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1.5">{book.author}</p>
                       <p className="font-sans font-light text-[8px] text-[#697962]">
                         {book.communityStats.activeReaders} leitores ativos
                       </p>
@@ -334,7 +334,7 @@ export function ExploreScreen() {
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
             </div>
-            <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">Os livros mais anotados agora</p>
+            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">Os livros mais anotados agora</p>
             <div className="space-y-2">
               {communityTrending.slice(0, 6).map((book, idx) => (
                 <Link key={book.id} href={`/book/${book.id}`} data-testid={`card-discussed-${book.id}`}>
@@ -347,13 +347,13 @@ export function ExploreScreen() {
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
+                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1">{book.author}</p>
                       <div className="flex items-center gap-2">
                         <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
                         {book.genres && book.genres.length > 0 && (
                           <>
                             <span className="text-[#AE8F7D]/25">·</span>
-                            <span className="font-sans font-light text-[8px] text-[#454545]/35">{(book.genres as string[])[0]}</span>
+                            <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">{(book.genres as string[])[0]}</span>
                           </>
                         )}
                       </div>
@@ -381,7 +381,7 @@ export function ExploreScreen() {
               <div className="flex items-center gap-2 mb-3">
                 <button
                   onClick={exitGenreFocus}
-                  className="text-[#454545]/40 hover:text-[#AE8F7D] transition-colors flex-shrink-0"
+                  className="text-[#2A2A2A]/40 hover:text-[#AE8F7D] transition-colors flex-shrink-0"
                   aria-label="Voltar aos gêneros"
                 >
                   ←
@@ -407,7 +407,7 @@ export function ExploreScreen() {
                 <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D]">
                   Livros em {selectedGenre}
                 </p>
-                <p className="font-sans font-light text-[8px] text-[#454545]/30">
+                <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30">
                   {allGenreBooks.length} {allGenreBooks.length === 1 ? "livro" : "livros"}
                 </p>
               </div>
@@ -415,7 +415,7 @@ export function ExploreScreen() {
               {communityGenreLoading && (
                 <div className="flex items-center justify-center py-6 gap-2">
                   <Loader2 className="w-4 h-4 text-[#AE8F7D]/50 animate-spin" />
-                  <span className="font-sans font-light text-[10px] text-[#454545]/30">Buscando livros...</span>
+                  <span className="font-sans font-light text-[10px] text-[#2A2A2A]/30">Buscando livros...</span>
                 </div>
               )}
 
@@ -431,10 +431,10 @@ export function ExploreScreen() {
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                          <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
+                          <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1">{book.author}</p>
                           <div className="flex items-center gap-2">
                             <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
-                            {book.publicationYear && (<><span className="text-[#AE8F7D]/25">·</span><span className="font-sans font-light text-[8px] text-[#454545]/30">{book.publicationYear}</span></>)}
+                            {book.publicationYear && (<><span className="text-[#AE8F7D]/25">·</span><span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{book.publicationYear}</span></>)}
                           </div>
                         </div>
                       </div>
@@ -444,7 +444,7 @@ export function ExploreScreen() {
               )}
 
               {!communityGenreLoading && communityGenreBooks.length === 0 && allGenreBooks.length === 0 && (
-                <p className="font-serif italic text-[13px] text-[#454545]/35 text-center py-6">
+                <p className="font-serif italic text-[13px] text-[#2A2A2A]/35 text-center py-6">
                   Nenhum livro encontrado neste gênero ainda.
                 </p>
               )}
@@ -464,13 +464,13 @@ export function ExploreScreen() {
                           />
                           <div className="flex-1 min-w-0">
                             <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                            <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
+                            <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1">{book.author}</p>
                             <div className="flex items-center gap-2">
                               <span className="font-sans font-light text-[8px] text-[#697962]">
                                 {book.communityStats.activeReaders} leitores
                               </span>
                               <span className="text-[#AE8F7D]/25">·</span>
-                              <span className="font-sans font-light text-[8px] text-[#454545]/35">
+                              <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
                                 {book.communityStats.totalMargins} margens
                               </span>
                             </div>
@@ -489,7 +489,7 @@ export function ExploreScreen() {
                     </button>
                   )}
                   {!hasMore && allGenreBooks.length > 0 && (
-                    <p className="font-sans font-light text-[9px] text-[#454545]/30 text-center mt-3">
+                    <p className="font-sans font-light text-[9px] text-[#2A2A2A]/30 text-center mt-3">
                       Todos os livros deste gênero
                     </p>
                   )}
@@ -509,7 +509,7 @@ export function ExploreScreen() {
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
               <button
                 onClick={() => setShowAllGenres((v) => !v)}
-                className="font-sans text-[8px] font-light text-[#454545]/40 hover:text-[#AE8F7D] transition-colors"
+                className="font-sans text-[8px] font-light text-[#2A2A2A]/40 hover:text-[#AE8F7D] transition-colors"
               >
                 {showAllGenres ? "Ver menos" : "Ver todos"}
               </button>
@@ -522,8 +522,8 @@ export function ExploreScreen() {
                   onClick={() => selectGenre(label)}
                   className="w-full flex items-center justify-between py-2.5 px-3 rounded-[10px] border border-transparent hover:bg-[#EBE6DB]/60 hover:border-[#AE8F7D]/10 transition-all text-left"
                 >
-                  <span className="font-sans font-light text-[13px] text-[#454545]/70">{label}</span>
-                  <span className="text-[#454545]/20 text-[10px]">›</span>
+                  <span className="font-sans font-light text-[13px] text-[#2A2A2A]/70">{label}</span>
+                  <span className="text-[#2A2A2A]/20 text-[10px]">›</span>
                 </button>
               ))}
             </div>
@@ -539,7 +539,7 @@ export function ExploreScreen() {
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
             </div>
-            <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
               As mais reagidas da comunidade
             </p>
             <div className="space-y-3">
@@ -559,7 +559,7 @@ export function ExploreScreen() {
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
             </div>
-            <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
               Calculado por gêneros, livros e estilo de leitura
             </p>
             <div className="space-y-2">
@@ -578,18 +578,18 @@ export function ExploreScreen() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-serif text-[14px] text-[#3D3D3D]">{reader.name}</div>
-                        <div className="font-sans font-light text-[9px] text-[#454545]/40">{reader.username} · {reader.city}</div>
+                        <div className="font-sans font-light text-[9px] text-[#2A2A2A]/40">{reader.username} · {reader.city}</div>
                       </div>
                       {reader.compatibilityScore && (
                         <div className="text-right flex-shrink-0">
                           <div className="font-serif text-[20px] text-[#AE8F7D] leading-none">{reader.compatibilityScore}%</div>
-                          <div className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#454545]/30">compatível</div>
+                          <div className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#2A2A2A]/30">compatível</div>
                         </div>
                       )}
                     </div>
                     <p className="font-serif italic text-[11px] text-[#AE8F7D]">&ldquo;{reader.readingSignature}&rdquo;</p>
                     {reader.bio && (
-                      <p className="font-sans font-light text-[10px] text-[#454545]/45 mt-1.5 line-clamp-2">{reader.bio}</p>
+                      <p className="font-sans font-light text-[10px] text-[#2A2A2A]/45 mt-1.5 line-clamp-2">{reader.bio}</p>
                     )}
                   </div>
                 </Link>

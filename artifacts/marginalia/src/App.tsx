@@ -28,6 +28,7 @@ import { PreferencesPrivacyScreen } from "@/screens/main/PreferencesPrivacyScree
 import { AboutScreen } from "@/screens/main/AboutScreen";
 import { ThreadScreen } from "@/screens/main/ThreadScreen";
 import { UserProfileScreen } from "@/screens/main/UserProfileScreen";
+import { PublicBookScreen } from "@/screens/main/PublicBookScreen";
 import NotFound from "@/pages/not-found";
 
 import type { SpoilerPreference } from "@/data/constants";
@@ -211,6 +212,18 @@ function AppContent() {
   const { session, authLoading } = useAuth();
   const [splashDone, setSplashDone] = useState(false);
   const [authFlowDone, setAuthFlowDone] = useState(false);
+  const [location] = useLocation();
+
+  /* Public routes — accessible without auth, no splash */
+  if (location.startsWith("/livro/")) {
+    return (
+      <div className="w-full max-w-md mx-auto">
+        <Switch>
+          <Route path="/livro/:id" component={PublicBookScreen} />
+        </Switch>
+      </div>
+    );
+  }
 
   if (!splashDone) {
     return <Splash onDone={() => setSplashDone(true)} />;

@@ -65,7 +65,7 @@ function MomentosSection() {
         </span>
         <span className="font-sans text-[7px] font-light tracking-[0.14em] uppercase text-[#697962]/70">ao vivo</span>
       </div>
-      <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
         Onde leitores estão parando agora
       </p>
       <div className="space-y-2">
@@ -90,30 +90,30 @@ function MomentosSection() {
                       {idx === 0 ? "✦ Mais ativo agora" : "Em alta"}
                     </p>
                     <p className="font-serif italic text-[15px] text-[#3D3D3D] leading-tight">{book.title}</p>
-                    <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#454545]/35">{book.author}</p>
+                    <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#2A2A2A]/35">{book.author}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="font-serif text-[22px] text-[#AE8F7D] leading-none">{count}</p>
-                    <p className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#454545]/30">ecos</p>
+                    <p className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#2A2A2A]/30">ecos</p>
                   </div>
                 </div>
 
                 {canSee ? (
                   <div className="border-l-2 border-[#AE8F7D]/40 pl-3 mb-2.5">
-                    <p className="font-serif italic text-[12px] text-[#454545]/65 leading-relaxed line-clamp-2">
+                    <p className="font-serif italic text-[12px] text-[#2A2A2A]/65 leading-relaxed line-clamp-2">
                       &ldquo;{topMargin.excerpt}&rdquo;
                     </p>
                   </div>
                 ) : (
                   <div className="bg-[#EBE6DB]/60 rounded-[8px] px-3 py-2 mb-2.5 flex items-center gap-2">
                     <Shield className="w-3 h-3 text-[#AE8F7D]/50 flex-shrink-0" />
-                    <p className="font-sans font-light text-[9px] text-[#454545]/45 italic">
+                    <p className="font-sans font-light text-[9px] text-[#2A2A2A]/45 italic">
                       Leitores estão reagindo intensamente neste ponto.
                     </p>
                   </div>
                 )}
 
-                <p className="font-sans font-light text-[8px] text-[#454545]/35">
+                <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
                   {reactionTotal > 0 ? `${reactionTotal} reações · ` : ""}
                   {topMargin.commentsCount} ecos
                   {topMargin.percent !== undefined ? ` · em ${topMargin.percent}% do livro` : ""}
@@ -169,7 +169,7 @@ function FeedBreak({ index }: { index: number }) {
   return (
     <div className="bg-[#EBE6DB]/35 border border-[#AE8F7D]/12 rounded-[14px] p-5">
       <p className={`font-sans text-[7px] font-light tracking-[0.2em] uppercase ${b.accent} mb-2`}>{b.label}</p>
-      <p className="font-serif italic text-[13px] text-[#454545]/60 leading-relaxed mb-3">{b.body}</p>
+      <p className="font-serif italic text-[13px] text-[#2A2A2A]/60 leading-relaxed mb-3">{b.body}</p>
       {b.cta && b.href && (
         <Link href={b.href}>
           <button className="font-sans text-[9px] font-light tracking-[0.12em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/30 px-4 py-2 rounded-full hover:bg-[#AE8F7D]/8 transition-colors">
@@ -196,7 +196,7 @@ function CommunityFeedSection() {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-[#697962]" />
         </span>
       </div>
-      <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-4">O que leitores estão sentindo agora</p>
+      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-4">O que leitores estão sentindo agora</p>
       <div className="space-y-3">
         {margins.map((m) => {
           const rxTotal = totalReactions(m.reactions);
@@ -211,7 +211,7 @@ function CommunityFeedSection() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-sans font-light text-[10px] text-[#3D3D3D] truncate">{m.userName}</p>
-                  <p className="font-sans font-light text-[8px] text-[#454545]/35">{formatCommunityMarginAge(m.createdAt)}</p>
+                  <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35">{formatCommunityMarginAge(m.createdAt)}</p>
                 </div>
                 {m.spoilerLevel !== "none" && (
                   <span className="font-sans font-light text-[7px] tracking-[0.1em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/25 px-1.5 py-0.5 rounded-full">
@@ -227,16 +227,16 @@ function CommunityFeedSection() {
               </div>
 
               {m.commentary && (
-                <p className="font-sans font-light text-[11px] text-[#454545]/60 leading-relaxed mb-2 line-clamp-2">{m.commentary}</p>
+                <p className="font-sans font-light text-[11px] text-[#2A2A2A]/60 leading-relaxed mb-2 line-clamp-2">{m.commentary}</p>
               )}
 
               <div className="flex items-center gap-3">
-                <p className="font-sans font-light text-[8px] text-[#454545]/35 truncate flex-1">{m.bookTitle}</p>
+                <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35 truncate flex-1">{m.bookTitle}</p>
                 {rxTotal > 0 && (
                   <span className="font-sans font-light text-[8px] text-[#697962]">{rxTotal} reações</span>
                 )}
                 {m.commentsCount > 0 && (
-                  <span className="font-sans font-light text-[8px] text-[#454545]/30">{m.commentsCount} ecos</span>
+                  <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{m.commentsCount} ecos</span>
                 )}
               </div>
             </div>
@@ -263,7 +263,7 @@ function WishlistSection() {
         </span>
         <div className="flex-1 h-px bg-[#AE8F7D]/20" />
       </div>
-      <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
         Quando chegar a hora, estará aqui
       </p>
       <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5">
@@ -291,7 +291,7 @@ function WishlistSection() {
                   <p className="font-serif italic text-[11px] text-[#3D3D3D] leading-tight line-clamp-2 mb-0.5">
                     {book.title}
                   </p>
-                  <p className="font-sans font-light text-[7px] text-[#454545]/40 truncate">
+                  <p className="font-sans font-light text-[7px] text-[#2A2A2A]/40 truncate">
                     {book.author}
                   </p>
                 </div>
@@ -356,12 +356,12 @@ export function HomeScreen() {
         </div>
         <div className="flex items-center gap-3">
           <Link href="/notifications">
-            <button data-testid="button-notifications" className="relative text-[#454545]/40 hover:text-[#454545]/70 transition-colors p-1">
+            <button data-testid="button-notifications" className="relative text-[#2A2A2A]/40 hover:text-[#2A2A2A]/70 transition-colors p-1">
               <Bell className="w-5 h-5" />
               {unread > 0 && <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[#AE8F7D]" />}
             </button>
           </Link>
-          <button className="text-[#454545]/30 hover:text-[#454545]/60 transition-colors p-1">
+          <button className="text-[#2A2A2A]/30 hover:text-[#2A2A2A]/60 transition-colors p-1">
             <SlidersHorizontal className="w-4 h-4" />
           </button>
         </div>
@@ -387,7 +387,7 @@ export function HomeScreen() {
               </span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
               {readingBooks.length > 1 && (
-                <span className="font-sans font-light text-[8px] text-[#454545]/30">{readingBooks.length} livros</span>
+                <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{readingBooks.length} livros</span>
               )}
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
@@ -402,14 +402,14 @@ export function HomeScreen() {
                       <BookCover title={book.title} bookColor={book.bookColor} coverUrl={book.coverUrl} size="sm" className="shadow-sm" />
                       <div className="flex-1 min-w-0">
                         <h2 className="font-serif italic text-[15px] text-[#3D3D3D] leading-tight mb-0.5 line-clamp-2">{book.title}</h2>
-                        <p className="font-sans font-light text-[8px] tracking-[0.1em] uppercase text-[#454545]/45 mb-2">{book.author}</p>
+                        <p className="font-sans font-light text-[8px] tracking-[0.1em] uppercase text-[#2A2A2A]/45 mb-2">{book.author}</p>
                         <div className="w-full h-[2.5px] bg-[#EBE6DB] rounded-full overflow-hidden mb-1">
                           <div
                             className="h-full bg-[#AE8F7D] rounded-full transition-all duration-500"
                             style={{ width: `${prog.currentPercent}%` }}
                           />
                         </div>
-                        <span className="font-sans font-light text-[8px] text-[#454545]/40">
+                        <span className="font-sans font-light text-[8px] text-[#2A2A2A]/40">
                           {progressLabel(prog)}
                           {prog.currentPage > 0 && book.totalPages > 0
                             ? ` · p. ${prog.currentPage} de ${book.totalPages}`
@@ -429,7 +429,7 @@ export function HomeScreen() {
                         </button>
                       </Link>
                       <Link href="/nova-margem" className="flex-1">
-                        <button className="w-full border border-[#454545]/15 text-[#454545]/55 font-sans text-[9px] font-light tracking-[0.1em] uppercase py-2.5 rounded-[8px] hover:border-[#AE8F7D]/40 transition-colors">
+                        <button className="w-full border border-[#454545]/15 text-[#2A2A2A]/55 font-sans text-[9px] font-light tracking-[0.1em] uppercase py-2.5 rounded-[8px] hover:border-[#AE8F7D]/40 transition-colors">
                           + Margem
                         </button>
                       </Link>
@@ -459,13 +459,13 @@ export function HomeScreen() {
             <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Hoje para você</span>
             <div className="flex-1 h-px bg-[#AE8F7D]/20" />
           </div>
-          <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-4">
+          <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-4">
             {isProtected ? "Com seu ritmo protegido" : "Feed personalizado"}
           </p>
 
           {feedMargins.length === 0 ? (
             <div className="text-center py-10 border border-dashed border-[#AE8F7D]/20 rounded-[14px]">
-              <p className="font-serif italic text-[14px] text-[#454545]/35 mb-3">
+              <p className="font-serif italic text-[14px] text-[#2A2A2A]/35 mb-3">
                 Adicione livros à biblioteca para ver ecos compatíveis.
               </p>
               <Link href="/explore">
@@ -496,7 +496,7 @@ export function HomeScreen() {
             <p className="font-serif italic text-[15px] text-[#3D3D3D] mb-1 leading-snug">
               Guarde antes que se perca.
             </p>
-            <p className="font-sans font-light text-[10px] text-[#454545]/45 mb-4 leading-relaxed">
+            <p className="font-sans font-light text-[10px] text-[#2A2A2A]/45 mb-4 leading-relaxed">
               Aquele trecho que ficou com você — merece existir como margem.
             </p>
             <Link href="/nova-margem" data-testid="button-nova-margem-ritual">

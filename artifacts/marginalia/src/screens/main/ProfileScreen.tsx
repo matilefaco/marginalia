@@ -92,7 +92,7 @@ function DnaDeLeiturasSection({ myMargins, userReactions, myBooks, dominantMargi
         <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">DNA de leitura</span>
         <div className="flex-1 h-px bg-[#AE8F7D]/20" />
       </div>
-      <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-4">
+      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-4">
         Padrões que emergem das suas margens
       </p>
 
@@ -114,7 +114,7 @@ function DnaDeLeiturasSection({ myMargins, userReactions, myBooks, dominantMargi
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-serif text-[15px] text-[#2A2A2A] leading-tight mb-0.5">{trait.label}</p>
-              <p className="font-sans font-light text-[10px] text-[#454545]/50">{trait.desc}</p>
+              <p className="font-sans font-light text-[10px] text-[#2A2A2A]/50">{trait.desc}</p>
             </div>
           </div>
         ))}
@@ -127,7 +127,7 @@ function DnaDeLeiturasSection({ myMargins, userReactions, myBooks, dominantMargi
           <p className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-0.5">
             Impressão digital
           </p>
-          <p className="font-serif italic text-[12.5px] text-[#454545]/65">
+          <p className="font-serif italic text-[12.5px] text-[#2A2A2A]/65">
             {archetype.label} · {traits[0]?.label} · {dominantEmojiEntry?.emoji ?? "📖"}
           </p>
         </div>
@@ -290,7 +290,7 @@ export function ProfileScreen() {
         <div className="flex justify-end gap-3 mb-5">
           {editing ? (
             <>
-              <button onClick={cancelEdit} className="text-[#454545]/35 hover:text-[#454545]/65 transition-colors">
+              <button onClick={cancelEdit} className="text-[#2A2A2A]/35 hover:text-[#2A2A2A]/65 transition-colors">
                 <X className="w-5 h-5" />
               </button>
               <button
@@ -313,12 +313,12 @@ export function ProfileScreen() {
               <button
                 data-testid="button-edit-profile"
                 onClick={() => setEditing(true)}
-                className="text-[#454545]/35 hover:text-[#454545]/65 transition-colors"
+                className="text-[#2A2A2A]/35 hover:text-[#2A2A2A]/65 transition-colors"
               >
                 <Pencil className="w-4 h-4" />
               </button>
               <Link href="/settings">
-                <button data-testid="button-settings" className="text-[#454545]/35 hover:text-[#454545]/65 transition-colors">
+                <button data-testid="button-settings" className="text-[#2A2A2A]/35 hover:text-[#2A2A2A]/65 transition-colors">
                   <Settings className="w-5 h-5" />
                 </button>
               </Link>
@@ -418,11 +418,11 @@ export function ProfileScreen() {
               onChange={(e) => setEditBio(e.target.value)}
               placeholder="Bio — o que a leitura significa para você?"
               rows={2}
-              className="w-full font-serif italic text-[14px] text-[#454545]/60 bg-transparent border-b border-[#AE8F7D]/20 outline-none resize-none leading-relaxed"
+              className="w-full font-serif italic text-[14px] text-[#2A2A2A]/60 bg-transparent border-b border-[#AE8F7D]/20 outline-none resize-none leading-relaxed"
             />
           ) : (
             currentUser.bio && (
-              <p className="font-serif italic text-[14px] text-[#454545]/60 leading-relaxed" data-testid="text-bio">
+              <p className="font-serif italic text-[14px] text-[#2A2A2A]/60 leading-relaxed" data-testid="text-bio">
                 {currentUser.bio}
               </p>
             )
@@ -435,21 +435,21 @@ export function ProfileScreen() {
             <p className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D] mb-3">Onde te encontrar</p>
             <div className="space-y-3">
               <div className="flex items-center gap-3 bg-[#EBE6DB]/40 rounded-[10px] px-3 py-2.5">
-                <Instagram className="w-4 h-4 text-[#454545]/40 flex-shrink-0" />
+                <Instagram className="w-4 h-4 text-[#2A2A2A]/40 flex-shrink-0" />
                 <input
                   value={editInstagram}
                   onChange={(e) => setEditInstagram(e.target.value)}
                   placeholder="@seuusuario"
-                  className="flex-1 font-sans font-light text-[12px] text-[#454545]/70 bg-transparent outline-none placeholder:text-[#454545]/25"
+                  className="flex-1 font-sans font-light text-[12px] text-[#2A2A2A]/70 bg-transparent outline-none placeholder:text-[#2A2A2A]/25"
                 />
               </div>
               <div className="flex items-center gap-3 bg-[#EBE6DB]/40 rounded-[10px] px-3 py-2.5">
-                <TikTokIcon className="w-4 h-4 text-[#454545]/40 flex-shrink-0" />
+                <TikTokIcon className="w-4 h-4 text-[#2A2A2A]/40 flex-shrink-0" />
                 <input
                   value={editTikTok}
                   onChange={(e) => setEditTikTok(e.target.value)}
                   placeholder="@seuusuario"
-                  className="flex-1 font-sans font-light text-[12px] text-[#454545]/70 bg-transparent outline-none placeholder:text-[#454545]/25"
+                  className="flex-1 font-sans font-light text-[12px] text-[#2A2A2A]/70 bg-transparent outline-none placeholder:text-[#2A2A2A]/25"
                 />
               </div>
             </div>
@@ -470,9 +470,9 @@ export function ProfileScreen() {
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 bg-[#EBE6DB]/60 rounded-[10px] px-3.5 py-2.5 hover:bg-[#AE8F7D]/10 transition-colors group"
                     >
-                      <Instagram className="w-4 h-4 text-[#454545]/50 group-hover:text-[#AE8F7D] transition-colors" />
-                      <span className="font-sans font-light text-[11px] text-[#454545]/60 group-hover:text-[#454545]/80">{currentUser.instagram}</span>
-                      <ExternalLink className="w-2.5 h-2.5 text-[#454545]/20 group-hover:text-[#AE8F7D]/60" />
+                      <Instagram className="w-4 h-4 text-[#2A2A2A]/50 group-hover:text-[#AE8F7D] transition-colors" />
+                      <span className="font-sans font-light text-[11px] text-[#2A2A2A]/60 group-hover:text-[#2A2A2A]/80">{currentUser.instagram}</span>
+                      <ExternalLink className="w-2.5 h-2.5 text-[#2A2A2A]/20 group-hover:text-[#AE8F7D]/60" />
                     </a>
                   )}
                   {currentUser.tiktok && (
@@ -482,9 +482,9 @@ export function ProfileScreen() {
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 bg-[#EBE6DB]/60 rounded-[10px] px-3.5 py-2.5 hover:bg-[#AE8F7D]/10 transition-colors group"
                     >
-                      <TikTokIcon className="w-4 h-4 text-[#454545]/50 group-hover:text-[#AE8F7D] transition-colors" />
-                      <span className="font-sans font-light text-[11px] text-[#454545]/60 group-hover:text-[#454545]/80">{currentUser.tiktok}</span>
-                      <ExternalLink className="w-2.5 h-2.5 text-[#454545]/20 group-hover:text-[#AE8F7D]/60" />
+                      <TikTokIcon className="w-4 h-4 text-[#2A2A2A]/50 group-hover:text-[#AE8F7D] transition-colors" />
+                      <span className="font-sans font-light text-[11px] text-[#2A2A2A]/60 group-hover:text-[#2A2A2A]/80">{currentUser.tiktok}</span>
+                      <ExternalLink className="w-2.5 h-2.5 text-[#2A2A2A]/20 group-hover:text-[#AE8F7D]/60" />
                     </a>
                   )}
                 </div>
@@ -492,7 +492,7 @@ export function ProfileScreen() {
             ) : (
               <button onClick={() => setEditing(true)} className="w-full border border-dashed border-[#AE8F7D]/20 rounded-[14px] p-4 text-left hover:border-[#AE8F7D]/40 transition-colors group">
                 <p className="font-sans text-[7px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]/60 mb-1">Onde te encontrar</p>
-                <p className="font-serif italic text-[12px] text-[#454545]/30 group-hover:text-[#454545]/50 transition-colors">Adicionar Instagram ou TikTok…</p>
+                <p className="font-serif italic text-[12px] text-[#2A2A2A]/30 group-hover:text-[#2A2A2A]/50 transition-colors">Adicionar Instagram ou TikTok…</p>
               </button>
             )}
           </div>
@@ -517,7 +517,7 @@ export function ProfileScreen() {
             <p className="font-serif text-[22px] text-[#3D3D3D] leading-tight mb-1">
               {archetype.label}
             </p>
-            <p className="font-serif italic text-[13px] text-[#454545]/55 mb-4 leading-snug">
+            <p className="font-serif italic text-[13px] text-[#2A2A2A]/55 mb-4 leading-snug">
               {archetype.description}
             </p>
 
@@ -530,7 +530,7 @@ export function ProfileScreen() {
               &ldquo;{currentUser.readingSignature}&rdquo;
             </p>
 
-            <p className="font-sans font-light text-[8px] text-[#454545]/30 mb-4">
+            <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30 mb-4">
               Isso muda conforme você lê
             </p>
 
@@ -578,7 +578,7 @@ export function ProfileScreen() {
               <div key={stat.label} data-testid={`stat-${stat.label.toLowerCase()}`} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] py-3 text-center">
                 <div className="text-[13px] mb-0.5">{stat.icon}</div>
                 <div className="font-serif text-[20px] text-[#3D3D3D] leading-none mb-0.5">{stat.value}</div>
-                <div className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#454545]/35">{stat.label}</div>
+                <div className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#2A2A2A]/35">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -590,7 +590,7 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">✨</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Ecos recebidos nas suas margens</p>
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Ecos recebidos nas suas margens</p>
                   <p className="font-serif italic text-[13px] text-[#3D3D3D]">{reacoesRecebidas} {reacoesRecebidas === 1 ? "reação" : "reações"}</p>
                 </div>
               </div>
@@ -599,7 +599,7 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">{dominantEmojiEntry.emoji}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Reação mais usada</p>
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Reação mais usada</p>
                   <p className="font-serif italic text-[13px] text-[#3D3D3D] capitalize">{dominantEmojiEntry.label}</p>
                 </div>
               </div>
@@ -607,8 +607,8 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0 opacity-30">🤍</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Reação mais usada</p>
-                  <p className="font-serif italic text-[12px] text-[#454545]/30">Reaja a ecos para aparecer aqui</p>
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Reação mais usada</p>
+                  <p className="font-serif italic text-[12px] text-[#2A2A2A]/30">Reaja a ecos para aparecer aqui</p>
                 </div>
               </div>
             )}
@@ -616,7 +616,7 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">{dominantMarginType.icon}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Tipo de margem dominante</p>
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Tipo de margem dominante</p>
                   <p className="font-serif italic text-[13px] text-[#3D3D3D]">{dominantMarginType.label}</p>
                 </div>
               </div>
@@ -627,7 +627,7 @@ export function ProfileScreen() {
                 <div className="flex items-start gap-3 px-4 py-3">
                   <span className="text-[15px] flex-shrink-0 mt-0.5">✨</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Eco mais popular · {total} reações</p>
+                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Eco mais popular · {total} reações</p>
                     <p className="font-serif italic text-[12px] text-[#3D3D3D] leading-snug line-clamp-2">
                       &ldquo;{topEco.excerpt.slice(0, 80)}{topEco.excerpt.length > 80 ? "…" : ""}&rdquo;
                     </p>
@@ -639,15 +639,15 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">📖</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Livro mais anotado</p>
+                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Livro mais anotado</p>
                   <p className="font-serif italic text-[13px] text-[#3D3D3D] truncate">{topAnnotatedBook.title}</p>
-                  <p className="font-sans font-light text-[9px] text-[#454545]/40">{topAnnotatedBook.author}</p>
+                  <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40">{topAnnotatedBook.author}</p>
                 </div>
               </div>
             )}
             {!dominantMarginType && !topAnnotatedBook && reacoesRecebidas === 0 && reacoesFeitas === 0 && !dominantEmojiEntry && (
               <div className="px-4 py-4 text-center">
-                <p className="font-serif italic text-[13px] text-[#454545]/35">As estatísticas aparecem conforme você lê e reage</p>
+                <p className="font-serif italic text-[13px] text-[#2A2A2A]/35">As estatísticas aparecem conforme você lê e reage</p>
               </div>
             )}
           </div>
@@ -659,9 +659,9 @@ export function ProfileScreen() {
             <div className="flex items-center gap-2 mb-1.5">
               <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Quero ler</span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-              <span className="font-sans font-light text-[8px] text-[#454545]/30">{wishlistBooks.length}</span>
+              <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{wishlistBooks.length}</span>
             </div>
-            <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
               Livros que ainda te esperam
             </p>
             <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
@@ -690,7 +690,7 @@ export function ProfileScreen() {
                       <p className="font-serif italic text-[11px] text-[#3D3D3D] leading-tight line-clamp-2 mb-0.5">
                         {book.title}
                       </p>
-                      <p className="font-sans font-light text-[7px] text-[#454545]/40 truncate">
+                      <p className="font-sans font-light text-[7px] text-[#2A2A2A]/40 truncate">
                         {book.author}
                       </p>
                     </div>
@@ -709,9 +709,9 @@ export function ProfileScreen() {
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Guardados</span>
                 <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-                <span className="font-sans font-light text-[8px] text-[#454545]/30">{saved.length}</span>
+                <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{saved.length}</span>
               </div>
-              <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">
+              <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
                 Ecos que te tocaram
               </p>
               <div className="space-y-3">
@@ -729,7 +729,7 @@ export function ProfileScreen() {
             <div className="flex items-center gap-2 mb-3">
               <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Minhas margens</span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-              <span className="font-sans font-light text-[8px] text-[#454545]/30">{currentUser.stats.totalMargins} total</span>
+              <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{currentUser.stats.totalMargins} total</span>
             </div>
             <div className="space-y-3">
               {myMargins.slice(0, 3).map((m) => (

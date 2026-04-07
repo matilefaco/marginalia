@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marginalia — Cards de Compartilhamento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–albescent: #FAF8F3;
+–heather: #AE8F7D;
+–old-vine: #697962;
+–doeskin: #BDAB9C;
+–metal: #2A2A2A;
+–metal-light: #5A5450;
+–cream-mid: #F0EDE6;
+–parchment: #E8E3D9;
+}
+
+body {
+background: #1A1816;
+font-family: ‘Jost’, sans-serif;
+padding: 40px 20px 60px;
+min-height: 100vh;
+}
+
+h1 {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-weight: 300;
+font-size: 22px;
+color: var(–doeskin);
+text-align: center;
+margin-bottom: 6px;
+letter-spacing: 0.02em;
+}
+
+.subtitle {
+font-family: ‘Jost’, sans-serif;
+font-size: 11px;
+font-weight: 400;
+letter-spacing: 0.12em;
+color: #5A5450;
+text-align: center;
+margin-bottom: 48px;
+text-transform: uppercase;
+}
+
+.section-label {
+font-family: ‘Jost’, sans-serif;
+font-size: 10px;
+font-weight: 500;
+letter-spacing: 0.18em;
+color: #4A4642;
+text-transform: uppercase;
+margin-bottom: 20px;
+padding-left: 2px;
+}
+
+.cards-section {
+max-width: 420px;
+margin: 0 auto 56px;
+}
+
+/* ── CARD BASE ── */
+.card {
+width: 100%;
+aspect-ratio: 9 / 16;
+border-radius: 20px;
+overflow: hidden;
+position: relative;
+display: flex;
+flex-direction: column;
+margin-bottom: 16px;
+}
+
+.card-square {
+aspect-ratio: 1 / 1;
+}
+
+/* ── VARIANTE 1 — CITAÇÃO FAVORITA (light, Stories 9:16) ── */
+.card-quote-light {
+background: var(–albescent);
+padding: 44px 36px;
+justify-content: space-between;
+}
+
+.card-quote-light::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background:
+radial-gradient(ellipse 60% 40% at 15% 10%, rgba(174,143,125,0.10) 0%, transparent 70%),
+radial-gradient(ellipse 50% 50% at 85% 90%, rgba(105,121,98,0.08) 0%, transparent 60%);
+pointer-events: none;
+}
+
+/* dot texture overlay */
+.card-quote-light::after {
+content: ‘’;
+position: absolute;
+inset: 0;
+background-image: radial-gradient(circle, rgba(100,85,72,0.06) 1px, transparent 1px);
+background-size: 18px 18px;
+pointer-events: none;
+}
+
+.cq-header {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+position: relative;
+z-index: 2;
+}
+
+.cq-badge {
+display: flex;
+align-items: center;
+gap: 6px;
+font-family: ‘Jost’, sans-serif;
+font-size: 9.5px;
+font-weight: 500;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: var(–heather);
+}
+
+.cq-badge-dot {
+width: 5px;
+height: 5px;
+background: var(–heather);
+border-radius: 50%;
+}
+
+.cq-logo {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-weight: 400;
+font-size: 13px;
+color: var(–doeskin);
+letter-spacing: 0.04em;
+}
+
+.cq-body {
+position: relative;
+z-index: 2;
+flex: 1;
+display: flex;
+flex-direction: column;
+justify-content: center;
+padding: 32px 0;
+}
+
+.cq-marks {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 52px;
+color: var(–heather);
+opacity: 0.35;
+line-height: 0.7;
+margin-bottom: 16px;
+font-weight: 300;
+}
+
+.cq-quote {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-weight: 400;
+font-size: 24px;
+line-height: 1.55;
+color: var(–metal);
+letter-spacing: 0.01em;
+}
+
+.cq-source {
+margin-top: 20px;
+display: flex;
+flex-direction: column;
+gap: 3px;
+}
+
+.cq-book {
+font-family: ‘Jost’, sans-serif;
+font-size: 10px;
+font-weight: 500;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: var(–metal-light);
+}
+
+.cq-author {
+font-family: ‘Jost’, sans-serif;
+font-size: 10px;
+font-weight: 300;
+letter-spacing: 0.10em;
+text-transform: uppercase;
+color: var(–doeskin);
+}
+
+.cq-footer {
+position: relative;
+z-index: 2;
+display: flex;
+justify-content: space-between;
+align-items: flex-end;
+}
+
+.cq-user {
+display: flex;
+align-items: center;
+gap: 9px;
+}
+
+.cq-avatar {
+width: 28px;
+height: 28px;
+border-radius: 50%;
+background: var(–heather);
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘Jost’, sans-serif;
+font-size: 10px;
+font-weight: 500;
+color: white;
+letter-spacing: 0.02em;
+}
+
+.cq-username {
+font-family: ‘Jost’, sans-serif;
+font-size: 11px;
+font-weight: 400;
+color: var(–metal-light);
+letter-spacing: 0.06em;
+}
+
+.cq-reactions {
+display: flex;
+gap: 6px;
+}
+
+.cq-reaction-pill {
+background: var(–parchment);
+border-radius: 20px;
+padding: 4px 10px;
+font-size: 11px;
+color: var(–metal-light);
+font-family: ‘Jost’, sans-serif;
+font-weight: 400;
+display: flex;
+align-items: center;
+gap: 4px;
+}
+
+/* ── VARIANTE 2 — CITAÇÃO DARK (contraste máximo, viral) ── */
+.card-quote-dark {
+background: #100E0C;
+padding: 44px 36px;
+justify-content: space-between;
+}
+
+.card-quote-dark::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background:
+radial-gradient(ellipse 70% 50% at 50% 50%, rgba(174,143,125,0.06) 0%, transparent 65%),
+radial-gradient(ellipse 30% 40% at 0% 100%, rgba(105,121,98,0.08) 0%, transparent 50%);
+pointer-events: none;
+}
+
+.card-quote-dark .cq-logo { color: #6B5E54; }
+.card-quote-dark .cq-badge { color: var(–doeskin); opacity: 0.6; }
+.card-quote-dark .cq-badge-dot { background: var(–doeskin); opacity: 0.6; }
+.card-quote-dark .cq-marks { color: var(–heather); opacity: 0.18; }
+.card-quote-dark .cq-quote { color: var(–albescent); }
+.card-quote-dark .cq-book { color: rgba(250,248,243,0.5); }
+.card-quote-dark .cq-author { color: var(–heather); opacity: 0.7; }
+.card-quote-dark .cq-username { color: rgba(250,248,243,0.35); }
+.card-quote-dark .cq-reaction-pill { background: rgba(255,255,255,0.06); color: rgba(250,248,243,0.4); }
+
+/* ── VARIANTE 3 — TIPO DE LEITOR ── */
+.card-reader-type {
+background: var(–cream-mid);
+padding: 0;
+justify-content: flex-end;
+overflow: hidden;
+}
+
+.card-reader-type::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background:
+radial-gradient(ellipse 100% 60% at 50% 0%, rgba(174,143,125,0.15) 0%, transparent 60%),
+radial-gradient(ellipse 80% 80% at 100% 100%, rgba(105,121,98,0.10) 0%, transparent 50%);
+pointer-events: none;
+z-index: 1;
+}
+
+.rt-top-ornament {
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 55%;
+background: var(–heather);
+clip-path: ellipse(65% 100% at 50% 0%);
+opacity: 0.12;
+z-index: 0;
+}
+
+.rt-content {
+position: relative;
+z-index: 2;
+padding: 44px 36px;
+display: flex;
+flex-direction: column;
+height: 100%;
+justify-content: space-between;
+}
+
+.rt-header {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+}
+
+.rt-label {
+font-family: ‘Jost’, sans-serif;
+font-size: 9.5px;
+font-weight: 500;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: var(–heather);
+}
+
+.rt-logo {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-size: 13px;
+color: var(–doeskin);
+letter-spacing: 0.04em;
+}
+
+.rt-emoji-container {
+display: flex;
+justify-content: center;
+align-items: center;
+flex: 1;
+}
+
+.rt-emoji {
+font-size: 80px;
+filter: saturate(0.7);
+opacity: 0.9;
+}
+
+.rt-main {
+text-align: center;
+padding-bottom: 8px;
+}
+
+.rt-type-name {
+font-family: ‘Cormorant Garamond’, serif;
+font-weight: 400;
+font-size: 38px;
+color: var(–metal);
+line-height: 1.1;
+letter-spacing: -0.01em;
+margin-bottom: 8px;
+}
+
+.rt-type-desc {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-weight: 300;
+font-size: 16px;
+color: var(–metal-light);
+line-height: 1.5;
+letter-spacing: 0.01em;
+max-width: 240px;
+margin: 0 auto;
+}
+
+.rt-divider {
+width: 32px;
+height: 0.5px;
+background: var(–doeskin);
+margin: 18px auto;
+opacity: 0.6;
+}
+
+.rt-fingerprint {
+display: flex;
+justify-content: center;
+gap: 8px;
+flex-wrap: wrap;
+margin-bottom: 8px;
+}
+
+.rt-tag {
+font-family: ‘Jost’, sans-serif;
+font-size: 9.5px;
+font-weight: 400;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(–heather);
+padding: 4px 10px;
+border: 0.5px solid var(–doeskin);
+border-radius: 20px;
+opacity: 0.8;
+}
+
+.rt-footer {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 24px;
+padding-top: 16px;
+border-top: 0.5px solid rgba(174,143,125,0.25);
+}
+
+.rt-stats {
+display: flex;
+gap: 16px;
+}
+
+.rt-stat {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 2px;
+}
+
+.rt-stat-val {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 18px;
+font-weight: 400;
+color: var(–metal);
+}
+
+.rt-stat-key {
+font-family: ‘Jost’, sans-serif;
+font-size: 8px;
+font-weight: 400;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: var(–doeskin);
+}
+
+/* ── VARIANTE 4 — MARGEM/ECO (card feed) ── */
+.card-echo {
+background: var(–albescent);
+padding: 36px 32px;
+justify-content: space-between;
+border: 0.5px solid rgba(174,143,125,0.2);
+}
+
+.card-echo::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background-image: radial-gradient(circle, rgba(100,85,72,0.04) 1px, transparent 1px);
+background-size: 16px 16px;
+pointer-events: none;
+}
+
+.echo-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+position: relative;
+z-index: 2;
+margin-bottom: 28px;
+}
+
+.echo-badge {
+display: flex;
+align-items: center;
+gap: 6px;
+font-family: ‘Jost’, sans-serif;
+font-size: 9px;
+font-weight: 500;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: var(–old-vine);
+}
+
+.echo-badge-icon {
+font-size: 11px;
+}
+
+.echo-book-label {
+font-family: ‘Jost’, sans-serif;
+font-size: 9px;
+font-weight: 400;
+letter-spacing: 0.10em;
+text-transform: uppercase;
+color: var(–doeskin);
+}
+
+.echo-body {
+position: relative;
+z-index: 2;
+flex: 1;
+}
+
+.echo-left-bar {
+position: absolute;
+left: -20px;
+top: 0;
+bottom: 0;
+width: 2px;
+background: var(–heather);
+opacity: 0.4;
+border-radius: 2px;
+}
+
+.echo-passage {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-weight: 400;
+font-size: 21px;
+line-height: 1.6;
+color: var(–metal);
+letter-spacing: 0.01em;
+margin-bottom: 16px;
+}
+
+.echo-annotation {
+font-family: ‘Jost’, sans-serif;
+font-size: 13px;
+font-weight: 300;
+color: var(–metal-light);
+line-height: 1.65;
+letter-spacing: 0.01em;
+}
+
+.echo-footer {
+position: relative;
+z-index: 2;
+margin-top: 28px;
+display: flex;
+justify-content: space-between;
+align-items: flex-end;
+}
+
+.echo-meta {
+display: flex;
+flex-direction: column;
+gap: 3px;
+}
+
+.echo-user {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.echo-avatar {
+width: 24px;
+height: 24px;
+border-radius: 50%;
+background: var(–old-vine);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 9px;
+font-weight: 500;
+color: white;
+font-family: ‘Jost’, sans-serif;
+}
+
+.echo-handle {
+font-family: ‘Jost’, sans-serif;
+font-size: 11px;
+font-weight: 400;
+color: var(–metal-light);
+letter-spacing: 0.04em;
+}
+
+.echo-chapter {
+font-family: ‘Jost’, sans-serif;
+font-size: 9px;
+font-weight: 400;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(–doeskin);
+margin-top: 10px;
+}
+
+.echo-right {
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+gap: 6px;
+}
+
+.echo-reactions {
+display: flex;
+gap: 5px;
+}
+
+.echo-logo {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-size: 12px;
+color: var(–doeskin);
+opacity: 0.6;
+letter-spacing: 0.04em;
+}
+
+/* ── VARIANTE 5 — DNA DE LEITURA / WRAPPED ── */
+.card-dna {
+background: #100E0C;
+padding: 44px 36px;
+justify-content: space-between;
+overflow: hidden;
+}
+
+.dna-bg-lines {
+position: absolute;
+inset: 0;
+z-index: 0;
+overflow: hidden;
+}
+
+.dna-bg-lines::before {
+content: ‘’;
+position: absolute;
+top: -30%;
+left: -20%;
+width: 80%;
+height: 120%;
+border: 0.5px solid rgba(174,143,125,0.08);
+border-radius: 50%;
+transform: rotate(-15deg);
+}
+
+.dna-bg-lines::after {
+content: ‘’;
+position: absolute;
+bottom: -20%;
+right: -10%;
+width: 70%;
+height: 100%;
+border: 0.5px solid rgba(105,121,98,0.08);
+border-radius: 50%;
+transform: rotate(20deg);
+}
+
+.dna-content {
+position: relative;
+z-index: 2;
+display: flex;
+flex-direction: column;
+height: 100%;
+justify-content: space-between;
+}
+
+.dna-header {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+}
+
+.dna-label {
+font-family: ‘Jost’, sans-serif;
+font-size: 9px;
+font-weight: 500;
+letter-spacing: 0.20em;
+text-transform: uppercase;
+color: rgba(174,143,125,0.5);
+}
+
+.dna-logo {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-size: 13px;
+color: rgba(174,143,125,0.4);
+letter-spacing: 0.04em;
+}
+
+.dna-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-weight: 300;
+font-size: 42px;
+line-height: 1.05;
+color: var(–albescent);
+letter-spacing: -0.02em;
+margin-bottom: 6px;
+}
+
+.dna-title em {
+font-style: italic;
+color: var(–heather);
+}
+
+.dna-subtitle {
+font-family: ‘Jost’, sans-serif;
+font-size: 11px;
+font-weight: 300;
+color: rgba(250,248,243,0.35);
+letter-spacing: 0.10em;
+text-transform: uppercase;
+}
+
+.dna-traits {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.dna-trait {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.dna-trait-bar-wrap {
+flex: 1;
+height: 2px;
+background: rgba(255,255,255,0.06);
+border-radius: 2px;
+overflow: hidden;
+}
+
+.dna-trait-bar {
+height: 100%;
+background: linear-gradient(90deg, var(–heather), var(–old-vine));
+border-radius: 2px;
+opacity: 0.7;
+}
+
+.dna-trait-name {
+font-family: ‘Jost’, sans-serif;
+font-size: 11px;
+font-weight: 400;
+color: rgba(250,248,243,0.5);
+letter-spacing: 0.06em;
+min-width: 90px;
+}
+
+.dna-trait-val {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 14px;
+color: rgba(250,248,243,0.4);
+min-width: 30px;
+text-align: right;
+}
+
+.dna-books {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+}
+
+.dna-book-chip {
+font-family: ‘Jost’, sans-serif;
+font-size: 9.5px;
+font-weight: 400;
+letter-spacing: 0.10em;
+color: rgba(250,248,243,0.35);
+border: 0.5px solid rgba(255,255,255,0.10);
+padding: 5px 10px;
+border-radius: 20px;
+}
+
+.dna-footer {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-top: 16px;
+border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+
+.dna-fingerprint-label {
+font-family: ‘Jost’, sans-serif;
+font-size: 9px;
+font-weight: 400;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: rgba(250,248,243,0.2);
+}
+
+.dna-fingerprint-val {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-size: 12px;
+color: rgba(174,143,125,0.4);
+}
+
+/* ── VARIANTE 6 — MOMENTO VIRAL (dark, máximo impacto) ── */
+.card-moment {
+background: #0D0B09;
+padding: 48px 36px;
+justify-content: center;
+align-items: center;
+overflow: hidden;
+}
+
+.card-moment::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background:
+radial-gradient(ellipse 80% 60% at 50% 30%, rgba(174,143,125,0.08) 0%, transparent 60%);
+z-index: 0;
+}
+
+.moment-content {
+position: relative;
+z-index: 2;
+text-align: center;
+display: flex;
+flex-direction: column;
+align-items: center;
+width: 100%;
+}
+
+.moment-header {
+display: flex;
+gap: 6px;
+align-items: center;
+margin-bottom: 48px;
+}
+
+.moment-dot {
+width: 4px;
+height: 4px;
+border-radius: 50%;
+background: var(–heather);
+opacity: 0.4;
+}
+
+.moment-book-label {
+font-family: ‘Jost’, sans-serif;
+font-size: 9px;
+font-weight: 400;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: rgba(174,143,125,0.4);
+}
+
+.moment-quote {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-weight: 300;
+font-size: 28px;
+line-height: 1.5;
+color: var(–albescent);
+letter-spacing: 0.01em;
+text-align: center;
+max-width: 280px;
+margin-bottom: 40px;
+}
+
+.moment-divider {
+width: 1px;
+height: 32px;
+background: linear-gradient(to bottom, transparent, rgba(174,143,125,0.4), transparent);
+margin-bottom: 40px;
+}
+
+.moment-annotation {
+font-family: ‘Jost’, sans-serif;
+font-size: 13px;
+font-weight: 300;
+color: rgba(250,248,243,0.45);
+line-height: 1.7;
+text-align: center;
+max-width: 260px;
+letter-spacing: 0.01em;
+font-style: italic;
+}
+
+.moment-footer {
+position: absolute;
+bottom: 40px;
+left: 36px;
+right: 36px;
+z-index: 3;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.moment-user {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.moment-avatar {
+width: 26px;
+height: 26px;
+border-radius: 50%;
+background: rgba(174,143,125,0.3);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 9px;
+color: var(–heather);
+font-family: ‘Jost’, sans-serif;
+font-weight: 500;
+}
+
+.moment-handle {
+font-family: ‘Jost’, sans-serif;
+font-size: 11px;
+font-weight: 300;
+color: rgba(250,248,243,0.25);
+letter-spacing: 0.06em;
+}
+
+.moment-logo {
+font-family: ‘Cormorant Garamond’, serif;
+font-style: italic;
+font-size: 14px;
+color: rgba(174,143,125,0.3);
+letter-spacing: 0.04em;
+}
+
+/* ── UI CHROME ── */
+.card-label {
+font-family: ‘Jost’, sans-serif;
+font-size: 10px;
+font-weight: 400;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: #3A3632;
+margin-bottom: 10px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.card-label::after {
+content: ‘’;
+flex: 1;
+height: 0.5px;
+background: #2A2622;
+}
+
+.note {
+font-family: ‘Jost’, sans-serif;
+font-size: 10px;
+font-weight: 300;
+color: #3A3632;
+margin-top: 6px;
+line-height: 1.7;
+letter-spacing: 0.03em;
+}
+
+.grid-2 {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+}
+
+.grid-2 .card {
+aspect-ratio: 9 / 16;
+font-size: 0.85em;
+}
+
+.grid-2 .cq-quote { font-size: 16px; }
+.grid-2 .cq-marks { font-size: 36px; }
+
+/* scrollable showcase */
+@media (max-width: 480px) {
+.cards-section { max-width: 100%; }
+.card { border-radius: 16px; }
+.grid-2 { grid-template-columns: 1fr; }
+.grid-2 .card { aspect-ratio: 9 / 16; }
+}
+</style>
+
+</head>
+<body>
+
+<h1>marginalia</h1>
+<p class="subtitle">Cards de Compartilhamento — Proposta Visual</p>
+
+<!-- ── 1. CITAÇÃO LIGHT ── -->
+
+<div class="cards-section">
+  <p class="card-label">Citação Favorita — Fundo claro</p>
+
+  <div class="card card-quote-light">
+    <div class="cq-header">
+      <div class="cq-badge"><span class="cq-badge-dot"></span>Citação favorita</div>
+      <div class="cq-logo">marginalia</div>
+    </div>
+
+```
+<div class="cq-body">
+  <div class="cq-marks">"</div>
+  <div class="cq-quote">Quero escrever movimento puro. A passagem de um dia para outro.</div>
+  <div class="cq-source">
+    <span class="cq-book">A Hora da Estrela</span>
+    <span class="cq-author">Clarice Lispector · Cap. III</span>
+  </div>
+</div>
+
+<div class="cq-footer">
+  <div class="cq-user">
+    <div class="cq-avatar">AC</div>
+    <span class="cq-username">@anaclara</span>
+  </div>
+  <div class="cq-reactions">
+    <span class="cq-reaction-pill">✦ 9</span>
+    <span class="cq-reaction-pill">🤔 2</span>
+  </div>
+</div>
+```
+
+  </div>
+  <p class="note">Stories 9:16 · Background Albescent · Ideal para BookTok estético</p>
+</div>
+
+<!-- ── 2. CITAÇÃO DARK ── -->
+
+<div class="cards-section">
+  <p class="card-label">Citação Favorita — Fundo escuro</p>
+
+  <div class="card card-quote-dark">
+    <div class="cq-header">
+      <div class="cq-badge"><span class="cq-badge-dot"></span>Citação favorita</div>
+      <div class="cq-logo">marginalia</div>
+    </div>
+
+```
+<div class="cq-body">
+  <div class="cq-marks">"</div>
+  <div class="cq-quote">Ser auténtico é o trabalho mais difícil e mais solitário que existe.</div>
+  <div class="cq-source">
+    <span class="cq-book">O Amor nos Tempos do Cólera</span>
+    <span class="cq-author">García Márquez · Cap. VII</span>
+  </div>
+</div>
+
+<div class="cq-footer">
+  <div class="cq-user">
+    <div class="cq-avatar" style="background: #3D3530;">MF</div>
+    <span class="cq-username">@matilefaco</span>
+  </div>
+  <div class="cq-reactions">
+    <span class="cq-reaction-pill">🤍 12</span>
+    <span class="cq-reaction-pill">⚡ 5</span>
+  </div>
+</div>
+```
+
+  </div>
+  <p class="note">Versão dark · Maior contraste · Mais impacto em feed do Instagram</p>
+</div>
+
+<!-- ── 3. TIPO DE LEITOR ── -->
+
+<div class="cards-section">
+  <p class="card-label">Tipo de Leitor</p>
+
+  <div class="card card-reader-type">
+    <div class="rt-top-ornament"></div>
+    <div class="rt-content">
+      <div class="rt-header">
+        <span class="rt-label">Seu tipo de leitor</span>
+        <span class="rt-logo">marginalia</span>
+      </div>
+
+```
+  <div class="rt-emoji-container">
+    <div class="rt-emoji">🔭</div>
+  </div>
+
+  <div class="rt-main">
+    <div class="rt-type-name">O Observador</div>
+    <div class="rt-type-desc">Você percebe coisas que passam despercebidas.</div>
+    <div class="rt-divider"></div>
+    <div class="rt-fingerprint">
+      <span class="rt-tag">Leitor sensível</span>
+      <span class="rt-tag">Criterioso</span>
+      <span class="rt-tag">🤍 Tocou</span>
+    </div>
+  </div>
+
+  <div class="rt-footer">
+    <div class="rt-stats">
+      <div class="rt-stat">
+        <span class="rt-stat-val">14</span>
+        <span class="rt-stat-key">Margens</span>
+      </div>
+      <div class="rt-stat">
+        <span class="rt-stat-val">47</span>
+        <span class="rt-stat-key">Ecos</span>
+      </div>
+      <div class="rt-stat">
+        <span class="rt-stat-val">3</span>
+        <span class="rt-stat-key">Livros</span>
+      </div>
+    </div>
+    <span class="rt-logo">marginalia</span>
+  </div>
+</div>
+```
+
+  </div>
+  <p class="note">Ideal para compartilhar no Stories · Personalidade de leitura + stats</p>
+</div>
+
+<!-- ── 4. ECO / MARGEM ── -->
+
+<div class="cards-section">
+  <p class="card-label">Eco / Margem no Feed</p>
+
+  <div class="card card-echo">
+    <div class="echo-header">
+      <div class="echo-badge">
+        <span class="echo-badge-icon">💡</span>
+        <span>Insight</span>
+      </div>
+      <span class="echo-book-label">Grande Sertão: Veredas</span>
+    </div>
+
+```
+<div class="echo-body">
+  <div style="position: relative; padding-left: 20px;">
+    <div class="echo-left-bar"></div>
+    <div class="echo-passage">"Nonada. Tiros que o senhor ouviu foram de briga de homem não, Quem sabe lá."</div>
+  </div>
+  <div class="echo-annotation">Esse parágrafo abre o livro como se a literatura inteira pudesse começar num sopro descartado. Guimarães consegue o impossível.</div>
+</div>
+
+<div class="echo-footer">
+  <div class="echo-meta">
+    <div class="echo-user">
+      <div class="echo-avatar" style="background: var(--old-vine);">TA</div>
+      <span class="echo-handle">@thiago.andrade</span>
+    </div>
+    <span class="echo-chapter">Em 0% do livro · sem spoiler</span>
+  </div>
+  <div class="echo-right">
+    <div class="echo-reactions">
+      <span class="cq-reaction-pill">🔥 5</span>
+      <span class="cq-reaction-pill">💡 3</span>
+    </div>
+    <span class="echo-logo">marginalia</span>
+  </div>
+</div>
+```
+
+  </div>
+  <p class="note">Card de margem individual · Shareável via ícone de compartilhar do feed</p>
+</div>
+
+<!-- ── 5. DNA DE LEITURA (dark) ── -->
+
+<div class="cards-section">
+  <p class="card-label">DNA de Leitura</p>
+
+  <div class="card card-dna">
+    <div class="dna-bg-lines"></div>
+    <div class="dna-content">
+      <div class="dna-header">
+        <span class="dna-label">DNA de leitura</span>
+        <span class="dna-logo">marginalia</span>
+      </div>
+
+```
+  <div>
+    <div class="dna-title">Matile <em>Facó</em></div>
+    <div class="dna-subtitle">perfil de leitor · 2025</div>
+  </div>
+
+  <div class="dna-traits">
+    <div class="dna-trait">
+      <span class="dna-trait-name">Sensível</span>
+      <div class="dna-trait-bar-wrap"><div class="dna-trait-bar" style="width: 88%;"></div></div>
+      <span class="dna-trait-val">88</span>
+    </div>
+    <div class="dna-trait">
+      <span class="dna-trait-name">Analítico</span>
+      <div class="dna-trait-bar-wrap"><div class="dna-trait-bar" style="width: 62%;"></div></div>
+      <span class="dna-trait-val">62</span>
+    </div>
+    <div class="dna-trait">
+      <span class="dna-trait-name">Crítico</span>
+      <div class="dna-trait-bar-wrap"><div class="dna-trait-bar" style="width: 45%;"></div></div>
+      <span class="dna-trait-val">45</span>
+    </div>
+    <div class="dna-trait">
+      <span class="dna-trait-name">Curioso</span>
+      <div class="dna-trait-bar-wrap"><div class="dna-trait-bar" style="width: 79%;"></div></div>
+      <span class="dna-trait-val">79</span>
+    </div>
+  </div>
+
+  <div class="dna-books">
+    <span class="dna-book-chip">A Hora da Estrela</span>
+    <span class="dna-book-chip">Grande Sertão</span>
+    <span class="dna-book-chip">A Paixão Segundo GH</span>
+  </div>
+
+  <div class="dna-footer">
+    <div>
+      <div class="dna-fingerprint-label">Impressão digital</div>
+      <div class="dna-fingerprint-val">O Observador · Leitor sensível · 🤍</div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+  <p class="note">Card de perfil completo · Viral alto potencial · Formato Spotify Wrapped</p>
+</div>
+
+<!-- ── 6. MOMENTO (dark, máximo impacto) ── -->
+
+<div class="cards-section">
+  <p class="card-label">Momento — Máximo impacto</p>
+
+  <div class="card card-moment">
+    <div class="moment-content">
+      <div class="moment-header">
+        <div class="moment-dot"></div>
+        <span class="moment-book-label">Admirável Mundo Novo · Huxley</span>
+        <div class="moment-dot"></div>
+      </div>
+
+```
+  <div class="moment-quote">"Escrevo porque não sei o que dizer quando estou de frente para o que sinto."</div>
+
+  <div class="moment-divider"></div>
+
+  <div class="moment-annotation">Não há jeito de melhorar essa frase. Ela chegou perfeita e deve ser deixada exatamente assim.</div>
+</div>
+
+<div class="moment-footer">
+  <div class="moment-user">
+    <div class="moment-avatar">CM</div>
+    <span class="moment-handle">@claramonteiro</span>
+  </div>
+  <div class="moment-logo">marginalia</div>
+</div>
+```
+
+  </div>
+  <p class="note">Stories escuro · Silêncio visual + peso emocional = muito shareável</p>
+</div>
+
+</body>
+</html>

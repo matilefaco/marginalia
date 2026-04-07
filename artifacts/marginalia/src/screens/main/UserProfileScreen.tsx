@@ -23,7 +23,7 @@ export function UserProfileScreen() {
   if (!user || userId === currentUser.id) {
     return (
       <div className="min-h-full flex items-center justify-center screen-enter">
-        <p className="font-serif italic text-[#454545]/40">Perfil não encontrado.</p>
+        <p className="font-serif italic text-[#2A2A2A]/40">Perfil não encontrado.</p>
       </div>
     );
   }
@@ -48,11 +48,11 @@ export function UserProfileScreen() {
       <div className="flex items-center gap-3 px-5 pt-8 pb-4">
         <button
           onClick={() => window.history.back()}
-          className="text-[#454545]/40 hover:text-[#454545]/70 transition-colors"
+          className="text-[#2A2A2A]/40 hover:text-[#2A2A2A]/70 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <p className="font-sans font-light text-[9px] tracking-[0.14em] uppercase text-[#454545]/35">
+        <p className="font-sans font-light text-[9px] tracking-[0.14em] uppercase text-[#2A2A2A]/35">
           Perfil do leitor
         </p>
       </div>
@@ -70,14 +70,14 @@ export function UserProfileScreen() {
             <h1 className="font-serif text-[22px] text-[#3D3D3D] leading-tight">{fullName}</h1>
             <p className="font-sans font-light text-[10px] text-[#AE8F7D] mt-0.5">{user.username}</p>
             {user.city && (
-              <p className="font-sans font-light text-[9px] text-[#454545]/35 mt-0.5">{user.city}</p>
+              <p className="font-sans font-light text-[9px] text-[#2A2A2A]/35 mt-0.5">{user.city}</p>
             )}
           </div>
         </div>
 
         {/* Bio */}
         {user.bio && (
-          <p className="font-serif italic text-[14px] text-[#454545]/60 leading-relaxed">
+          <p className="font-serif italic text-[14px] text-[#2A2A2A]/60 leading-relaxed">
             {user.bio}
           </p>
         )}
@@ -96,9 +96,9 @@ export function UserProfileScreen() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-[#EBE6DB]/60 rounded-[10px] px-3.5 py-2.5 hover:bg-[#AE8F7D]/10 transition-colors group"
                 >
-                  <Instagram className="w-4 h-4 text-[#454545]/50 group-hover:text-[#AE8F7D] transition-colors" />
-                  <span className="font-sans font-light text-[11px] text-[#454545]/60 group-hover:text-[#454545]/80">{user.instagram}</span>
-                  <ExternalLink className="w-2.5 h-2.5 text-[#454545]/20 group-hover:text-[#AE8F7D]/60" />
+                  <Instagram className="w-4 h-4 text-[#2A2A2A]/50 group-hover:text-[#AE8F7D] transition-colors" />
+                  <span className="font-sans font-light text-[11px] text-[#2A2A2A]/60 group-hover:text-[#2A2A2A]/80">{user.instagram}</span>
+                  <ExternalLink className="w-2.5 h-2.5 text-[#2A2A2A]/20 group-hover:text-[#AE8F7D]/60" />
                 </a>
               )}
               {user.tiktok && (
@@ -108,9 +108,9 @@ export function UserProfileScreen() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-[#EBE6DB]/60 rounded-[10px] px-3.5 py-2.5 hover:bg-[#AE8F7D]/10 transition-colors group"
                 >
-                  <TikTokIcon className="w-4 h-4 text-[#454545]/50 group-hover:text-[#AE8F7D] transition-colors" />
-                  <span className="font-sans font-light text-[11px] text-[#454545]/60 group-hover:text-[#454545]/80">{user.tiktok}</span>
-                  <ExternalLink className="w-2.5 h-2.5 text-[#454545]/20 group-hover:text-[#AE8F7D]/60" />
+                  <TikTokIcon className="w-4 h-4 text-[#2A2A2A]/50 group-hover:text-[#AE8F7D] transition-colors" />
+                  <span className="font-sans font-light text-[11px] text-[#2A2A2A]/60 group-hover:text-[#2A2A2A]/80">{user.tiktok}</span>
+                  <ExternalLink className="w-2.5 h-2.5 text-[#2A2A2A]/20 group-hover:text-[#AE8F7D]/60" />
                 </a>
               )}
             </div>
@@ -134,7 +134,7 @@ export function UserProfileScreen() {
               Tipo de leitor
             </p>
             <p className="font-serif text-[20px] text-[#3D3D3D] leading-tight mb-1">{archetype.label}</p>
-            <p className="font-serif italic text-[12px] text-[#454545]/55 mb-4 leading-snug">{archetype.description}</p>
+            <p className="font-serif italic text-[12px] text-[#2A2A2A]/55 mb-4 leading-snug">{archetype.description}</p>
             <div className="h-px bg-[#AE8F7D]/20 mb-4" />
             <p className="font-sans text-[7px] font-light tracking-[0.22em] uppercase text-[#AE8F7D] mb-2">
               Assinatura de leitura
@@ -155,7 +155,7 @@ export function UserProfileScreen() {
             <div key={stat.label} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] py-3 text-center">
               <div className="text-[13px] mb-0.5">{stat.icon}</div>
               <div className="font-serif text-[20px] text-[#3D3D3D] leading-none mb-0.5">{stat.value}</div>
-              <div className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#454545]/35">{stat.label}</div>
+              <div className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#2A2A2A]/35">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -166,9 +166,9 @@ export function UserProfileScreen() {
             <div className="flex items-center gap-3 border border-[#AE8F7D]/15 rounded-[14px] px-4 py-3 hover:border-[#AE8F7D]/30 transition-colors">
               <span className="text-[15px] flex-shrink-0">📖</span>
               <div className="flex-1 min-w-0">
-                <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#454545]/35">Livro mais anotado</p>
+                <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Livro mais anotado</p>
                 <p className="font-serif italic text-[13px] text-[#3D3D3D] truncate">{topAnnotatedBook.title}</p>
-                <p className="font-sans font-light text-[9px] text-[#454545]/40">{topAnnotatedBook.author}</p>
+                <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40">{topAnnotatedBook.author}</p>
               </div>
             </div>
           </Link>
@@ -183,7 +183,7 @@ export function UserProfileScreen() {
             </div>
             <div className="flex flex-wrap gap-2">
               {user.preferredGenres.map((g) => (
-                <span key={g} className="font-sans font-light text-[10px] text-[#454545]/60 bg-[#EBE6DB]/60 border border-[#AE8F7D]/15 rounded-full px-3 py-1.5">
+                <span key={g} className="font-sans font-light text-[10px] text-[#2A2A2A]/60 bg-[#EBE6DB]/60 border border-[#AE8F7D]/15 rounded-full px-3 py-1.5">
                   {g}
                 </span>
               ))}
@@ -197,7 +197,7 @@ export function UserProfileScreen() {
             <div className="flex items-center gap-2 mb-3">
               <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Margens públicas</span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-              <span className="font-sans font-light text-[8px] text-[#454545]/30">{userMargins.length}</span>
+              <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{userMargins.length}</span>
             </div>
             <div className="space-y-3">
               {userMargins.slice(0, 8).map((m) => (
@@ -209,7 +209,7 @@ export function UserProfileScreen() {
 
         {userMargins.length === 0 && (
           <div className="text-center py-10 border border-dashed border-[#AE8F7D]/15 rounded-[14px]">
-            <p className="font-serif italic text-[13px] text-[#454545]/35">
+            <p className="font-serif italic text-[13px] text-[#2A2A2A]/35">
               Nenhuma margem pública ainda.
             </p>
           </div>

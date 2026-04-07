@@ -1,0 +1,660 @@
+Quero implementar um pacote completo de refinamento visual, estrutural e estratégico no app Marginalia.
+
+Este pacote inclui:
+
+1. sistema tipográfico global mais legível
+2. transformação dos cards de compartilhamento em componentes reais e reutilizáveis
+3. integração desses cards ao fluxo real de exportação/compartilhamento
+4. criação de página pública do livro acessível sem login
+5. exibição do heatmap do livro sem login
+6. regras claras de acesso para usuários logados e deslogados
+7. padronização visual e técnica de tudo isso
+
+Quero implementação real no código, não apenas conceito visual.
+
+==================================================
+PARTE 1 — SISTEMA TIPOGRÁFICO GLOBAL
+==================================================
+
+OBJETIVO:
+Quero corrigir e padronizar o uso da tipografia no app para melhorar:
+- legibilidade
+- contraste
+- consistência
+- sensação editorial
+
+--------------------------------------------------
+1.1. REGRA DE USO DAS FONTES
+--------------------------------------------------
+
+### Cormorant Garamond
+Usar apenas em:
+- citações destacadas
+- títulos grandes de seção
+- títulos editoriais de impacto
+- nome do app
+- momentos emocionais/poéticos
+
+### Jost Regular / Medium
+Usar em:
+- corpo de texto funcional
+- labels
+- descrições
+- metadados
+- textos auxiliares
+- UI geral
+- botões
+- formulários
+- menus
+- tabs
+- informações do livro
+- informações do usuário
+
+--------------------------------------------------
+1.2. COR DO TEXTO FUNCIONAL
+--------------------------------------------------
+
+Quero escurecer o texto funcional para algo em torno de:
+
+- `#2A2A2A`
+
+Esse deve ser o “Metal” principal mais escuro.
+
+### Objetivo:
+- ganhar contraste
+- reduzir fadiga visual
+- manter identidade elegante
+
+--------------------------------------------------
+1.3. HIERARQUIA TIPOGRÁFICA
+--------------------------------------------------
+
+Quero aplicar a regra:
+
+- tudo que for “sentir” → Cormorant
+- tudo que for “usar” → Jost
+
+### Exemplos:
+Cormorant:
+- títulos grandes
+- citações
+- frases centrais
+- momentos de impacto
+- nome do app
+
+Jost:
+- labels
+- subtítulos
+- metadados
+- botões
+- descrições
+- UI funcional
+
+--------------------------------------------------
+1.4. IMPLEMENTAÇÃO TÉCNICA
+--------------------------------------------------
+
+Quero:
+- revisar tokens de tipografia
+- centralizar estilos tipográficos reutilizáveis
+- criar classes ou objetos de estilo reutilizáveis para:
+  - headingEditorial
+  - quoteDisplay
+  - bodyUI
+  - labelCaps
+  - metaText
+  - helperText
+
+Se houver design tokens, atualizar eles.
+Se não houver, criar uma camada clara de tipografia compartilhada.
+
+==================================================
+PARTE 2 — SISTEMA OFICIAL DE CARDS DE COMPARTILHAMENTO
+==================================================
+
+OBJETIVO:
+Quero transformar as referências visuais dos cards em componentes reais dentro do app.
+
+Esses cards precisam:
+- existir como componentes
+- receber dados reais dinamicamente
+- serem exportáveis
+- respeitar formatos story/feed
+- manter a identidade premium do Marginalia
+
+--------------------------------------------------
+2.1. CRIAR UM SISTEMA DE COMPONENTES PARA CARDS
+--------------------------------------------------
+
+Criar componentes reais, reutilizáveis e bem separados para as seguintes variantes:
+
+1. Citação Favorita Light
+2. Citação Dark
+3. Tipo de Leitor
+4. Eco / Margem
+5. DNA de Leitura
+6. Momento
+
+Cada card deve aceitar props reais e não conteúdo hardcoded.
+
+--------------------------------------------------
+2.2. VARIANTE 1 — CITAÇÃO FAVORITA LIGHT
+--------------------------------------------------
+
+### Conceito:
+- fundo Albescent
+- textura dot-matrix sutil
+- aspas decorativas grandes
+- quote central em Cormorant
+- attribution em spaced caps
+- visual clean e estético
+
+### Props esperadas:
+- quote
+- bookTitle
+- author
+- chapterLabel / reference
+- username
+- avatarInitials
+- avatarColor
+- reactions
+- logoVariant
+
+### Uso:
+- Stories 9:16
+- cards delicados e compartilháveis
+
+--------------------------------------------------
+2.3. VARIANTE 2 — CITAÇÃO DARK
+--------------------------------------------------
+
+### Conceito:
+- fundo quase preto
+- estrutura semelhante à light
+- contraste máximo
+- impacto visual forte
+
+### Props esperadas:
+mesmas da variante light
+
+### Uso:
+- compartilhamento em feed
+- cards com mais drama/força
+
+--------------------------------------------------
+2.4. VARIANTE 3 — TIPO DE LEITOR
+--------------------------------------------------
+
+### Conceito:
+- card altamente compartilhável
+- tipo de leitor em Cormorant
+- emoji central
+- tags de personalidade
+- stats no rodapé
+
+### Props esperadas:
+- readerTypeName
+- readerTypeDescription
+- emoji
+- tags[]
+- stats:
+  - margins
+  - ecos
+  - books
+- username / app name
+
+### Objetivo:
+fazer a pessoa querer compartilhar porque o card “fala sobre ela”.
+
+--------------------------------------------------
+2.5. VARIANTE 4 — ECO / MARGEM
+--------------------------------------------------
+
+### Conceito:
+- card individual derivado do feed
+- barra lateral de acento
+- trecho em itálico
+- anotação em Jost
+- referência + badge de spoiler
+- usuário + reações
+
+### Props esperadas:
+- ecoType
+- accentColor
+- passage
+- annotation
+- bookTitle
+- chapterLabel
+- spoilerFlag
+- username
+- avatar
+- reactions
+
+### Objetivo:
+permitir compartilhar uma margem individual do feed.
+
+--------------------------------------------------
+2.6. VARIANTE 5 — DNA DE LEITURA
+--------------------------------------------------
+
+### Conceito:
+- card tipo Wrapped
+- visual escuro e sofisticado
+- barras de traços
+- chips de livros
+- fingerprint/resumo final
+
+### Props esperadas:
+- fullName
+- username
+- traits:
+  - sensível
+  - analítico
+  - crítico
+  - curioso
+- books[]
+- fingerprintText
+- archetypeName
+
+### Objetivo:
+alto potencial viral e compartilhável.
+
+--------------------------------------------------
+2.7. VARIANTE 6 — MOMENTO
+--------------------------------------------------
+
+### Conceito:
+- card escuro minimalista
+- silêncio visual máximo
+- só citação e anotação
+- forte presença poética
+
+### Props esperadas:
+- quote
+- annotation
+- bookLabel
+- username
+- avatar
+- logo/app mark
+
+### Objetivo:
+parar scroll e gerar impacto emocional.
+
+--------------------------------------------------
+2.8. ESTRUTURA TÉCNICA DOS COMPONENTES
+--------------------------------------------------
+
+Quero criar algo como:
+- `ShareCardQuoteLight`
+- `ShareCardQuoteDark`
+- `ShareCardReaderType`
+- `ShareCardEcho`
+- `ShareCardReadingDNA`
+- `ShareCardMoment`
+
+Ou uma arquitetura equivalente com um `ShareCardRenderer` + variantes.
+
+### Regras:
+- componentes desacoplados
+- dados via props
+- sem conteúdo fixo
+- preparados para exportação
+
+==================================================
+PARTE 3 — INTEGRAÇÃO DOS CARDS AO SISTEMA DE EXPORTAÇÃO
+==================================================
+
+OBJETIVO:
+Quero que essas variantes sejam a base real do fluxo de compartilhar/baixar.
+
+--------------------------------------------------
+3.1. FORMATO
+--------------------------------------------------
+
+Todo card precisa poder ser gerado em:
+- Stories 9:16
+- Feed 1:1
+
+### Regras:
+- o formato selecionado deve mudar de verdade o render final
+- a prévia e o arquivo final precisam corresponder
+
+--------------------------------------------------
+3.2. EXPORTAÇÃO
+--------------------------------------------------
+
+Quero corrigir e consolidar a exportação de cards.
+
+### Regras:
+- exportar o card real selecionado
+- gerar imagem correta
+- nada branco
+- nada vazio
+- nada genérico
+- respeitar fundo, tipografia, avatar e reações
+
+### Formato preferido:
+- JPEG real para download/compartilhamento
+- PNG apenas se houver necessidade técnica clara
+
+--------------------------------------------------
+3.3. AÇÕES
+--------------------------------------------------
+
+### Baixar
+- baixar a imagem correta do card
+- respeitar o formato selecionado
+- manter o usuário na tela
+- mostrar feedback
+
+### Compartilhar
+- abrir share nativo usando a imagem real
+- respeitar o formato selecionado
+- nunca compartilhar card branco ou vazio
+
+==================================================
+PARTE 4 — DIFERENCIAÇÃO VISUAL DOS TIPOS DE MARGEM
+==================================================
+
+OBJETIVO:
+Quero reforçar a identidade dos tipos de margem no feed e nos cards.
+
+--------------------------------------------------
+4.1. ACENTO CROMÁTICO POR TIPO
+--------------------------------------------------
+
+Sugestão:
+- Citação → Dusty Rose
+- Leitura simbólica → Sage
+- Teoria / Interpretação → Ink
+- Pergunta → tom complementar discreto
+- Crítica → tom mais sóbrio escuro
+- Reação emocional → tom quente suave
+
+--------------------------------------------------
+4.2. ONDE APLICAR
+--------------------------------------------------
+
+Aplicar de forma sutil em:
+- barra lateral
+- label do tipo
+- pequeno marcador
+- badge superior
+
+Nunca exagerar.
+Quero orientação visual, não poluição.
+
+==================================================
+PARTE 5 — PÁGINA PÚBLICA DO LIVRO SEM LOGIN
+==================================================
+
+OBJETIVO:
+Quero que cada livro tenha uma página pública acessível sem login, funcionando como:
+- vitrine viva do livro
+- porta de entrada do app
+- landing page social/editorial para conversão
+
+--------------------------------------------------
+5.1. ROTA PÚBLICA DO LIVRO
+--------------------------------------------------
+
+Criar uma rota pública para o detalhe do livro, acessível sem autenticação.
+
+### Exemplo conceitual:
+- `/book/:id`
+ou
+- `/livro/:slug`
+
+A página deve ser carregável por:
+- link direto
+- compartilhamento
+- indexação
+- acesso sem conta
+
+--------------------------------------------------
+5.2. O QUE MOSTRAR SEM LOGIN
+--------------------------------------------------
+
+Quero que usuários deslogados consigam ver:
+
+### dados do livro
+- capa
+- título
+- autor
+- descrição
+- ano / páginas, se houver
+- gênero(s), se houver
+
+### atividade coletiva resumida
+- número de ecos
+- número de leitores
+- trechos mais quentes
+- resumo de atividade
+
+### heatmap coletivo
+- visível sem login
+
+### destaques da comunidade
+- trecho mais comentado
+- pico emocional
+- parte mais ecoada
+- talvez 1 ou 2 margens em destaque, se fizer sentido
+
+--------------------------------------------------
+5.3. O QUE NÃO MOSTRAR / NÃO PERMITIR SEM LOGIN
+--------------------------------------------------
+
+Sem login, o usuário NÃO pode:
+- publicar margem
+- comentar
+- reagir
+- salvar eco
+- atualizar progresso
+- acessar funções pessoais
+
+Essas ações devem exibir CTA para entrar/criar conta.
+
+==================================================
+PARTE 6 — HEATMAP VISÍVEL SEM LOGIN
+==================================================
+
+OBJETIVO:
+Quero usar o heatmap como mecanismo de encantamento e conversão.
+
+--------------------------------------------------
+6.1. FUNÇÃO ESTRATÉGICA DO HEATMAP
+--------------------------------------------------
+
+O heatmap deve comunicar imediatamente:
+- que aquele livro está vivo
+- que a comunidade reage em pontos específicos
+- que existe leitura coletiva real
+- que o Marginalia é uma camada social sobre o livro
+
+--------------------------------------------------
+6.2. O QUE O HEATMAP PRECISA MOSTRAR
+--------------------------------------------------
+
+Quero que ele sinalize:
+- zonas mais anotadas
+- trechos de maior intensidade emocional
+- partes mais comentadas
+- pontos de maior eco
+
+Mesmo em versão pública sem login, ele precisa ser:
+- bonito
+- compreensível
+- atraente
+- convidativo
+
+--------------------------------------------------
+6.3. UX DE CONVERSÃO
+--------------------------------------------------
+
+Ao ver esse heatmap, o usuário deve sentir:
+“quero entrar nesse app para ver meus livros assim também”
+
+==================================================
+PARTE 7 — CTA PARA CONVERSÃO DE USUÁRIOS DESLOGADOS
+==================================================
+
+OBJETIVO:
+Quero que a página pública do livro funcione como funnel de entrada.
+
+--------------------------------------------------
+7.1. PONTOS DE CTA
+--------------------------------------------------
+
+Inserir CTAs elegantes em lugares estratégicos, por exemplo:
+
+- abaixo do heatmap
+- após margens em destaque
+- próximo da ação de comentar/reagir bloqueada
+- no fim da página
+
+### Exemplos de texto:
+- “Entre para deixar sua margem”
+- “Faça parte da leitura coletiva”
+- “Descubra onde este livro pulsa com outros leitores”
+- “Crie sua leitura dentro da leitura dos outros”
+
+--------------------------------------------------
+7.2. COMPORTAMENTO
+--------------------------------------------------
+
+Se usuário deslogado tentar:
+- reagir
+- comentar
+- salvar
+- publicar margem
+
+abrir:
+- login
+ou
+- modal elegante de convite
+
+==================================================
+PARTE 8 — REGRAS DE ACESSO (LOGADO VS DESLOGADO)
+==================================================
+
+OBJETIVO:
+Definir claramente o que é público e o que exige conta.
+
+--------------------------------------------------
+8.1. PÚBLICO SEM LOGIN
+--------------------------------------------------
+
+Permitir:
+- ver página do livro
+- ver capa/título/autor/descrição
+- ver heatmap coletivo
+- ver resumos de atividade
+- ver algumas margens em destaque, se aplicável
+
+--------------------------------------------------
+8.2. EXIGE LOGIN
+--------------------------------------------------
+
+Exigir login para:
+- publicar margem
+- reagir
+- comentar
+- salvar eco
+- atualizar progresso
+- acessar biblioteca pessoal
+- ver dados privados/pessoais
+
+==================================================
+PARTE 9 — DESIGN SYSTEM / PADRONIZAÇÃO
+==================================================
+
+OBJETIVO:
+Quero que isso seja implementado como sistema, não como exceções soltas.
+
+--------------------------------------------------
+9.1. TOKENS
+--------------------------------------------------
+
+Criar/revisar tokens de:
+- cor
+- tipografia
+- espaçamento
+- raios
+- bordas
+- sombras
+- durações de animação
+
+--------------------------------------------------
+9.2. COMPONENTES REUTILIZÁVEIS
+--------------------------------------------------
+
+Quero componentes reutilizáveis para:
+- card de livro público
+- heatmap público
+- CTA de login
+- card de compartilhamento
+- label editorial
+- metadados em Jost
+- citações em Cormorant
+
+==================================================
+PARTE 10 — TAREFAS TÉCNICAS OBJETIVAS
+==================================================
+
+Executar nesta ordem:
+
+### Tarefa 1
+Revisar e padronizar o sistema tipográfico global.
+
+### Tarefa 2
+Criar os 6 componentes reais de cards de compartilhamento.
+
+### Tarefa 3
+Integrar os cards ao fluxo de exportação/compartilhamento/download.
+
+### Tarefa 4
+Criar rota pública de detalhe do livro sem exigir login.
+
+### Tarefa 5
+Adaptar a query do detalhe do livro para suportar visualização pública.
+
+### Tarefa 6
+Exibir heatmap e destaques da comunidade nessa página pública.
+
+### Tarefa 7
+Adicionar CTAs elegantes para login/entrada.
+
+### Tarefa 8
+Aplicar diferenciação cromática sutil por tipo de margem.
+
+### Tarefa 9
+Garantir consistência visual entre feed, cards e página pública.
+
+==================================================
+PARTE 11 — RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessa implementação, quero que:
+
+- a tipografia fique mais legível e mais inteligente
+- Cormorant seja usada apenas onde realmente brilha
+- Jost assuma a interface funcional
+- os cards de compartilhamento virem sistema oficial do app
+- existam 6 variantes reais e reutilizáveis
+- a exportação desses cards funcione com fidelidade visual
+- a página pública do livro sem login exista de verdade
+- o heatmap visível sem login ajude a converter novos usuários
+- o Marginalia fique mais forte como produto, marca e mecanismo de crescimento
+
+==================================================
+PARTE 12 — IMPORTANTE
+==================================================
+
+Não quero apenas maquetes ou estilo isolado.
+
+Quero:
+- implementação real
+- componentes reais
+- regras reais de acesso
+- integração com dados reais
+- consistência visual e funcional
