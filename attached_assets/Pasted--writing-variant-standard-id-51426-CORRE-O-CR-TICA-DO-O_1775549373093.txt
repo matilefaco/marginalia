@@ -1,0 +1,319 @@
+:::writing{variant=“standard” id=“51426”}
+CORREÇÃO CRÍTICA DO ONBOARDING — O CADASTRO NÃO PODE VOLTAR PARA A TELA INICIAL APÓS A ETAPA DE DADOS + AVATAR
+
+Existe um bug crítico no fluxo de cadastro.
+
+Situação atual:
+	•	o usuário entra no fluxo de criação de conta;
+	•	escolhe os gêneros;
+	•	preenche os dados;
+	•	escolhe o avatar;
+	•	aperta em “Continuar”;
+	•	e, em vez de seguir para a próxima etapa do onboarding, o app volta para a tela inicial, aquela onde o usuário escolhe entre:
+	•	criar conta
+	•	ou entrar se já tiver conta
+
+Isso está completamente errado.
+
+Esse comportamento quebra o onboarding, impede a criação da conta e faz o fluxo parecer instável.
+
+Quero que o Replit trate isso como um bug estrutural do fluxo de autenticação/onboarding e corrija de forma definitiva.
+
+==================================================
+OBJETIVO
+
+Depois da tela de dados + avatar, ao apertar “Continuar”, o app deve:
+	•	permanecer dentro do fluxo de onboarding;
+	•	avançar para a próxima etapa correta;
+	•	não voltar para a tela inicial;
+	•	não resetar o formulário;
+	•	não perder os dados já preenchidos;
+	•	não redirecionar para login/entrada;
+	•	não encerrar o fluxo no meio.
+
+==================================================
+ORDEM CORRETA DO ONBOARDING
+
+Quero manter exatamente esta ordem:
+
+Etapa 1
+
+Escolha de gêneros
+	•	obrigatório escolher pelo menos 3
+
+Etapa 2
+
+Dados da conta + avatar
+	•	nome
+	•	sobrenome
+	•	username
+	•	e-mail
+	•	senha
+	•	bio opcional
+	•	avatar obrigatório
+
+Etapa 3
+
+Modo de exploração
+	•	obrigatório escolher:
+	•	modo protegido
+	•	ou explorar livremente
+
+Etapa 4
+
+Escolha de livros iniciais
+	•	opcional
+	•	pode selecionar ou pular
+
+Final
+
+Finalizar cadastro e só então entrar no app
+
+==================================================
+PROBLEMA TÉCNICO PROVÁVEL
+
+Hoje parece que, ao clicar em “Continuar” na etapa 2, uma destas coisas está acontecendo:
+	1.	o app está disparando a navegação errada para a tela inicial;
+	2.	o fluxo está resetando step para 0 ou null;
+	3.	algum listener de autenticação está interpretando incorretamente o estado atual;
+	4.	a etapa 2 está chamando uma função de submit parcial que desmonta o onboarding;
+	5.	a tela inicial está sendo tratada como fallback automático ao fim da etapa;
+	6.	o estado do onboarding está sendo perdido ao re-renderizar;
+	7.	existe algum navigate, router.push, replace, setScreen, setRoute ou redirect indevido sendo executado;
+	8.	o cadastro parcial está falhando silenciosamente e o app volta para a tela inicial em vez de mostrar erro;
+	9.	o botão “Continuar” da etapa 2 está chamando a lógica de saída do onboarding em vez de avanço de etapa.
+
+Quero que tudo isso seja revisado.
+
+==================================================
+PARTE 1 — REGRA DE OURO DO FLUXO
+
+Na etapa 2, ao clicar em “Continuar”, o app deve fazer APENAS isto:
+	1.	validar os dados da etapa 2;
+	2.	armazenar esses dados no estado do onboarding;
+	3.	avançar para a etapa 3.
+
+Nada além disso.
+
+Na etapa 2, NÃO deve:
+	•	redirecionar para tela inicial;
+	•	redirecionar para feed;
+	•	resetar o onboarding;
+	•	disparar a tela de login;
+	•	desmontar o fluxo.
+
+==================================================
+PARTE 2 — COMPORTAMENTO ESPERADO DA ETAPA 2
+
+Ao clicar em “Continuar” na tela de dados + avatar:
+
+se houver campo inválido
+	•	permanecer na mesma tela
+	•	mostrar erro inline
+
+se estiver tudo válido
+	•	ir diretamente para a tela:
+“Como você prefere explorar o app?”
+
+Essa deve ser a próxima etapa visível.
+
+==================================================
+PARTE 3 — REVISÃO DO CONTROLE DE ETAPAS
+
+Quero que o fluxo seja controlado por um estado explícito e confiável.
+
+Exemplo:
+	•	step 1 = genres
+	•	step 2 = account
+	•	step 3 = exploration
+	•	step 4 = books
+	•	step 5 = finish
+
+A renderização deve depender exclusivamente desse estado.
+
+Exemplo esperado:
+	•	se step === 1 → tela de gêneros
+	•	se step === 2 → tela de dados + avatar
+	•	se step === 3 → tela de modo de exploração
+	•	se step === 4 → tela de livros
+	•	se step === 5 → finalização
+
+Quero que o Replit revise se, ao sair da etapa 2, step está realmente virando 3.
+
+==================================================
+PARTE 4 — REVISÃO DO BOTÃO “CONTINUAR” DA ETAPA 2
+
+Quero que o botão da etapa 2 seja revisado linha por linha.
+
+Ele deve fazer algo conceitualmente assim:
+	•	validar nome
+	•	validar sobrenome
+	•	validar username
+	•	validar e-mail
+	•	validar senha
+	•	validar avatar
+	•	se tudo estiver válido:
+	•	salvar no estado temporário do onboarding
+	•	setStep(3)
+
+Ele NÃO deve:
+	•	chamar logout
+	•	chamar login
+	•	chamar createAccount final
+	•	navegar para a tela inicial
+	•	resetar navegação
+	•	fazer replace da rota do onboarding
+
+==================================================
+PARTE 5 — SEPARAR “AVANÇAR ETAPA” DE “FINALIZAR CADASTRO”
+
+Parece que existe mistura entre:
+	•	avançar etapa
+	•	finalizar fluxo
+
+Quero separar isso de forma clara.
+
+Funções diferentes
+
+Criar responsabilidades separadas:
+	•	goToNextStep()
+	•	validateStep2()
+	•	saveStep2Draft()
+	•	completeSignup()
+
+A etapa 2 deve usar:
+	•	validação
+	•	save draft
+	•	next step
+
+A etapa 2 NÃO deve usar:
+	•	complete signup
+
+O cadastro completo só deve ser finalizado depois da última etapa.
+
+==================================================
+PARTE 6 — PERSISTÊNCIA TEMPORÁRIA DO ONBOARDING
+
+Quero que os dados das etapas sejam mantidos em memória durante todo o onboarding.
+
+Exemplo de estrutura:
+	•	selectedGenres
+	•	accountData
+	•	selectedAvatar
+	•	explorationMode
+	•	selectedBooks
+
+Nada disso pode sumir ao trocar de etapa.
+
+E se a UI rerenderizar, os dados devem continuar disponíveis.
+
+Se necessário, usar:
+	•	context do onboarding
+	•	estado global leve
+	•	store local do fluxo
+	•	local/session storage temporário
+
+Mas o importante é:
+👉 não perder os dados entre etapas
+
+==================================================
+PARTE 7 — NÃO VOLTAR PARA A TELA INICIAL
+
+A tela inicial de entrada (“criar conta / login”) só deve aparecer em 3 situações:
+	1.	antes de iniciar o onboarding;
+	2.	se o usuário cancelar o fluxo manualmente;
+	3.	se o logout acontecer.
+
+Ela NÃO deve aparecer:
+	•	no meio do cadastro;
+	•	ao apertar continuar;
+	•	por erro silencioso de validação;
+	•	por falta de step;
+	•	por reset indevido da tela.
+
+==================================================
+PARTE 8 — TRATAMENTO DE ERRO REAL
+
+Se houver qualquer erro ao sair da etapa 2, o app não deve voltar para a tela inicial.
+
+Em vez disso:
+	•	deve permanecer na mesma etapa;
+	•	mostrar erro legível;
+	•	preservar os dados preenchidos.
+
+Exemplo de mensagens:
+	•	“Não foi possível continuar agora. Tente novamente.”
+	•	“Revise os dados do cadastro.”
+	•	“Houve um erro ao avançar para a próxima etapa.”
+
+Mas jamais jogar o usuário de volta para o começo sem explicação.
+
+==================================================
+PARTE 9 — REVISÃO DE ROTAS / NAVEGAÇÃO
+
+Quero que o Replit revise toda a navegação do onboarding.
+
+Verificar se existe algo assim sendo disparado na etapa 2:
+	•	navigate('/')
+	•	router.push('/')
+	•	router.replace('/')
+	•	setCurrentScreen('welcome')
+	•	setCurrentRoute('auth')
+	•	fallback automático ao componente inicial
+
+Se existir, corrigir.
+
+O fluxo do onboarding deve ter sua própria navegação interna.
+
+==================================================
+PARTE 10 — TESTES OBRIGATÓRIOS
+
+Depois da correção, testar exatamente isto:
+
+Teste 1
+	•	abrir onboarding
+	•	escolher 3 gêneros
+	•	continuar
+	•	verificar se vai para tela de dados + avatar
+
+Teste 2
+	•	preencher nome, sobrenome, username, e-mail, senha, bio
+	•	escolher avatar
+	•	clicar em continuar
+	•	verificar se vai para a tela de modo de exploração
+	•	confirmar que NÃO volta para a tela inicial
+
+Teste 3
+	•	repetir o teste acima várias vezes
+	•	garantir que o bug não acontece de forma intermitente
+
+Teste 4
+	•	testar com dados válidos
+	•	testar com dados inválidos
+	•	verificar que, quando inválido, permanece na mesma tela com mensagem de erro
+
+Teste 5
+	•	completar todo o onboarding até o fim
+	•	garantir que só entra no app depois da última etapa
+
+==================================================
+PARTE 11 — RESULTADO FINAL ESPERADO
+
+Depois dessa correção:
+	•	o usuário escolhe gêneros;
+	•	preenche os dados + avatar;
+	•	clica em continuar;
+	•	vai para o modo de exploração;
+	•	depois escolhe livros opcionais;
+	•	só no final entra no app.
+
+Nenhuma etapa pode voltar para a tela inicial automaticamente.
+
+==================================================
+PRIORIDADE
+
+Altíssima.
+
+Esse é um bug crítico de fluxo, porque impede a finalização correta do cadastro.
+Quero que o Replit revise e conserte isso de forma estrutural, não superficial.
+:::
