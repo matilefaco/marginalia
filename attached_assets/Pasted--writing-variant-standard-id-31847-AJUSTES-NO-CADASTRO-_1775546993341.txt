@@ -1,0 +1,295 @@
+:::writing{variant=“standard” id=“31847”}
+AJUSTES NO CADASTRO — ESCOLHA DE AVATAR SEM POLUIÇÃO + ESCOLHA OBRIGATÓRIA DO MODO DE EXPLORAÇÃO
+
+Quero fazer dois ajustes importantes no onboarding/cadastro do app:
+	1.	adicionar a escolha de avatar já no fluxo de criação de conta, de forma bonita, fluida e sem poluição visual;
+	2.	tornar obrigatória a escolha entre “Modo protegido” e “Explorar livremente”, deixando claro que essa preferência pode ser alterada depois.
+
+A base visual e a taxonomia dos avatares já estão definidas no material “Avatars — Escolha sua identidade de leitura”, com 16 opções organizadas em 4 famílias.  ￼
+
+==================================================
+PARTE 1 — ADICIONAR ESCOLHA DE AVATAR NO CADASTRO
+
+Hoje, na tela de cadastro, o usuário preenche:
+	•	nome
+	•	sobrenome
+	•	username
+	•	e-mail
+	•	senha
+	•	bio
+
+Quero que também exista uma forma de ele escolher seu avatar preferido já nessa etapa.
+
+Mas eu NÃO quero uma tela poluída com 16 opções jogadas de uma vez.
+
+Quero uma solução elegante, suave e bem pensada.
+
+==================================================
+1.1. ONDE ISSO ENTRA NO FLUXO
+
+Quero inserir a escolha de avatar logo após a etapa de dados da conta.
+
+Fluxo sugerido do onboarding:
+	1.	dados da conta
+	2.	escolha do modo de exploração
+	3.	escolha do avatar
+	4.	preferências/gêneros
+	5.	conclusão
+
+Se for melhor para UX, também aceito:
+	1.	dados da conta
+	2.	escolha do avatar
+	3.	escolha do modo de exploração
+	4.	preferências/gêneros
+	5.	conclusão
+
+Minha preferência:
+👉 dados da conta
+👉 modo de exploração
+👉 avatar
+Porque o modo de exploração define a lógica do app, e depois o avatar entra como etapa mais prazerosa e pessoal.
+
+==================================================
+1.2. COMO A ESCOLHA DE AVATAR DEVE FUNCIONAR
+
+Quero uma escolha de avatar sem poluição visual.
+
+A melhor estratégia é esta:
+
+Etapa 1 — mostrar apenas 4 famílias
+
+Em vez de mostrar 16 avatares de uma vez, mostrar primeiro 4 blocos/famílias:
+	•	Objetos literários
+	•	Natureza & poesia
+	•	Conceitos & símbolos
+	•	Íntimos & pessoais
+
+Cada bloco pode ter:
+	•	título
+	•	subtítulo curtinho opcional
+	•	mini preview de 2 ou 4 avatares
+	•	aparência de card delicado
+
+Etapa 2 — ao tocar numa família
+
+Abrir uma seleção secundária elegante com apenas os 4 avatares daquela família.
+
+Isso pode ser feito de uma destas formas:
+	•	carrossel horizontal
+	•	grid 2x2 dentro de um card expandido
+	•	bottom sheet
+	•	acordeão suave
+
+Minha recomendação:
+👉 card expandido ou bottom sheet com os 4 avatares da família escolhida
+
+Etapa 3 — selecionar avatar
+
+Ao tocar em um avatar:
+	•	ele fica selecionado
+	•	mostra check visual
+	•	aparece preview do usuário com aquele avatar
+	•	botão continuar habilita
+
+==================================================
+1.3. PREVIEW DO AVATAR
+
+Quero que, quando o usuário selecionar um avatar, apareça um preview elegante com:
+	•	avatar escolhido
+	•	nome do usuário
+	•	@username
+	•	nome do avatar
+
+Exemplo:
+Matile Facó
+@matilefaco · A Vela
+
+Esse preview pode aparecer:
+	•	logo abaixo da seleção
+	•	ou fixo na parte inferior da etapa
+
+==================================================
+1.4. AVATAR SUGERIDO
+
+Se já houver algum arquétipo inferido ou algum sinal de perfil do leitor, o app pode sugerir um avatar inicial.
+
+Mas isso é só sugestão.
+A escolha final é sempre do usuário.
+
+Exemplo:
+	•	O Observador → A Bússola / O Espelho
+	•	O Sensível → O Coração / A Lua
+	•	O Contemplativo → A Lua / A Folha / O Novelo
+	•	O Analítico → Os Óculos / O Tempo
+	•	O Introspectivo → O Lacre / A Chave
+
+==================================================
+1.5. REGRAS IMPORTANTES DO AVATAR NO CADASTRO
+	•	o usuário deve conseguir continuar o cadastro só depois de selecionar 1 avatar;
+	•	o avatar precisa ser salvo no perfil permanentemente;
+	•	o avatar escolhido deve aparecer depois no perfil, nos posts e nas respostas;
+	•	o sistema antigo de “cor da bolinha” não deve mais ser usado.
+
+==================================================
+PARTE 2 — TORNAR O MODO DE EXPLORAÇÃO OBRIGATÓRIO
+
+Na tela:
+“Como você prefere explorar o app?”
+
+existem hoje duas opções:
+	•	Modo protegido
+	•	Explorar livremente
+
+Quero que o usuário seja obrigado a escolher uma delas antes de continuar.
+
+Hoje isso precisa ficar mais claro e mais controlado.
+
+==================================================
+2.1. REGRA DE FUNCIONAMENTO
+
+O botão “Continuar” só deve ser habilitado quando uma das duas opções estiver selecionada.
+
+Ou seja:
+	•	se nenhuma opção estiver marcada → botão continuar desabilitado
+	•	se uma opção estiver marcada → botão continuar habilitado
+
+==================================================
+2.2. FEEDBACK VISUAL
+
+Quero que a opção selecionada fique claramente destacada.
+
+Exemplo de destaque:
+	•	borda mais forte
+	•	fundo levemente diferente
+	•	ícone preenchido
+	•	pequeno check no canto
+
+Mas sempre de forma elegante, sem exagero.
+
+==================================================
+2.3. ESCOLHA OBRIGATÓRIA E CLARA
+
+Quero deixar explícito para o usuário que essa é uma escolha necessária.
+
+Sugestão de microtexto na tela:
+
+“Escolha como você quer explorar a comunidade.”
+
+ou
+
+“Selecione uma opção para continuar.”
+
+Esse texto pode aparecer:
+	•	abaixo do subtítulo
+	•	ou acima do botão continuar, se nada estiver selecionado
+
+==================================================
+PARTE 3 — AVISO DE QUE A PREFERÊNCIA PODE SER ALTERADA DEPOIS
+
+Também quero que nessa mesma tela exista um aviso visível, mas discreto, informando que essa escolha pode ser alterada futuramente.
+
+Texto sugerido:
+
+“Você poderá alterar essa preferência a qualquer momento em Preferências.”
+
+ou
+
+“Essa opção pode ser mudada depois em Preferências.”
+
+ou
+
+“Seu ritmo de leitura pode ser ajustado a qualquer momento em Preferências.”
+
+Minha recomendação final:
+👉 “Você poderá alterar essa preferência a qualquer momento em Preferências.”
+
+==================================================
+3.1. ONDE ESSE AVISO DEVE FICAR
+
+Esse aviso pode ficar:
+	•	abaixo dos dois cards de escolha
+	•	acima do botão continuar
+	•	em fonte menor
+	•	com tom suave
+	•	sem competir com o resto da tela
+
+Algo como uma nota editorial discreta.
+
+==================================================
+PARTE 4 — AJUSTES DE UX NA TELA “COMO VOCÊ PREFERE EXPLORAR O APP?”
+
+Quero deixar essa etapa mais inteligente.
+
+==================================================
+4.1. LÓGICA DAS OPÇÕES
+
+Modo protegido
+
+Descrição sugerida:
+“O Marginalia respeita o seu ritmo de leitura. Conteúdos além do seu progresso ficam protegidos.”
+
+Explorar livremente
+
+Descrição sugerida:
+“Veja tudo da comunidade, inclusive conteúdos além do seu progresso.”
+
+Essas duas opções já estão boas conceitualmente, mas a seleção precisa ficar obrigatória e mais clara.
+
+==================================================
+4.2. ESTADO INICIAL
+
+Não pré-selecionar automaticamente uma opção sem o usuário perceber.
+
+Quero que ele faça a escolha conscientemente.
+
+Se quiser muito um padrão, pode deixar:
+	•	Modo protegido como sugestão visual
+mas sem efetivamente confirmar até o toque do usuário.
+
+==================================================
+PARTE 5 — O QUE NÃO QUERO
+
+Não quero:
+	•	a pessoa seguir no fluxo sem escolher o modo;
+	•	uma tela de avatar lotada com 16 itens de uma vez;
+	•	excesso de ruído visual;
+	•	sensação de formulário pesado;
+	•	onboarding confuso.
+
+==================================================
+PARTE 6 — O QUE EU QUERO
+
+Quero:
+	•	um onboarding mais pensado;
+	•	escolha de avatar prazerosa;
+	•	modo de exploração obrigatório;
+	•	clareza sobre o anti-spoiler;
+	•	aviso discreto de que a preferência pode ser alterada depois;
+	•	visual bonito e limpo.
+
+==================================================
+PARTE 7 — IMPLEMENTAÇÃO TÉCNICA ESPERADA
+
+Quero que o Replit faça:
+	1.	adicionar uma etapa de escolha de avatar no onboarding;
+	2.	usar as 4 famílias de avatares como primeira camada da seleção;
+	3.	exibir apenas 4 avatares por vez, dentro da família escolhida;
+	4.	salvar avatar_id no perfil do usuário durante o cadastro;
+	5.	tornar obrigatória a escolha entre:
+	•	modo protegido
+	•	explorar livremente
+	6.	bloquear o botão continuar enquanto nenhuma opção estiver selecionada;
+	7.	adicionar nota informando que a preferência pode ser alterada em Preferências;
+	8.	garantir persistência real dessas escolhas.
+
+==================================================
+PARTE 8 — RESULTADO FINAL ESPERADO
+
+Depois dessas mudanças, quero que:
+	•	o usuário escolha seu avatar já no cadastro;
+	•	essa escolha seja fluida, bonita e não poluída;
+	•	o modo de exploração seja obrigatório;
+	•	o onboarding fique mais coerente com o conceito do app;
+	•	a pessoa entenda que pode mudar essa preferência depois;
+	•	o fluxo inteiro pareça premium, editorial e pensado de verdade.
+:::

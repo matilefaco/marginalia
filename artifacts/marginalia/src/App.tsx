@@ -86,7 +86,7 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   const { signUp, updateProfile } = useAuth();
   const [step, setStep] = useState<OnboardingStep>("welcome");
   const [pendingGenres, setPendingGenres] = useState<string[]>([]);
-  const [pendingSpoiler, setPendingSpoiler] = useState<SpoilerPreference>("progress_only");
+  const [pendingSpoiler, setPendingSpoiler] = useState<SpoilerPreference | null>(null);
   const [signupError, setSignupError] = useState("");
 
   const finish = () => {
@@ -97,7 +97,7 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   if (step === "welcome") {
     return (
       <OnboardingWelcomeScreen
-        onStart={() => setStep("genres")}
+        onStart={() => setStep("signup")}
         onLogin={() => setStep("login")}
       />
     );
@@ -108,32 +108,6 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
       <LoginScreen
         onLogin={finish}
         onBack={() => setStep("welcome")}
-      />
-    );
-  }
-
-  if (step === "genres") {
-    return (
-      <OnboardingGenresScreen
-        selected={pendingGenres}
-        onContinue={(genres) => {
-          setPendingGenres(genres);
-          updatePreferredGenres(genres);
-          setStep("spoiler");
-        }}
-      />
-    );
-  }
-
-  if (step === "spoiler") {
-    return (
-      <OnboardingSpoilerScreen
-        selected={pendingSpoiler}
-        onContinue={(pref) => {
-          setPendingSpoiler(pref);
-          updateSpoilerPreference(pref);
-          setStep("signup");
-        }}
       />
     );
   }
@@ -157,9 +131,23 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
             setSignupError(error);
             return;
           }
+          setStep("spoiler");
+        }}
+        onBack={() => setStep("welcome")}
+      />
+    );
+  }
+
+  if (step === "spoiler") {
+    return (
+      <OnboardingSpoilerScreen
+        selected={pendingSpoiler}
+        onContinue={(pref) => {
+          setPendingSpoiler(pref);
+          updateSpoilerPreference(pref);
           setStep("avatar");
         }}
-        onBack={() => setStep("spoiler")}
+        onBack={() => setStep("signup")}
       />
     );
   }
@@ -168,11 +156,27 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
     return (
       <OnboardingAvatarScreen
         initials={currentUser.initials}
+        name={currentUser.name}
+        username={currentUser.username}
         onContinue={async (avatarId) => {
           await updateProfile({ avatar_id: avatarId });
+          setStep("genres");
+        }}
+        onBack={() => setStep("spoiler")}
+      />
+    );
+  }
+
+  if (step === "genres") {
+    return (
+      <OnboardingGenresScreen
+        selected={pendingGenres}
+        onContinue={(genres) => {
+          setPendingGenres(genres);
+          updatePreferredGenres(genres);
           setStep("books");
         }}
-        onBack={() => setStep("signup")}
+        onBack={() => setStep("avatar")}
       />
     );
   }

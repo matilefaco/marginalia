@@ -2,16 +2,19 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { AvatarIcon } from "@/components/AvatarIcon";
-import type { AvatarId } from "@/data/avatarDefinitions";
+import { getAvatarById, type AvatarId } from "@/data/avatarDefinitions";
 
 interface Props {
   initials?: string;
+  name?: string;
+  username?: string;
   onContinue: (avatarId: AvatarId) => void;
   onBack: () => void;
 }
 
-export function OnboardingAvatarScreen({ initials, onContinue, onBack }: Props) {
+export function OnboardingAvatarScreen({ initials, name, username, onContinue, onBack }: Props) {
   const [selected, setSelected] = useState<AvatarId | null>(null);
+  const avatarDef = selected ? getAvatarById(selected) : null;
 
   return (
     <div
@@ -25,12 +28,12 @@ export function OnboardingAvatarScreen({ initials, onContinue, onBack }: Props) 
         <ArrowLeft className="w-5 h-5" />
       </button>
 
-      <div className="mb-6">
+      <div className="mb-5">
         <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-          4 de 5
+          3 de 5
         </span>
         <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full mt-2 mb-6">
-          <div className="h-full bg-[#AE8F7D] rounded-full w-4/5" />
+          <div className="h-full bg-[#AE8F7D] rounded-full w-3/5" />
         </div>
         <h2 className="font-serif italic text-[28px] text-[#454545] leading-tight mb-1">
           Escolha seu avatar
@@ -40,11 +43,27 @@ export function OnboardingAvatarScreen({ initials, onContinue, onBack }: Props) 
         </p>
       </div>
 
-      {selected && (
-        <div className="flex items-center gap-3 bg-[#EBE6DB]/40 border border-[#AE8F7D]/15 rounded-[14px] px-4 py-3 mb-5">
+      {selected && avatarDef ? (
+        <div className="flex items-center gap-4 bg-[#EBE6DB]/45 border border-[#AE8F7D]/18 rounded-[16px] px-4 py-3.5 mb-5">
           <AvatarIcon avatarId={selected} initials={initials} size="md" />
-          <p className="font-serif italic text-[13px] text-[#2A2A2A]/70">
-            Boa escolha — este é você no Marginalia.
+          <div className="min-w-0">
+            {name && (
+              <p className="font-serif italic text-[15px] text-[#2A2A2A] leading-tight truncate">
+                {name}
+              </p>
+            )}
+            <p className="font-sans font-light text-[10px] text-[#454545]/45 mt-0.5">
+              {username ? `@${username.replace(/^@/, "")} · ` : ""}{avatarDef.name}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center gap-4 bg-[#EBE6DB]/25 border border-dashed border-[#AE8F7D]/20 rounded-[16px] px-4 py-3.5 mb-5">
+          <div className="w-9 h-9 rounded-full bg-[#EBE6DB]/80 flex items-center justify-center flex-shrink-0">
+            <span className="font-serif italic text-[13px] text-[#AE8F7D]/60">{initials || "?"}</span>
+          </div>
+          <p className="font-sans font-light text-[11px] text-[#454545]/30 italic">
+            Seu avatar aparecerá aqui
           </p>
         </div>
       )}

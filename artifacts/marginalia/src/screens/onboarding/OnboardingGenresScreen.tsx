@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { GENRES } from "@/data/constants";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface Props {
   selected: string[];
   onContinue: (genres: string[]) => void;
+  onBack?: () => void;
 }
 
-export function OnboardingGenresScreen({ selected: initial, onContinue }: Props) {
+export function OnboardingGenresScreen({ selected: initial, onContinue, onBack }: Props) {
   const [selected, setSelected] = useState<string[]>(initial);
 
   const toggle = (genre: string) => {
@@ -17,18 +18,24 @@ export function OnboardingGenresScreen({ selected: initial, onContinue }: Props)
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col px-6 pt-12 pb-8"
+    <div className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col px-6 pt-10 pb-8"
       style={{
         backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
         backgroundSize: "5px 5px",
       }}
     >
+      {onBack && (
+        <button onClick={onBack} className="text-[#454545]/40 mb-6 w-fit">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+      )}
+
       <div className="mb-8">
         <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-          1 de 4
+          4 de 5
         </span>
         <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full mt-2 mb-6">
-          <div className="h-full bg-[#AE8F7D] rounded-full w-1/4" />
+          <div className="h-full bg-[#AE8F7D] rounded-full w-4/5" />
         </div>
         <h2 className="font-serif italic text-[28px] text-[#454545] leading-tight mb-2">
           Que leituras mais chamam você?
