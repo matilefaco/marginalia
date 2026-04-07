@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Jost',sans-serif;background:transparent}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.card{padding:22px 20px 18px;border-radius:10px;position:relative;overflow:hidden;min-height:170px;display:flex;flex-direction:column;justify-content:space-between}
+
+.num{font-family:'Jost',sans-serif;font-size:9px;font-weight:300;letter-spacing:0.18em;margin-bottom:10px;opacity:0.65}
+.name{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;font-weight:300;line-height:1.1;margin-bottom:6px}
+.phrase{font-family:'Jost',sans-serif;font-size:10px;font-weight:300;line-height:1.55;opacity:0.7;letter-spacing:0.02em}
+
+.traits{display:flex;gap:5px;margin-top:12px;flex-wrap:wrap}
+.trait{font-family:'Jost',sans-serif;font-size:8px;font-weight:400;letter-spacing:0.1em;padding:2px 7px;border-radius:20px;text-transform:uppercase}
+
+.tex-lines::before{content:'';position:absolute;inset:0;background-repeating-linear-gradient:none;background-image:repeating-linear-gradient(0deg,transparent,transparent 18px,rgba(255,255,255,0.06) 18px,rgba(255,255,255,0.06) 19px);pointer-events:none}
+.tex-dots::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.1) 1px,transparent 1px);background-size:8px 8px;pointer-events:none}
+.tex-cross::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,0.05) 0,rgba(255,255,255,0.05) 1px,transparent 0,transparent 50%);background-size:10px 10px;pointer-events:none}
+.tex-wave::before{content:'';position:absolute;inset:0;background-image:radial-gradient(ellipse 60% 20% at 50% 0%,rgba(255,255,255,0.12) 0%,transparent 100%);pointer-events:none}
+.tex-grain::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);background-size:4px 4px;pointer-events:none}
+
+.dog-ear{position:absolute;top:0;right:0;width:28px;height:28px;overflow:hidden}
+.dog-ear::after{content:'';position:absolute;top:0;right:0;width:0;height:0;border-style:solid;border-width:0 28px 28px 0;border-color:transparent rgba(255,255,255,0.15) transparent transparent}
+
+</style>
+</head>
+<body>
+<div style="padding:0 0 2rem;">
+
+<div style="margin-bottom:16px;">
+  <div style="font-family:'Jost',sans-serif;font-size:9px;font-weight:400;letter-spacing:0.2em;text-transform:uppercase;color:var(--color-text-tertiary);padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:0;">Sistema de arquétipos · Marginalia · 12 tipos de leitor</div>
+</div>
+
+<div class="grid">
+
+  <!-- 1. O Observador -->
+  <div class="card tex-dots" style="background:#2C2C3E;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#A8A8C8;">01 — O Observador</div>
+      <div class="name" style="color:#E8E8F4;">O Observador</div>
+      <div class="phrase" style="color:#A8A8C8;">"Você percebe o que ninguém disse."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(168,168,200,0.15);color:#C8C8E8;">silêncio</div>
+      <div class="trait" style="background:rgba(168,168,200,0.15);color:#C8C8E8;">margem</div>
+      <div class="trait" style="background:rgba(168,168,200,0.15);color:#C8C8E8;">precisão</div>
+    </div>
+  </div>
+
+  <!-- 2. O Sensível -->
+  <div class="card tex-wave" style="background:#3D2630;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#C8909A;">02 — O Sensível</div>
+      <div class="name" style="color:#F4E0E4;">"O Sensível"</div>
+      <div class="phrase" style="color:#C8909A;">"Você sente antes de entender."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(200,144,154,0.15);color:#E8B0BA;">emoção</div>
+      <div class="trait" style="background:rgba(200,144,154,0.15);color:#E8B0BA;">instinto</div>
+      <div class="trait" style="background:rgba(200,144,154,0.15);color:#E8B0BA;">pele</div>
+    </div>
+  </div>
+
+  <!-- 3. O Analítico -->
+  <div class="card tex-cross" style="background:#1E2E3A;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#7AA8C8;">03 — O Analítico</div>
+      <div class="name" style="color:#D8ECF8;">O Analítico</div>
+      <div class="phrase" style="color:#7AA8C8;">"Você desmonta o texto."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(122,168,200,0.15);color:#A8CCE0;">estrutura</div>
+      <div class="trait" style="background:rgba(122,168,200,0.15);color:#A8CCE0;">lógica</div>
+      <div class="trait" style="background:rgba(122,168,200,0.15);color:#A8CCE0;">padrão</div>
+    </div>
+  </div>
+
+  <!-- 4. O Intenso -->
+  <div class="card tex-grain" style="background:#3A1E1A;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#D4826A;">04 — O Intenso</div>
+      <div class="name" style="color:#F4DED8;">O Intenso</div>
+      <div class="phrase" style="color:#D4826A;">"Você vive o livro."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(212,130,106,0.15);color:#E8A894;">fogo</div>
+      <div class="trait" style="background:rgba(212,130,106,0.15);color:#E8A894;">visceral</div>
+      <div class="trait" style="background:rgba(212,130,106,0.15);color:#E8A894;">total</div>
+    </div>
+  </div>
+
+  <!-- 5. O Contemplativo -->
+  <div class="card tex-dots" style="background:#1E2A22;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#7AA888;">05 — O Contemplativo</div>
+      <div class="name" style="color:#D8ECD8;">O Contemplativo</div>
+      <div class="phrase" style="color:#7AA888;">"Você lê devagar — e sente mais."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(122,168,136,0.15);color:#A8CCB0;">silvo</div>
+      <div class="trait" style="background:rgba(122,168,136,0.15);color:#A8CCB0;">tempo</div>
+      <div class="trait" style="background:rgba(122,168,136,0.15);color:#A8CCB0;">raiz</div>
+    </div>
+  </div>
+
+  <!-- 6. O Conector -->
+  <div class="card tex-lines" style="background:#2A2218;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#C8A870;">06 — O Conector</div>
+      <div class="name" style="color:#F4ECD4;">O Conector</div>
+      <div class="phrase" style="color:#C8A870;">"Tudo te lembra alguma coisa."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(200,168,112,0.15);color:#E0C898;">memória</div>
+      <div class="trait" style="background:rgba(200,168,112,0.15);color:#E0C898;">elo</div>
+      <div class="trait" style="background:rgba(200,168,112,0.15);color:#E0C898;">eco</div>
+    </div>
+  </div>
+
+  <!-- 7. O Interpretador -->
+  <div class="card tex-cross" style="background:#261E30;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#A888C8;">07 — O Interpretador</div>
+      <div class="name" style="color:#E8DCF4;">O Interpretador</div>
+      <div class="phrase" style="color:#A888C8;">"Você transforma leitura em significado."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(168,136,200,0.15);color:#C8B0E8;">símbolo</div>
+      <div class="trait" style="background:rgba(168,136,200,0.15);color:#C8B0E8;">sentido</div>
+      <div class="trait" style="background:rgba(168,136,200,0.15);color:#C8B0E8;">camadas</div>
+    </div>
+  </div>
+
+  <!-- 8. O Imersivo -->
+  <div class="card tex-wave" style="background:#1A2830;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#6AB4C8;">08 — O Imersivo</div>
+      <div class="name" style="color:#D4ECF4;">O Imersivo</div>
+      <div class="phrase" style="color:#6AB4C8;">"Você desaparece dentro da história."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(106,180,200,0.15);color:#9AD0E0;">fundo</div>
+      <div class="trait" style="background:rgba(106,180,200,0.15);color:#9AD0E0;">oceano</div>
+      <div class="trait" style="background:rgba(106,180,200,0.15);color:#9AD0E0;">perda</div>
+    </div>
+  </div>
+
+  <!-- 9. O Curioso -->
+  <div class="card tex-grain" style="background:#302A1A;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#C8B068;">09 — O Curioso</div>
+      <div class="name" style="color:#F4ECD0;">O Curioso</div>
+      <div class="phrase" style="color:#C8B068;">"Você quer entender tudo."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(200,176,104,0.15);color:#E0CC94;">pergunta</div>
+      <div class="trait" style="background:rgba(200,176,104,0.15);color:#E0CC94;">busca</div>
+      <div class="trait" style="background:rgba(200,176,104,0.15);color:#E0CC94;">luz</div>
+    </div>
+  </div>
+
+  <!-- 10. O Seletivo -->
+  <div class="card tex-lines" style="background:#222222;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#909090;">10 — O Seletivo</div>
+      <div class="name" style="color:#E8E8E8;">O Seletivo</div>
+      <div class="phrase" style="color:#909090;">"Você guarda só o que importa."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(144,144,144,0.15);color:#C0C0C0;">essência</div>
+      <div class="trait" style="background:rgba(144,144,144,0.15);color:#C0C0C0;">filtro</div>
+      <div class="trait" style="background:rgba(144,144,144,0.15);color:#C0C0C0;">rigor</div>
+    </div>
+  </div>
+
+  <!-- 11. O Introspectivo -->
+  <div class="card tex-dots" style="background:#241E2E;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#9888B8;">11 — O Introspectivo</div>
+      <div class="name" style="color:#E4DCF4;">O Introspectivo</div>
+      <div class="phrase" style="color:#9888B8;">"Você lê para se encontrar."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(152,136,184,0.15);color:#BEB0D8;">espelho</div>
+      <div class="trait" style="background:rgba(152,136,184,0.15);color:#BEB0D8;">dentro</div>
+      <div class="trait" style="background:rgba(152,136,184,0.15);color:#BEB0D8;">névoa</div>
+    </div>
+  </div>
+
+  <!-- 12. O Estético -->
+  <div class="card tex-wave" style="background:#2A1E28;">
+    <div class="dog-ear"></div>
+    <div>
+      <div class="num" style="color:#C888B4;">12 — O Estético</div>
+      <div class="name" style="color:#F4DCF0;">O Estético</div>
+      <div class="phrase" style="color:#C888B4;">"Você se apaixona pela forma."</div>
+    </div>
+    <div class="traits">
+      <div class="trait" style="background:rgba(200,136,180,0.15);color:#E0B0D4;">beleza</div>
+      <div class="trait" style="background:rgba(200,136,180,0.15);color:#E0B0D4;">forma</div>
+      <div class="trait" style="background:rgba(200,136,180,0.15);color:#E0B0D4;">flor</div>
+    </div>
+  </div>
+
+</div>
+</div>
+</body>
+</html>

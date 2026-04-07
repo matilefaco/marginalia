@@ -1,0 +1,785 @@
+# MARGINALIA — Sistema de Arquétipos de Leitor
+## Prompt completo para implementação no Replit
+
+---
+
+## CONTEXTO
+
+Implementar no Marginalia (marginalia.replit.app) um sistema completo de **arquétipos de leitor** com identidade visual única por tipo, integrado ao perfil do usuário e ao sistema de cards compartilháveis.
+
+O sistema deve parecer algo que o usuário **quer mostrar para o mundo** — identidade emocional, não apenas dado de uso.
+
+---
+
+## PARTE 1 — OS 12 ARQUÉTIPOS
+
+### Definição e Cores
+
+Cada arquétipo tem: nome, frase, 3 palavras-traço, cor primária, cor de texto e textura de fundo.
+
+```javascript
+const ARQUETIPOS = [
+  {
+    id: "observador",
+    numero: "01",
+    nome: "O Observador",
+    frase: "Você percebe o que ninguém disse.",
+    tracos: ["silêncio", "margem", "precisão"],
+    cor: "#2C2C3E",
+    corTexto: "#E8E8F4",
+    corAccent: "#A8A8C8",
+    corTraco: "#7878A8",
+    textura: "dots",
+    comportamentos: [
+      "marca trechos sem diálogo",
+      "anota detalhes de narrador",
+      "reage a omissões no texto",
+      "comenta o que o autor não disse",
+      "tipo de margem favorito: INSIGHT"
+    ]
+  },
+  {
+    id: "sensivel",
+    numero: "02",
+    nome: "O Sensível",
+    frase: "Você sente antes de entender.",
+    tracos: ["emoção", "instinto", "pele"],
+    cor: "#3D2630",
+    corTexto: "#F4E0E4",
+    corAccent: "#C8909A",
+    corTraco: "#A86878",
+    textura: "wave",
+    comportamentos: [
+      "reage com emojis emocionais",
+      "usa tipo REAÇÃO com frequência",
+      "marca trechos que 'doem'",
+      "compartilha frases que tocam",
+      "tipo de margem favorito: REAÇÃO, CITAÇÃO FAVORITA"
+    ]
+  },
+  {
+    id: "analitico",
+    numero: "03",
+    nome: "O Analítico",
+    frase: "Você desmonta o texto.",
+    tracos: ["estrutura", "lógica", "padrão"],
+    cor: "#1E2E3A",
+    corTexto: "#D8ECF8",
+    corAccent: "#7AA8C8",
+    corTraco: "#5888A8",
+    textura: "cross",
+    comportamentos: [
+      "usa tipo TEORIA e CRÍTICA frequentemente",
+      "anota estrutura narrativa",
+      "compara capítulos",
+      "faz perguntas sobre o texto",
+      "tipo de margem favorito: TEORIA, CRÍTICA, PERGUNTA"
+    ]
+  },
+  {
+    id: "intenso",
+    numero: "04",
+    nome: "O Intenso",
+    frase: "Você vive o livro.",
+    tracos: ["fogo", "visceral", "total"],
+    cor: "#3A1E1A",
+    corTexto: "#F4DED8",
+    corAccent: "#D4826A",
+    corTraco: "#B46050",
+    textura: "grain",
+    comportamentos: [
+      "lê muitas horas seguidas",
+      "marca muitos trechos por sessão",
+      "reações intensas (fogo, destruiu)",
+      "sessões longas de leitura",
+      "tipo de margem favorito: REAÇÃO, CONEXÃO PESSOAL"
+    ]
+  },
+  {
+    id: "contemplativo",
+    numero: "05",
+    nome: "O Contemplativo",
+    frase: "Você lê devagar — e sente mais.",
+    tracos: ["silvo", "tempo", "raiz"],
+    cor: "#1E2A22",
+    corTexto: "#D8ECD8",
+    corAccent: "#7AA888",
+    corTraco: "#5A8A68",
+    textura: "dots",
+    comportamentos: [
+      "sessões longas mas poucas por semana",
+      "poucos destaques mas muito refletidos",
+      "anota reflexões profundas",
+      "progresso lento e constante",
+      "tipo de margem favorito: LEITURA SIMBÓLICA, CONEXÃO PESSOAL"
+    ]
+  },
+  {
+    id: "conector",
+    numero: "06",
+    nome: "O Conector",
+    frase: "Tudo te lembra alguma coisa.",
+    tracos: ["memória", "elo", "eco"],
+    cor: "#2A2218",
+    corTexto: "#F4ECD4",
+    corAccent: "#C8A870",
+    corTraco: "#A88850",
+    textura: "lines",
+    comportamentos: [
+      "menciona outros livros nas anotações",
+      "conecta trechos de livros diferentes",
+      "usa tipo CONEXÃO PESSOAL muito",
+      "referencia experiências pessoais",
+      "tipo de margem favorito: CONEXÃO PESSOAL, CITAÇÃO FAVORITA"
+    ]
+  },
+  {
+    id: "interpretador",
+    numero: "07",
+    nome: "O Interpretador",
+    frase: "Você transforma leitura em significado.",
+    tracos: ["símbolo", "sentido", "camadas"],
+    cor: "#261E30",
+    corTexto: "#E8DCF4",
+    corAccent: "#A888C8",
+    corTraco: "#8868A8",
+    textura: "cross",
+    comportamentos: [
+      "anota interpretações simbólicas",
+      "busca significado em metáforas",
+      "usa tipo LEITURA SIMBÓLICA",
+      "anota muito por trecho marcado",
+      "tipo de margem favorito: LEITURA SIMBÓLICA, INSIGHT"
+    ]
+  },
+  {
+    id: "imersivo",
+    numero: "08",
+    nome: "O Imersivo",
+    frase: "Você desaparece dentro da história.",
+    tracos: ["fundo", "oceano", "perda"],
+    cor: "#1A2830",
+    corTexto: "#D4ECF4",
+    corAccent: "#6AB4C8",
+    corTraco: "#4A94A8",
+    textura: "wave",
+    comportamentos: [
+      "lê em sequências longas e rápidas",
+      "progresso acelerado por capítulo",
+      "poucos comentários durante, muitos depois",
+      "segue o ritmo da narrativa",
+      "tipo de margem favorito: REAÇÃO, CITAÇÃO FAVORITA"
+    ]
+  },
+  {
+    id: "curioso",
+    numero: "09",
+    nome: "O Curioso",
+    frase: "Você quer entender tudo.",
+    tracos: ["pergunta", "busca", "luz"],
+    cor: "#302A1A",
+    corTexto: "#F4ECD0",
+    corAccent: "#C8B068",
+    corTraco: "#A89048",
+    textura: "grain",
+    comportamentos: [
+      "usa tipo PERGUNTA frequentemente",
+      "anota dúvidas sobre o texto",
+      "marca passagens ambíguas",
+      "pesquisa sobre o autor",
+      "tipo de margem favorito: PERGUNTA, TEORIA"
+    ]
+  },
+  {
+    id: "seletivo",
+    numero: "10",
+    nome: "O Seletivo",
+    frase: "Você guarda só o que importa.",
+    tracos: ["essência", "filtro", "rigor"],
+    cor: "#222222",
+    corTexto: "#E8E8E8",
+    corAccent: "#909090",
+    corTraco: "#707070",
+    textura: "lines",
+    comportamentos: [
+      "poucos destaques por livro",
+      "mas cada um com nota longa",
+      "alta taxa nota/destaque",
+      "compartilha raramente mas com impacto",
+      "tipo de margem favorito: CITAÇÃO FAVORITA, INSIGHT"
+    ]
+  },
+  {
+    id: "introspectivo",
+    numero: "11",
+    nome: "O Introspectivo",
+    frase: "Você lê para se encontrar.",
+    tracos: ["espelho", "dentro", "névoa"],
+    cor: "#241E2E",
+    corTexto: "#E4DCF4",
+    corAccent: "#9888B8",
+    corTraco: "#7868A0",
+    textura: "dots",
+    comportamentos: [
+      "anota experiências pessoais no texto",
+      "usa 'eu' nas anotações frequentemente",
+      "prefere ficção psicológica",
+      "reage a personagens com dilemas internos",
+      "tipo de margem favorito: CONEXÃO PESSOAL, LEITURA SIMBÓLICA"
+    ]
+  },
+  {
+    id: "estetico",
+    numero: "12",
+    nome: "O Estético",
+    frase: "Você se apaixona pela forma.",
+    tracos: ["beleza", "forma", "flor"],
+    cor: "#2A1E28",
+    corTexto: "#F4DCF0",
+    corAccent: "#C888B4",
+    corTraco: "#A86898",
+    textura: "wave",
+    comportamentos: [
+      "marca trechos pela beleza da escrita",
+      "comenta sobre o estilo do autor",
+      "usa tipo CITAÇÃO FAVORITA muito",
+      "reage ao ritmo das frases",
+      "tipo de margem favorito: CITAÇÃO FAVORITA, ESTÉTICO"
+    ]
+  }
+];
+```
+
+---
+
+## PARTE 2 — ALGORITMO DE DETECÇÃO
+
+### Como calcular o arquétipo do usuário
+
+```javascript
+function calcularArquetipos(dadosUsuario) {
+  // dadosUsuario contém:
+  // - tiposDeMargemUsados: { insight: N, teoria: N, reacao: N, ... }
+  // - totalDestaques: N
+  // - totalAnotacoes: N
+  // - mediaAnotacoesPorDestaque: N
+  // - sessoesLeitura: [{ duracao, paginasLidas }]
+  // - percentualConcluidoPorSemana: N
+  // - usaEmojiIntensidade: boolean
+  // - mencionaOutrosLivros: boolean
+  // - usaPrimeirasPessoa: boolean (frequência de "eu" nas notas)
+
+  const scores = {};
+
+  // Inicializa todos com 0
+  ARQUETIPOS.forEach(a => { scores[a.id] = 0; });
+
+  const m = dadosUsuario.tiposDeMargemUsados;
+  const total = Object.values(m).reduce((s, v) => s + v, 0) || 1;
+
+  // Observador: usa insight, anota sem diálogo
+  scores.observador += (m.insight / total) * 40;
+  scores.observador += Math.min(dadosUsuario.mediaAnotacoesPorDestaque * 5, 30);
+  scores.observador += dadosUsuario.usaPrimeiraPessoa ? 0 : 30;
+
+  // Sensível: usa reação + citação, emojis intensos
+  scores.sensivel += (m.reacao / total) * 35;
+  scores.sensivel += ((m.citacaoFavorita || 0) / total) * 25;
+  scores.sensivel += dadosUsuario.usaEmojiIntensidade ? 40 : 0;
+
+  // Analítico: usa teoria + crítica + pergunta
+  scores.analitico += ((m.teoria || 0) / total) * 35;
+  scores.analitico += ((m.critica || 0) / total) * 30;
+  scores.analitico += ((m.pergunta || 0) / total) * 35;
+
+  // Intenso: muitos destaques por sessão, sessões longas
+  const mediaDestPorSessao = dadosUsuario.totalDestaques /
+    Math.max(dadosUsuario.sessoesLeitura.length, 1);
+  scores.intenso += Math.min(mediaDestPorSessao * 8, 50);
+  const mediaHoras = dadosUsuario.sessoesLeitura
+    .reduce((s, sess) => s + sess.duracao, 0) /
+    Math.max(dadosUsuario.sessoesLeitura.length, 1);
+  scores.intenso += Math.min(mediaHoras * 15, 50);
+
+  // Contemplativo: progresso lento, notas profundas
+  scores.contemplativo += dadosUsuario.percentualConcluidoPorSemana < 5 ? 50 : 10;
+  scores.contemplativo += Math.min(dadosUsuario.mediaAnotacoesPorDestaque * 8, 50);
+
+  // Conector: menciona outros livros
+  scores.conector += dadosUsuario.mencionaOutrosLivros ? 60 : 0;
+  scores.conector += ((m.conexaoPessoal || 0) / total) * 40;
+
+  // Interpretador: leitura simbólica
+  scores.interpretador += ((m.leituraSimbolica || 0) / total) * 60;
+  scores.interpretador += ((m.insight || 0) / total) * 40;
+
+  // Imersivo: progresso rápido, poucas pauses
+  scores.imersivo += dadosUsuario.percentualConcluidoPorSemana > 15 ? 60 : 10;
+  const totalDestaquesPorPagina = dadosUsuario.totalDestaques /
+    Math.max(dadosUsuario.totalPaginasLidas, 1);
+  scores.imersivo += totalDestaquesPorPagina < 0.3 ? 40 : 0;
+
+  // Curioso: pergunta frequente
+  scores.curioso += ((m.pergunta || 0) / total) * 50;
+  scores.curioso += ((m.teoria || 0) / total) * 30;
+  scores.curioso += dadosUsuario.buscaInformacoesExternas ? 20 : 0;
+
+  // Seletivo: poucos destaques, notas longas
+  scores.seletivo += dadosUsuario.totalDestaques < 20 ? 40 : 0;
+  scores.seletivo += dadosUsuario.mediaAnotacoesPorDestaque > 3 ? 40 : 0;
+  scores.seletivo += ((m.citacaoFavorita || 0) / total) * 20;
+
+  // Introspectivo: primeira pessoa, conexão pessoal
+  scores.introspectivo += dadosUsuario.usaPrimeiraPessoa ? 50 : 0;
+  scores.introspectivo += ((m.conexaoPessoal || 0) / total) * 50;
+
+  // Estético: citação favorita dominante
+  scores.estetico += ((m.citacaoFavorita || 0) / total) * 60;
+  scores.estetico += dadosUsuario.comentaEstiloAutor ? 40 : 0;
+
+  // Normaliza 0-100
+  const maxScore = Math.max(...Object.values(scores), 1);
+  const normalized = {};
+  Object.keys(scores).forEach(k => {
+    normalized[k] = Math.round((scores[k] / maxScore) * 100);
+  });
+
+  // Retorna top 3 arquétipos
+  const ordenados = Object.entries(normalized)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 3)
+    .map(([id, score]) => ({
+      arquetipo: ARQUETIPOS.find(a => a.id === id),
+      score
+    }));
+
+  return ordenados;
+}
+```
+
+---
+
+## PARTE 3 — FRASES COMBINADAS (TOP 2 ARQUÉTIPOS)
+
+```javascript
+const FRASES_COMBINADAS = {
+  "observador+sensivel":   "Você percebe o que ninguém disse\ne sente o que ninguém explica.",
+  "observador+analitico":  "Você vê nas entrelinhas\ne entende o que o autor escondeu.",
+  "observador+intenso":    "Você nota cada detalhe\ne vive cada página como se fosse a última.",
+  "observador+contemplativo": "Você lê devagar o suficiente\npara ver o que passa despercebido.",
+  "sensivel+intenso":      "Você sente antes de pensar\ne vive o livro com o corpo inteiro.",
+  "sensivel+introspectivo":"Você sente o texto na pele\ne encontra a si mesmo em cada página.",
+  "sensivel+estetico":     "Você se apaixona pelas palavras\ne sente beleza onde outros veem texto.",
+  "analitico+curioso":     "Você desmonta o texto\ne quer entender cada engrenagem.",
+  "analitico+interpretador":"Você enxerga a estrutura\ne transforma padrões em significado.",
+  "intenso+imersivo":      "Você vive o livro inteiro\ne só respira de novo quando acaba.",
+  "contemplativo+introspectivo": "Você lê devagar\ne cada frase vira espelho.",
+  "conector+interpretador": "Tudo te lembra alguma coisa\ne você transforma conexões em sentido.",
+  "curioso+analitico":     "Você quer entender tudo\ne não descansa enquanto não acha a resposta.",
+  "estetico+sensivel":     "Você se apaixona pela forma\ne sente cada frase como música.",
+  "imersivo+intenso":      "Você desaparece dentro da história\ne só sai completamente diferente.",
+  "seletivo+observador":   "Você guarda só o que importa\ne percebe exatamente o que isso é."
+};
+
+function getFraseCombinada(tipo1id, tipo2id) {
+  const chave1 = `${tipo1id}+${tipo2id}`;
+  const chave2 = `${tipo2id}+${tipo1id}`;
+  return FRASES_COMBINADAS[chave1]
+    || FRASES_COMBINADAS[chave2]
+    || `Você ${ARQUETIPOS.find(a=>a.id===tipo1id).frase.toLowerCase().replace('você ','')} e ${ARQUETIPOS.find(a=>a.id===tipo2id).frase.toLowerCase().replace('você ','')}`;
+}
+```
+
+---
+
+## PARTE 4 — ESTRUTURA DO PERFIL REDESENHADO
+
+### Ordem dos blocos na tela de Perfil:
+
+```
+1. HEADER DE IDENTIDADE
+   ├── Avatar com cor do arquétipo principal
+   ├── Nome + @username
+   ├── Bolinha colorida com cor do arquétipo
+   └── "O Sensível · Leitor intenso" — tipo principal + secundário
+
+2. BOTÃO: "Compartilhar identidade" — gera Card Identidade
+
+3. ASSINATURA
+   └── Frase curta do usuário (editável)
+       Ex: "Cada livro me deixa diferente"
+
+4. DNA DE LEITURA
+   ├── Barras de progresso para cada traço detectado
+   ├── Top 4 traços com percentuais
+   └── Cor da barra = cor do arquétipo correspondente
+
+5. IMPRESSÃO DE LEITURA
+   └── Bloco com frase combinada dos top 2 arquétipos
+       Cormorant Garamond italic grande
+       Cor do texto em tom do arquétipo principal
+
+6. CARDS DISPONÍVEIS
+   └── Grid horizontal scroll de cards para compartilhar
+```
+
+### Implementação do Header:
+
+```jsx
+// Avatar com cor do arquétipo
+const avatarStyle = {
+  background: arquetipos[0].arquetipo.cor,
+  color: arquetipos[0].arquetipo.corTexto,
+  width: 64,
+  height: 64,
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontFamily: 'Jost',
+  fontSize: 20,
+  fontWeight: 400
+};
+
+// Bolinha de identidade (pequena, ao lado do nome)
+const bolinhaStyle = {
+  width: 10,
+  height: 10,
+  borderRadius: '50%',
+  background: arquetipos[0].arquetipo.corAccent
+};
+
+// Label do tipo
+// "{Nome do tipo principal} · {Traço do tipo secundário}"
+const labelTipo = `${arquetipos[0].arquetipo.nome} · Leitor ${arquetipos[1].arquetipo.tracos[0]}`;
+```
+
+### DNA de Leitura — barras:
+
+```jsx
+// Mostrar top 4 arquétipos detectados com barras
+arquetipos.slice(0, 4).map(({ arquetipo, score }) => (
+  <div key={arquetipo.id}>
+    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <span style={{ fontFamily: 'Jost', fontSize: 11, fontWeight: 300, color: '#454545' }}>
+        {arquetipo.nome.replace('O ', '').replace('A ', '')}
+      </span>
+      <span style={{ fontFamily: 'Jost', fontSize: 11, fontWeight: 400, color: arquetipo.corAccent }}>
+        {score}%
+      </span>
+    </div>
+    <div style={{ height: 3, background: 'rgba(69,69,69,0.08)', borderRadius: 3 }}>
+      <div style={{
+        width: `${score}%`,
+        height: 3,
+        background: arquetipo.corTraco,
+        borderRadius: 3,
+        transition: 'width 0.8s ease'
+      }} />
+    </div>
+  </div>
+));
+```
+
+---
+
+## PARTE 5 — SISTEMA DE CARDS COMPARTILHÁVEIS
+
+### Card 1 — Identidade (principal, gerado ao compartilhar perfil)
+
+```jsx
+// Fundo: #FAF8F3 (Parchment)
+// Textura: dots radial-gradient
+// Dog-ear: triângulo SVG no canto superior direito
+// Proporção: 1:1 (feed) ou 9:16 (stories — padding maior)
+
+const CardIdentidade = ({ usuario, arquetipos }) => (
+  <div style={{
+    background: '#FAF8F3',
+    backgroundImage: 'radial-gradient(circle, rgba(189,171,156,0.1) 1px, transparent 1px)',
+    backgroundSize: '5px 5px',
+    border: '0.5px solid rgba(174,143,125,0.2)',
+    borderRadius: 14,
+    padding: '28px 26px 22px',
+    position: 'relative',
+    overflow: 'hidden',
+    width: 320,
+    minHeight: 380
+  }}>
+    {/* Dog-ear */}
+    <svg style={{ position: 'absolute', top: 0, right: 0 }} width="40" height="40" viewBox="0 0 40 40">
+      <polygon points="0,0 40,0 40,40" fill="rgba(174,143,125,0.07)"/>
+      <line x1="18" y1="0" x2="40" y2="22" stroke="rgba(174,143,125,0.18)" strokeWidth="0.5"/>
+    </svg>
+
+    {/* Label */}
+    <div style={{ fontFamily: 'Jost', fontSize: 8, fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#AE8F7D', marginBottom: 16 }}>
+      PERFIL DE LEITOR · MARGINALIA
+    </div>
+
+    {/* Nome + tipo */}
+    <div style={{ fontFamily: 'Cormorant Garamond', fontSize: 28, fontStyle: 'italic', fontWeight: 300, color: '#454545', lineHeight: 1.05, marginBottom: 4 }}>
+      {usuario.nome}
+    </div>
+    <div style={{ fontFamily: 'Jost', fontSize: 10, fontWeight: 300, color: '#AE8F7D', letterSpacing: '0.08em', marginBottom: 18 }}>
+      {usuario.username} · {arquetipos[0].arquetipo.nome} • Leitor {arquetipos[1].arquetipo.tracos[0]}
+    </div>
+
+    {/* Barras DNA */}
+    {arquetipos.slice(0, 4).map(({ arquetipo, score }) => (
+      <div key={arquetipo.id} style={{ marginBottom: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+          <span style={{ fontFamily: 'Jost', fontSize: 9, fontWeight: 300, color: '#454545', letterSpacing: '0.06em' }}>
+            {arquetipo.nome.replace('O ', '').replace('A ', '')}
+          </span>
+          <span style={{ fontFamily: 'Jost', fontSize: 9, fontWeight: 400, color: arquetipo.corAccent }}>
+            {score}%
+          </span>
+        </div>
+        <div style={{ height: 3, background: 'rgba(69,69,69,0.08)', borderRadius: 3 }}>
+          <div style={{ width: `${score}%`, height: 3, background: arquetipo.corTraco, borderRadius: 3 }}/>
+        </div>
+      </div>
+    ))}
+
+    {/* Separador */}
+    <div style={{ height: '0.5px', background: 'rgba(69,69,69,0.1)', margin: '16px 0 12px' }}/>
+
+    {/* Assinatura */}
+    <div style={{ fontFamily: 'Cormorant Garamond', fontSize: 13, fontStyle: 'italic', color: 'rgba(69,69,69,0.55)', lineHeight: 1.5, marginBottom: 14 }}>
+      "{usuario.assinatura}"
+    </div>
+
+    {/* Footer */}
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* SVG símbolo Marginalia */}
+      <svg width="16" height="20" viewBox="0 0 72 86" fill="none">
+        <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.9"/>
+        <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.55"/>
+        <circle cx="13" cy="70" r="5" fill="#697962" opacity="0.85"/>
+      </svg>
+      <div style={{ fontFamily: 'Jost', fontSize: 8, fontWeight: 300, color: 'rgba(69,69,69,0.3)', letterSpacing: '0.1em' }}>
+        marginalia · 2025
+      </div>
+    </div>
+  </div>
+);
+```
+
+### Card 2 — Frase Combinada (viral, gerado ao compartilhar tipo)
+
+```jsx
+const CardFraseCombinada = ({ usuario, arquetipos }) => {
+  const frase = getFraseCombinada(arquetipos[0].arquetipo.id, arquetipos[1].arquetipo.id);
+  const [linha1, linha2] = frase.split('\n');
+
+  return (
+    <div style={{
+      background: '#FAF8F3',
+      backgroundImage: 'radial-gradient(circle, rgba(189,171,156,0.1) 1px, transparent 1px)',
+      backgroundSize: '5px 5px',
+      border: '0.5px solid rgba(174,143,125,0.2)',
+      borderRadius: 14,
+      padding: '28px 26px 22px',
+      position: 'relative',
+      overflow: 'hidden',
+      width: 320
+    }}>
+      {/* Dog-ear */}
+      <svg style={{ position: 'absolute', top: 0, right: 0 }} width="48" height="48" viewBox="0 0 48 48">
+        <polygon points="0,0 48,0 48,48" fill="rgba(174,143,125,0.06)"/>
+        <line x1="24" y1="0" x2="48" y2="24" stroke="rgba(174,143,125,0.18)" strokeWidth="0.5"/>
+      </svg>
+
+      <div style={{ fontFamily: 'Jost', fontSize: 8, fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#AE8F7D', marginBottom: 20 }}>
+        {arquetipos[0].arquetipo.nome} · {arquetipos[1].arquetipo.nome}
+      </div>
+
+      {/* Frase grande */}
+      <div style={{ fontFamily: 'Cormorant Garamond', fontSize: 24, fontStyle: 'italic', fontWeight: 300, color: '#454545', lineHeight: 1.35, marginBottom: 6 }}>
+        "{linha1}
+      </div>
+      <div style={{ fontFamily: 'Cormorant Garamond', fontSize: 24, fontStyle: 'italic', fontWeight: 300, color: '#AE8F7D', lineHeight: 1.35, marginBottom: 20 }}>
+        {linha2}"
+      </div>
+
+      <div style={{ height: '0.5px', background: 'rgba(69,69,69,0.1)', margin: '0 0 12px' }}/>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <div style={{ fontFamily: 'Jost', fontSize: 9, fontWeight: 400, color: '#454545' }}>{usuario.nome} · {usuario.username}</div>
+          <div style={{ fontFamily: 'Jost', fontSize: 8, fontWeight: 300, color: '#AE8F7D', letterSpacing: '0.08em' }}>perfil de leitor · marginalia</div>
+        </div>
+        <svg width="16" height="20" viewBox="0 0 72 86" fill="none">
+          <path d="M4,4 L4,82 L60,82 L60,28 L36,4 Z" fill="#BDAB9C" opacity="0.9"/>
+          <path d="M36,4 L60,28 L36,28 Z" fill="#FAF8F3" opacity="0.55"/>
+          <circle cx="13" cy="70" r="5" fill="#697962" opacity="0.85"/>
+        </svg>
+      </div>
+    </div>
+  );
+};
+```
+
+### Card 3 — Momento de Leitura (gerado ao compartilhar trecho)
+
+```jsx
+// Mesmo formato do card de citação já existente no app
+// Adicionar: bolinha colorida do arquétipo + tipo do leitor no footer
+// Ex: "● O Sensível · @anaclara · A Hora da Estrela"
+```
+
+### Card 4 — DNA Visual (gerado na seção DNA do perfil)
+
+```jsx
+// Fundo escuro com a cor do arquétipo principal
+// Cormorant italic com nome do tipo
+// Barras finas de DNA em variações da cor
+// @username + logo Marginalia no footer
+```
+
+### Card 5 — Minimal (gerado ao compartilhar reação emocional)
+
+```jsx
+// Fundo escuro com cor do arquétipo
+// Frase emocional curta em Cormorant italic grande
+// Ex: "Esse capítulo me destruiu."
+// Username + logo no footer
+```
+
+---
+
+## PARTE 6 — EXPORTAÇÃO DE CARDS COMO IMAGEM
+
+```javascript
+// Usar html2canvas ou similar para exportar
+
+import html2canvas from 'html2canvas';
+
+async function exportarCard(elementId, nomeArquivo) {
+  const elemento = document.getElementById(elementId);
+
+  const canvas = await html2canvas(elemento, {
+    scale: 3,          // Alta resolução para mobile
+    useCORS: true,
+    backgroundColor: null,
+    logging: false
+  });
+
+  // Download
+  const link = document.createElement('a');
+  link.download = `${nomeArquivo}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// Formatos disponíveis:
+// Feed 1:1 — width: 320px, aspectRatio: 1
+// Stories 9:16 — width: 320px, height: 568px (padding aumentado)
+```
+
+---
+
+## PARTE 7 — LÓGICA DE GERAÇÃO AUTOMÁTICA
+
+```javascript
+// Regra: cada ação gera um card específico — o usuário não escolhe
+
+const TRIGGER_CARD = {
+  "compartilhar_perfil":    "CardIdentidade",
+  "compartilhar_tipo":      "CardFraseCombinada",
+  "compartilhar_trecho":    "CardCitacao",      // já existe no app
+  "compartilhar_progresso": "CardProgresso",
+  "compartilhar_reacao":    "CardMinimal",
+  "compartilhar_dna":       "CardDNAVisual"
+};
+
+function gerarCard(trigger, dadosUsuario) {
+  const tipoCard = TRIGGER_CARD[trigger];
+  const arquetipos = calcularArquetipos(dadosUsuario);
+
+  switch (tipoCard) {
+    case "CardIdentidade":
+      return <CardIdentidade usuario={dadosUsuario} arquetipos={arquetipos} />;
+    case "CardFraseCombinada":
+      return <CardFraseCombinada usuario={dadosUsuario} arquetipos={arquetipos} />;
+    // ... outros tipos
+  }
+}
+```
+
+---
+
+## PARTE 8 — ONBOARDING DO ARQUÉTIPO
+
+### Quando mostrar pela primeira vez:
+
+Após o usuário ter **pelo menos 5 destaques marcados** ou **3 margens publicadas**, mostrar bottom sheet:
+
+```
+[Símbolo Marginalia]
+
+"Descobrimos seu perfil de leitor"
+
+[Nome do arquétipo em Cormorant italic grande]
+[Cor de fundo do arquétipo]
+
+[Frase do tipo]
+
+[Traços em pills]
+
+[Botão "Ver meu perfil completo"]
+[Botão secundário "Continuar lendo"]
+```
+
+### Atualização dinâmica:
+- Recalcular a cada nova margem publicada
+- Mostrar notificação sutil se o tipo secundário mudar
+- Nunca mostrar de forma intrusiva — sempre como descoberta
+
+---
+
+## PARTE 9 — VARIÁVEIS CSS GLOBAIS POR ARQUÉTIPO
+
+```css
+/* Aplicar no :root quando o usuário está logado */
+/* Usado para tinting sutil de elementos de perfil */
+
+:root {
+  --arquetipo-cor: #3D2630;           /* cor principal do tipo */
+  --arquetipo-texto: #F4E0E4;         /* cor do texto sobre o tipo */
+  --arquetipo-accent: #C8909A;        /* cor de destaque/links */
+  --arquetipo-traco: #A86878;         /* cor das barras de DNA */
+}
+
+/* Uso nos componentes: */
+.avatar-perfil {
+  background: var(--arquetipo-cor);
+  color: var(--arquetipo-texto);
+}
+
+.bolinha-identidade {
+  background: var(--arquetipo-accent);
+}
+
+.barra-dna-fill {
+  background: var(--arquetipo-traco);
+}
+```
+
+---
+
+## RESULTADO ESPERADO
+
+Ao implementar esse sistema, o Marginalia ganha:
+
+1. **Identidade emocional** — o usuário não é "usuário", é "O Sensível"
+2. **Compartilhamento natural** — cards bonitos que as pessoas vão querer postar
+3. **Diferenciação** — nenhum outro app de leitura tem isso
+4. **Retenção** — o usuário quer ver seu tipo evoluir
+5. **Viralidade** — a frase combinada é única para cada par de arquétipos
+
+---
+
+*Marginalia · Sistema de Arquétipos de Leitor · 2025*
+*"Você não lê de qualquer jeito. Marginalia sabe como você lê."*

@@ -8,18 +8,10 @@ export function canUserSeeMargin(
 ): boolean {
   if (spoilerPreference === "all") return true;
 
-  if (spoilerPreference === "protected") {
-    // Book not in library → always block
-    if (!progress) return false;
-    // Any spoiler level → block
-    if (margin.spoilerLevel !== "none") return false;
-    // Not started yet → block (protect unstarted books)
-    if (progress.currentPercent === 0 && progress.status !== "completed") return false;
-    return isWithinProgress(margin, progress);
-  }
-
-  // progress_only: book must be in library with registered progress
+  // protected: book must be in library, started, within progress, no spoiler flags
   if (!progress) return false;
+  if (margin.spoilerLevel !== "none") return false;
+  if (progress.currentPercent === 0 && progress.status !== "completed") return false;
   return isWithinProgress(margin, progress);
 }
 

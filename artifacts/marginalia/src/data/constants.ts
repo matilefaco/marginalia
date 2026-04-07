@@ -21,23 +21,18 @@ export const GENRES = [
 
 export const SPOILER_PREFERENCES = [
   {
-    id: "all",
-    label: "Ver tudo",
-    description: "Veja todo o conteúdo público, inclusive trechos e discussões além do seu progresso.",
-  },
-  {
-    id: "progress_only",
-    label: "Ver só o que eu já li",
-    description: "Mostrar apenas posts de livros que já registrei e apenas dentro do meu progresso.",
-  },
-  {
     id: "protected",
     label: "Modo protegido",
-    description: "Ocultar automaticamente conteúdos de livros que ainda não registrei ou que estejam além do meu progresso, até eu decidir liberar.",
+    description: "O Marginalia respeita o seu ritmo de leitura. Conteúdos além do seu progresso ficam protegidos.",
+  },
+  {
+    id: "all",
+    label: "Explorar livremente",
+    description: "Veja tudo da comunidade, inclusive conteúdos além do seu progresso.",
   },
 ] as const;
 
-export type SpoilerPreference = "all" | "progress_only" | "protected";
+export type SpoilerPreference = "all" | "protected";
 
 export const MARGIN_TYPES = [
   { id: "insight", label: "Insight", icon: "💡" },

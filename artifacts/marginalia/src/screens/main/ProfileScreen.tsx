@@ -7,7 +7,16 @@ import { ShareCardModal } from "@/components/cards/ShareCardModal";
 import { BookCover } from "@/components/BookCover";
 import { Settings, Pencil, Check, X, Share2, Instagram, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
-import { READER_ARCHETYPES, EMOJI_REACTIONS, MARGIN_TYPES } from "@/data/constants";
+import { EMOJI_REACTIONS, MARGIN_TYPES } from "@/data/constants";
+import {
+  ARQUETIPOS,
+  calcularArquetipos,
+  getFraseCombinada,
+  DNA_TRAITS,
+  calcularDnaTrait,
+  getTexturaStyle,
+  type ArquetipoResult,
+} from "@/data/archetypes";
 
 const AVATAR_COLORS = [
   { id: "verde", label: "Verde", value: "#697962" },
@@ -25,67 +34,14 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
-/* ─── DNA de Leitura ─── */
-interface DnaProps {
-  myMargins: ReturnType<typeof useApp>["margins"];
-  userReactions: Record<string, string>;
-  myBooks: ReturnType<typeof useApp>["progress"];
-  dominantMarginType: typeof MARGIN_TYPES[number] | null;
-  dominantEmojiEntry: typeof EMOJI_REACTIONS[number] | null;
-  archetype: typeof READER_ARCHETYPES[number];
-}
-
-function DnaDeLeiturasSection({ myMargins, userReactions, myBooks, dominantMarginType, dominantEmojiEntry, archetype }: DnaProps) {
-  const hasData = myMargins.length > 0 || Object.keys(userReactions).length > 0;
-  if (!hasData) return null;
-
-  // Compute traits
-  const marginCount = myMargins.length;
-  const bookCount = myBooks.filter((p) => p.status === "reading" || p.status === "completed" || p.status === "finished").length;
-  const avgMarginsPerBook = bookCount > 0 ? (marginCount / bookCount) : 0;
-
-  const annotationStyle = (() => {
-    if (!dominantMarginType) return null;
-    const styleMap: Record<string, { label: string; desc: string; color: string }> = {
-      favorite_quote:      { label: "Colecionador de trechos", desc: "Você guarda o que é belo", color: "#C9A99A" },
-      symbolic_reading:    { label: "Leitor de símbolos", desc: "Você vê mais do que o texto diz", color: "#8A9E8C" },
-      theory:              { label: "Construtor de teorias", desc: "Você conecta ideias", color: "#6B7A6B" },
-      question:            { label: "O que questiona", desc: "Você não lê sem duvidar", color: "#BDAB9C" },
-      critique:            { label: "Crítico exigente", desc: "Você avalia cada escolha do autor", color: "#7A7A7A" },
-      reaction:            { label: "Leitor visceral", desc: "Você sente antes de pensar", color: "#C4A28C" },
-      insight:             { label: "Caçador de insights", desc: "Você lê para entender", color: "#697962" },
-      personal_connection: { label: "Leitor pessoal", desc: "Você se vê nas histórias", color: "#C4A08A" },
-    };
-    return styleMap[dominantMarginType.id] ?? null;
-  })();
-
-  const emotionalProfile = (() => {
-    if (!dominantEmojiEntry) return null;
-    const profileMap: Record<string, { label: string; desc: string }> = {
-      "🤍": { label: "Leitor sensível", desc: "Você se toca facilmente" },
-      "😭": { label: "Leitor emocional", desc: "Você sente tudo de verdade" },
-      "🤔": { label: "Leitor reflexivo", desc: "Você processa devagar" },
-      "🔥": { label: "Leitor intenso", desc: "Você lê com adrenalina" },
-      "✨": { label: "Leitor estético", desc: "Você aprecia a forma" },
-      "😮": { label: "Leitor curioso", desc: "Você se surpreende" },
-    };
-    return profileMap[dominantEmojiEntry.emoji] ?? null;
-  })();
-
-  const densityTrait = (() => {
-    if (marginCount === 0) return null;
-    if (avgMarginsPerBook >= 5) return { label: "Leitor denso", desc: "Você registra cada detalhe", icon: "📑" };
-    if (avgMarginsPerBook >= 2) return { label: "Leitor criterioso", desc: "Você marca o que importa", icon: "✍" };
-    return { label: "Leitor seletivo", desc: "Você guarda só o essencial", icon: "🎯" };
-  })();
-
-  const traits = [
-    annotationStyle ? { ...annotationStyle, icon: dominantMarginType?.icon } : null,
-    emotionalProfile ? { label: emotionalProfile.label, desc: emotionalProfile.desc, color: "#AE8F7D", icon: dominantEmojiEntry?.emoji } : null,
-    densityTrait ? { label: densityTrait.label, desc: densityTrait.desc, color: "#697962", icon: densityTrait.icon } : null,
-  ].filter(Boolean) as { label: string; desc: string; color: string; icon: string | undefined }[];
-
-  if (traits.length === 0) return null;
+/* ─── Novo DNA de Leitura (barras + frase combinada) ─── */
+function DnaDeLeiturasSection({ topArquetipos }: { topArquetipos: ArquetipoResult[] }) {
+  if (topArquetipos.length === 0) return null;
+  const primary = topArquetipos[0];
+  const secondary = topArquetipos[1] ?? null;
+  const fraseCombinada = secondary
+    ? getFraseCombinada(primary.arquetipo.id, secondary.arquetipo.id)
+    : null;
 
   return (
     <div className="mb-7">
@@ -97,42 +53,38 @@ function DnaDeLeiturasSection({ myMargins, userReactions, myBooks, dominantMargi
         Padrões que emergem das suas margens
       </p>
 
-      <div className="space-y-2.5">
-        {traits.map((trait, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-4 rounded-[14px] px-4 py-3.5 border"
-            style={{
-              borderColor: `${trait.color}25`,
-              backgroundColor: `${trait.color}0A`,
-            }}
-          >
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-[18px]"
-              style={{ backgroundColor: `${trait.color}18` }}
-            >
-              {trait.icon}
+      {/* DNA trait bars */}
+      <div className="space-y-3 mb-5">
+        {DNA_TRAITS.map((trait) => {
+          const pct = calcularDnaTrait(trait.archetipoIds, topArquetipos);
+          return (
+            <div key={trait.id}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-sans font-light text-[11px] text-[#454545]/70">{trait.label}</span>
+                <span className="font-sans font-light text-[9px] text-[#AE8F7D]">{pct}%</span>
+              </div>
+              <div className="h-[3px] bg-[#EBE6DB] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#AE8F7D] rounded-full transition-all duration-700"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-serif text-[15px] text-[#2A2A2A] leading-tight mb-0.5">{trait.label}</p>
-              <p className="font-sans font-light text-[10px] text-[#2A2A2A]/50">{trait.desc}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Reading fingerprint tagline */}
-      <div className="mt-4 rounded-[12px] border border-[#AE8F7D]/15 bg-[#EBE6DB]/20 px-4 py-3 flex items-center gap-3">
-        <span className="text-[20px]">{archetype.marginTypes[0] ? "📚" : "📖"}</span>
-        <div>
-          <p className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-0.5">
-            Impressão digital
+      {/* Combined phrase */}
+      {fraseCombinada && (
+        <div className="bg-[#EBE6DB]/40 border border-[#AE8F7D]/15 rounded-[14px] px-5 py-4">
+          <p className="font-sans text-[7px] font-light tracking-[0.2em] uppercase text-[#AE8F7D] mb-2">
+            {primary.arquetipo.nome} · {secondary!.arquetipo.nome}
           </p>
-          <p className="font-serif italic text-[12.5px] text-[#2A2A2A]/65">
-            {archetype.label} · {traits[0]?.label} · {dominantEmojiEntry?.emoji ?? "📖"}
+          <p className="font-serif italic text-[16px] text-[#3D3D3D] leading-[1.6] whitespace-pre-line">
+            &ldquo;{fraseCombinada}&rdquo;
           </p>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -175,8 +127,9 @@ export function ProfileScreen() {
   const myMargins = margins.filter((m) => m.userId === currentUser.id);
   const myBooks = progress.filter((p) => p.userId === currentUser.id);
 
-  const archetype = READER_ARCHETYPES.find((a) => a.id === currentUser.readerType)
-    ?? READER_ARCHETYPES.find((a) => a.id === "observador")!;
+  const topArquetipos = calcularArquetipos({ margins: myMargins, progress: myBooks, userReactions });
+  const primaryArquetipo = topArquetipos[0]?.arquetipo ?? ARQUETIPOS.find((a) => a.id === "observador")!;
+  const secondaryArquetipo = topArquetipos[1]?.arquetipo ?? null;
 
   const fullName = currentUser.lastName
     ? `${currentUser.firstName} ${currentUser.lastName}`
@@ -489,63 +442,113 @@ export function ProfileScreen() {
           </div>
         )}
 
-        {/* Archetype + Reading Signature */}
+        {/* ─── Impressão de leitura — identity card with archetype colors ─── */}
         <div
           className="rounded-[16px] p-5 mb-5 relative overflow-hidden"
-          style={{ backgroundColor: "#EBE6DB" }}
+          style={{ backgroundColor: primaryArquetipo.cor }}
         >
+          {/* Texture overlay */}
           <div
-            className="absolute inset-0 opacity-30"
+            className="absolute inset-0 opacity-60"
             style={{
-              backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.3) 1px, transparent 1px)",
-              backgroundSize: "4px 4px",
+              backgroundImage: getTexturaStyle(primaryArquetipo.textura),
+              backgroundSize: primaryArquetipo.textura === "dots" || primaryArquetipo.textura === "grain" ? "6px 6px" : "auto",
             }}
           />
+          {/* Dog-ear */}
+          <div className="absolute top-0 right-0 w-8 h-8 overflow-hidden">
+            <div
+              className="absolute top-0 right-0 w-0 h-0"
+              style={{
+                borderStyle: "solid",
+                borderWidth: "0 32px 32px 0",
+                borderColor: `transparent rgba(255,255,255,0.12) transparent transparent`,
+              }}
+            />
+          </div>
+
           <div className="relative z-10">
-            <p className="font-sans text-[7px] font-light tracking-[0.22em] uppercase text-[#AE8F7D] mb-3">
-              Seu tipo de leitor
+            <p
+              className="font-sans text-[7px] font-light tracking-[0.22em] uppercase mb-3"
+              style={{ color: primaryArquetipo.corAccent }}
+            >
+              {primaryArquetipo.numero} · Impressão de leitura
             </p>
-            <p className="font-serif text-[22px] text-[#3D3D3D] leading-tight mb-1">
-              {archetype.label}
+            <p
+              className="font-serif italic text-[26px] leading-tight mb-1"
+              style={{ color: primaryArquetipo.corTexto }}
+            >
+              {primaryArquetipo.nome}
             </p>
-            <p className="font-serif italic text-[13px] text-[#2A2A2A]/55 mb-4 leading-snug">
-              {archetype.description}
+            {secondaryArquetipo && (
+              <p
+                className="font-sans font-light text-[10px] tracking-[0.06em] mb-3"
+                style={{ color: primaryArquetipo.corAccent }}
+              >
+                {primaryArquetipo.nome} · {secondaryArquetipo.nome}
+              </p>
+            )}
+            <p
+              className="font-serif italic text-[13px] leading-relaxed mb-4"
+              style={{ color: primaryArquetipo.corAccent }}
+            >
+              &ldquo;{primaryArquetipo.frase}&rdquo;
             </p>
 
-            <div className="h-px bg-[#AE8F7D]/20 mb-4" />
+            {/* Trait pills */}
+            <div className="flex gap-1.5 flex-wrap mb-5">
+              {primaryArquetipo.tracos.map((traco) => (
+                <span
+                  key={traco}
+                  className="font-sans font-light text-[7px] tracking-[0.12em] uppercase px-2.5 py-1 rounded-full"
+                  style={{
+                    backgroundColor: `${primaryArquetipo.corAccent}20`,
+                    color: primaryArquetipo.corTexto,
+                  }}
+                >
+                  {traco}
+                </span>
+              ))}
+            </div>
 
-            <p className="font-sans text-[7px] font-light tracking-[0.22em] uppercase text-[#AE8F7D] mb-2">
+            <div
+              className="h-px mb-4 opacity-20"
+              style={{ backgroundColor: primaryArquetipo.corAccent }}
+            />
+
+            <p
+              className="font-sans text-[7px] font-light tracking-[0.22em] uppercase mb-2"
+              style={{ color: primaryArquetipo.corAccent }}
+            >
               Assinatura de leitura
             </p>
-            <p className="font-serif italic text-[17px] text-[#3D3D3D] leading-snug mb-4" data-testid="text-reading-signature">
+            <p
+              className="font-serif italic text-[15px] leading-snug mb-5"
+              data-testid="text-reading-signature"
+              style={{ color: primaryArquetipo.corTexto }}
+            >
               &ldquo;{currentUser.readingSignature}&rdquo;
-            </p>
-
-            <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30 mb-4">
-              Isso muda conforme você lê
             </p>
 
             <button
               onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-2 bg-[#2A2A2A] text-[#FAF8F3] rounded-[8px] px-4 py-2.5 transition-colors hover:bg-[#3A3A3A]"
+              className="flex items-center gap-2 rounded-[8px] px-4 py-2.5 transition-all hover:opacity-90"
+              style={{
+                backgroundColor: `${primaryArquetipo.corTexto}18`,
+                border: `1px solid ${primaryArquetipo.corAccent}40`,
+                color: primaryArquetipo.corTexto,
+              }}
             >
               <Share2 className="w-3.5 h-3.5" />
               <span className="font-sans text-[9px] font-light tracking-[0.12em]">
-                Compartilhar meu perfil de leitura
+                Compartilhar identidade de leitura
               </span>
             </button>
           </div>
         </div>
 
         {/* DNA de Leitura */}
-        <DnaDeLeiturasSection
-          myMargins={myMargins}
-          userReactions={userReactions}
-          myBooks={myBooks}
-          dominantMarginType={dominantMarginType}
-          dominantEmojiEntry={dominantEmojiEntry}
-          archetype={archetype}
-        />
+        <DnaDeLeiturasSection topArquetipos={topArquetipos} />
 
         {/* Estatísticas de leitura */}
         <div className="mb-7">

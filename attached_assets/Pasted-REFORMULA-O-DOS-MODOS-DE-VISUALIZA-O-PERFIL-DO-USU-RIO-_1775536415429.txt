@@ -1,0 +1,176 @@
+REFORMULAÇÃO DOS MODOS DE VISUALIZAÇÃO + PERFIL DO USUÁRIO
+
+Quero simplificar completamente a lógica de visualização do app e também reformular a estrutura do perfil para deixá-lo mais claro, forte e compartilhável.
+
+==================================================
+PARTE 1 — SIMPLIFICAÇÃO DOS MODOS DE VISUALIZAÇÃO
+==================================================
+
+Atualmente existem 3 modos:
+- Ver tudo
+- Ver só o que eu já li
+- Modo protegido
+
+Isso está redundante e confuso.
+
+Quero reduzir para apenas 2 modos.
+
+--------------------------------------------------
+1.1. NOVOS MODOS
+--------------------------------------------------
+
+Manter apenas:
+
+### 1. MODO PROTEGIDO (PADRÃO)
+- Este deve ser o modo padrão do app
+- Filtrar conteúdo baseado em:
+  - livros registrados
+  - progresso de leitura
+- Não mostrar spoilers
+- Proteger automaticamente:
+  - trechos
+  - comentários
+  - respostas
+- Substituir conteúdo protegido por cards de descoberta segura
+
+### 2. EXPLORAR LIVREMENTE
+- Antigo “Ver tudo”
+- Mostra todo conteúdo sem filtro
+- Exibir aviso:
+  “Você pode ver spoilers neste modo”
+
+--------------------------------------------------
+1.2. REMOVER COMPLETAMENTE
+--------------------------------------------------
+
+Remover:
+- “Ver só o que eu já li”
+
+Motivo:
+- comportamento já está coberto pelo modo protegido
+- é redundante e desnecessário
+
+--------------------------------------------------
+1.3. AJUSTE DE INTERFACE
+--------------------------------------------------
+
+Na tela de preferências:
+
+Substituir tudo por:
+
+- 🔒 Modo protegido (toggle ON por padrão)
+- 🌍 Explorar livremente (toggle OFF)
+
+Texto:
+
+Modo protegido:
+“O Marginalia respeita o seu ritmo de leitura. Conteúdos além do seu progresso ficam protegidos.”
+
+Explorar livremente:
+“Veja tudo da comunidade, inclusive conteúdos além do seu progresso.”
+
+==================================================
+PARTE 2 — PERFIL DO USUÁRIO (REFORMULAÇÃO COMPLETA)
+==================================================
+
+O perfil atual está bonito, mas pouco funcional e pouco compartilhável.
+
+Quero transformar o perfil em uma identidade de leitor forte.
+
+--------------------------------------------------
+2.1. HEADER DO PERFIL
+--------------------------------------------------
+
+Manter:
+- Tipo de leitor
+- Assinatura
+
+Adicionar:
+- Username visível
+- Cor de identidade do usuário (bolinha)
+- Botão principal:
+  “Compartilhar identidade de leitura”
+
+--------------------------------------------------
+2.2. DNA DE LEITURA (REFORMULAR)
+--------------------------------------------------
+
+Substituir blocos genéricos por métricas claras:
+
+Exibir como barras ou níveis:
+
+- Sensibilidade
+- Análise
+- Intensidade
+- Curiosidade
+
+Exemplo:
+
+Sensível — 78%
+Analítico — 62%
+Intenso — 85%
+Curioso — 70%
+
+--------------------------------------------------
+2.3. IMPRESSÃO DE LEITURA (TORNAR PRINCIPAL)
+--------------------------------------------------
+
+Criar um bloco mais forte e emocional:
+
+Exemplo:
+
+Impressão de leitura
+
+“O Observador  
+Leitor sensível  
+Ama frases que doem devagar”
+
+Esse bloco deve ser altamente visual e destacável.
+
+--------------------------------------------------
+2.4. CARD PRINCIPAL COMPARTILHÁVEL
+--------------------------------------------------
+
+Criar um único card principal para compartilhamento:
+
+Formato:
+
+Nome do usuário
+Perfil de leitor • ano
+
+Principais traços:
+- Sensível
+- Analítico
+- Intenso
+
+Assinatura:
+“Cada livro me deixa diferente”
+
+Esse card deve ser exportável para:
+- Stories (9:16)
+- Feed (1:1)
+
+--------------------------------------------------
+2.5. REMOVER REDUNDÂNCIA
+--------------------------------------------------
+
+Remover:
+- múltiplos cards pequenos no perfil
+- duplicações de informação
+- seções que não agregam valor
+
+Manter apenas:
+- identidade forte
+- métricas claras
+- um card compartilhável
+
+==================================================
+PARTE 3 — OBJETIVO FINAL
+==================================================
+
+Depois dessas mudanças:
+
+- o app fica mais simples de entender
+- o modo protegido vira o coração do produto
+- o perfil vira algo que o usuário quer compartilhar
+- a experiência fica mais premium, emocional e viral

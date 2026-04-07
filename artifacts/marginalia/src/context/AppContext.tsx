@@ -46,7 +46,7 @@ export interface UserPreferences {
 }
 
 export const DEFAULT_PREFS: UserPreferences = {
-  spoilerPreference: "all",
+  spoilerPreference: "protected",
   preferredGenres: [],
   notifications: {
     reactions: true,
@@ -135,7 +135,7 @@ function buildUserFromProfile(
     readerType: "observador",
     readingSignature:
       profile.reading_signature || "Cada livro me deixa diferente",
-    spoilerPreference: "progress_only",
+    spoilerPreference: "protected",
     preferredGenres: [],
     favoriteAuthors: [],
     stats: {

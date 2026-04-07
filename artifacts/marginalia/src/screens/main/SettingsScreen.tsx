@@ -1,10 +1,10 @@
-import { ArrowLeft, ArrowRight, Eye, BookOpen, Shield, LogOut, Bell, Lock, Info } from "lucide-react";
+import { ArrowLeft, ArrowRight, Globe, Shield, LogOut, Bell, Lock, Info } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { SPOILER_PREFERENCES, GENRES, type SpoilerPreference } from "@/data/constants";
 
-const RHYTHM_ICONS = [Eye, BookOpen, Shield];
+const RHYTHM_ICONS = [Shield, Globe];
 
 export function SettingsScreen() {
   const { currentUser, userPrefs, updateSpoilerPreference, updatePreferredGenres } = useApp();
@@ -87,6 +87,14 @@ export function SettingsScreen() {
               );
             })}
           </div>
+          {userPrefs.spoilerPreference === "all" && (
+            <div className="mt-2 flex items-start gap-2 bg-[#EBE6DB]/50 border border-[#BDAB9C]/30 rounded-[10px] px-3 py-2.5">
+              <Globe className="w-3 h-3 text-[#BDAB9C] flex-shrink-0 mt-0.5" />
+              <p className="font-sans font-light text-[9px] text-[#2A2A2A]/50 leading-relaxed">
+                Você pode ver spoilers neste modo.
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Genres */}
