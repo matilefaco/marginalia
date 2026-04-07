@@ -1,0 +1,265 @@
+CORRIGIR ESTADO VAZIO DA PÁGINA DO LIVRO QUANDO EXISTIREM POSTS PROTEGIDOS
+
+Quero corrigir uma inconsistência importante na página do livro.
+
+Hoje, quando o usuário clica em:
+
+👉 “Ver conteúdos protegidos”
+
+a parte de baixo da tela continua mostrando:
+
+👉 “Nenhum post nesta categoria ainda”
+
+Isso está errado quando o livro realmente possui posts, mesmo que esses posts estejam protegidos.
+
+Essa mensagem de estado vazio só pode aparecer quando realmente não existir nenhum post para aquele livro.
+
+==================================================
+PARTE 1 — REGRA PRINCIPAL
+==================================================
+
+A mensagem:
+
+- “Nenhum post nesta categoria ainda”
+- “Seja o primeiro a registrar um pensamento aqui”
+
+só deve aparecer se o livro realmente tiver:
+
+👉 zero posts totais
+
+Ou seja:
+- zero posts visíveis
+- zero posts protegidos
+- zero posts liberáveis
+- zero atividade real
+
+Se existir qualquer conteúdo relacionado ao livro, essa mensagem NÃO deve aparecer.
+
+==================================================
+PARTE 2 — COMPORTAMENTO CORRETO
+==================================================
+
+Quero que a lógica funcione assim:
+
+### CASO A — livro sem nenhum post real
+Mostrar estado vazio:
+- “Nenhum post nesta categoria ainda”
+- “Seja o primeiro a registrar um pensamento aqui”
+
+### CASO B — livro com posts visíveis
+Mostrar a lista dos posts visíveis
+
+### CASO C — livro com posts protegidos, mas sem posts visíveis
+NÃO mostrar estado vazio
+Mostrar:
+- bloco de conteúdos protegidos
+- lista dos conteúdos protegidos
+- ou os cards protegidos correspondentes
+
+### CASO D — livro com mistura de posts visíveis e protegidos
+Mostrar:
+- posts visíveis
+- e também conteúdos protegidos, quando aplicável
+
+==================================================
+PARTE 3 — O ERRO ATUAL
+==================================================
+
+Hoje parece que a UI está usando algo como:
+
+- “se a lista de posts visíveis está vazia, mostrar estado vazio”
+
+Mas isso está incompleto e errado.
+
+Porque no modo protegido pode acontecer:
+- visiblePosts = 0
+- protectedPosts > 0
+
+Nesse caso, o livro NÃO está vazio.
+
+Então a lógica correta não deve olhar apenas para:
+- visiblePosts.length
+
+Ela deve olhar para:
+- totalPosts
+- visiblePosts
+- protectedPosts
+
+==================================================
+PARTE 4 — NOVA REGRA DE ESTADO VAZIO
+==================================================
+
+Quero que o estado vazio só apareça se:
+
+- totalPosts === 0
+
+Se:
+- totalPosts > 0
+
+então nunca mostrar “Nenhum post nesta categoria ainda”.
+
+Mesmo que:
+- visiblePosts === 0
+
+Se houver:
+- protectedPosts > 0
+
+a tela deve mostrar esses conteúdos protegidos como conteúdo existente.
+
+==================================================
+PARTE 5 — FONTE DA VERDADE
+==================================================
+
+Quero que o Replit revise a lógica de cada livro para determinar corretamente:
+
+- total_posts
+- visible_posts
+- protected_posts
+- filtered_posts_by_tab
+
+Essa contagem precisa ser real e consistente.
+
+Sugestão de estrutura de dados por livro:
+
+- totalPosts
+- visiblePosts
+- protectedPosts
+- visibleByCategory
+- protectedByCategory
+
+==================================================
+PARTE 6 — RELAÇÃO COM AS ABAS / CATEGORIAS
+==================================================
+
+Hoje a tela tem abas como:
+- Todos
+- Insights
+- Interpretações
+- Críticas
+- etc.
+
+Quero que essa lógica também seja corrigida por categoria.
+
+Exemplo:
+
+### Se na aba “Todos”:
+- visiblePosts = 0
+- protectedPosts = 7
+
+Então:
+- NÃO mostrar estado vazio
+- mostrar conteúdos protegidos
+
+### Se na aba “Críticas”:
+- visiblePosts = 0
+- protectedPosts = 0
+- totalPostsInCategory = 0
+
+Aí sim pode mostrar:
+- “Nenhum post nesta categoria ainda”
+
+Ou seja:
+o estado vazio precisa respeitar a categoria atual, mas também considerar conteúdos protegidos daquela categoria.
+
+==================================================
+PARTE 7 — O QUE A TELA DEVE MOSTRAR QUANDO EXISTIREM SOMENTE CONTEÚDOS PROTEGIDOS
+==================================================
+
+Se o livro tiver apenas conteúdos protegidos na categoria atual, quero que a tela mostre:
+
+- cabeçalho com quantidade de conteúdos protegidos
+- bloco “seu ritmo está protegido”
+- botão “Ver conteúdos protegidos”
+- cards protegidos já listados quando o usuário expandir
+- e nunca o estado vazio ao mesmo tempo
+
+Ou seja:
+não pode coexistir na mesma situação:
+- “há 7 conteúdos protegidos”
+- e também
+- “Nenhum post nesta categoria ainda”
+
+Isso é contraditório.
+
+==================================================
+PARTE 8 — AJUSTE DE INTERFACE
+==================================================
+
+Quando o usuário clicar em:
+👉 “Ver conteúdos protegidos”
+
+e houver conteúdos protegidos reais,
+quero que a parte inferior da tela seja substituída pela lista desses conteúdos.
+
+Não quero que o estado vazio continue renderizado embaixo.
+
+Então, ao expandir conteúdos protegidos:
+- esconder o bloco de estado vazio
+- renderizar a lista real dos conteúdos protegidos
+- manter a navegação dentro da mesma tela
+
+==================================================
+PARTE 9 — TESTES OBRIGATÓRIOS
+==================================================
+
+Depois da correção, testar:
+
+### Teste 1
+Livro com:
+- 0 posts visíveis
+- 7 protegidos
+
+Resultado esperado:
+- NÃO mostrar “Nenhum post nesta categoria ainda”
+- mostrar conteúdos protegidos corretamente
+
+### Teste 2
+Livro com:
+- 2 posts visíveis
+- 5 protegidos
+
+Resultado esperado:
+- mostrar posts visíveis
+- mostrar bloco de protegidos
+- sem estado vazio
+
+### Teste 3
+Livro com:
+- 0 posts totais
+
+Resultado esperado:
+- aí sim mostrar estado vazio
+
+### Teste 4
+Trocar de aba/categoria:
+- verificar se o estado vazio só aparece quando aquela categoria realmente não tiver nem posts visíveis nem protegidos
+
+### Teste 5
+Clicar em “Ver conteúdos protegidos”
+- verificar se a lista aparece na mesma tela
+- e o estado vazio desaparece
+
+==================================================
+PARTE 10 — RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessa mudança, quero que:
+
+1. a mensagem “Nenhum post nesta categoria ainda” só apareça quando realmente não existir nenhum post;
+2. conteúdos protegidos contem como conteúdo existente;
+3. ao clicar em “Ver conteúdos protegidos”, a tela mostre esses conteúdos em vez do estado vazio;
+4. a página do livro fique lógica, coerente e confiável;
+5. nunca mais apareça uma contradição entre “há conteúdos protegidos” e “não há posts”.
+
+==================================================
+PARTE 11 — PRIORIDADE
+==================================================
+
+Alta.
+
+Implementar nesta ordem:
+1. revisar a lógica de estado vazio
+2. considerar totalPosts e protectedPosts, não apenas visiblePosts
+3. corrigir por categoria/aba
+4. esconder o estado vazio quando houver conteúdos protegidos
+5. testar em livros com diferentes combinações de visíveis/protegidos

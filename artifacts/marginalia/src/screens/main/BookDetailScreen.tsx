@@ -373,6 +373,19 @@ export function BookDetailScreen() {
     citacoes: visibleMargins.filter((m) => m.postType === "favorite_quote"),
   };
 
+  const blockedTabMargins: Record<string, typeof blockedMargins> = {
+    todos: blockedMargins,
+    insights: blockedMargins.filter((m) =>
+      ["insight", "reaction", "personal_connection"].includes(m.postType)
+    ),
+    interpretacoes: blockedMargins.filter((m) =>
+      ["theory", "symbolic_reading"].includes(m.postType)
+    ),
+    criticas: blockedMargins.filter((m) => m.postType === "critique"),
+    perguntas: blockedMargins.filter((m) => m.postType === "question"),
+    citacoes: blockedMargins.filter((m) => m.postType === "favorite_quote"),
+  };
+
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
     setFeedKey((k) => k + 1);
@@ -619,7 +632,9 @@ export function BookDetailScreen() {
         <div>
           <div className="flex gap-1 overflow-x-auto pb-2 mb-4 scrollbar-hide">
             {TABS.map((tab) => {
-              const count = tabMargins[tab.id]?.length ?? 0;
+              const visibleCount = tabMargins[tab.id]?.length ?? 0;
+              const blockedInTab = blockedTabMargins[tab.id]?.length ?? 0;
+              const total = visibleCount + blockedInTab;
               return (
                 <button
                   key={tab.id}
@@ -631,48 +646,93 @@ export function BookDetailScreen() {
                       : "bg-transparent text-[#2A2A2A]/45 border-[#454545]/10 hover:border-[#AE8F7D]/25"
                   }`}
                 >
-                  {tab.label}{count > 0 ? ` · ${count}` : ""}
+                  {tab.label}{total > 0 ? ` · ${total}` : ""}
+                  {blockedInTab > 0 && visibleCount === 0 && (
+                    <span className="ml-1 opacity-60">🔒</span>
+                  )}
                 </button>
               );
             })}
           </div>
 
-          <div key={feedKey} className="space-y-3 feed-enter">
-            {(tabMargins[activeTab] ?? []).length === 0 ? (
-              <div className="text-center py-10 border border-dashed border-[#AE8F7D]/15 rounded-[14px]">
-                <p className="font-serif italic text-[13px] text-[#2A2A2A]/35 mb-1">
-                  Nenhum post nesta categoria ainda.
-                </p>
-                <p className="font-sans font-light text-[9px] text-[#2A2A2A]/25">
-                  Seja o primeiro a registrar um pensamento aqui.
-                </p>
-              </div>
-            ) : (
-              (tabMargins[activeTab] ?? []).map((m) => (
-                <MarginCard key={m.id} margin={m} />
-              ))
-            )}
-          </div>
-        </div>
+          {(() => {
+            const currentVisible = tabMargins[activeTab] ?? [];
+            const currentBlocked = blockedTabMargins[activeTab] ?? [];
+            const currentTotal = currentVisible.length + currentBlocked.length;
 
-        {/* Protected Content Section */}
-        {showProtected && blockedCount > 0 && (
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex-1 h-px bg-[#AE8F7D]/15" />
-              <span className="font-sans text-[7.5px] font-light tracking-[0.2em] uppercase text-[#AE8F7D]/60 flex items-center gap-1.5 whitespace-nowrap">
-                <Shield className="w-3 h-3" />
-                {blockedCount} {blockedCount === 1 ? "conteúdo protegido" : "conteúdos protegidos"}
-              </span>
-              <div className="flex-1 h-px bg-[#AE8F7D]/15" />
-            </div>
-            <div className="space-y-3">
-              {blockedMargins.map((m) => (
-                <MarginCard key={m.id} margin={m} />
-              ))}
-            </div>
-          </div>
-        )}
+            if (currentTotal === 0) {
+              return (
+                <div className="text-center py-10 border border-dashed border-[#AE8F7D]/15 rounded-[14px]">
+                  <p className="font-serif italic text-[13px] text-[#2A2A2A]/35 mb-1">
+                    Nenhum post nesta categoria ainda.
+                  </p>
+                  <p className="font-sans font-light text-[9px] text-[#2A2A2A]/25">
+                    Seja o primeiro a registrar um pensamento aqui.
+                  </p>
+                </div>
+              );
+            }
+
+            if (currentVisible.length === 0) {
+              if (showProtected) {
+                return (
+                  <div key={feedKey} className="space-y-3 feed-enter">
+                    <div className="flex items-center gap-3 mb-1">
+                      <div className="flex-1 h-px bg-[#AE8F7D]/15" />
+                      <span className="font-sans text-[7.5px] font-light tracking-[0.2em] uppercase text-[#AE8F7D]/60 flex items-center gap-1.5 whitespace-nowrap">
+                        <Shield className="w-3 h-3" />
+                        {currentBlocked.length}{" "}
+                        {currentBlocked.length === 1 ? "conteúdo protegido" : "conteúdos protegidos"}
+                      </span>
+                      <div className="flex-1 h-px bg-[#AE8F7D]/15" />
+                    </div>
+                    {currentBlocked.map((m) => (
+                      <MarginCard key={m.id} margin={m} />
+                    ))}
+                  </div>
+                );
+              }
+              return (
+                <div className="text-center py-8 border border-dashed border-[#AE8F7D]/20 rounded-[14px]">
+                  <Shield className="w-5 h-5 text-[#AE8F7D]/30 mx-auto mb-2.5" />
+                  <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 leading-relaxed mb-1">
+                    {currentBlocked.length}{" "}
+                    {currentBlocked.length === 1 ? "post protegido" : "posts protegidos"} nesta categoria.
+                  </p>
+                  <p className="font-sans font-light text-[8px] text-[#AE8F7D]/55">
+                    Toque em "Ver conteúdos protegidos" acima para revelá-los.
+                  </p>
+                </div>
+              );
+            }
+
+            return (
+              <>
+                <div key={feedKey} className="space-y-3 feed-enter">
+                  {currentVisible.map((m) => (
+                    <MarginCard key={m.id} margin={m} />
+                  ))}
+                </div>
+                {showProtected && currentBlocked.length > 0 && (
+                  <div className="mt-3 space-y-3">
+                    <div className="flex items-center gap-3 my-4">
+                      <div className="flex-1 h-px bg-[#AE8F7D]/15" />
+                      <span className="font-sans text-[7.5px] font-light tracking-[0.2em] uppercase text-[#AE8F7D]/60 flex items-center gap-1.5 whitespace-nowrap">
+                        <Shield className="w-3 h-3" />
+                        {currentBlocked.length}{" "}
+                        {currentBlocked.length === 1 ? "conteúdo protegido" : "conteúdos protegidos"}
+                      </span>
+                      <div className="flex-1 h-px bg-[#AE8F7D]/15" />
+                    </div>
+                    {currentBlocked.map((m) => (
+                      <MarginCard key={m.id} margin={m} />
+                    ))}
+                  </div>
+                )}
+              </>
+            );
+          })()}
+        </div>
 
         {/* Add Margin CTA */}
         <div className="pt-2">
