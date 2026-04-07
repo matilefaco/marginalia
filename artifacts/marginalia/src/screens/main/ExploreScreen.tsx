@@ -233,34 +233,36 @@ export function ExploreScreen() {
                 {communitySearchResults
                   .filter((cr) => !localResults.some((lr) => lr.title.toLowerCase() === cr.title.toLowerCase()))
                   .map((book) => (
-                    <div key={book.id} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-3">
-                      {book.coverUrl ? (
-                        <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                      ) : (
-                        <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
-                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
-                        <p className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} margens · {book.publicationYear ?? ""}</p>
+                    <Link key={book.id} href={`/book/${book.id}`} data-testid={`search-community-${book.id}`}>
+                      <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-3 hover:border-[#AE8F7D]/35 active:opacity-75 transition-all">
+                        {book.coverUrl ? (
+                          <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                        ) : (
+                          <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
+                          <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
+                          <p className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} margens · {book.publicationYear ?? ""}</p>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
               </div>
             )}
 
-            {/* Google Books results */}
+            {/* Google Books results — discovery only, not yet in catalog */}
             {googleResults.length > 0 && (
               <div className="space-y-2">
                 <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#454545]/35 mb-2">
-                  Mais livros
+                  Descobertos fora do catálogo
                 </p>
                 {googleResults
                   .filter((gr) => !localResults.some((lr) => lr.title.toLowerCase() === gr.title.toLowerCase()) && !communitySearchResults.some((cr) => cr.title.toLowerCase() === gr.title.toLowerCase()))
                   .map((book) => (
                     <div
                       key={book.externalId}
-                      className="bg-[#FAF8F3] border border-[#AE8F7D]/10 rounded-[12px] p-4 flex items-center gap-3"
+                      className="bg-[#FAF8F3] border border-dashed border-[#AE8F7D]/20 rounded-[12px] p-4 flex items-center gap-3 opacity-80"
                     >
                       {book.coverUrl ? (
                         <img
@@ -275,9 +277,9 @@ export function ExploreScreen() {
                       <div className="flex-1 min-w-0">
                         <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
                         <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#454545]/40 mb-1">{book.author}</p>
-                        {book.publishYear && (
-                          <p className="font-sans font-light text-[9px] text-[#454545]/30">{book.publishYear}</p>
-                        )}
+                        <p className="font-sans font-light text-[8px] text-[#AE8F7D]/60 italic">
+                          Ainda não está no Marginalia
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -335,27 +337,29 @@ export function ExploreScreen() {
             <p className="font-sans font-light text-[9px] text-[#454545]/40 mb-3">Os livros mais anotados agora</p>
             <div className="space-y-2">
               {communityTrending.slice(0, 6).map((book, idx) => (
-                <div key={book.id} data-testid={`card-discussed-${book.id}`} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4">
-                  <span className="font-serif italic text-[22px] text-[#AE8F7D]/40 w-6 flex-shrink-0 text-center">{idx + 1}</span>
-                  {book.coverUrl ? (
-                    <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                  ) : (
-                    <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                    <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
-                      {book.genres && book.genres.length > 0 && (
-                        <>
-                          <span className="text-[#AE8F7D]/25">·</span>
-                          <span className="font-sans font-light text-[8px] text-[#454545]/35">{(book.genres as string[])[0]}</span>
-                        </>
-                      )}
+                <Link key={book.id} href={`/book/${book.id}`} data-testid={`card-discussed-${book.id}`}>
+                  <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 active:opacity-75 transition-all">
+                    <span className="font-serif italic text-[22px] text-[#AE8F7D]/40 w-6 flex-shrink-0 text-center">{idx + 1}</span>
+                    {book.coverUrl ? (
+                      <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    ) : (
+                      <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
+                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
+                        {book.genres && book.genres.length > 0 && (
+                          <>
+                            <span className="text-[#AE8F7D]/25">·</span>
+                            <span className="font-sans font-light text-[8px] text-[#454545]/35">{(book.genres as string[])[0]}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
@@ -418,21 +422,23 @@ export function ExploreScreen() {
               {!communityGenreLoading && communityGenreBooks.length > 0 && (
                 <div className="space-y-2 mb-4">
                   {communityGenreBooks.map((book) => (
-                    <div key={book.id} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/25 transition-colors">
-                      {book.coverUrl ? (
-                        <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                      ) : (
-                        <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                        <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
-                        <div className="flex items-center gap-2">
-                          <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
-                          {book.publicationYear && (<><span className="text-[#AE8F7D]/25">·</span><span className="font-sans font-light text-[8px] text-[#454545]/30">{book.publicationYear}</span></>)}
+                    <Link key={book.id} href={`/book/${book.id}`} data-testid={`genre-community-book-${book.id}`}>
+                      <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 active:opacity-75 transition-all">
+                        {book.coverUrl ? (
+                          <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                        ) : (
+                          <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
+                          <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#454545]/40 mb-1">{book.author}</p>
+                          <div className="flex items-center gap-2">
+                            <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} ecos</span>
+                            {book.publicationYear && (<><span className="text-[#AE8F7D]/25">·</span><span className="font-sans font-light text-[8px] text-[#454545]/30">{book.publicationYear}</span></>)}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

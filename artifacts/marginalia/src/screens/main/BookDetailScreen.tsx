@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link } from "wouter";
+import { useParams, Link, useLocation } from "wouter";
 import { ArrowLeft, Shield } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { MOCK_BOOKS, MOCK_MARGINS } from "@/data/mockData";
@@ -304,6 +304,7 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
 
 export function BookDetailScreen() {
   const params = useParams<{ id: string }>();
+  const [, navigate] = useLocation();
   const bookId = parseInt(params.id || "1", 10);
   const { currentUser, progress, updateBookProgress } = useApp();
 
@@ -318,7 +319,37 @@ export function BookDetailScreen() {
   const [pageInput, setPageInput] = useState(String(prog?.currentPage || ""));
   const [chapterInput, setChapterInput] = useState(prog?.currentChapter || "");
 
-  if (!book) return null;
+  const goBack = () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      navigate("/explore");
+    }
+  };
+
+  if (!book) {
+    return (
+      <div className="min-h-full bg-[#FAF8F3] flex flex-col">
+        <div className="flex items-center gap-3 px-5 pt-8 pb-4">
+          <button onClick={goBack} className="text-[#454545]/40" data-testid="button-back">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+          <p className="font-serif italic text-[32px] text-[#AE8F7D]/40 mb-4">Livro não encontrado</p>
+          <p className="font-sans font-light text-[11px] text-[#454545]/35 mb-8">
+            Este livro ainda não está no catálogo do Marginalia.
+          </p>
+          <button
+            onClick={() => navigate("/explore")}
+            className="font-sans font-light text-[10px] tracking-[0.14em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/30 rounded-full px-5 py-2.5 hover:bg-[#AE8F7D]/5 transition-colors"
+          >
+            Explorar catálogo
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const visibleMargins = bookMargins.filter((m) =>
     canUserSeeMargin(m, currentUser.spoilerPreference, prog)
@@ -367,11 +398,9 @@ export function BookDetailScreen() {
     <div className="min-h-full bg-[#FAF8F3]">
       {/* Header */}
       <div className="flex items-center gap-3 px-5 pt-8 pb-4">
-        <Link href="/library">
-          <button data-testid="button-back" className="text-[#454545]/40">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-        </Link>
+        <button onClick={goBack} data-testid="button-back" className="text-[#454545]/40 hover:text-[#454545]/70 transition-colors">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
         <div className="flex-1 min-w-0">
           <h1 className="font-serif italic text-[18px] text-[#3D3D3D] leading-tight truncate">{book.title}</h1>
           <p className="font-sans font-light text-[9px] tracking-[0.12em] uppercase text-[#454545]/40">{book.author}</p>

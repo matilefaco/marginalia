@@ -1,0 +1,201 @@
+Quero corrigir uma falha importante de navegação e estrutura do catálogo:
+
+Hoje, vários livros exibidos no app **não estão clicáveis**.
+
+Isso está errado.
+
+Todos os livros mostrados no app precisam ser clicáveis e abrir uma página completa de detalhe do livro, como já acontece com livros que estão funcionando bem, por exemplo **A Hora da Estrela**.
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Hoje existem livros aparecendo em listas como:
+- Em alta na comunidade
+- Livros por gênero
+- Explorar
+- Rankings
+- Outras seções do app
+
+Mas muitos desses livros:
+- não respondem ao clique
+- ou não abrem uma página de detalhe
+- ou parecem apenas cards estáticos
+
+Isso quebra a experiência do usuário e passa sensação de app incompleto.
+
+==================================================
+2. COMPORTAMENTO CORRETO QUE EU QUERO
+==================================================
+
+Todo livro exibido no app deve ser clicável.
+
+Quando o usuário tocar em qualquer card de livro, o app deve abrir a página específica daquele livro.
+
+Essa regra deve valer para:
+- livros em alta
+- livros por gênero
+- livros de listas temáticas
+- livros do explorar
+- livros da biblioteca
+- livros sugeridos
+- qualquer card de livro em qualquer tela do app
+
+==================================================
+3. A PÁGINA DO LIVRO PRECISA SER COMPLETA
+==================================================
+
+Quero que todos os livros abram uma página de detalhe rica e consistente, como já acontece com livros que estão melhor estruturados, por exemplo “A Hora da Estrela”.
+
+Ou seja, ao clicar no livro, a página precisa mostrar:
+
+### 3.1. Informações principais do livro
+- capa
+- título
+- autor
+- descrição/sobre o livro
+- publicação/ano
+- número de páginas, quando houver
+- progresso do leitor naquele livro, se existir
+- botão/ação de atualizar progresso
+
+### 3.2. Métricas sociais do livro
+- leitores
+- margens/ecos
+- debates/comentários, se aplicável
+- salvos/guardados, se existir essa métrica
+
+### 3.3. Atividade da comunidade naquele livro
+Quero que apareçam as interações da comunidade especificamente relacionadas àquele livro:
+- ecos
+- margens
+- comentários
+- reações
+- leituras simbólicas
+- citações
+- perguntas
+- críticas
+- interpretações
+
+### 3.4. Navegação dentro do conteúdo do livro
+A página do livro deve permitir explorar o conteúdo daquele livro, e não ser apenas uma ficha técnica vazia.
+
+==================================================
+4. ISSO PRECISA VALER PARA TODOS OS LIVROS
+==================================================
+
+Quero que essa estrutura seja universal no app.
+
+Não quero que:
+- alguns livros tenham página completa
+- e outros sejam cards mortos sem ação
+
+Quero que todos os livros usem o mesmo sistema de detalhe.
+
+Mesmo que o livro tenha menos dados inicialmente, ele ainda precisa:
+- abrir
+- mostrar seus dados
+- mostrar sua descrição
+- mostrar a atividade disponível
+- e ter estrutura preparada para crescer
+
+==================================================
+5. O QUE REVISAR NO CÓDIGO
+==================================================
+
+Quero que você revise a navegação e a modelagem dos cards de livro.
+
+### Verificar especificamente:
+
+#### 5.1. Clique no card
+- garantir que cada card de livro tenha `onClick` ou ação equivalente
+- garantir que o clique navegue para a rota/tela do livro
+- garantir que isso esteja implementado em todas as listas
+
+#### 5.2. Identificador correto do livro
+- garantir que todos os livros tenham um identificador válido (`id`, `slug` ou equivalente)
+- garantir que esse identificador seja passado corretamente na navegação
+
+#### 5.3. Página de detalhe do livro
+- garantir que a tela de detalhe consiga carregar qualquer livro do banco
+- não só alguns livros específicos
+- não só livros hardcoded
+
+#### 5.4. Query de busca do livro
+- revisar se a página do livro está buscando:
+  - os dados do livro
+  - os ecos daquele livro
+  - as estatísticas daquele livro
+  - as interações da comunidade daquele livro
+
+#### 5.5. Fallback para livros com menos dados
+Se um livro ainda não tiver muitos ecos, comentários ou métricas, mesmo assim ele deve abrir normalmente e mostrar:
+- dados básicos do livro
+- descrição
+- capa
+- estado vazio elegante para a comunidade, algo como:
+  - “Ainda não há margens neste livro”
+  - “Seja a primeira voz neste livro”
+  - etc.
+
+==================================================
+6. PADRONIZAÇÃO ENTRE LIVROS
+==================================================
+
+Quero que livros novos, livros vindos de API e livros seed usem a mesma lógica de detalhe.
+
+Ou seja:
+- não pode existir diferença estrutural entre “livro especial/manual” e “livro vindo da lista”
+- tudo precisa convergir para a mesma página de detalhe
+
+==================================================
+7. EXPERIÊNCIA DO USUÁRIO
+==================================================
+
+Quando o usuário vê um livro em qualquer lista, ele naturalmente espera que o livro seja clicável.
+
+Então quero:
+- feedback de toque no card
+- navegação suave
+- abertura confiável da página
+- sem parecer elemento decorativo
+
+Se necessário:
+- adicionar estado hover/touch/press no card
+- pequena microinteração ao tocar
+- deixar claro visualmente que o livro é interativo
+
+==================================================
+8. O QUE NÃO PODE MAIS ACONTECER
+==================================================
+
+Depois da correção, não pode mais acontecer:
+
+- livro aparecer mas não abrir
+- card sem ação
+- lista cheia de livros “mortos”
+- livro sem página de detalhe
+- usuário tocar e nada acontecer
+- somente alguns livros terem experiência completa
+
+==================================================
+9. RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessa correção, quero que:
+
+- todos os livros do app sejam clicáveis
+- todos abram uma página completa de detalhe
+- todos tenham estrutura semelhante à página de “A Hora da Estrela”
+- todos mostrem informações do livro + atividade da comunidade sobre aquele livro
+- o app pareça consistente e confiável em todo o catálogo
+
+==================================================
+10. PRIORIDADE
+==================================================
+
+Isso é prioridade alta.
+
+Implemente a correção na navegação e na tela de detalhe dos livros.
+Não quero apenas tornar o card clicável visualmente.
+Quero que o clique leve para uma página real, completa e funcional de cada livro.
