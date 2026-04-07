@@ -518,10 +518,104 @@ const ATMOSPHERIC_PHRASES = [
 
 function SpoilerShieldCard({ margin, reason, inLibrary }: { margin: Margin; reason: string; inLibrary: boolean }) {
   const [, navigate] = useLocation();
+  const [revealed, setRevealed] = useState(false);
 
   const book = MOCK_BOOKS.find((b) => b.id === margin.bookId);
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
   const phrase = ATMOSPHERIC_PHRASES[margin.id % ATMOSPHERIC_PHRASES.length];
+  const a = accent(margin.postType);
+  const ref = formatReference(margin);
+  const typeIcon = MARGIN_TYPES.find((t) => t.id === margin.postType)?.icon || "";
+  const authorUsername = USER_USERNAME_MAP[margin.userId];
+
+  if (revealed) {
+    return (
+      <Link
+        href={`/thread/${margin.id}`}
+        className="block active:scale-[0.99] active:opacity-90 transition-all duration-150"
+      >
+        <div
+          data-testid={`card-spoiler-revealed-${margin.id}`}
+          className="rounded-[14px] p-5"
+          style={{
+            border: "1px solid rgba(174,143,125,0.22)",
+            borderLeft: `3px solid ${a.border}BB`,
+            backgroundColor: "#FDF9F5",
+            boxShadow: "0 1px 6px rgba(174,143,125,0.08)",
+          }}
+        >
+          {/* Type + reference + timestamp */}
+          <div className="flex items-center gap-2 mb-3.5">
+            <span
+              className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase flex items-center gap-1"
+              style={{ color: a.label }}
+            >
+              <span>{typeIcon}</span>
+              <span>{marginTypeLabel(margin.postType)}</span>
+            </span>
+            {ref && (
+              <>
+                <span className="text-[#AE8F7D]/25">·</span>
+                <span className="font-sans text-[8px] font-light text-[#2A2A2A]/40">{ref}</span>
+              </>
+            )}
+            <span className="ml-auto font-sans text-[7px] font-light text-[#2A2A2A]/25 flex-shrink-0">
+              {timeAgo(margin.createdAt)}
+            </span>
+          </div>
+
+          {/* Excerpt */}
+          <div className="pl-4 mb-4" style={{ borderLeft: `2px solid ${a.border}66` }}>
+            <p className="font-serif italic text-[15px] text-[#2A2A2A] leading-[1.75]">
+              &ldquo;{margin.excerpt}&rdquo;
+            </p>
+          </div>
+
+          {/* Commentary */}
+          {margin.commentary && (
+            <p className="font-serif text-[14px] text-[#454545]/72 leading-[1.7] mb-4">
+              {margin.commentary}
+            </p>
+          )}
+
+          {/* Author row */}
+          <div className="flex items-center gap-2 mb-3 pt-3 border-t border-[#454545]/5">
+            <div
+              className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: MOCK_USERS.find((u) => u.id === margin.userId)?.avatarColor || "#AE8F7D" }}
+            >
+              <span className="font-sans text-[7px] text-[#FAF8F3]">{margin.userInitials}</span>
+            </div>
+            <span className="font-sans font-light text-[10.5px] text-[#AE8F7D]">{margin.userName}</span>
+            {authorUsername && (
+              <span className="font-sans font-light text-[8.5px] text-[#454545]/30">
+                @{authorUsername.replace(/^@/, "")}
+              </span>
+            )}
+          </div>
+
+          {/* Stats + affordance */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {totalReactions > 0 && (
+                <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
+                  {totalReactions} reações
+                </span>
+              )}
+              {margin.commentsCount > 0 && (
+                <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
+                  {margin.commentsCount} {margin.commentsCount === 1 ? "resposta" : "respostas"}
+                </span>
+              )}
+            </div>
+            <span className="font-sans font-light text-[7.5px] text-[#AE8F7D]/50 flex items-center gap-0.5">
+              Abrir post ↗
+            </span>
+          </div>
+        </div>
+      </Link>
+    );
+  }
 
   return (
     <div
@@ -552,7 +646,8 @@ function SpoilerShieldCard({ margin, reason, inLibrary }: { margin: Margin; reas
           <p className="font-sans font-light text-[8px] text-[#697962]/75 mt-1.5">
             {totalReactions > 0 && `${totalReactions} reações`}
             {totalReactions > 0 && margin.commentsCount > 0 && " · "}
-            {margin.commentsCount > 0 && `${margin.commentsCount} ${margin.commentsCount === 1 ? "resposta" : "respostas"}`}
+            {margin.commentsCount > 0 &&
+              `${margin.commentsCount} ${margin.commentsCount === 1 ? "resposta" : "respostas"}`}
           </p>
         )}
       </div>
@@ -578,8 +673,9 @@ function SpoilerShieldCard({ margin, reason, inLibrary }: { margin: Margin; reas
           </button>
         )}
         <button
-          onClick={() => navigate(`/thread/${margin.id}`)}
-          className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#2A2A2A]/35 px-3 py-1.5 hover:text-[#2A2A2A]/55 transition-colors"
+          data-testid={`button-reveal-${margin.id}`}
+          onClick={() => setRevealed(true)}
+          className="font-sans text-[8px] font-light tracking-[0.1em] uppercase text-[#2A2A2A]/35 px-3 py-1.5 hover:text-[#AE8F7D] transition-colors"
         >
           Ver mesmo assim
         </button>

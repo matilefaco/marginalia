@@ -1,0 +1,151 @@
+:::writing{variant=“standard” id=“20471”}
+AJUSTAR O COMPORTAMENTO DE “VER MESMO ASSIM” NOS CONTEÚDOS PROTEGIDOS
+
+Quero mudar o comportamento do botão “Ver mesmo assim” dentro da lista de conteúdos protegidos.
+
+Hoje, quando o usuário clica em “Ver mesmo assim”, o app está direcionando ou pode direcionar para outra tela.
+Eu NÃO quero isso nesse primeiro clique.
+
+O comportamento correto deve ser este:
+
+==================================================
+PARTE 1 — PRIMEIRO CLIQUE EM “VER MESMO ASSIM”
+
+Quando o usuário clicar em:
+
+👉 “Ver mesmo assim”
+
+o conteúdo protegido deve ser liberado na mesma tela, ali mesmo, sem redirecionamento.
+
+Ou seja:
+	•	o card protegido se expande ou se transforma
+	•	o trecho real aparece no próprio card
+	•	a anotação/reflexão real aparece no próprio card
+	•	nome do usuário que publicou aparece
+	•	@username aparece
+	•	reações aparecem
+	•	respostas/comentários resumidos aparecem, se existirem
+	•	livro e autor continuam visíveis
+
+Mas tudo isso deve acontecer inline, dentro da mesma listagem.
+
+Não abrir outra página.
+Não navegar.
+Não sair da tela atual.
+
+==================================================
+PARTE 2 — SEGUNDO PASSO: CARD LIBERADO FICA CLICÁVEL
+
+Depois que o conteúdo for liberado inline na própria tela, aí sim o comportamento muda:
+
+👉 se o usuário clicar no card já liberado,
+aí o app pode abrir a tela principal / detalhada daquele conteúdo específico.
+
+Então a lógica fica assim:
+
+Estado 1 — protegido
+	•	botão “Ver mesmo assim”
+
+Estado 2 — liberado inline
+	•	mostra o conteúdo real no mesmo lugar
+	•	card passa a ser clicável
+
+Estado 3 — detalhe
+	•	ao tocar no card já liberado, abrir a página completa do post
+
+==================================================
+PARTE 3 — COMPORTAMENTO EXATO QUE EU QUERO
+
+Fluxo ideal:
+	1.	usuário vê lista de conteúdos protegidos
+	2.	toca em “Ver mesmo assim”
+	3.	o card se expande na mesma tela
+	4.	mostra conteúdo real daquele item
+	5.	agora esse card liberado ganha affordance visual de clique
+	6.	se o usuário tocar no card liberado, abre a tela detalhada do conteúdo
+
+==================================================
+PARTE 4 — O QUE O CARD DEVE MOSTRAR QUANDO FOR LIBERADO INLINE
+
+Quando o usuário liberar o conteúdo na mesma tela, o card deve mostrar, no mínimo:
+	•	tipo do post
+	•	trecho/citação real
+	•	texto/reflexão real
+	•	nome do usuário
+	•	@username
+	•	livro
+	•	autor da obra
+	•	quantidade real de reações
+	•	quantidade real de respostas, se houver
+
+Se ficar pesado mostrar tudo, pelo menos:
+	•	trecho
+	•	reflexão
+	•	autoria
+	•	ações principais
+
+Mas o mais importante é:
+👉 o conteúdo precisa aparecer ali mesmo, na própria lista.
+
+==================================================
+PARTE 5 — SUGESTÃO DE UX / MICROINTERAÇÃO
+
+Quero que esse comportamento fique claro visualmente.
+
+Sugestão:
+
+Antes de liberar
+	•	card protegido
+	•	botão “Ver mesmo assim”
+
+Depois de liberar
+	•	card muda de estado visual
+	•	fundo pode ficar levemente diferente
+	•	botão desaparece
+ou vira:
+	•	“Abrir post”
+	•	ou o card inteiro fica clicável
+
+Também pode aparecer um microtexto discreto, tipo:
+	•	“Conteúdo liberado”
+	•	“Toque para abrir o post completo”
+
+Mas de forma elegante, sem poluição.
+
+==================================================
+PARTE 6 — IMPLEMENTAÇÃO TÉCNICA
+
+Quero que isso seja tratado como mudança de estado local do item, e não como navegação imediata.
+
+Ou seja:
+ao clicar em “Ver mesmo assim”:
+	•	setar o item como revealed: true
+	•	renderizar o conteúdo real daquele post dentro da lista
+	•	manter o usuário na mesma tela
+
+Só depois, no clique do card revelado:
+	•	navegar para o detalhe do post
+
+==================================================
+PARTE 7 — IMPORTANTE
+
+Esse comportamento deve valer para os conteúdos protegidos dentro dessa listagem específica.
+
+Não quero mais:
+	•	clique em “Ver mesmo assim” levando direto para outra tela
+	•	quebra de contexto
+	•	sair da exploração atual
+
+Quero uma experiência mais fluida, contínua e elegante.
+
+==================================================
+PARTE 8 — RESULTADO FINAL ESPERADO
+
+Depois dessa mudança:
+	1.	o botão “Ver mesmo assim” libera o conteúdo na própria tela;
+	2.	o usuário continua no mesmo contexto;
+	3.	o conteúdo real aparece inline;
+	4.	só depois, ao clicar no conteúdo já liberado, abre a tela principal daquele post específico.
+
+Isso deixa a experiência mais natural e muito melhor.
+:::
