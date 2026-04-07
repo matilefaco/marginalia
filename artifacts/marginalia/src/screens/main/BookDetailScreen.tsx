@@ -315,6 +315,7 @@ export function BookDetailScreen() {
   const [activeTab, setActiveTab] = useState("todos");
   const [feedKey, setFeedKey] = useState(0);
   const [editingProgress, setEditingProgress] = useState(false);
+  const [showProtected, setShowProtected] = useState(false);
   const [progressMode, setProgressMode] = useState<"page" | "chapter">("page");
   const [pageInput, setPageInput] = useState(String(prog?.currentPage || ""));
   const [chapterInput, setChapterInput] = useState(prog?.currentChapter || "");
@@ -354,7 +355,10 @@ export function BookDetailScreen() {
   const visibleMargins = bookMargins.filter((m) =>
     canUserSeeMargin(m, currentUser.spoilerPreference, prog)
   );
-  const blockedCount = bookMargins.length - visibleMargins.length;
+  const blockedMargins = bookMargins.filter(
+    (m) => !canUserSeeMargin(m, currentUser.spoilerPreference, prog)
+  );
+  const blockedCount = blockedMargins.length;
 
   const tabMargins: Record<string, typeof visibleMargins> = {
     todos: visibleMargins,
@@ -589,16 +593,25 @@ export function BookDetailScreen() {
 
         {/* Anti-Spoiler Banner */}
         {blockedCount > 0 && (
-          <div data-testid="spoiler-banner" className="flex items-center gap-3 bg-[#EBE6DB]/40 border border-[#AE8F7D]/15 rounded-[12px] px-4 py-3">
-            <Shield className="w-4 h-4 text-[#AE8F7D] flex-shrink-0" />
-            <div className="flex-1">
-              <p className="font-sans font-light text-[10px] text-[#2A2A2A]/60">
-                {blockedCount} {blockedCount === 1 ? "conteúdo ocultado" : "conteúdos ocultados"} — seu ritmo está protegido
-              </p>
-              <p className="font-sans font-light text-[8px] text-[#AE8F7D] mt-0.5">
-                {SPOILER_PREFERENCES.find((p) => p.id === currentUser.spoilerPreference)?.label}
-              </p>
+          <div data-testid="spoiler-banner" className="bg-[#EBE6DB]/40 border border-[#AE8F7D]/15 rounded-[14px] p-4">
+            <div className="flex items-start gap-3 mb-3">
+              <Shield className="w-4 h-4 text-[#AE8F7D] flex-shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="font-sans font-light text-[10px] text-[#2A2A2A]/70 leading-relaxed">
+                  {blockedCount} {blockedCount === 1 ? "conteúdo ocultado" : "conteúdos ocultados"} — seu ritmo está protegido
+                </p>
+                <p className="font-sans font-light text-[8px] text-[#2A2A2A]/38 mt-0.5 leading-relaxed">
+                  Você pode explorar esses conteúdos com proteção ou liberar manualmente
+                </p>
+              </div>
             </div>
+            <button
+              data-testid="button-ver-protegidos"
+              onClick={() => setShowProtected((v) => !v)}
+              className="w-full font-sans font-light text-[9px] tracking-[0.14em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/25 rounded-[9px] py-2.5 hover:bg-[#AE8F7D]/6 transition-colors flex items-center justify-center gap-1.5"
+            >
+              {showProtected ? "Ocultar conteúdos protegidos" : "Ver conteúdos protegidos"}
+            </button>
           </div>
         )}
 
@@ -641,6 +654,25 @@ export function BookDetailScreen() {
             )}
           </div>
         </div>
+
+        {/* Protected Content Section */}
+        {showProtected && blockedCount > 0 && (
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-1 h-px bg-[#AE8F7D]/15" />
+              <span className="font-sans text-[7.5px] font-light tracking-[0.2em] uppercase text-[#AE8F7D]/60 flex items-center gap-1.5 whitespace-nowrap">
+                <Shield className="w-3 h-3" />
+                {blockedCount} {blockedCount === 1 ? "conteúdo protegido" : "conteúdos protegidos"}
+              </span>
+              <div className="flex-1 h-px bg-[#AE8F7D]/15" />
+            </div>
+            <div className="space-y-3">
+              {blockedMargins.map((m) => (
+                <MarginCard key={m.id} margin={m} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Add Margin CTA */}
         <div className="pt-2">

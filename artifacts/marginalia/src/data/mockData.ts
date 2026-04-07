@@ -3929,6 +3929,18 @@ export const MOCK_REPLIES: Record<number, Reply[]> = {
   ],
 };
 
+MOCK_MARGINS.forEach((m) => {
+  m.commentsCount = (MOCK_REPLIES[m.id] || []).length;
+});
+
 MOCK_BOOKS.forEach((book) => {
-  book.marginCount = MOCK_MARGINS.filter((m) => m.bookId === book.id).length;
+  const bookMargins = MOCK_MARGINS.filter((m) => m.bookId === book.id);
+  const count = bookMargins.length;
+  const debates = bookMargins.filter((m) => m.commentsCount > 0).length;
+  book.marginCount = count;
+  book.communityStats = {
+    ...book.communityStats,
+    totalMargins: count,
+    debates,
+  };
 });

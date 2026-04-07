@@ -1,0 +1,375 @@
+CORRIGIR ACESSO A CONTEÚDOS OCULTADOS + GARANTIR QUE TODAS AS CONTAGENS DO APP SEJAM 100% PRECISAS E VERDADEIRAS
+
+Quero corrigir dois problemas centrais do app, porque eles afetam diretamente a confiança do usuário:
+
+1. quando o livro informa que existem conteúdos ocultados porque o ritmo está protegido, o usuário precisa ter uma forma clara de visualizar esses conteúdos, caso queira;
+2. todas as contagens do app precisam ser precisas e verdadeiras, sem exceção:
+   - quantidade de posts por livro
+   - quantidade de respostas/comentários por post
+   - quantidade de conteúdos ocultados
+   - qualquer número exibido na interface
+
+Hoje ainda existem inconsistências, como:
+- um livro mostra “X posts”, mas ao abrir a página do livro não existem aqueles X posts;
+- um post mostra “3 respostas”, mas ao abrir não existe nenhuma;
+- aparece “conteúdos ocultados”, mas o usuário não consegue acessar isso de forma clara.
+
+Quero corrigir isso de forma estrutural.
+
+==================================================
+PARTE 1 — DAR ACESSO CLARO AOS CONTEÚDOS OCULTADOS
+==================================================
+
+Quando o sistema informar algo como:
+
+- “5 conteúdos ocultados — seu ritmo está protegido”
+- “10 conteúdos ocultados — modo protegido”
+
+quero que o usuário possa interagir com isso de forma clara.
+
+Hoje isso está muito passivo.
+
+==================================================
+1.1. NOVO COMPORTAMENTO
+==================================================
+
+Quando existir conteúdo ocultado, quero adicionar um CTA claro.
+
+Sugestão principal:
+
+👉 botão: “Ver conteúdos protegidos”
+
+ou
+
+👉 botão: “Explorar conteúdos protegidos”
+
+Esse botão deve abrir uma visualização específica com os conteúdos ocultados daquele livro.
+
+==================================================
+1.2. COMO ESSA VISUALIZAÇÃO DEVE FUNCIONAR
+==================================================
+
+Ao clicar nesse botão, abrir uma seção/modal/tela com a lista dos conteúdos protegidos daquele livro.
+
+Essa visualização deve mostrar os itens protegidos em formato seguro, por exemplo:
+
+- tipo do post
+- intensidade/relevância
+- quantidade de reações
+- quantidade de respostas
+- ponto aproximado do livro
+- frase segura gerada pelo sistema, sem spoiler direto
+- botão “Ver mesmo assim”
+- botão “Marcar progresso”
+- botão “Adicionar à biblioteca”, se aplicável
+
+Ou seja:
+o usuário deve conseguir ver que existem conteúdos específicos ali, e não apenas um número solto.
+
+==================================================
+1.3. REGRA DE UX
+==================================================
+
+Não quero mais um card estático que só informe:
+“5 conteúdos ocultados”
+
+Quero um card útil, com ação.
+
+Estrutura sugerida:
+
+- ícone de proteção
+- texto:
+  “5 conteúdos ocultados — seu ritmo está protegido”
+- subtítulo:
+  “Você pode explorar esses conteúdos com proteção ou liberar manualmente”
+- botão principal:
+  “Ver conteúdos protegidos”
+
+==================================================
+1.4. ALTERNATIVA ADICIONAL
+==================================================
+
+Se fizer sentido, dentro da própria página do livro pode existir uma subseção:
+
+### Conteúdos protegidos
+com lista dos itens ocultados
+
+Mas isso só se ficar elegante.
+Se ficar poluído, prefiro botão + modal/tela dedicada.
+
+==================================================
+PARTE 2 — TODAS AS CONTAGENS DO APP PRECISAM SER VERDADEIRAS
+==================================================
+
+Esse é o ponto mais importante:
+
+Quero que cada número exibido no app corresponda exatamente ao dado real existente.
+
+Sem aproximação.
+Sem mock decorativo.
+Sem número inventado.
+Sem inconsistência entre páginas.
+
+==================================================
+2.1. CONTAGENS QUE PRECISAM SER REVISADAS
+==================================================
+
+Revisar e corrigir globalmente:
+
+- posts por livro
+- respostas/comentários por post
+- reações por post
+- conteúdos protegidos por livro
+- quantidade de posts em explorar
+- quantidade de posts na biblioteca
+- quantidade de posts no feed
+- contagens mostradas na página do livro
+- contagens mostradas em cards protegidos
+- contagens mostradas no “momento do livro”
+- qualquer total exibido na interface
+
+==================================================
+PARTE 3 — REGRA PRINCIPAL DE VERDADE DOS DADOS
+==================================================
+
+Cada informação numérica do app tem que ser precisa e verdadeira.
+
+Exemplos:
+
+Se o livro mostra:
+👉 “6 posts”
+
+então, na página daquele livro, devem existir exatamente 6 posts relacionados a ele
+(considerando posts completos + protegidos, se o modo protegido estiver ativo).
+
+Se um post mostra:
+👉 “3 respostas”
+
+então, ao abrir esse post, devem existir exatamente 3 respostas reais.
+
+Se mostra:
+👉 “5 conteúdos ocultados”
+
+então, o usuário deve conseguir visualizar exatamente 5 itens protegidos correspondentes.
+
+==================================================
+PARTE 4 — O QUE PROVAVELMENTE ESTÁ ERRADO HOJE
+==================================================
+
+Quero que o Replit revise onde a contagem está sendo calculada e onde a exibição está sendo filtrada.
+
+Verificar se o problema vem de:
+
+- contagem vinda de mock antigo
+- cache antigo
+- seeds inconsistentes
+- count baseado em todos os posts, mas tela filtrada por outro critério
+- count bruto no banco, mas query da página usando filtro incorreto
+- respostas contadas mas não carregadas
+- posts protegidos contados mas não exibidos nem representados
+- joins errados entre posts, books e comments
+- uso de arrays estáticos na UI
+- mistura entre posts publicados, protegidos e ocultados
+- contagem de respostas sem considerar status/publicação
+- página do livro usando query diferente do card de livro
+
+==================================================
+PARTE 5 — FONTE ÚNICA DE VERDADE
+==================================================
+
+Quero uma única lógica central para contagem.
+
+Ou seja:
+- o número mostrado no card do livro
+- o número mostrado na página do livro
+- o número mostrado no explorar
+- o número mostrado na biblioteca
+
+devem vir da mesma base de verdade.
+
+Mesma ideia para respostas:
+- o número exibido no card do post
+- o número exibido na página do post
+- o número exibido em qualquer preview
+
+precisam ser calculados da mesma forma.
+
+==================================================
+PARTE 6 — COMO CONTAR POSTS DE LIVRO NO MODO PROTEGIDO
+==================================================
+
+No modo protegido, quero manter a verdade dos números SEM deixar o livro parecer vazio.
+
+Regra:
+
+Se o livro tem 8 posts no total:
+- e 3 podem ser mostrados completos
+- e 5 estão protegidos
+
+então a página do livro deve refletir isso corretamente.
+
+Exemplo:
+- 3 posts visíveis
+- 5 conteúdos protegidos
+
+Total coerente:
+👉 8 conteúdos relacionados
+
+Não quero mais o erro de:
+- o card mostra 8
+- a página parece ter 0
+
+==================================================
+PARTE 7 — COMO CONTAR RESPOSTAS / COMENTÁRIOS
+==================================================
+
+Quero a mesma precisão para respostas.
+
+Se o post mostra:
+👉 “3 respostas”
+
+então devem existir exatamente 3 respostas visíveis/reais associadas a ele.
+
+Se algumas respostas estiverem protegidas por spoiler, então isso deve ser representado claramente, por exemplo:
+- 1 resposta visível
+- 2 respostas protegidas
+
+Mas nunca:
+- mostrar 3 e abrir vazio
+
+==================================================
+PARTE 8 — CONTEÚDOS PROTEGIDOS TAMBÉM PRECISAM SER CONTÁVEIS
+==================================================
+
+Se um conteúdo existe e está protegido, ele continua existindo.
+
+Então:
+- ele pode entrar no total do livro
+- ele pode entrar no total de atividade
+- mas precisa aparecer como item protegido, e não desaparecer
+
+Isso evita inconsistência.
+
+==================================================
+PARTE 9 — IMPLEMENTAÇÃO TÉCNICA RECOMENDADA
+==================================================
+
+Quero que o Replit revise a arquitetura da contagem com funções centralizadas.
+
+Exemplos de funções:
+
+- getBookPostCounts(bookId, userId, mode)
+- getPostReplyCounts(postId, userId, mode)
+- getProtectedContentCounts(bookId, userId, mode)
+
+Essas funções devem retornar dados coerentes, por exemplo:
+
+Para livro:
+- total_posts
+- visible_posts
+- protected_posts
+
+Para post:
+- total_replies
+- visible_replies
+- protected_replies
+
+Com isso, a UI passa a exibir números reais e consistentes.
+
+==================================================
+PARTE 10 — REPRESENTAÇÃO VISUAL CORRETA
+==================================================
+
+Quero que a UI reflita a realidade do dado.
+
+Exemplos:
+
+### Na página do livro:
+- 8 posts no total
+- 3 visíveis agora
+- 5 protegidos
+
+### No card de proteção:
+- “5 conteúdos ocultados — seu ritmo está protegido”
+- botão: “Ver conteúdos protegidos”
+
+### Na página do post:
+- “3 respostas”
+- e as 3 respostas realmente existem
+ou
+- “1 resposta visível · 2 protegidas”, se quiser representar melhor
+
+==================================================
+PARTE 11 — NÃO ACEITAR MAIS NÚMEROS DECORATIVOS
+==================================================
+
+Quero remover qualquer lógica em que o app:
+- inventa volume
+- mostra número fictício
+- usa count mockado
+- promete atividade que não existe
+- mostra comentário que não está lá
+
+Se for necessário, é melhor mostrar um número menor, porém verdadeiro.
+
+A prioridade agora é:
+👉 confiança no dado
+
+==================================================
+PARTE 12 — TESTES OBRIGATÓRIOS
+==================================================
+
+Depois da correção, testar:
+
+### Teste 1
+Abrir um livro no explorar que mostra “6 posts”.
+Verificar se a página do livro representa exatamente esses 6 conteúdos:
+- visíveis
+- e/ou protegidos
+
+### Teste 2
+Abrir um post que mostra “3 respostas”.
+Verificar se há exatamente 3 respostas reais
+ou uma representação correta entre visíveis/protegidas.
+
+### Teste 3
+Clicar em “Ver conteúdos protegidos”.
+Verificar se abre a lista real dos conteúdos ocultados daquele livro.
+
+### Teste 4
+Comparar o mesmo livro em:
+- explorar
+- biblioteca
+- feed
+- página do livro
+
+Garantir que todos exibem contagens coerentes.
+
+### Teste 5
+Testar no modo protegido e no modo explorar livremente para garantir consistência nos dois.
+
+==================================================
+PARTE 13 — RESULTADO FINAL ESPERADO
+==================================================
+
+Depois dessas mudanças, quero que:
+
+1. todo número mostrado no app seja verdadeiro;
+2. o usuário possa acessar claramente os conteúdos ocultados;
+3. livros com atividade não pareçam vazios;
+4. posts com respostas mostrem respostas reais;
+5. contagem de posts e respostas bata em todas as telas;
+6. o app transmita confiança, coerência e comunidade viva de verdade.
+
+==================================================
+PARTE 14 — PRIORIDADE
+==================================================
+
+Implementar nesta ordem:
+
+1. adicionar CTA para visualizar conteúdos ocultados
+2. criar visualização real dos conteúdos protegidos
+3. revisar a lógica global de contagens de posts
+4. revisar a lógica global de contagens de respostas/comentários
+5. sincronizar números entre todas as telas
+6. remover qualquer contagem decorativa ou inconsistente
