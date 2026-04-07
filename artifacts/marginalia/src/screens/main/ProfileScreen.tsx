@@ -559,7 +559,7 @@ export function ProfileScreen() {
             {[
               { label: "Lendo", value: leituraCount, icon: "📖" },
               { label: "Lidos", value: lidosCount, icon: "📚" },
-              { label: "Margens", value: myMargins.length, icon: "✍" },
+              { label: "Posts", value: myMargins.length, icon: "✍" },
               { label: "Reações", value: reacoesFeitas, icon: "🔥" },
             ].map((stat) => (
               <div key={stat.label} data-testid={`stat-${stat.label.toLowerCase()}`} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] py-3 text-center">
@@ -699,7 +699,7 @@ export function ProfileScreen() {
                 <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{saved.length}</span>
               </div>
               <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
-                Ecos que te tocaram
+                Posts que te tocaram
               </p>
               <div className="space-y-3">
                 {saved.slice(0, 5).map((m) => (

@@ -118,10 +118,10 @@ export function NewMarginScreen() {
         </button>
         <div>
           <h1 className="font-serif italic text-[20px] text-[#454545]">
-            {replyToMargin ? "Responder com margem" : "Nova Margem"}
+            {replyToMargin ? "Responder com post" : "Criar Post"}
           </h1>
           <p className="font-sans font-light text-[9px] tracking-[0.14em] uppercase text-[#AE8F7D]">
-            {replyToMargin ? "Seu eco em resposta" : "Guardar esse trecho para sempre"}
+            {replyToMargin ? "Sua resposta" : "Criar post com esse trecho"}
           </p>
         </div>
         {replyToMargin && (
@@ -138,7 +138,7 @@ export function NewMarginScreen() {
         {replyToMargin && (
           <div className="rounded-[12px] border border-[#697962]/20 bg-[#697962]/5 px-4 py-3.5">
             <p className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase text-[#697962] mb-1.5">
-              Respondendo ao eco de {replyToMargin.userName ?? "outro leitor"}
+              Respondendo a {replyToMargin.userName ?? "outro leitor"}
             </p>
             <p className="font-serif italic text-[13px] text-[#454545]/65 leading-relaxed border-l-2 border-[#697962]/30 pl-3">
               &ldquo;{replyToMargin.excerpt.slice(0, 100)}{replyToMargin.excerpt.length > 100 ? "…" : ""}&rdquo;
@@ -240,7 +240,7 @@ export function NewMarginScreen() {
             {/* Type */}
             <div>
               <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-                Tipo de margem
+                Tipo de post
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {MARGIN_TYPES.map((type) => (
@@ -303,10 +303,10 @@ export function NewMarginScreen() {
               )}
             </div>
 
-            {/* Sua margem (commentary) */}
+            {/* Seu pensamento (commentary) */}
             <div>
               <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-                Sua margem
+                Seu pensamento
               </p>
               <textarea
                 data-testid="input-commentary"
@@ -421,7 +421,7 @@ export function NewMarginScreen() {
           disabled={!canPublish}
           className="w-full bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-25 hover:bg-[#454545]/90 active:scale-[0.99] transition-all"
         >
-          {replyToMargin ? "Publicar resposta" : "Publicar margem"}
+          {replyToMargin ? "Publicar resposta" : "Publicar post"}
         </button>
       </div>
     </div>

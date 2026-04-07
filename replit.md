@@ -70,21 +70,26 @@ A Portuguese-language literary social network where users annotate book passages
 6. **Books** — search + select initial books, set status + progress %
 
 ### Main Screens (13 total)
-1. **Home** (`/`) — "Lendo agora" horizontal carousel (all reading-status books with BookCover + progress + ecos), "Hoje para você" feed (anti-spoiler filtered) with 5 editorial FeedBreak types (including "Trechos que estão fazendo leitores parar", "Pouca gente percebeu isso"), "Em alta", "Sua atividade". WishlistSection moved to ProfileScreen.
-2. **Explore** (`/explore`) — Search, editorial collections, trending margins, books in debate, compatible readers
-3. **Nova Margem** (`/nova-margem`) — 7-step wizard: book → excerpt → reference → type → commentary → spoiler → visibility → publish
+1. **Home** (`/`) — "Lendo agora" horizontal carousel (all reading-status books with BookCover + progress + posts), "Hoje para você" feed (anti-spoiler filtered) with 5 editorial FeedBreak types (including "Trechos que estão fazendo leitores parar", "Pouca gente percebeu isso"), "Conversas da comunidade", "Em alta", "Sua atividade". WishlistSection moved to ProfileScreen.
+2. **Explore** (`/explore`) — Search, editorial collections, trending posts, books in debate, compatible readers
+3. **Nova Margem** (`/nova-margem`) — 7-step wizard: book → excerpt → reference → type → commentary → spoiler → visibility → publish (UI label: "Criar Post")
 4. **Library** (`/library`) — Status filters (Todos/Lendo/Concluídos/Quero ler/Abandonados/Favoritos), book cards with progress
-5. **Book Detail** (`/book/:id`) — Community hub (NOT reader); progress editor, community stats, tabs (Ecos/Teorias/Críticas/Perguntas/Meus registros), anti-spoiler banner
-6. **Profile** (`/profile`) — Reader archetype (ex: "O Analista") + description, reading signature card with "Compartilhar meu perfil de leitura" share button, Instagram/TikTok social links (view + inline edit), avatar color picker, 4-stat grid, my margins. NO "leitores compatíveis" section.
+5. **Book Detail** (`/book/:id`) — Community hub (NOT reader); progress editor, community stats, tabs (Posts/Teorias/Críticas/Perguntas/Meus registros), anti-spoiler banner
+6. **Profile** (`/profile`) — Reader archetype (ex: "O Analista") + description, reading signature card with "Compartilhar meu perfil de leitura" share button, Instagram/TikTok social links (view + inline edit), avatar color picker, 4-stat grid, my posts. NO "leitores compatíveis" section.
 7. **Notifications** (`/notifications`) — Typed notification list with unread dots
 8. **Settings** (`/settings`) — Ritmo da leitura preference + genre toggles
-9. **Thread** (`/thread/:id`) — Margin detail with reactions (8 types), reply input; empty state "O que isso te causou?", placeholder "Escreva seu eco…"
+9. **Thread** (`/thread/:id`) — Post detail with reactions (8 types), reply input; empty state "O que isso te causou?", "Vozes nesse trecho" section
+10. **Eco** (`/eco/:id`) — Community DB post detail (same layout as Thread); fetches from `/api/community/margins/:id`
+
+### Terminology (UX vs Internal)
+- **UI facing**: "Post" (before: margem), "Resposta" (before: eco), "Criar Post" (before: Nova Margem), "Conversas da comunidade" (before: Ecos da comunidade), "Respostas" (before: Ecos), "Publicar post" (before: Publicar margem)
+- **Internal (code/routes/DB)**: `margin`, `margins`, `eco`, `/nova-margem`, `MarginCard`, `EcoScreen` — all unchanged; "Marginalia" brand identity stays
 
 ### Key Components
-- `MarginCard` — Shows margin with book-color tinting. 4 layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. Each has an `EmojiReactionBar` (🖤💥🤔✨📌😵 with scale animation on tap), "Ecoar" CTA (links to thread), and ShareButton. OR SpoilerShieldCard if blocked.
+- `MarginCard` — Shows margin with book-color tinting. 4 layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. Each has an `EmojiReactionBar` (🖤💥🤔✨📌😵 with scale animation on tap), "Responder" CTA (links to thread), and ShareButton. OR SpoilerShieldCard if blocked.
 - `BookCover` — Reusable colored book cover placeholder using bookColor + italic first-letter initial + paper texture + spine shadow. Sizes: xs/sm/md/lg. Used in LibraryScreen, HomeScreen, BookDetailScreen, ProfileScreen (wishlist), and WishlistSection.
 - `LogoMark` — SVG book logo
-- `Navbar` — 5-item bottom nav with elevated center "+" button for /nova-margem
+- `Navbar` — 5-item bottom nav with elevated center "+" button for /nova-margem (label: "Criar Post")
 - `SpoilerShieldCard` — Elegant blocked content card with update progress / unlock actions
 
 ### Anti-Spoiler System ("Ritmo da leitura")

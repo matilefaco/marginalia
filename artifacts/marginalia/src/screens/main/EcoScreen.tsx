@@ -172,7 +172,7 @@ export function EcoScreen() {
         <button
           onClick={() => toggleSaveMargin(margin.id)}
           className={`transition-all active:scale-90 ${isSaved ? "text-[#AE8F7D]" : "text-[#454545]/25 hover:text-[#AE8F7D]/60"}`}
-          title={isSaved ? "Eco salvo" : "Salvar eco"}
+          title={isSaved ? "Post salvo" : "Salvar post"}
         >
           {isSaved ? <BookmarkCheck className="w-4.5 h-4.5" /> : <Bookmark className="w-4.5 h-4.5" />}
         </button>
@@ -329,7 +329,7 @@ export function EcoScreen() {
 
             {rxTotal > 0 && (
               <p className="font-sans font-light text-[7px] text-[#454545]/30 mt-2">
-                {rxTotal} {rxTotal === 1 ? "reação" : "reações"} nesse eco
+                {rxTotal} {rxTotal === 1 ? "reação" : "reações"} nesse post
               </p>
             )}
           </div>
@@ -350,7 +350,7 @@ export function EcoScreen() {
               }`}
             >
               {isSaved ? <BookmarkCheck className="w-3 h-3" /> : <Bookmark className="w-3 h-3" />}
-              {isSaved ? "Salvo" : "Salvar eco"}
+              {isSaved ? "Salvo" : "Salvar post"}
             </button>
           </div>
         </div>

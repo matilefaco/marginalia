@@ -149,7 +149,7 @@ export function UserProfileScreen() {
         <div className="grid grid-cols-3 gap-2">
           {[
             { label: "Lidos", value: user.stats.booksRead, icon: "📚" },
-            { label: "Margens", value: user.stats.totalMargins, icon: "✍" },
+            { label: "Posts", value: user.stats.totalMargins, icon: "✍" },
             { label: "Debates", value: user.stats.debates, icon: "💬" },
           ].map((stat) => (
             <div key={stat.label} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] py-3 text-center">

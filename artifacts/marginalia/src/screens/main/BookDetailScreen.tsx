@@ -283,8 +283,8 @@ function EcoMap({ bookId, userPercent }: { bookId: number; userPercent: number }
           <div className="bg-[#EBE6DB]/50 rounded-[10px] px-3.5 py-2.5">
             <p className="font-sans font-light text-[9px] text-[#2A2A2A]/70 leading-relaxed">
               <span className="mr-1">✍</span>
-              <strong>Mais ecoado</strong> entre {mostEcoadoBucket.lo}–{mostEcoadoBucket.hi}%
-              {" "}· {mostEcoadoBucket.ecos} ecos
+              <strong>Mais popular</strong> entre {mostEcoadoBucket.lo}–{mostEcoadoBucket.hi}%
+              {" "}· {mostEcoadoBucket.ecos} posts
             </p>
           </div>
         )}
@@ -548,7 +548,7 @@ export function BookDetailScreen() {
           <div className="grid grid-cols-4 gap-2">
             {[
               { label: "Leitores", value: book.communityStats.activeReaders },
-              { label: "Margens", value: book.communityStats.totalMargins },
+              { label: "Posts", value: book.communityStats.totalMargins },
               { label: "Debates", value: book.communityStats.debates },
               { label: "Salvos", value: book.communityStats.savedBy },
             ].map((stat) => (
@@ -628,7 +628,7 @@ export function BookDetailScreen() {
             {(tabMargins[activeTab] ?? []).length === 0 ? (
               <div className="text-center py-10 border border-dashed border-[#AE8F7D]/15 rounded-[14px]">
                 <p className="font-serif italic text-[13px] text-[#2A2A2A]/35 mb-1">
-                  Nenhuma margem nesta categoria ainda.
+                  Nenhum post nesta categoria ainda.
                 </p>
                 <p className="font-sans font-light text-[9px] text-[#2A2A2A]/25">
                   Seja o primeiro a registrar um pensamento aqui.
@@ -646,7 +646,7 @@ export function BookDetailScreen() {
         <div className="pt-2">
           <Link href="/nova-margem" data-testid="button-add-margin-book">
             <button className="w-full bg-[#454545] text-[#FAF8F3] font-sans font-light text-[11px] tracking-[0.12em] uppercase py-4 rounded-[10px] hover:bg-[#454545]/90 transition-colors">
-              Adicionar margem a este livro
+              Criar post sobre este livro
             </button>
           </Link>
         </div>

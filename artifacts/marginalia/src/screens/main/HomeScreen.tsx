@@ -13,7 +13,7 @@ import { useCommunityFeed, formatCommunityMarginAge, totalReactions } from "@/ho
 
 const SUBTITLES = [
   "Seu ritmo está protegido.",
-  "Novos ecos disponíveis para você.",
+  "Novos posts disponíveis para você.",
   "Leia junto. Sinta junto.",
   "O que ficou com você hoje?",
   "Isso ficou com você por um motivo.",
@@ -115,7 +115,7 @@ function MomentosSection() {
 
                 <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
                   {reactionTotal > 0 ? `${reactionTotal} reações · ` : ""}
-                  {topMargin.commentsCount} ecos
+                  {topMargin.commentsCount} respostas
                   {topMargin.percent !== undefined ? ` · em ${topMargin.percent}% do livro` : ""}
                 </p>
               </div>
@@ -131,14 +131,14 @@ function FeedBreak({ index }: { index: number }) {
   const breaks = [
     {
       label: "Trechos que estão fazendo leitores parar",
-      body: "Algumas frases não pedem para ser entendidas. Pedem para ser sentidas. Os ecos mais ativos desta semana estão aqui.",
-      cta: "Explorar ecos",
+      body: "Algumas frases não pedem para ser entendidas. Pedem para ser sentidas. Os posts mais ativos desta semana estão aqui.",
+      cta: "Ver posts",
       href: "/explore",
       accent: "text-[#AE8F7D]",
     },
     {
       label: "Pouca gente percebeu isso",
-      body: "As margens mais raras são as que revelam o que passa despercebido. Leia junto, sinta diferente.",
+      body: "Os posts mais raros são os que revelam o que passa despercebido. Leia junto, sinta diferente.",
       cta: "Registrar o que você viu",
       href: "/nova-margem",
       accent: "text-[#697962]",
@@ -146,7 +146,7 @@ function FeedBreak({ index }: { index: number }) {
     {
       label: "Guarde antes que se perca",
       body: "Aquele trecho que ficou ecoando na sua cabeça merece existir no papel também.",
-      cta: "Nova margem",
+      cta: "Criar post",
       href: "/nova-margem",
       accent: "text-[#AE8F7D]",
     },
@@ -189,14 +189,14 @@ function CommunityFeedSection() {
   return (
     <section data-testid="section-community-feed">
       <div className="flex items-center gap-2 mb-1.5">
-        <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#697962]">Ecos da comunidade</span>
+        <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#697962]">Conversas da comunidade</span>
         <div className="flex-1 h-px bg-[#697962]/20" />
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#697962] opacity-35" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-[#697962]" />
         </span>
       </div>
-      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-4">O que leitores estão sentindo agora</p>
+      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-4">O que leitores estão compartilhando agora</p>
       <div className="space-y-3">
         {margins.map((m) => {
           const rxTotal = totalReactions(m.reactions);
@@ -421,18 +421,18 @@ export function HomeScreen() {
                     </div>
                     {bookEchos > 0 && (
                       <p className="font-sans font-light text-[8px] text-[#697962] mb-3">
-                        {bookEchos} {bookEchos === 1 ? "eco liberado" : "ecos liberados"} dentro do seu progresso
+                        {bookEchos} {bookEchos === 1 ? "post liberado" : "posts liberados"} dentro do seu progresso
                       </p>
                     )}
                     <div className="flex gap-2">
                       <Link href={`/book/${book.id}`} data-testid="button-ver-ecos" className="flex-1">
                         <button className="w-full bg-[#454545] text-[#FAF8F3] font-sans text-[9px] font-light tracking-[0.1em] uppercase py-2.5 rounded-[8px] hover:bg-[#454545]/90 transition-colors">
-                          Ver ecos
+                          Ver posts
                         </button>
                       </Link>
                       <Link href="/nova-margem" className="flex-1">
                         <button className="w-full border border-[#454545]/15 text-[#2A2A2A]/55 font-sans text-[9px] font-light tracking-[0.1em] uppercase py-2.5 rounded-[8px] hover:border-[#AE8F7D]/40 transition-colors">
-                          + Margem
+                          + Post
                         </button>
                       </Link>
                     </div>
@@ -468,7 +468,7 @@ export function HomeScreen() {
           {feedMargins.length === 0 ? (
             <div className="text-center py-10 border border-dashed border-[#AE8F7D]/20 rounded-[14px]">
               <p className="font-serif italic text-[14px] text-[#2A2A2A]/35 mb-3">
-                Adicione livros à biblioteca para ver ecos compatíveis.
+                Adicione livros à biblioteca para ver posts compatíveis.
               </p>
               <Link href="/explore">
                 <button className="font-sans text-[9px] font-light tracking-[0.12em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/30 px-4 py-2 rounded-full hover:bg-[#AE8F7D]/5 transition-colors">
@@ -499,11 +499,11 @@ export function HomeScreen() {
               Guarde antes que se perca.
             </p>
             <p className="font-sans font-light text-[10px] text-[#2A2A2A]/45 mb-4 leading-relaxed">
-              Aquele trecho que ficou com você — merece existir como margem.
+              Aquele trecho que ficou com você — merece ser um post.
             </p>
             <Link href="/nova-margem" data-testid="button-nova-margem-ritual">
               <button className="font-sans text-[9px] font-light tracking-[0.14em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/35 px-5 py-2.5 rounded-full hover:bg-[#AE8F7D]/8 transition-colors">
-                Guardar como margem
+                Criar post
               </button>
             </Link>
           </div>

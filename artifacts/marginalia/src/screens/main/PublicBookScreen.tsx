@@ -291,7 +291,7 @@ export function PublicBookScreen() {
         <div className="grid grid-cols-3 gap-2">
           {[
             { val: totalReaders, label: "Leitores ativos" },
-            { val: totalMargins, label: "Margens escritas" },
+            { val: totalMargins, label: "Posts escritos" },
             { val: totalReactions, label: "Reações totais" },
           ].map(s => (
             <div key={s.label} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-3 text-center">

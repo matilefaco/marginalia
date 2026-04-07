@@ -110,11 +110,11 @@ export function LibraryScreen() {
                         </span>
                         <span className="text-[#AE8F7D]/20">·</span>
                         <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
-                          {item.myMargins} {item.myMargins === 1 ? "margem" : "margens"}
+                          {item.myMargins} {item.myMargins === 1 ? "post" : "posts"}
                         </span>
                         <span className="text-[#AE8F7D]/20">·</span>
                         <span className="font-sans font-light text-[8px] text-[#697962]">
-                          {item.communityStats.totalMargins} ecos
+                          {item.communityStats.totalMargins} posts
                         </span>
                       </div>
                     </div>

@@ -62,7 +62,7 @@ function SaveButton({ margin }: { margin: Margin }) {
     <button
       data-testid={`button-save-margin-${margin.id}`}
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleSaveMargin(margin.id); }}
-      title={isSaved ? "Salvo" : "Salvar eco"}
+      title={isSaved ? "Salvo" : "Salvar post"}
       className={`transition-all active:scale-90 ${isSaved ? "text-[#AE8F7D]" : "text-[#2A2A2A]/25 hover:text-[#AE8F7D]/60"}`}
     >
       {isSaved ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
@@ -293,7 +293,7 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
         <div className="flex items-center gap-2">
           {ecoarContent}
           <button
-            title="Responder com sua margem"
+            title="Responder com seu post"
             onClick={handleReplyWithMargin}
             className="flex items-center gap-1 text-[#2A2A2A]/22 hover:text-[#697962] transition-colors"
           >
@@ -416,7 +416,7 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <EmojiReactionBar margin={margin} />
       </div>
       {totalReactions > 0 && (
-        <p className="font-sans font-light text-[8px] mb-2" style={{ color: `${a.border}99` }}>{totalReactions} leitores ecoaram isso</p>
+        <p className="font-sans font-light text-[8px] mb-2" style={{ color: `${a.border}99` }}>{totalReactions} leitores responderam isso</p>
       )}
       <EcoarBar margin={margin} linkToThread={linkToThread} />
     </div>
@@ -471,7 +471,7 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
       </div>
       {totalReactions > 0 && (
         <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35 mb-1">
-          {totalReactions} {totalReactions === 1 ? "leitor ecoou" : "leitores ecoaram"} isso
+          {totalReactions} {totalReactions === 1 ? "leitor respondeu" : "leitores responderam"} isso
         </p>
       )}
       <EcoarBar margin={margin} linkToThread={linkToThread} />

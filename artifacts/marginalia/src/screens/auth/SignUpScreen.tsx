@@ -116,7 +116,7 @@ export function SignUpScreen({ onComplete, onBack, externalError }: Props) {
                 Escolha um tom para sua presença
               </p>
               <p className="font-sans font-light text-[8px] text-[#454545]/35 mt-0.5">
-                Aparece no seu perfil e nos seus ecos
+                Aparece no seu perfil e nos seus posts
               </p>
             </div>
           </div>

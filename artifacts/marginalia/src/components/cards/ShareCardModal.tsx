@@ -48,7 +48,7 @@ const CONTEXT_CONFIG: Record<ShareContext["type"], {
     templates:       ["echo", "quote-light", "quote-dark"],
     defaultTemplate: "echo",
     defaultFormat:   "feed",
-    subtitle:        "Eco · Citação Light · Citação Dark",
+    subtitle:        "Post · Citação Light · Citação Dark",
   },
   profile: {
     templates:       ["reader-type", "reading-dna"],
@@ -60,7 +60,7 @@ const CONTEXT_CONFIG: Record<ShareContext["type"], {
 
 /* ── Template display metadata ── */
 const TEMPLATE_META: Record<Template, { label: string; icon: string; preferred: Format }> = {
-  "echo":         { label: "Eco / Margem",   icon: "◎",  preferred: "feed"    },
+  "echo":         { label: "Post",   icon: "◎",  preferred: "feed"    },
   "quote-light":  { label: "Citação Light",  icon: "✦",  preferred: "stories" },
   "quote-dark":   { label: "Citação Dark",   icon: "●",  preferred: "feed"    },
   "moment":       { label: "Momento",        icon: "◦",  preferred: "stories" },
@@ -308,7 +308,7 @@ function CardReaderType({ userId, userName, userInitials, isSquare }: {
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:16, borderTop:`0.5px solid rgba(174,143,125,0.25)` }}>
           <div style={{ display:"flex", gap:16 }}>
             {[
-              { val: profile.stats.margins, key: "Margens" },
+              { val: profile.stats.margins, key: "Posts" },
               { val: profile.stats.ecos,    key: "Ecos" },
               { val: profile.stats.books,   key: "Livros" },
             ].map(s => (

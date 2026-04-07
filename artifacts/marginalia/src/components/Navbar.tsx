@@ -11,7 +11,7 @@ export function Navbar() {
   const navItems = [
     { icon: Home, path: "/", label: "Início" },
     { icon: Compass, path: "/explore", label: "Explorar" },
-    { icon: Plus, path: "/nova-margem", label: "Nova Margem", center: true },
+    { icon: Plus, path: "/nova-margem", label: "Criar Post", center: true },
     { icon: Library, path: "/library", label: "Biblioteca" },
     { icon: User, path: "/profile", label: "Perfil" },
   ];

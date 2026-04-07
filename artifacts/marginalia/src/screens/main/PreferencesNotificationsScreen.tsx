@@ -78,14 +78,14 @@ export function PreferencesNotificationsScreen() {
       <div className="px-5 pb-8 space-y-6">
         <Section title="Atividade social">
           <ToggleRow
-            label="Reações nos meus ecos"
-            description="Quando alguém reagir a um eco seu"
+            label="Reações nos meus posts"
+            description="Quando alguém reagir a um post seu"
             value={n.reactions}
             onChange={set("reactions")}
           />
           <ToggleRow
-            label="Comentários nos meus ecos"
-            description="Quando alguém comentar em um eco seu"
+            label="Comentários nos meus posts"
+            description="Quando alguém comentar em um post seu"
             value={n.comments}
             onChange={set("comments")}
           />
@@ -96,8 +96,8 @@ export function PreferencesNotificationsScreen() {
             onChange={set("replies")}
           />
           <ToggleRow
-            label="Quando salvarem meu eco"
-            description="Quando alguém guardar um eco seu"
+            label="Quando salvarem meu post"
+            description="Quando alguém guardar um post seu"
             value={n.saves}
             onChange={set("saves")}
           />

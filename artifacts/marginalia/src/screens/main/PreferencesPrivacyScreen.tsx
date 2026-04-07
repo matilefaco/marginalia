@@ -107,7 +107,7 @@ export function PreferencesPrivacyScreen() {
           />
           <ToggleRow
             label="Mostrar estatísticas de leitura"
-            description="Livros lidos, ecos criados, etc."
+            description="Livros lidos, posts criados, etc."
             value={p.showStats}
             onChange={set("showStats")}
           />
@@ -115,8 +115,8 @@ export function PreferencesPrivacyScreen() {
 
         <Section title="Atividade">
           <ToggleRow
-            label="Permitir que outros vejam meus ecos"
-            description="Seus ecos aparecem no feed público"
+            label="Permitir que outros vejam meus posts"
+            description="Seus posts aparecem no feed público"
             value={p.showEcos}
             onChange={set("showEcos")}
           />

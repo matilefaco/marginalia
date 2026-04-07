@@ -1,0 +1,233 @@
+Quero reformular completamente os conceitos de “margem” e “eco” dentro do app, porque hoje eles estão confusos e não são imediatamente compreensíveis para o usuário.
+
+O objetivo é que qualquer pessoa abra o app e entenda em segundos:
+- o que ela pode fazer
+- o que ela está vendo
+- como interagir
+
+==================================================
+1. PROBLEMA ATUAL
+==================================================
+
+Hoje existem dois conceitos principais:
+- Margem
+- Eco
+
+Mas:
+- os nomes não são intuitivos para novos usuários
+- não está claro qual a diferença entre eles
+- o usuário não entende rapidamente o fluxo de interação
+- parece abstrato demais (quase conceitual, não funcional)
+
+Isso gera fricção.
+
+==================================================
+2. NOVA LÓGICA SIMPLIFICADA (CLARA E INTUITIVA)
+==================================================
+
+Quero reduzir tudo para um modelo extremamente simples:
+
+### 1. POST
+(tudo começa aqui)
+
+### 2. INTERAÇÕES NO POST
+- reagir
+- comentar
+- responder
+
+Ou seja:
+não existem dois conceitos principais separados
+existe apenas um:
+
+➡️ O POST DE LEITURA
+
+==================================================
+3. NOVA NOMENCLATURA
+==================================================
+
+Substituir:
+
+❌ Margem  
+❌ Eco  
+
+Por:
+
+✅ Post  
+✅ Resposta  
+
+==================================================
+4. COMO FUNCIONA AGORA
+==================================================
+
+### POST (antes “margem”)
+
+É o conteúdo principal que o usuário cria.
+
+Um post contém:
+- trecho do livro
+- pensamento/reflexão
+- tipo (insight, pergunta, crítica etc.)
+- livro associado
+
+Exemplo mental:
+👉 “isso é o que eu pensei enquanto lia”
+
+---
+
+### RESPOSTAS (antes “ecos”)
+
+Tudo que acontece em cima de um post vira resposta.
+
+Tipos de resposta:
+- comentário simples
+- reação com emoji
+- resposta com texto
+- resposta mais elaborada (tipo “nova margem sobre a margem”)
+
+Exemplo mental:
+👉 “isso é o que eu pensei sobre o que você pensou”
+
+---
+
+==================================================
+5. COMO ISSO APARECE NA UI
+==================================================
+
+### No feed:
+
+Antes:
+- mistura de margem + eco + conceito abstrato
+
+Agora:
+
+Cada card é um:
+
+👉 POST
+
+E abaixo dele:
+
+- reações
+- número de respostas
+- preview de respostas
+
+---
+
+### Seção “Ecos da comunidade”
+
+Renomear para algo mais claro:
+
+Sugestões:
+- “Conversas da comunidade”
+- “Discussões”
+- “Leitores estão conversando”
+- “Debates de leitura”
+
+👉 recomendação: “Conversas da comunidade”
+
+---
+
+==================================================
+6. FLUXO DO USUÁRIO (MUITO MAIS CLARO)
+==================================================
+
+### Criar conteúdo
+
+Botão "+"
+→ “Criar post”
+
+---
+
+### Interagir
+
+Usuário vê um post e pode:
+
+- ❤️ reagir
+- 💬 comentar
+- ↩️ responder com outra ideia
+
+---
+
+### Ao clicar no post
+
+Abre a tela:
+
+- post completo
+- lista de respostas
+- campo para responder
+
+---
+
+==================================================
+7. REMOVER COMPLEXIDADE CONCEITUAL
+==================================================
+
+Quero eliminar completamente a sensação de “conceito filosófico” no produto.
+
+Marginalia continua como identidade poética do app,
+mas NÃO como mecânica de UX.
+
+Ou seja:
+- pode existir no branding
+- NÃO deve existir como sistema confuso
+
+---
+
+==================================================
+8. AJUSTES DE TEXTO NO APP
+==================================================
+
+Substituir:
+
+- “Publicar margem” → “Publicar post”
+- “Ecos” → “Respostas”
+- “Ecos da comunidade” → “Conversas da comunidade”
+- “Ecoar” → “Responder”
+- “Seu eco” → “Sua resposta”
+
+---
+
+==================================================
+9. DIFERENCIAL (MANTER ESSÊNCIA SEM CONFUNDIR)
+==================================================
+
+Quero manter a sofisticação conceitual,
+mas escondida na experiência.
+
+Ou seja:
+
+Internamente:
+- continua sendo “marginalia”
+
+Para o usuário:
+- parece simples como Instagram + Goodreads + comentários
+
+---
+
+==================================================
+10. RESULTADO FINAL
+==================================================
+
+Depois dessa mudança:
+
+- o app fica imediatamente compreensível
+- o usuário entende o que fazer sem explicação
+- aumenta muito a interação
+- reduz fricção
+- melhora retenção
+- melhora viralização
+
+---
+
+==================================================
+11. REGRA PRINCIPAL
+==================================================
+
+Se o usuário precisa pensar para entender o sistema,
+o sistema está errado.
+
+Quero que ele apenas use.
+
+==================================================
+
+Implemente essa simplificação em toda a estrutura do app:
+UI, textos, navegação e lógic

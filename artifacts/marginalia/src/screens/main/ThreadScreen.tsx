@@ -188,7 +188,7 @@ export function ThreadScreen() {
           data-testid="button-save-thread"
           onClick={() => toggleSaveMargin(margin.id)}
           className={`transition-all active:scale-90 ${isSaved ? "text-[#AE8F7D]" : "text-[#454545]/25 hover:text-[#AE8F7D]/60"}`}
-          title={isSaved ? "Eco salvo" : "Salvar eco"}
+          title={isSaved ? "Post salvo" : "Salvar post"}
         >
           {isSaved ? <BookmarkCheck className="w-4.5 h-4.5" /> : <Bookmark className="w-4.5 h-4.5" />}
         </button>
@@ -371,7 +371,7 @@ export function ThreadScreen() {
               }`}
             >
               {isSaved ? <BookmarkCheck className="w-3 h-3" /> : <Bookmark className="w-3 h-3" />}
-              {isSaved ? "Salvo" : "Salvar eco"}
+              {isSaved ? "Salvo" : "Salvar post"}
             </button>
           </div>
         </div>
