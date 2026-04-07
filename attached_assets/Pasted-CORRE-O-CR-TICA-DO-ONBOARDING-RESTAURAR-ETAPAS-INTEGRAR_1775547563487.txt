@@ -1,0 +1,346 @@
+CORREÇÃO CRÍTICA DO ONBOARDING — RESTAURAR ETAPAS + INTEGRAR AVATAR
+
+Existe um problema GRAVE no fluxo de cadastro:
+
+As etapas essenciais do onboarding simplesmente desapareceram.
+
+Hoje o fluxo está incompleto e quebra completamente a lógica do Marginalia.
+
+==================================================
+PROBLEMAS IDENTIFICADOS
+==================================================
+
+Durante o cadastro:
+
+❌ Não aparece mais a tela:
+→ “Como você prefere explorar o app?” (modo protegido vs livre)
+
+❌ Não aparece mais a tela:
+→ seleção de livros / interesses iniciais
+
+❌ Não existe:
+→ escolha de avatar no cadastro
+
+Isso quebra:
+
+- a lógica anti-spoiler (núcleo do produto)
+- a personalização inicial
+- o sentimento de onboarding guiado
+- a coerência do sistema inteiro
+
+==================================================
+OBJETIVO
+==================================================
+
+Restaurar o onboarding COMPLETO e melhorar ele.
+
+Fluxo final esperado:
+
+1. Criar conta (dados básicos)
+2. Escolher modo de exploração (OBRIGATÓRIO)
+3. Escolher avatar (NOVO)
+4. Escolher gostos / livros (OBRIGATÓRIO)
+5. Conclusão → ir para o feed
+
+==================================================
+PARTE 1 — RESTAURAR FLUXO MULTI-STEP
+==================================================
+
+Hoje parece que o app está tratando o cadastro como uma única tela.
+
+Isso está errado.
+
+Quero um fluxo multi-step real com estado persistido.
+
+==================================================
+1.1. ESTRUTURA DE ESTADO
+==================================================
+
+Criar controle de etapa:
+
+const [step, setStep] = useState(1);
+
+Etapas:
+
+1 → dados da conta  
+2 → modo de exploração  
+3 → avatar  
+4 → interesses / livros  
+5 → finalização  
+
+==================================================
+1.2. BOTÃO CONTINUAR
+==================================================
+
+O botão “Continuar” deve:
+
+- validar a etapa atual
+- só permitir avançar se estiver válida
+- avançar para próxima etapa
+
+Exemplo:
+
+onClick={() => {
+  if (!isStepValid(step)) return;
+  setStep(step + 1);
+}}
+
+==================================================
+PARTE 2 — TELA 1: CRIAR CONTA (JÁ EXISTE)
+==================================================
+
+Essa tela já existe e está funcionando.
+
+Campos:
+- nome
+- sobrenome
+- username
+- email
+- senha
+- bio
+
+AÇÃO:
+👉 manter como está  
+👉 ao clicar em continuar → ir para etapa 2
+
+==================================================
+PARTE 3 — TELA 2: MODO DE EXPLORAÇÃO (OBRIGATÓRIO)
+==================================================
+
+Essa tela SUMIU e precisa voltar.
+
+==================================================
+3.1. OPÇÕES
+==================================================
+
+- Modo protegido
+- Explorar livremente
+
+==================================================
+3.2. REGRA CRÍTICA
+==================================================
+
+O usuário DEVE escolher uma opção.
+
+Sem escolha:
+→ botão continuar DESABILITADO
+
+==================================================
+3.3. ESTADO
+==================================================
+
+const [explorationMode, setExplorationMode] = useState(null);
+
+==================================================
+3.4. BOTÃO CONTINUAR
+==================================================
+
+disabled={!explorationMode}
+
+==================================================
+3.5. AVISO IMPORTANTE
+==================================================
+
+Adicionar texto:
+
+“Você poderá alterar essa preferência a qualquer momento em Preferências.”
+
+==================================================
+PARTE 4 — TELA 3: ESCOLHA DE AVATAR (NOVO)
+==================================================
+
+Essa tela NÃO EXISTE hoje — precisa ser criada.
+
+==================================================
+4.1. O QUE NÃO FAZER
+==================================================
+
+❌ Não mostrar 16 avatares de uma vez  
+❌ Não poluir visual  
+❌ Não virar grid pesado  
+
+==================================================
+4.2. ESTRATÉGIA CORRETA
+==================================================
+
+Primeiro nível:
+→ mostrar 4 categorias:
+
+- Objetos literários  
+- Natureza & poesia  
+- Conceitos & símbolos  
+- Íntimos & pessoais  
+
+Cada categoria:
+→ card leve com preview
+
+==================================================
+4.3. AO CLICAR NA CATEGORIA
+==================================================
+
+Abrir:
+
+- bottom sheet OU
+- expansão suave
+
+Com apenas 4 avatares daquela categoria
+
+==================================================
+4.4. SELEÇÃO
+==================================================
+
+const [avatar, setAvatar] = useState(null);
+
+==================================================
+4.5. REGRA
+==================================================
+
+Usuário deve escolher 1 avatar
+
+Botão continuar:
+disabled={!avatar}
+
+==================================================
+4.6. PREVIEW
+==================================================
+
+Mostrar:
+
+[avatar]  
+Nome  
+@username · Nome do avatar  
+
+==================================================
+PARTE 5 — TELA 4: ESCOLHA DE LIVROS / INTERESSES
+==================================================
+
+Essa tela também SUMIU e é essencial.
+
+==================================================
+5.1. OBJETIVO
+==================================================
+
+- alimentar feed inicial
+- dar sensação de comunidade viva
+- personalizar experiência
+
+==================================================
+5.2. FUNCIONAMENTO
+==================================================
+
+Mostrar:
+
+- gêneros
+OU
+- lista de livros populares
+
+Usuário seleciona:
+
+const [selectedBooks, setSelectedBooks] = useState([]);
+
+==================================================
+5.3. REGRA
+==================================================
+
+Obrigatório selecionar pelo menos:
+
+👉 3 livros OU 3 interesses
+
+==================================================
+5.4. BOTÃO CONTINUAR
+==================================================
+
+disabled={selectedBooks.length < 3}
+
+==================================================
+PARTE 6 — FINALIZAÇÃO
+==================================================
+
+Na última etapa:
+
+Criar usuário com:
+
+- nome
+- username
+- email
+- senha
+- bio
+- explorationMode
+- avatar
+- selectedBooks
+
+Salvar tudo no banco.
+
+==================================================
+PARTE 7 — PERSISTÊNCIA (CRÍTICO)
+==================================================
+
+Garantir que:
+
+- explorationMode salva corretamente
+- avatar salva corretamente
+- interesses salvam corretamente
+
+Nada pode ser perdido.
+
+==================================================
+PARTE 8 — PROBLEMA ATUAL (DIAGNÓSTICO)
+==================================================
+
+O que provavelmente aconteceu:
+
+- removeram o step control
+OU
+- quebraram o fluxo condicional
+OU
+- renderização está travada só no step 1
+
+==================================================
+8.1. CORREÇÃO
+==================================================
+
+Garantir:
+
+{step === 1 && <StepAccount />}
+{step === 2 && <StepExploration />}
+{step === 3 && <StepAvatar />}
+{step === 4 && <StepInterests />}
+{step === 5 && <StepFinish />}
+
+==================================================
+PARTE 9 — RESULTADO FINAL ESPERADO
+==================================================
+
+Depois da correção:
+
+✔ onboarding completo restaurado  
+✔ escolha de modo obrigatória  
+✔ escolha de avatar integrada  
+✔ seleção de livros funcionando  
+✔ experiência fluida  
+✔ coerência com o conceito do app  
+
+==================================================
+IMPORTANTE
+==================================================
+
+Esse onboarding NÃO é opcional.
+
+Ele é parte central da experiência do Marginalia.
+
+Sem ele:
+→ o app perde identidade  
+→ perde lógica de anti-spoiler  
+→ perde personalização  
+
+==================================================
+
+Quero que o Replit:
+
+1. restaure imediatamente as etapas perdidas  
+2. implemente controle de steps  
+3. adicione tela de avatar  
+4. torne escolhas obrigatórias  
+5. garanta persistência correta  
+
+Isso é prioridade máxima.

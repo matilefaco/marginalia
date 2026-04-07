@@ -10,6 +10,7 @@ interface Props {
 
 export function OnboardingGenresScreen({ selected: initial, onContinue, onBack }: Props) {
   const [selected, setSelected] = useState<string[]>(initial);
+  const canContinue = selected.length >= 3;
 
   const toggle = (genre: string) => {
     setSelected((prev) =>
@@ -68,17 +69,25 @@ export function OnboardingGenresScreen({ selected: initial, onContinue, onBack }
       </div>
 
       <div className="pt-4">
+        {!canContinue && (
+          <p className="font-sans font-light text-[10px] text-[#AE8F7D]/70 text-center mb-3 tracking-[0.06em]">
+            {selected.length === 0
+              ? "Escolha pelo menos 3 interesses"
+              : `Mais ${3 - selected.length} para continuar`}
+          </p>
+        )}
         <button
           data-testid="button-genres-continue"
           onClick={() => onContinue(selected)}
-          className="w-full flex items-center justify-center gap-2 bg-[#AE8F7D] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-40 hover:bg-[#AE8F7D]/90 transition-colors"
+          disabled={!canContinue}
+          className="w-full flex items-center justify-center gap-2 bg-[#AE8F7D] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#AE8F7D]/90 active:scale-[0.99] transition-all"
         >
           Continuar
           <ArrowRight className="w-4 h-4" />
         </button>
         <button
-          onClick={() => onContinue(selected)}
-          className="w-full text-[#454545]/35 font-sans font-light text-[10px] tracking-[0.08em] py-2 mt-1"
+          onClick={() => onContinue([])}
+          className="w-full text-[#454545]/30 font-sans font-light text-[10px] tracking-[0.08em] py-2 mt-1"
         >
           Pular por agora
         </button>

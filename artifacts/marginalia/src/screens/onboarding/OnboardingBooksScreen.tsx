@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { MOCK_BOOKS } from "@/data/mockData";
-import { CheckCircle, ArrowRight } from "lucide-react";
+import { CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 
 interface Props {
   onComplete: () => void;
+  onBack?: () => void;
 }
 
 type Status = "reading" | "completed" | "wishlist";
@@ -31,7 +32,7 @@ function calcPercent(sel: Sel, book: (typeof MOCK_BOOKS)[0]): number {
   return 0;
 }
 
-export function OnboardingBooksScreen({ onComplete }: Props) {
+export function OnboardingBooksScreen({ onComplete, onBack }: Props) {
   const { updateBookProgress } = useApp();
   const [selections, setSelections] = useState<Record<number, Sel>>({});
   const [search, setSearch] = useState("");
@@ -41,6 +42,9 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
       b.title.toLowerCase().includes(search.toLowerCase()) ||
       b.author.toLowerCase().includes(search.toLowerCase())
   );
+
+  const selectedCount = Object.keys(selections).length;
+  const canContinue = selectedCount >= 1;
 
   const toggleBook = (bookId: number) => {
     setSelections((prev) => {
@@ -76,15 +80,22 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col px-6 pt-10 pb-8"
+    <div
+      className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col px-6 pt-10 pb-8"
       style={{
         backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
         backgroundSize: "5px 5px",
       }}
     >
+      {onBack && (
+        <button onClick={onBack} className="text-[#454545]/40 mb-6 w-fit">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+      )}
+
       <div className="mb-6">
         <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
-          4 de 4
+          5 de 5
         </span>
         <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full mt-2 mb-6">
           <div className="h-full bg-[#AE8F7D] rounded-full w-full" />
@@ -212,14 +223,22 @@ export function OnboardingBooksScreen({ onComplete }: Props) {
         })}
       </div>
 
-      <button
-        data-testid="button-books-complete"
-        onClick={handleComplete}
-        className="w-full flex items-center justify-center gap-2 bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] hover:bg-[#454545]/90 transition-colors"
-      >
-        {Object.keys(selections).length > 0 ? "Entrar no Marginalia" : "Pular e entrar"}
-        <ArrowRight className="w-4 h-4" />
-      </button>
+      <div>
+        {!canContinue && (
+          <p className="font-sans font-light text-[10px] text-[#AE8F7D]/70 text-center mb-3 tracking-[0.06em]">
+            Selecione pelo menos um livro para continuar
+          </p>
+        )}
+        <button
+          data-testid="button-books-complete"
+          onClick={handleComplete}
+          disabled={!canContinue}
+          className="w-full flex items-center justify-center gap-2 bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#454545]/90 active:scale-[0.99] transition-all"
+        >
+          {selectedCount > 0 ? `Entrar no Marginalia · ${selectedCount} ${selectedCount === 1 ? "livro" : "livros"}` : "Entrar no Marginalia"}
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
 }

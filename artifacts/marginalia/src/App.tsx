@@ -182,7 +182,7 @@ function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   }
 
   if (step === "books") {
-    return <OnboardingBooksScreen onComplete={finish} />;
+    return <OnboardingBooksScreen onComplete={finish} onBack={() => setStep("genres")} />;
   }
 
   return null;
