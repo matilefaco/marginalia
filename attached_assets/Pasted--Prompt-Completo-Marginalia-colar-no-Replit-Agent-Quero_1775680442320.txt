@@ -1,0 +1,323 @@
+# Prompt Completo — Marginalia (colar no Replit Agent)
+
+-----
+
+Quero que você faça várias melhorias simultâneas no Marginalia. Vou descrever cada uma com precisão. Aplique todas de uma vez.
+
+-----
+
+## 1. COMPOSITOR DE POST — substituir o wizard de 7 passos
+
+Substitua o fluxo atual de `NovaMargem` (wizard multi-step) por um compositor de tela única rolável.
+
+A tela deve ter as seguintes seções na ordem:
+
+**a) Seletor de livro**
+
+- Mostra capa + título + autor do livro atualmente selecionado
+- Botão/tap para trocar o livro (abre o buscador já existente)
+- Se nenhum livro selecionado: placeholder “Escolher livro”
+
+**b) Campo de trecho**
+
+- Textarea com placeholder dinâmico que muda conforme o tipo selecionado:
+  - Insight → “Que trecho desencadeou esse pensamento?”
+  - Reação → “O que exatamente te atingiu?”
+  - Teoria → “Em que trecho isso está baseado?”
+  - Destaque → “Cole o trecho que você quer guardar.”
+  - (padrão, sem tipo) → “Cole ou escreva o trecho…”
+- Contador de caracteres discreto no canto inferior direito (cor: #8C837A), limite soft de 400
+- Fonte: Cormorant Garamond italic, 16px
+
+**c) Referência**
+
+- Dois campos inline: “Página” (número) e “%” (progresso) — apenas um precisa ser preenchido
+- Labels em Jost uppercase 10px
+
+**d) Tipo de post**
+
+- Chips inline horizontais: Insight / Reação / Teoria / Destaque
+- Seleção muda a cor do chip para Old Vine (#697962) com texto branco
+- Muda o placeholder do campo de trecho em tempo real
+
+**e) Campo de comentário**
+
+- Label: “O que isso te causou?” em Jost 12px uppercase, letter-spacing 0.14em, cor #8C837A
+- Textarea grande, mínimo 4 linhas, expansível
+- Contador de caracteres (cor: #8C837A), limite soft 800 — ao passar, mostrar aviso sutil mas não bloquear
+- Fonte: Jost 14px, line-height 1.65
+
+**f) Spoiler e visibilidade (colapsados por padrão)**
+
+- Dois dropdowns compactos numa linha só: “Nível de spoiler” e “Visibilidade”
+- Ícones: 🔒 e 👁 antes dos labels
+- Colapsados por padrão, expansíveis com tap
+
+**g) Botão de publicar**
+
+- Label: “Publicar post”
+- Desabilitado (opacidade 0.4, não clicável) até que livro + trecho + tipo estejam preenchidos
+- Quando habilitado: background Old Vine (#697962), texto branco, Jost uppercase
+
+**Auto-save de rascunho:**
+
+- Salvar no localStorage a chave `mg_draft_${userId}` a cada 3 segundos se houver conteúdo
+- Ao abrir a tela, verificar se existe rascunho salvo
+- Se existir, mostrar banner discreto no topo: “Você tem um rascunho de [título do livro] — retomar?” com botões “Retomar” e “Descartar”
+- Ao publicar com sucesso, limpar o rascunho do localStorage
+
+-----
+
+## 2. MARGINCARD — melhorias de legibilidade e hierarquia
+
+No componente `MarginCard.tsx`, faça as seguintes alterações:
+
+**a) Hierarquia tipográfica**
+
+Estrutura visual dos cards na seguinte ordem:
+
+1. Header: `TIPO • NOME DO LIVRO` — Jost 10px uppercase, letter-spacing 0.16em, cor #8C837A
+1. Trecho citado — Cormorant Garamond italic, 17px, line-height 1.7, cor #2C2A27
+1. Referência de página — Jost 11px, cor #8C837A, alinhado à direita: `— p. 134`
+1. Linha separadora — `<hr>` com cor #EBE6DB, espessura 1px, margem vertical 12px
+1. Comentário do leitor — Jost 14px regular, line-height 1.65, cor #3D3A36
+1. Footer: avatar + @username + tempo — Jost 12px, cor #8C837A
+
+**b) Background do card com bookColor**
+
+Substituir o background atual por:
+
+```css
+background: color-mix(in srgb, var(--book-color, #AE8F7D) 8%, #FAF8F3);
+```
+
+Isso garante que nenhuma cor de livro vai comprometer o contraste do texto.
+
+**c) Padding**
+
+- Padding interno do card: 20px (não menos que isso)
+- Espaçamento entre trecho e comentário: 16px (a linha separadora já ajuda)
+
+**d) Barra de reações**
+
+- Espaçamento entre botões de reação: mínimo 8px
+- Fonte dos contadores: Jost 12px, cor #8C837A
+- Tap area de cada botão: mínimo 44x44px (acessibilidade)
+
+-----
+
+## 3. THREADSCREEN — respiro e legibilidade
+
+No componente `ThreadScreen.tsx`:
+
+**a)** Padding vertical entre respostas: 20px (não 12px)
+
+**b)** Avatar + nome ficam na mesma linha que o início do texto da resposta (layout inline, não empilhado)
+
+**c)** Respostas com mais de 4 linhas: adicionar botão “ver mais” em Jost 12px, cor Old Vine (#697962), que expande o texto. Não truncar abruptamente.
+
+**d)** O trecho original do post fica fixado no topo da tela em versão compacta ao rolar (sticky): mostrar apenas a primeira linha do trecho + reticências, com fundo Albescent 2 (#EBE6DB) e padding 12px. Ao parar de rolar, desaparece suavemente.
+
+**e)** Adicionar botão “Modo foco” no header da tela (ícone de olho ou livro aberto). Quando ativado:
+
+- Esconde contadores de reação
+- Esconde avatares
+- Esconde timestamps
+- Deixa apenas o texto dos posts e respostas
+- Fundo muda para #FAF8F3 puro (sem texturas)
+- Botão ativo fica destacado em Old Vine
+
+-----
+
+## 4. MOCK DATA — substituir conteúdo por textos reais e densos
+
+No arquivo `src/data/mockData.ts`, **adicione** os seguintes posts ao array de margins existente (não remova os outros, apenas adicione estes):
+
+```typescript
+// === NOVOS POSTS — conteúdo denso ===
+
+{
+  id: "margin_real_001",
+  bookId: "dom_casmurro", // ajustar para o id real do livro no mockData
+  userId: "user_me",
+  type: "TEORIA",
+  excerpt: "Não consultes dicionários. Casmurro não está aqui no sentido que eles lhe dão, mas no que lhe pôs o vulgo de homem calado e metido consigo.",
+  reference: { page: 7, percentage: 2 },
+  commentary: "Machado avisa desde o título que vai jogar com as palavras. 'Casmurro' não significa o que você acha que significa. E se ele está nos dizendo isso logo no início, o que mais no livro não significa o que pensamos? Capitu traiu? Ou 'traiu' é também uma palavra que Machado está usando no sentido que lhe pôs o vulgo?",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+  reactions: { "💥": 47, "🤔": 38, "✨": 29 },
+  replyCount: 18,
+},
+{
+  id: "margin_real_002",
+  bookId: "dom_casmurro",
+  userId: "user_02", // trocar por um userId existente no mock
+  type: "REAÇÃO",
+  excerpt: "Olhos de ressaca? Vá, leitora, vá entender o que quer dizer. Eu entendi aquela feição, aquele modo, aquela mulher...",
+  reference: { page: 24, percentage: 8 },
+  commentary: "Toda vez que releio esse trecho fico pensando: Bentinho não consegue descrever Capitu. Ele tenta, usa uma metáfora, e imediatamente abandona ela e entrega a responsabilidade pro leitor. É genial e perturbador. Ele não sabe o que viu. E nós também não saberemos.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(),
+  reactions: { "💥": 62, "🖤": 41, "✨": 35 },
+  replyCount: 31,
+},
+{
+  id: "margin_real_003",
+  bookId: "dom_casmurro",
+  userId: "user_03",
+  type: "INSIGHT",
+  excerpt: "Agora, por que é que nenhuma dessas caprichosas me fez esquecer a primeira amada? Talvez porque nenhuma delas tinha os olhos de ressaca, nem os de cigana oblíqua e dissimulada...",
+  reference: { page: 312, percentage: 94 },
+  commentary: "Dom Casmurro é um livro sobre como a memória fabrica a culpa. Bentinho não lembra Capitu como ela era — ele a reconstrói para justificar o que sente. Cada vez que ele a descreve como 'oblíqua e dissimulada', está menos descrevendo ela e mais revelando o narrador que se tornou. A traição pode ter acontecido ou não. Mas a obsessão aconteceu — e essa é a única certeza do livro.",
+  spoilerLevel: "ENDING",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+  reactions: { "✨": 89, "🤔": 44, "💥": 22 },
+  replyCount: 52,
+},
+{
+  id: "margin_real_004",
+  bookId: "o_processo", // ajustar para o id real
+  userId: "user_04",
+  type: "TEORIA",
+  excerpt: "Alguém devia ter caluniado Josef K., pois uma manhã ele foi detido sem ter feito nada de errado.",
+  reference: { page: 9, percentage: 3 },
+  commentary: "A primeira frase do livro é perfeita porque contém sua própria desconstrução. 'Devia ter' — Kafka já introduz a dúvida. A voz narrativa não sabe, apenas supõe. E 'sem ter feito nada de errado' é narrado do ponto de vista de K., não estabelecido como fato. Em 8 palavras, Kafka já nos colocou na posição de todo réu do absurdo: não sabemos se somos culpados, mas precisamos nos defender.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
+  reactions: { "✨": 103, "🤔": 67, "💥": 28 },
+  replyCount: 44,
+},
+{
+  id: "margin_real_005",
+  bookId: "o_processo",
+  userId: "user_05",
+  type: "REAÇÃO",
+  excerpt: "O tribunal não quer nada de você. Recebe você quando vem e o dispensa quando vai.",
+  reference: { page: 188, percentage: 61 },
+  commentary: "Isso me destruiu. A burocracia kafkiana não é maliciosa — é pior do que isso. É indiferente. K. gasta o livro inteiro tentando encontrar alguém que o acuse formalmente, alguém responsável, alguém com quem negociar. E não existe esse alguém. O sistema funciona precisamente porque ninguém é responsável por ele.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 30).toISOString(),
+  reactions: { "💥": 78, "🖤": 55, "🤔": 33 },
+  replyCount: 27,
+},
+{
+  id: "margin_real_006",
+  bookId: "cem_anos_solidao", // ajustar para o id real
+  userId: "user_06",
+  type: "INSIGHT",
+  excerpt: "Muitos anos depois, diante do pelotão de fuzilamento, o coronel Aureliano Buendía havia de recordar aquela tarde remota em que seu pai o levou para conhecer o gelo.",
+  reference: { page: 11, percentage: 1 },
+  commentary: "Essa frase faz algo que poucos livros conseguem: coloca três momentos temporais distintos na mesma respiração — um futuro (pelotão de fuzilamento), um presente narrativo (havia de recordar), e um passado dentro desse presente (tarde remota, o gelo). E o ponto de ancoragem entre a morte e a infância é o gelo — não a guerra, não o amor, o gelo. García Márquez nos diz desde a primeira linha que o extraordinário mora no cotidiano, e o cotidiano é tão estranho quanto o extraordinário.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+  reactions: { "✨": 134, "🖤": 67, "💥": 41 },
+  replyCount: 63,
+},
+{
+  id: "margin_real_007",
+  bookId: "a_hora_da_estrela", // ajustar para o id real
+  userId: "user_07",
+  type: "REAÇÃO",
+  excerpt: "Ela era incompetente. Incompetente para a vida.",
+  reference: { page: 37, percentage: 28 },
+  commentary: "Clarice escreve sobre Macabéa com uma crueldade que é também ternura. 'Incompetente para a vida' não é julgamento — é diagnóstico e compaixão ao mesmo tempo. Macabéa não falhou na vida. A vida falhou em dar a ela as ferramentas mínimas para que ela pudesse falhar por conta própria. Isso é diferente, e Clarice sabe a diferença.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(),
+  reactions: { "🖤": 91, "💥": 44, "✨": 38 },
+  replyCount: 35,
+},
+{
+  id: "margin_real_008",
+  bookId: "a_hora_da_estrela",
+  userId: "user_08",
+  type: "TEORIA",
+  excerpt: "Escrever é uma maldição que salva.",
+  reference: { page: 18, percentage: 14 },
+  commentary: "Essa frase aparece cedo e contamina tudo que vem depois. Rodrigo S.M. não quer escrever sobre Macabéa — ele precisa. E a escolha de Clarice de colocar um narrador masculino desconfortável com sua própria história é cirúrgica: ela está escrevendo sobre como o olhar masculino literário constrói mulheres como Macabéa. O desconforto de Rodrigo é o ponto. A maldição é dele. A salvação, talvez, seja dela.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(),
+  reactions: { "✨": 76, "🤔": 52, "🖤": 49 },
+  replyCount: 41,
+},
+{
+  id: "margin_real_009",
+  bookId: "1984", // ajustar para o id real
+  userId: "user_09",
+  type: "INSIGHT",
+  excerpt: "War is peace. Freedom is slavery. Ignorance is strength.",
+  reference: { page: 6, percentage: 2 },
+  commentary: "O que Orwell entendeu que outros distópicos não entenderam: o totalitarismo não precisa convencer você de que 2+2=5. Ele precisa apenas que você aceite dizer que é 5. A crença pode vir depois, ou nunca vir. O que importa é a capitulação verbal. Doublethink não é sobre acreditar em contradições — é sobre aprender a não notar que são contradições. E isso não é ficção científica. É descrição.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(),
+  reactions: { "💥": 88, "🤔": 71, "✨": 39 },
+  replyCount: 58,
+},
+{
+  id: "margin_real_010",
+  bookId: null, // post de reflexão livre, sem livro específico
+  userId: "user_10",
+  type: "INSIGHT",
+  excerpt: null,
+  reference: null,
+  commentary: "Existe uma diferença entre livros que você lê e livros que te lêem. Os primeiros você consome. Os segundos te reorganizam por dentro de um jeito que você só percebe semanas depois, quando está no ônibus ou tomando café e de repente entende algo sobre você mesmo que não entendia antes de abrir aquele livro. Cem Anos de Solidão foi o meu primeiro livro que me leu. Qual foi o seu?",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+  reactions: { "✨": 156, "🖤": 87, "🤔": 23 },
+  replyCount: 94,
+},
+```
+
+**Importante:** ajuste os `bookId` para corresponderem aos IDs reais dos livros já existentes no `mockData.ts`. Se algum livro não existir ainda (O Processo, A Hora da Estrela), adicione-os ao array de books com as informações básicas e um `bookColor` adequado.
+
+-----
+
+## 5. MODO NOTURNO
+
+No arquivo `src/index.css` (ou onde ficam as variáveis CSS), adicione:
+
+```css
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background:   #1C1916;
+    --color-surface:      #252119;
+    --color-surface-2:    #2E2A24;
+    --color-text-primary: #E8E2D6;
+    --color-text-secondary: #9C8E82;
+    --color-text-tertiary:  #6B6057;
+    --color-heather:      #C4A090;
+    --color-old-vine:     #8A9E82;
+    --color-doeskin:      #A89080;
+    --color-border:       #3A342C;
+  }
+}
+```
+
+Também adicione um toggle manual de tema em `SettingsScreen.tsx`:
+
+- Switch “Tema escuro” que salva preferência em localStorage como `mg_theme_${userId}`
+- Ao ativar, adicionar class `dark` no `<html>` e usar as variáveis acima via `[html.dark]` além do `@media`
+
+-----
+
+## 6. OBSERVAÇÕES IMPORTANTES
+
+- Não quebre nenhuma funcionalidade existente (auth, anti-spoiler, localStorage de progresso)
+- Mantenha a tipografia Cormorant Garamond para trechos citados e Jost para todo o resto da UI
+- Mantenha a paleta: Albescent White #FAF8F3, Albescent 2 #EBE6DB, Heather Rose #AE8F7D, Doeskin #BDAB9C, Old Vine #697962, Metal #454545
+- O compositor novo deve substituir completamente o wizard antigo, inclusive atualizando o link do botão “+” da Navbar
+- Preserve o sistema anti-spoiler — o campo de “nível de spoiler” no compositor deve usar os mesmos SPOILER_LEVELS já definidos em `constants.ts`
+
+-----
+
+Pode começar. Aplique tudo de uma vez e me mostre o resultado.

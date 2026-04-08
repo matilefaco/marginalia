@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Globe, Shield, LogOut, Bell, Lock, Info, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Globe, Shield, LogOut, Bell, Lock, Info, Loader2, Moon, Sun } from "lucide-react";
 import { Link } from "wouter";
 import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
@@ -8,7 +8,7 @@ import { SPOILER_PREFERENCES, GENRES, type SpoilerPreference } from "@/data/cons
 const RHYTHM_ICONS = [Shield, Globe];
 
 export function SettingsScreen() {
-  const { currentUser, userPrefs, updateSpoilerPreference, updatePreferredGenres } = useApp();
+  const { currentUser, userPrefs, updateSpoilerPreference, updatePreferredGenres, isDark, toggleTheme } = useApp();
   const { signOut } = useAuth();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [logoutError, setLogoutError] = useState("");
@@ -144,6 +144,33 @@ export function SettingsScreen() {
           <p className="font-sans font-light text-[10px] text-[#454545]/30 mt-3 leading-relaxed">
             Salvo automaticamente. Personaliza o seu feed e descobertas.
           </p>
+        </section>
+
+        {/* Appearance / Dark mode */}
+        <section>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-sans text-[9px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              Aparência
+            </span>
+            <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+          </div>
+          <button
+            data-testid="button-toggle-dark-mode"
+            onClick={toggleTheme}
+            className="w-full flex items-center justify-between py-3.5 border-b border-[#454545]/5 hover:opacity-70 transition-opacity"
+          >
+            <div className="flex items-center gap-2.5">
+              {isDark
+                ? <Moon className="w-4 h-4 text-[#AE8F7D]/60" />
+                : <Sun className="w-4 h-4 text-[#AE8F7D]/60" />}
+              <span className="font-sans font-light text-[13px] text-[#454545]/65">
+                {isDark ? "Modo escuro" : "Modo claro"}
+              </span>
+            </div>
+            <div className={`w-10 h-5 rounded-full transition-all duration-300 flex items-center px-0.5 ${isDark ? "bg-[#697962]" : "bg-[#454545]/15"}`}>
+              <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-300 ${isDark ? "translate-x-5" : "translate-x-0"}`} />
+            </div>
+          </button>
         </section>
 
         {/* Account */}

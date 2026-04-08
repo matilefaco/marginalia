@@ -118,6 +118,7 @@ export function ThreadScreen() {
   const [justReacted, setJustReacted] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [showAllReplies, setShowAllReplies] = useState(false);
+  const [expandedReplies, setExpandedReplies] = useState<Set<number>>(new Set());
   const inputRef = useRef<HTMLInputElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
 
@@ -406,6 +407,11 @@ export function ThreadScreen() {
 
           {visibleMockReplies.map((reply) => {
             const replyUsername = USER_USERNAME_MAP[reply.userId];
+            const isLong = reply.text.length > 240;
+            const isExpanded = expandedReplies.has(reply.id);
+            const displayText = isLong && !isExpanded
+              ? reply.text.slice(0, 240).trimEnd() + "…"
+              : reply.text;
             return (
               <div key={reply.id} className="space-y-1.5">
                 <UserIdentity
@@ -419,7 +425,15 @@ export function ThreadScreen() {
                   timestamp={timeAgo(reply.createdAt)}
                 />
                 <div className="pl-7">
-                  <p className="font-sans text-[14px] text-[#2C2A27] leading-[1.65]">{reply.text}</p>
+                  <p className="font-sans text-[14px] text-[#2C2A27] leading-[1.65]">{displayText}</p>
+                  {isLong && !isExpanded && (
+                    <button
+                      onClick={() => setExpandedReplies((prev) => new Set([...prev, reply.id]))}
+                      className="font-sans font-light text-[10px] text-[#AE8F7D]/70 hover:text-[#AE8F7D] mt-0.5 transition-colors"
+                    >
+                      ver mais
+                    </button>
+                  )}
                   <CommentReactionBar commentId={reply.id} />
                 </div>
               </div>

@@ -469,17 +469,20 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
       </div>
 
       {/* Quote block */}
-      <div className="pl-4 mb-4" style={{ borderLeft: `2px solid ${a.border}66` }}>
-        <p className="font-serif italic text-[15px] text-[#2C2A27] leading-[1.7]">
+      <div className="pl-4 mb-3" style={{ borderLeft: `2px solid ${a.border}66` }}>
+        <p className="font-serif italic text-[17px] text-[#2C2A27] leading-[1.7]">
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
 
       {/* Commentary — visually separated from the quote */}
       {margin.commentary && (
-        <p className="font-sans text-[14px] text-[#5C5650] leading-[1.7] mb-4">
-          {margin.commentary}
-        </p>
+        <>
+          <div className="h-px bg-[#EBE6DB]/80 mb-3" />
+          <p className="font-sans text-[14px] text-[#3D3A36] leading-[1.65] mb-4">
+            {margin.commentary}
+          </p>
+        </>
       )}
 
       <div className="mb-3">

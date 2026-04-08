@@ -85,6 +85,7 @@ interface AppState {
   savedMargins: number[];
   userPrefs: UserPreferences;
   progressLoading: boolean;
+  isDark: boolean;
 }
 
 interface AppActions {
@@ -101,6 +102,7 @@ interface AppActions {
   setOnboardingStep: (step: number) => void;
   getProgressForBook: (bookId: number) => BookProgress | undefined;
   markNotificationRead: (id: number) => void;
+  toggleTheme: () => void;
 }
 
 const AppContext = createContext<(AppState & AppActions) | null>(null);
@@ -281,6 +283,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [lastUsedReaction, setLastUsedReaction] = useState<string | null>(null);
   const [progressLoading, setProgressLoading] = useState(false);
+
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    try { return localStorage.getItem(`mg_theme_${baseUser.id}`) === "dark"; } catch { return false; }
+  });
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(`mg_theme_${currentUser.id}`) === "dark";
+      setIsDark(saved);
+    } catch {}
+  }, [currentUser.id]);
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDark]);
+
+  const toggleTheme = useCallback(() => {
+    setIsDark((prev) => {
+      const next = !prev;
+      try { localStorage.setItem(`mg_theme_${currentUser.id}`, next ? "dark" : "light"); } catch {}
+      return next;
+    });
+  }, [currentUser.id]);
 
   // Community margins (from mock data) — kept mutable so reaction counts update visually
   const [communityMargins, setCommunityMargins] = useState<Margin[]>(MOCK_MARGINS);
@@ -562,6 +591,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setOnboardingStep,
         getProgressForBook,
         markNotificationRead,
+        isDark,
+        toggleTheme,
       }}
     >
       {children}

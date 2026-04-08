@@ -219,6 +219,10 @@
   --shadow-lg: 0px 8px 32px rgba(0,0,0,0.4);
   --shadow-xl: 0px 12px 48px rgba(0,0,0,0.5);
   --shadow-2xl: 0px 24px 64px rgba(0,0,0,0.6);
+
+  --text-primary:   #E8E4DE;
+  --text-secondary: #C4BDB5;
+  --text-tertiary:  #8C837A;
 }
 
 @layer base {
