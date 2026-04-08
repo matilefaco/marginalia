@@ -1,0 +1,273 @@
+:::writing{variant=“standard” id=“36184”}
+CORRIGIR BUG DE AUTOCORREÇÃO/ALTERAÇÃO INDEVIDA DO NOME DO USUÁRIO — “TATIANE” ESTÁ SENDO TROCADO PARA “TATIANA”
+
+Existe um bug grave de integridade de dados no perfil do usuário:
+
+Uma usuária chamada Tatiane está tentando atualizar o próprio nome no app, mas o sistema está mudando automaticamente para Tatiana.
+
+Isso não pode acontecer em hipótese nenhuma.
+
+Nome próprio do usuário precisa ser tratado como dado exato, literal, e nunca pode ser “corrigido”, “normalizado”, “sugerido” ou alterado automaticamente pelo app.
+
+Quero que o Replit revise isso como prioridade, porque esse tipo de erro afeta confiança, identidade do usuário e credibilidade do produto.
+
+==================================================
+OBJETIVO
+
+Garantir que, quando o usuário digitar o próprio nome:
+	•	o app salve exatamente o que foi digitado;
+	•	o app exiba exatamente o que foi salvo;
+	•	o app nunca altere “Tatiane” para “Tatiana”;
+	•	o app nunca faça autocorreção indevida de nomes próprios.
+
+==================================================
+COMPORTAMENTO CORRETO
+
+Se a usuária digitar:
+
+Tatiane
+
+o sistema deve:
+	•	manter “Tatiane” no input;
+	•	salvar “Tatiane” no banco;
+	•	mostrar “Tatiane” no perfil;
+	•	manter “Tatiane” após refresh;
+	•	manter “Tatiane” após logout/login;
+	•	manter “Tatiane” ao editar novamente.
+
+O app não pode:
+	•	trocar letras;
+	•	“corrigir” o nome;
+	•	substituir por nome parecido;
+	•	aplicar sugestão de teclado e persistir sem confirmação;
+	•	capitalizar de forma errada;
+	•	passar por função que muda conteúdo textual.
+
+==================================================
+POSSÍVEIS CAUSAS DO BUG
+
+Quero que o Replit revise os seguintes pontos, porque o erro provavelmente está vindo de um deles:
+
+1. AUTOCORRECT / AUTOCAPITALIZE DO INPUT
+
+No iPhone e em inputs mobile, o teclado pode sugerir ou autocorrigir palavras.
+
+Se o campo de nome estiver com autocorrect ativado, isso pode estar interferindo.
+
+2. FUNÇÃO DE NORMALIZAÇÃO DE TEXTO
+
+Pode existir alguma função utilitária que:
+	•	corrige nomes;
+	•	faz replace automático;
+	•	aplica title case de forma agressiva;
+	•	passa corretor ortográfico;
+	•	transforma texto antes de salvar.
+
+3. MAPEAMENTO ERRADO NO FORMULÁRIO
+
+Pode estar acontecendo algo como:
+	•	o input mostra uma coisa;
+	•	mas o valor enviado no submit vem de outro state;
+	•	ou algum defaultValue / fallback está substituindo o valor real.
+
+4. DADO SENDO SOBRESCRITO PELO BACKEND
+
+O front pode até mandar “Tatiane”, mas o backend ou a rotina de update pode estar sobrescrevendo depois.
+
+5. FUNÇÃO DE EXIBIÇÃO DIFERENTE DA FUNÇÃO DE SALVAMENTO
+
+Pode estar salvando corretamente no banco, mas renderizando errado por algum formatter.
+
+6. AUTOFILL / CACHE LOCAL
+
+Pode haver valor antigo em cache sendo reaplicado.
+
+==================================================
+CORREÇÕES OBRIGATÓRIAS
+
+Quero que o Replit implemente estas correções:
+
+==================================================
+	1.	O CAMPO DE NOME DEVE SER LITERAL
+==================================================
+
+O campo de nome deve tratar o valor digitado como texto literal.
+
+Não aplicar:
+	•	autocorreção sem controle
+	•	replace automático
+	•	heurística
+	•	“melhoria” do nome
+	•	sugestões persistidas automaticamente
+
+Quero desativar no input de nome, especialmente no mobile:
+	•	autoCorrect="off"
+	•	spellCheck={false}
+	•	autoCapitalize="words" pode continuar, mas sem alterar conteúdo além da capitalização normal
+	•	não usar qualquer função que “corrija” ortografia de nome próprio
+
+Exemplo esperado no input:
+
+<input
+  value={firstName}
+  onChange={...}
+  autoCorrect="off"
+  spellCheck={false}
+  autoCapitalize="words"
+/>
+
+Fazer isso também para:
+	•	sobrenome
+	•	username, com as adaptações adequadas
+
+==================================================
+2. REMOVER QUALQUER NORMALIZAÇÃO AGRESSIVA DO NOME
+
+Revisar todas as funções que tratam nome antes de salvar.
+
+Se existir algo assim, remover:
+	•	correção ortográfica
+	•	substituição automática
+	•	heurística de “nome mais comum”
+	•	normalize que altera caracteres além de espaços supérfluos
+	•	mapeamento de nomes conhecidos
+
+Permitido:
+	•	trim nas bordas
+	•	colapso de espaços duplicados internos, se quiser
+
+Não permitido:
+	•	mudar o conteúdo do nome
+
+Exemplo:
+	•	permitido: "  Tatiane  " → "Tatiane"
+	•	não permitido: "Tatiane" → "Tatiana"
+
+==================================================
+3. GARANTIR QUE O STATE SALVO É O MESMO STATE EXIBIDO
+
+Quero revisar o fluxo completo:
+	•	o que o usuário digita
+	•	o valor no state
+	•	o valor enviado no submit
+	•	o valor salvo no banco
+	•	o valor renderizado depois
+
+Todos precisam ser exatamente o mesmo texto.
+
+Exemplo de verificação:
+	•	input = “Tatiane”
+	•	state = “Tatiane”
+	•	payload = “Tatiane”
+	•	banco = “Tatiane”
+	•	UI = “Tatiane”
+
+==================================================
+4. REVISAR UPDATE DO PERFIL
+
+No momento de salvar edição de perfil, garantir que:
+	•	first_name recebe exatamente o valor digitado;
+	•	last_name recebe exatamente o valor digitado;
+	•	nenhuma função intermediária altera o valor.
+
+Quero revisar especialmente o update do perfil.
+
+==================================================
+5. REVISAR CARREGAMENTO DO PERFIL APÓS SALVAR
+
+Depois de salvar, o app deve recarregar os dados corretos.
+
+Se hoje estiver acontecendo:
+	•	salva uma coisa
+	•	renderiza outra
+
+isso precisa ser corrigido.
+
+==================================================
+6. LOG DE DEPURAÇÃO TEMPORÁRIO
+
+Se necessário, quero que o Replit coloque logs temporários para localizar exatamente onde o valor muda.
+
+Exemplo de pontos de log:
+	•	valor digitado no input
+	•	valor no state antes do submit
+	•	payload enviado no update
+	•	resposta do backend
+	•	valor retornado ao recarregar perfil
+
+A ideia é descobrir em qual etapa “Tatiane” vira “Tatiana”.
+
+Depois que o bug for corrigido, os logs podem ser removidos.
+
+==================================================
+7. TESTE ESPECÍFICO COM NOMES REAIS
+
+Quero testar explicitamente com nomes que não podem ser alterados.
+
+Exemplos:
+	•	Tatiane
+	•	Daiane
+	•	Cristiane
+	•	Eliane
+	•	Mariane
+	•	Luciene
+
+E também nomes compostos:
+	•	Ana Clara
+	•	Maria Eduarda
+	•	João Pedro
+
+O sistema deve preservar tudo exatamente como digitado.
+
+==================================================
+REGRAS FINAIS
+
+O app deve seguir estas regras para nomes próprios:
+	1.	nunca “corrigir” nome do usuário;
+	2.	nunca trocar por nome parecido;
+	3.	nunca aplicar ortografia automática persistente;
+	4.	sempre salvar exatamente o texto digitado;
+	5.	sempre exibir exatamente o valor salvo.
+
+==================================================
+TESTES OBRIGATÓRIOS
+
+Teste 1
+
+Editar nome para “Tatiane”
+	•	salvar
+	•	verificar se continua “Tatiane”
+
+Teste 2
+
+Dar refresh
+	•	verificar se continua “Tatiane”
+
+Teste 3
+
+Fazer logout/login
+	•	verificar se continua “Tatiane”
+
+Teste 4
+
+Editar novamente
+	•	verificar se o input continua mostrando “Tatiane”
+	•	sem substituição automática
+
+Teste 5
+
+Testar no iPhone/mobile
+	•	garantir que autocorrect do teclado não cause persistência errada
+
+==================================================
+RESULTADO FINAL ESPERADO
+
+Depois da correção:
+	•	a usuária escreve “Tatiane”;
+	•	o app mantém “Tatiane”;
+	•	o banco guarda “Tatiane”;
+	•	o perfil mostra “Tatiane”;
+	•	o bug não acontece mais.
+
+Isso é uma correção de integridade de dados e precisa ser tratada com prioridade.
+:::

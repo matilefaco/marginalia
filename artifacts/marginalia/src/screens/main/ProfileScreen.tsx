@@ -295,19 +295,31 @@ export function ProfileScreen() {
                     value={editFirstName}
                     onChange={(e) => setEditFirstName(e.target.value)}
                     placeholder="Nome"
-                    className="flex-1 min-w-0 font-serif italic text-[16px] text-[#3D3D3D] bg-transparent border-b border-[#AE8F7D]/30 outline-none pb-0.5"
+                    autoCorrect="off"
+                    autoComplete="given-name"
+                    spellCheck={false}
+                    autoCapitalize="words"
+                    className="flex-1 min-w-0 font-serif italic text-[16px] text-[#2C2A27] bg-transparent border-b border-[#AE8F7D]/30 outline-none pb-0.5"
                   />
                   <input
                     value={editLastName}
                     onChange={(e) => setEditLastName(e.target.value)}
                     placeholder="Sobrenome"
-                    className="flex-1 min-w-0 font-serif italic text-[16px] text-[#3D3D3D] bg-transparent border-b border-[#AE8F7D]/30 outline-none pb-0.5"
+                    autoCorrect="off"
+                    autoComplete="family-name"
+                    spellCheck={false}
+                    autoCapitalize="words"
+                    className="flex-1 min-w-0 font-serif italic text-[16px] text-[#2C2A27] bg-transparent border-b border-[#AE8F7D]/30 outline-none pb-0.5"
                   />
                 </div>
                 <input
                   value={editUsername}
                   onChange={(e) => setEditUsername(e.target.value)}
                   placeholder="@username"
+                  autoCorrect="off"
+                  autoComplete="username"
+                  spellCheck={false}
+                  autoCapitalize="none"
                   className="w-full min-w-0 font-sans font-light text-[11px] text-[#AE8F7D] bg-transparent border-b border-[#AE8F7D]/20 outline-none pb-0.5"
                 />
               </div>

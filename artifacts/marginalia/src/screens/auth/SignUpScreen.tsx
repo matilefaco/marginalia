@@ -203,6 +203,10 @@ export function SignUpScreen({ onComplete, onBack, externalError }: Props) {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="Ana"
+                autoCorrect="off"
+                autoComplete="given-name"
+                spellCheck={false}
+                autoCapitalize="words"
                 className="w-full font-serif italic text-[15px] text-[#454545] placeholder:text-[#454545]/20 bg-transparent border-b border-[#454545]/12 pb-2 outline-none focus:border-[#AE8F7D]/60 transition-colors"
               />
             </div>
@@ -216,6 +220,10 @@ export function SignUpScreen({ onComplete, onBack, externalError }: Props) {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Clara"
+                autoCorrect="off"
+                autoComplete="family-name"
+                spellCheck={false}
+                autoCapitalize="words"
                 className="w-full font-serif italic text-[15px] text-[#454545] placeholder:text-[#454545]/20 bg-transparent border-b border-[#454545]/12 pb-2 outline-none focus:border-[#AE8F7D]/60 transition-colors"
               />
             </div>
