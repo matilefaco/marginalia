@@ -412,16 +412,96 @@ export function NewMarginScreen() {
 
             {/* Preview */}
             {selectedBook && excerpt.trim() && (
-              <div className="p-4 rounded-[12px] border border-[#AE8F7D]/15 bg-[#EBE6DB]/20">
-                <p className="font-sans text-[7px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-                  Preview · como vai aparecer no feed
-                </p>
-                <p className="font-serif italic text-[13px] text-[#2A2A2A]/80 border-l-2 border-[#AE8F7D]/45 pl-3 mb-2 leading-relaxed">
-                  &ldquo;{excerpt.slice(0, 120)}{excerpt.length > 120 ? "…" : ""}&rdquo;
-                </p>
-                <p className="font-sans font-light text-[9px] text-[#454545]/40">
-                  {selectedBook.title} · {MARGIN_TYPES.find((t) => t.id === postType)?.label}
-                </p>
+              <div
+                className="rounded-[14px] overflow-hidden"
+                style={{
+                  backgroundColor: isDark ? "#1F1A17" : "#FAF8F3",
+                  border: `1px solid ${isDark ? "rgba(216,183,167,0.18)" : "rgba(174,143,125,0.20)"}`,
+                }}
+              >
+                {/* Preview header band */}
+                <div
+                  className="px-4 py-2.5 border-b flex items-center gap-2"
+                  style={{
+                    backgroundColor: isDark ? "rgba(215,183,167,0.06)" : "rgba(174,143,125,0.08)",
+                    borderColor: isDark ? "rgba(216,183,167,0.10)" : "rgba(174,143,125,0.12)",
+                  }}
+                >
+                  <p
+                    className="font-sans text-[6.5px] font-light tracking-[0.22em] uppercase"
+                    style={{ color: isDark ? "#CDB9AA" : "#AE8F7D" }}
+                  >
+                    Preview · como vai aparecer no feed
+                  </p>
+                </div>
+
+                {/* Preview body */}
+                <div className="px-4 pt-3.5 pb-4">
+                  {/* Post type + book */}
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <span
+                      className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase"
+                      style={{ color: isDark ? "#CDB9AA" : "#AE8F7D" }}
+                    >
+                      {MARGIN_TYPES.find((t) => t.id === postType)?.icon}{" "}
+                      {MARGIN_TYPES.find((t) => t.id === postType)?.label}
+                    </span>
+                    <span style={{ color: isDark ? "rgba(216,183,167,0.25)" : "rgba(174,143,125,0.30)" }}>·</span>
+                    <span
+                      className="font-sans font-light text-[7.5px] truncate"
+                      style={{ color: isDark ? "#B7A697" : "#8C837A" }}
+                    >
+                      {selectedBook.title}
+                    </span>
+                  </div>
+
+                  {/* Excerpt quote */}
+                  <div
+                    className="pl-3 mb-3"
+                    style={{
+                      borderLeft: `2px solid ${isDark ? "rgba(216,183,167,0.45)" : "rgba(174,143,125,0.50)"}`,
+                    }}
+                  >
+                    <p
+                      className="font-serif italic text-[15px] leading-[1.72]"
+                      style={{ color: isDark ? "#EADFD4" : "#24211E" }}
+                    >
+                      &ldquo;{excerpt.slice(0, 140)}{excerpt.length > 140 ? "…" : ""}&rdquo;
+                    </p>
+                  </div>
+
+                  {/* Commentary if present */}
+                  {commentary.trim() && (
+                    <p
+                      className="font-sans text-[12.5px] leading-[1.65] mb-3"
+                      style={{ color: isDark ? "#F3EDE5" : "#24211E" }}
+                    >
+                      {commentary.slice(0, 140)}{commentary.length > 140 ? "…" : ""}
+                    </p>
+                  )}
+
+                  {/* Meta chips */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span
+                      className="font-sans font-light text-[7px] tracking-[0.1em] uppercase border px-1.5 py-0.5 rounded-full"
+                      style={{
+                        color: isDark ? "#B7A697" : "#8C837A",
+                        borderColor: isDark ? "rgba(216,183,167,0.22)" : "rgba(174,143,125,0.28)",
+                      }}
+                    >
+                      {spoilerLevel === "none" ? "Sem spoiler" : spoilerLevel}
+                    </span>
+                    <span
+                      className="font-sans font-light text-[7px] tracking-[0.1em] uppercase border px-1.5 py-0.5 rounded-full"
+                      style={{
+                        color: isDark ? "#B7A697" : "#8C837A",
+                        borderColor: isDark ? "rgba(216,183,167,0.22)" : "rgba(174,143,125,0.28)",
+                      }}
+                    >
+                      {visibility === "public" ? "Público" : visibility === "followers" ? "Seguidores" : "Privado"}
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
           </div>

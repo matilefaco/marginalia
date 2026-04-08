@@ -85,12 +85,20 @@ A Portuguese-language literary social network where users annotate book passages
 - **UI facing**: "Post" (before: margem), "Resposta" (before: eco), "Criar Post" (before: Nova Margem), "Conversas da comunidade" (before: Ecos da comunidade), "Respostas" (before: Ecos), "Publicar post" (before: Publicar margem)
 - **Internal (code/routes/DB)**: `margin`, `margins`, `eco`, `/nova-margem`, `MarginCard`, `EcoScreen` — all unchanged; "Marginalia" brand identity stays
 
+### Dark Mode System
+- **Token hierarchy (dark):** `--text-primary #F3EDE5`, `--text-secondary #D2C3B5`, `--text-tertiary #AE9E90`, `--text-soft #8E7F73`
+- **Surface hierarchy (dark):** body `#12100F` → screen `#1C1916` → card `#1E1A18` (set via isDark inline styles in MarginCard/ExploreScreen) → inner-block `#252119` (EBE6DB override)
+- **CSS override pattern:** `html.dark [class*="bg-[#FAF8F3]"] { background-color: #1C1916 }` — covers all Tailwind hardcoded color classes; MarginCard uses `DARK_SURFACE="#1E1A18"` inline to elevate cards above screen bg
+- **SpoilerShieldCard:** fully `isDark`-aware via `useApp()` — protected card `#2A241F` bg, inner atmospheric block `#332B24`, all text inline-styled (never relying on CSS overrides that conflict with desired spec colors)
+- **EcoarBar meta count:** always shows `X reações · Y respostas` (even zeros) as a small line above the author/action row
+- **Preview card (NewMarginScreen):** properly dark-aware with header band, excerpt quote, commentary, and meta chips — looks like a real feed card
+
 ### Key Components
-- `MarginCard` — Shows margin with book-color tinting. 4 layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. Each has an `EmojiReactionBar` (🖤💥🤔✨📌😵 with scale animation on tap), "Responder" CTA (links to thread), and ShareButton. OR SpoilerShieldCard if blocked.
+- `MarginCard` — Shows margin with book-color tinting. 4 layouts: QuoteCard, QuestionCard, TheoryCard, StandardCard. Each has an `EmojiReactionBar` (🖤💥🤔✨📌😵 with scale animation on tap), "Responder" CTA (links to thread), and ShareButton. OR SpoilerShieldCard if blocked. `EcoarBar` always shows `X reações · Y respostas` count.
 - `BookCover` — Reusable colored book cover placeholder using bookColor + italic first-letter initial + paper texture + spine shadow. Sizes: xs/sm/md/lg. Used in LibraryScreen, HomeScreen, BookDetailScreen, ProfileScreen (wishlist), and WishlistSection.
 - `LogoMark` — SVG book logo
 - `Navbar` — 5-item bottom nav with elevated center "+" button for /nova-margem (label: "Criar Post")
-- `SpoilerShieldCard` — Elegant blocked content card with update progress / unlock actions
+- `SpoilerShieldCard` — Fully dark-mode-aware card for blocked content. Uses `isDark` from `useApp()`, not CSS overrides, to apply exact spec colors. "Ver mesmo assim" reveals inline with proper dark bg. "Adicionar à biblioteca"/"Marcar progresso" buttons have visible dark borders.
 
 ### Anti-Spoiler System ("Ritmo da leitura")
 - `canUserSeeMargin(margin, spoilerPreference, progress)` in `utils/spoiler.ts`

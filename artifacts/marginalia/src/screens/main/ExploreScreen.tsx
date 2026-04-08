@@ -164,9 +164,9 @@ export function ExploreScreen() {
 
   /* ── Style helpers ─────────────────────────────────────────── */
   const cardStyle = {
-    backgroundColor: isDark ? "#26211D" : "#F4EFE8",
-    border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(174,143,125,0.20)"}`,
-    boxShadow: isDark ? "0 1px 4px rgba(0,0,0,0.30)" : "0 1px 6px rgba(69,69,69,0.06)",
+    backgroundColor: isDark ? "#1E1A18" : "#F4EFE8",
+    border: `1px solid ${isDark ? "rgba(215,198,182,0.18)" : "rgba(174,143,125,0.20)"}`,
+    boxShadow: isDark ? "0 2px 10px rgba(0,0,0,0.40)" : "0 1px 6px rgba(69,69,69,0.06)",
   };
   const searchBarStyle = {
     backgroundColor: isDark ? "#201B17" : "rgba(235,230,219,0.75)",

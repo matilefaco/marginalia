@@ -1,0 +1,360 @@
+Perfeito — vi exatamente os problemas nas telas.
+
+Você está certa: ainda há muitos elementos com contraste baixo demais, especialmente no dark mode. O app está bonito, mas em vários pontos ele fica “bonito porém difícil de usar”, e isso precisa ser corrigido agora.
+O principal problema é que o dark mode está usando tons próximos demais entre fundo / card / borda / texto secundário / preview, então várias camadas somem umas nas outras.
+
+Abaixo está um texto pronto para colar no Replit, bem direto, detalhado e sem ambiguidade:
+
+⸻
+
+TEXTO PRONTO PARA COLAR NO REPLIT
+
+Quero corrigir de forma completa os problemas de legibilidade e consistência visual do app, especialmente no dark mode, mantendo a identidade sofisticada do Marginalia, mas priorizando clareza real de leitura.
+
+OBJETIVO GERAL
+
+O app deve continuar elegante, literário e sofisticado, porém agora com foco absoluto em:
+	•	contraste forte
+	•	texto sempre legível
+	•	consistência entre modo padrão e dark mode
+	•	preview realmente visível
+	•	cards protegidos e cards normais com hierarquia clara
+	•	contagem de comentários sempre visível nos posts
+	•	qualquer tela aberta no dark mode deve continuar em dark mode
+
+⸻
+
+1) CORRIGIR A PALETA DO DARK MODE PARA FICAR MUITO MAIS LEGÍVEL
+
+O dark mode atual está escuro demais com texto claro de menos, e vários elementos secundários estão quase invisíveis.
+
+Ajustar os tokens de cor do dark mode
+
+Quero substituir a lógica atual por uma hierarquia de contraste mais clara.
+
+Novo esquema base para dark mode:
+	•	background principal do app: #12100F
+	•	background secundário / blocos internos: #181513
+	•	card principal: #1E1A18
+	•	card protegido / bloco oculto: #2A241F
+	•	borda sutil: rgba(215, 198, 182, 0.16)
+	•	borda mais visível em áreas importantes: rgba(215, 198, 182, 0.24)
+
+Texto no dark mode:
+	•	texto principal: #F3EDE5
+	•	texto secundário: #D2C3B5
+	•	texto terciário / metadata: #AE9E90
+	•	texto muito sutil, mas ainda legível: #8E7F73
+
+Cor de destaque:
+	•	rose principal / accent: #D8B7A7
+	•	rose hover / pressed: #E4C6B7
+
+Elementos protegidos / spoiler / preview escuro:
+	•	usar fundo mais separado do card, nunca quase da mesma cor
+	•	fundo de bloco protegido: #332B24
+	•	texto dentro do protegido: #E2D4C6
+	•	texto secundário dentro do protegido: #BCA999
+
+Regra importante
+
+Nenhum texto pode usar opacidade tão baixa a ponto de ficar ilegível.
+Evitar textos com opacity muito pequena como 0.35 / 0.4 em conteúdos relevantes.
+Texto informativo precisa ficar no mínimo com contraste equivalente visual de texto secundário real.
+
+⸻
+
+2) CORRIGIR A ÁREA DE PREVIEW NA PUBLICAÇÃO
+
+Na tela de publicação, a área de Preview · como vai aparecer no feed está quase invisível.
+Isso precisa ser redesenhado para ficar totalmente compreensível.
+
+O que corrigir
+
+O card de preview deve:
+	•	ter fundo claramente separado do restante da tela
+	•	ter borda visível
+	•	ter texto principal realmente legível
+	•	mostrar claramente a hierarquia:
+	•	tipo do post
+	•	referência do livro/capítulo
+	•	trecho
+	•	comentário
+	•	status de spoiler
+	•	visibilidade
+
+Ajustes visuais do preview
+	•	fundo do preview no dark mode: #1F1A17
+	•	borda: rgba(216, 183, 167, 0.18)
+	•	título “PREVIEW · COMO VAI APARECER NO FEED” com cor #CDB9AA
+	•	trecho em itálico com cor #EADFD4
+	•	comentário principal com cor #F3EDE5
+	•	metadados com cor #B7A697
+
+Regra
+
+O preview deve parecer um card real do feed, não um bloco apagado.
+
+Melhorar estrutura interna do preview
+	•	aumentar padding interno
+	•	aumentar contraste entre o quote e o comentário
+	•	separar quote e comentário com mais respiro
+	•	deixar o preview com no mínimo 2 níveis claros de texto:
+	•	trecho citado
+	•	reflexão/comentário
+
+⸻
+
+3) CORRIGIR “EM ALTA ESTA SEMANA” NO DARK MODE
+
+Na área “Em alta esta semana”, especialmente nos posts protegidos, vários textos continuam ilegíveis.
+
+Corrigir todos os textos desta seção
+
+Quero revisar a hierarquia inteira do card para que tudo fique claramente visível no dark mode:
+
+No card protegido:
+	•	label superior (“TRECHO PROTEGIDO”, nome do livro etc.) deve ficar visível
+	•	nome do autor/livro deve ter contraste maior
+	•	bloco interno com a mensagem do spoiler protegido deve ser mais claro
+	•	número de reações deve continuar visível
+	•	texto explicativo (“você ainda não registrou este livro…” etc.) deve ser totalmente legível
+	•	botões “ADICIONAR À BIBLIOTECA” e “VER MESMO ASSIM” devem ter contraste forte e leitura imediata
+
+Ajustes específicos
+
+Cabeçalho do card protegido:
+	•	label superior: #B8A596
+	•	nome do livro/autor: #EADFD4
+
+Bloco interno do conteúdo protegido:
+	•	fundo: #302821
+	•	texto principal: #D9CABB
+	•	número de reações: #BDAA9A
+
+Texto explicativo abaixo:
+	•	usar #BFAF9F
+	•	aumentar line-height
+	•	não deixar opacidade baixa
+
+Botões:
+	•	botão secundário com borda mais visível
+	•	texto dos botões em #F1E7DD
+	•	hover/pressed com leve mudança de fundo
+
+⸻
+
+4) “VER MESMO ASSIM” PRECISA ABRIR O POST EM DARK MODE QUANDO O APP ESTIVER EM DARK MODE
+
+Hoje, no dark mode, quando o usuário toca em “ver mesmo assim” em um post protegido, o post abre em aparência de modo padrão.
+Isso está errado.
+
+Corrigir lógica do tema
+
+Quero que o estado de tema do app seja persistido e respeitado em toda navegação.
+
+Regra obrigatória:
+
+Se o usuário estiver em dark mode, qualquer post aberto a partir de:
+	•	feed
+	•	explorar
+	•	perfil
+	•	biblioteca
+	•	post protegido
+	•	“ver mesmo assim”
+
+deve abrir mantendo dark mode, sem exceção.
+
+O que verificar tecnicamente
+	•	remover qualquer fallback que esteja resetando o tema ao abrir detalhe do post
+	•	garantir que o tema venha de uma fonte global única
+	•	usar o mesmo estado de tema em:
+	•	páginas
+	•	modais
+	•	cards expandidos
+	•	preview
+	•	detalhe do post
+	•	se existir contexto global de theme, garantir que a tela de detalhe consuma esse contexto corretamente
+	•	se o tema estiver salvo em localStorage / banco / estado global, a abertura do post deve respeitar isso imediatamente
+
+Resultado esperado
+
+“Ver mesmo assim” deve apenas liberar o conteúdo protegido, sem trocar o tema visual da experiência.
+
+⸻
+
+5) MOSTRAR SEMPRE O NÚMERO DE COMENTÁRIOS NOS POSTS DE “MEUS POSTS” NO PERFIL
+
+Na área Meus posts do perfil do usuário, às vezes existem comentários de outros usuários, mas isso não aparece no card.
+
+Isso precisa ser corrigido.
+
+Regra obrigatória
+
+Todo post deve sempre exibir de forma explícita:
+	•	número de reações
+	•	número de comentários/respostas
+
+mesmo dentro da área “Meus posts”.
+
+O que fazer
+
+Adicionar no card dos posts do perfil uma linha de metadados visível com algo como:
+	•	12 reações
+	•	3 comentários
+
+ou, se preferir a linguagem do app:
+	•	12 reações
+	•	3 respostas
+
+Mas essa informação precisa sempre aparecer, inclusive quando houver zero.
+
+Exemplos:
+	•	0 reações · 0 comentários
+	•	8 reações · 2 comentários
+
+Importante
+
+Essa contagem deve refletir os dados reais do post e não pode sumir dependendo do tipo de post.
+Precisa funcionar para:
+	•	citação
+	•	teoria
+	•	leitura simbólica
+	•	crítica
+	•	qualquer outro tipo de margem
+
+⸻
+
+6) MELHORAR A HIERARQUIA VISUAL DOS CARDS NO PERFIL
+
+Na seção Meus posts, os cards ainda estão visualmente muito apagados no dark mode.
+
+Ajustes
+	•	aumentar contraste entre fundo da página e fundo do card
+	•	aumentar contraste da borda do card
+	•	deixar o nome do tipo do post mais legível
+	•	deixar o nome do livro mais legível
+	•	timestamp (“18m”, “43m” etc.) um pouco mais visível
+	•	o texto do post precisa ter prioridade visual clara
+	•	o autor/linha inferior não pode competir com o texto principal, mas precisa ser legível
+	•	o botão de reação rápida com “+” precisa ficar mais perceptível mesmo sem reação ainda
+
+Hierarquia desejada dentro do card
+	1.	tipo do post + livro
+	2.	trecho citado
+	3.	comentário principal
+	4.	reações e comentários
+	5.	autor e ações do rodapé
+
+⸻
+
+7) CORRIGIR TEXTOS SECUNDÁRIOS QUE ESTÃO SUMINDO NO DARK MODE
+
+Fazer uma revisão geral em todos os textos pequenos, especialmente:
+	•	labels em caixa alta
+	•	subtítulos
+	•	metadados
+	•	explicações abaixo dos cards
+	•	placeholders
+	•	previews
+	•	indicadores de spoiler
+	•	indicadores de visibilidade
+	•	contadores
+	•	timestamps
+	•	mensagens de estado vazio
+
+Regra geral
+
+Nenhum texto funcional pode depender de cor “quase invisível” para parecer sofisticado.
+O app deve ser sofisticado pela composição, não pela ilegibilidade.
+
+⸻
+
+8) AJUSTES DE UX PARA AUMENTAR CLAREZA SEM PERDER A ESTÉTICA
+
+Quero também aplicar estes refinamentos:
+
+Espaçamento
+	•	aumentar levemente o espaço entre título e conteúdo dos cards
+	•	aumentar line-height dos textos longos
+	•	melhorar respiro entre bloco de quote e reflexão
+
+Bordas
+	•	bordas precisam aparecer um pouco mais
+	•	não deixar os cards “sumirem” no fundo
+
+Botões
+	•	garantir contraste forte entre texto e fundo
+	•	estados pressed/hover/active mais claros
+
+Inputs e áreas editáveis
+	•	texto digitado precisa ter contraste forte
+	•	placeholder precisa ser visível
+	•	borda de focus precisa aparecer claramente
+
+⸻
+
+9) GARANTIR CONSISTÊNCIA ENTRE TODAS AS TELAS
+
+Aplicar esses ajustes de contraste e dark mode em todas estas áreas:
+	•	início
+	•	explorar
+	•	publicar margem
+	•	detalhe do post
+	•	posts protegidos
+	•	meus posts no perfil
+	•	biblioteca
+	•	qualquer modal relacionado
+
+Não quero corrigir só uma tela isolada.
+Quero consistência visual e funcional no app inteiro.
+
+⸻
+
+10) RESULTADO FINAL ESPERADO
+
+Depois dessa correção, o app deve ficar assim:
+	•	dark mode realmente legível
+	•	preview da publicação totalmente visível
+	•	seção “Em alta esta semana” com leitura clara
+	•	“Ver mesmo assim” abrindo corretamente em dark mode
+	•	posts do perfil mostrando sempre quantidade de comentários
+	•	cards com melhor contraste e hierarquia
+	•	aparência sofisticada, mas agora funcional e clara
+
+⸻
+
+11) IMPLEMENTAÇÃO TÉCNICA
+
+Quero que você:
+	1.	revise os tokens de cor do sistema inteiro
+	2.	aplique os novos contrastes no dark mode
+	3.	corrija os componentes reutilizáveis de card/post/preview
+	4.	corrija a persistência e propagação do tema
+	5.	corrija o card de “meus posts” para sempre mostrar contagem de comentários
+	6.	revise especificamente a tela de publicação e a seção “em alta esta semana”
+	7.	me entregue tudo já aplicado no código, sem quebrar a identidade visual do app
+
+⸻
+
+Se for necessário, pode refatorar os componentes de tema e os cards para centralizar as regras de cor e evitar novos bugs de inconsistência entre modo padrão e dark mode.
+
+⸻
+
+Além disso, te digo uma melhoria que eu recomendo muito acrescentar nesse mesmo ajuste:
+
+melhoria extra recomendada
+
+Nos posts do perfil e também no feed, mostrar a linha de micro-metadata assim:
+
+12 reações · 3 comentários
+
+logo acima da fileira de ações ou integrada ao rodapé do card.
+Isso deixa o card mais vivo, mais social e mais fácil de escanear.
+
+⸻
+
+Se você quiser, eu também posso fazer a segunda parte, com outro texto pronto para colar no Replit, só para:
+	•	deixar o dark mode absurdamente elegante
+	•	refinar a tipografia e os contrastes
+	•	e transformar esses cards em algo mais premium/editorial.
