@@ -158,7 +158,7 @@ export function ProfileScreen() {
 
   const topAnnotatedBook = (() => {
     const counts: Record<number, number> = {};
-    myMargins.forEach((m) => { counts[m.bookId] = (counts[m.bookId] || 0) + 1; });
+    myMargins.forEach((m) => { if (m.bookId !== null) counts[m.bookId] = (counts[m.bookId] || 0) + 1; });
     const top = Object.entries(counts).sort(([, a], [, b]) => b - a)[0];
     if (!top) return null;
     return MOCK_BOOKS.find((b) => b.id === Number(top[0])) ?? null;

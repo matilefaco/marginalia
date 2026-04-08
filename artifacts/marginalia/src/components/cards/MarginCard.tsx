@@ -524,7 +524,7 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
 
 export function MarginCard({ margin, showBook = false, linkToThread = true }: Props) {
   const { currentUser, getProgressForBook } = useApp();
-  const progress = getProgressForBook(margin.bookId);
+  const progress = margin.bookId !== null ? getProgressForBook(margin.bookId) : undefined;
   const canSee = canUserSeeMargin(margin, currentUser.spoilerPreference, progress);
 
   const book = MOCK_BOOKS.find((b) => b.id === margin.bookId);

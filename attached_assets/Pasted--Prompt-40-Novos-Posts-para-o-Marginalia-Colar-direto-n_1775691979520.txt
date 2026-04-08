@@ -1,0 +1,725 @@
+# Prompt — 40 Novos Posts para o Marginalia
+
+# Colar direto no agente do Replit
+
+-----
+
+Adicione os seguintes posts ao array `MOCK_MARGINS` no arquivo `src/data/mockData.ts`.
+
+Para cada post, use o `bookId` do livro correspondente já existente no array `MOCK_BOOKS`. Se o livro não existir ainda, adicione-o também ao array `MOCK_BOOKS` com os campos obrigatórios (`id`, `title`, `author`, `bookColor`, `coverUrl` via Open Library quando possível).
+
+Use os `userId` já existentes no mock, distribuindo os posts entre diferentes usuários para parecer uma comunidade ativa. Varie os `createdAt` entre 1 hora e 15 dias atrás.
+
+-----
+
+```typescript
+// ============================================================
+// 40 NOVOS POSTS — adicionar ao MOCK_MARGINS
+// ============================================================
+
+// --- DOM CASMURRO — Machado de Assis ---
+
+{
+  id: "mg_new_001",
+  bookId: "dom_casmurro",
+  userId: "user_02",
+  type: "TEORIA",
+  excerpt: "Tu tinhas me visto, eu tinha visto a ti; era tudo.",
+  reference: { page: 19, percentage: 6 },
+  commentary: "Esse 'era tudo' é a frase mais perigosa do livro. Bentinho está descrevendo o início de um amor como se fosse uma verdade cosmológica. Mas o leitor que chega ao fim sabe que esse 'tudo' vai ser destruído por ele mesmo. A frase só funciona como tragédia porque parece tão inocente aqui.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 14).toISOString(),
+  reactions: { "🖤": 73, "✨": 41, "🤔": 29 },
+  replyCount: 22,
+},
+
+{
+  id: "mg_new_002",
+  bookId: "dom_casmurro",
+  userId: "user_05",
+  type: "REAÇÃO",
+  excerpt: "Capitu olhou para mim, e eu comecei a sentir não sei quê, qualquer coisa que me fazia mal e bem ao mesmo tempo.",
+  reference: { page: 31, percentage: 10 },
+  commentary: "Machado descreve o amor adolescente com uma precisão que envergonha qualquer romance contemporâneo. 'Mal e bem ao mesmo tempo' — ele nem tenta resolver a contradição. Só a deixa lá, exata, sem explicação. Isso é literatura.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
+  reactions: { "💥": 55, "🖤": 48, "✨": 31 },
+  replyCount: 17,
+},
+
+// --- GRANDE SERTÃO: VEREDAS — Guimarães Rosa ---
+
+{
+  id: "mg_new_003",
+  bookId: "grande_sertao_veredas",
+  userId: "user_03",
+  type: "INSIGHT",
+  excerpt: "O diabo não existe, e eu vendo ele.",
+  reference: { page: 8, percentage: 1 },
+  commentary: "Riobaldo passa o livro inteiro tentando decidir se vendeu a alma ao diabo. E Guimarães Rosa deixa propositalmente em aberto — porque a questão não é se o diabo existe. É o que fazemos quando acreditamos que ele existe. O pacto pode ter sido só com a parte de Riobaldo que queria poder e estava disposta a pagar qualquer preço por isso.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 28).toISOString(),
+  reactions: { "✨": 118, "🤔": 84, "💥": 37 },
+  replyCount: 67,
+},
+
+{
+  id: "mg_new_004",
+  bookId: "grande_sertao_veredas",
+  userId: "user_07",
+  type: "TEORIA",
+  excerpt: "Viver é muito perigoso.",
+  reference: { page: 1, percentage: 0 },
+  commentary: "Essa frase aparece antes de tudo e volta como refrão ao longo do livro. Mas Guimarães Rosa não está falando de perigo físico — o sertão é violento, sim, mas o perigo real é existencial. Viver exige escolha, e escolha exige responsabilidade, e responsabilidade é o peso que Riobaldo carrega em cada página. A frase mais curta do livro é também a mais verdadeira.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 52).toISOString(),
+  reactions: { "✨": 201, "🖤": 93, "💥": 44 },
+  replyCount: 89,
+},
+
+// --- O ESTRANGEIRO — Albert Camus ---
+
+{
+  id: "mg_new_005",
+  bookId: "o_estrangeiro",
+  userId: "user_04",
+  type: "REAÇÃO",
+  excerpt: "Hoje, mamãe morreu. Ou talvez ontem, não sei bem.",
+  reference: { page: 9, percentage: 1 },
+  commentary: "A indiferença de Meursault não é fria — é estranha de um jeito que desconforta porque ressoa. Quantas vezes a gente processa a dor em delay, semanas depois, de repente no meio do almoço? Camus não está retratando um psicopata. Está retratando a dissociação que a perda às vezes produz. O desconcertante é o quanto Meursault parece humano justo quando deveria parecer menos.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 9).toISOString(),
+  reactions: { "💥": 144, "🤔": 76, "🖤": 58 },
+  replyCount: 71,
+},
+
+{
+  id: "mg_new_006",
+  bookId: "o_estrangeiro",
+  userId: "user_09",
+  type: "INSIGHT",
+  excerpt: "Como se a grande cólera tivesse lavado o mal que havia em mim, esvaziado de esperança; diante dessa noite carregada de signos e estrelas, eu me abria pela primeira vez à terna indiferença do mundo.",
+  reference: { page: 123, percentage: 97 },
+  commentary: "O final do Estrangeiro é paradoxalmente um dos mais belos da literatura. Meursault aceita a morte e com isso aceita a vida que teve — sem ressentimento, sem esperança de outra. 'Terna indiferença do mundo' é uma das expressões mais precisas sobre o absurdo já escritas. O mundo não está contra você. O mundo simplesmente não está para você. E isso, de alguma forma, liberta.",
+  spoilerLevel: "ENDING",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 96).toISOString(),
+  reactions: { "✨": 167, "🖤": 102, "💥": 49 },
+  replyCount: 83,
+},
+
+// --- MEMÓRIAS PÓSTUMAS DE BRÁS CUBAS — Machado de Assis ---
+
+{
+  id: "mg_new_007",
+  bookId: "memorias_postumas",
+  userId: "user_06",
+  type: "TEORIA",
+  excerpt: "Ao verme que primeiro roeu as frias carnes do meu cadáver dedico com saudosa lembrança estas Memórias Póstumas.",
+  reference: { page: 7, percentage: 1 },
+  commentary: "A dedicatória mais desconcertante da literatura brasileira. Mas ela não é só provocação — é tese. Brás Cubas está morto quando escreve, e isso muda tudo. Um narrador sem nada a perder, sem nada a provar, sem vaidade a alimentar. Ou pelo menos é o que ele quer que a gente acredite. Porque a vaidade de Brás Cubas transpira em cada página justamente enquanto ele afirma não tê-la.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 33).toISOString(),
+  reactions: { "✨": 88, "🤔": 67, "💥": 31 },
+  replyCount: 44,
+},
+
+{
+  id: "mg_new_008",
+  bookId: "memorias_postumas",
+  userId: "user_11",
+  type: "REAÇÃO",
+  excerpt: "Virgília era bela, era risonha, era amada; tinha vinte e dois anos; eu tinha trinta e cinco. Somando esses algarismos e dividindo-os por dois, obteríamos um amor normal e um matrimônio provável.",
+  reference: { page: 78, percentage: 24 },
+  commentary: "Machado reduz o amor a uma equação de média aritmética e de alguma forma isso é simultaneamente hilário e devastador. Brás Cubas não está sendo cínico — está sendo honesto sobre como a sociedade dele funciona. E como a nossa também funciona, se a gente for brutalmente honesto.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
+  reactions: { "😵": 91, "🤔": 54, "✨": 38 },
+  replyCount: 29,
+},
+
+// --- CRIME E CASTIGO — Dostoiévski ---
+
+{
+  id: "mg_new_009",
+  bookId: "crime_e_castigo",
+  userId: "user_08",
+  type: "INSIGHT",
+  excerpt: "Será que eu tremia como todos os outros, ou sou um homem de verdade?",
+  reference: { page: 67, percentage: 14 },
+  commentary: "Raskolnikov não mata por dinheiro nem por necessidade — mata para provar uma teoria sobre si mesmo. E a crueldade de Dostoiévski é mostrar que a teoria estava errada desde o início. Raskolnikov tremeu. A pergunta que ele faz sobre 'homem de verdade' revela que ele já sabia a resposta antes de agir. O crime foi a tentativa desesperada de se provar diferente do que sabia que era.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 41).toISOString(),
+  reactions: { "💥": 122, "🤔": 89, "✨": 43 },
+  replyCount: 61,
+},
+
+{
+  id: "mg_new_010",
+  bookId: "crime_e_castigo",
+  userId: "user_12",
+  type: "TEORIA",
+  excerpt: "A dor e o sofrimento são sempre inevitáveis para uma consciência ampla e um coração profundo.",
+  reference: { page: 312, percentage: 65 },
+  commentary: "Sônia é o contrapeso perfeito de Raskolnikov. Ela também sofre — mais, objetivamente — mas sem a autopiedade intelectual dele. Dostoiévski está sugerindo que a consciência ampla sem humildade vira veneno. Raskolnikov usa sua inteligência para se colocar acima dos outros. Sônia usa a dela para se colocar junto deles. E é ela quem sobrevive inteira.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 77).toISOString(),
+  reactions: { "✨": 134, "🖤": 67, "🤔": 45 },
+  replyCount: 52,
+},
+
+// --- A METAMORFOSE — Kafka ---
+
+{
+  id: "mg_new_011",
+  bookId: "a_metamorfose",
+  userId: "user_13",
+  type: "REAÇÃO",
+  excerpt: "Quando Gregor Samsa acordou numa manhã de sonhos agitados, descobriu que se transformara num inseto monstruoso.",
+  reference: { page: 7, percentage: 3 },
+  commentary: "O espantoso não é a transformação — é a reação de Gregor. Ele não grita, não entra em pânico. Sua primeira preocupação é chegar no trabalho a tempo. Kafka entendeu algo que a maioria ignora: a alienação do trabalho é tão completa que mesmo se tornando literalmente um inseto, o trabalhador pensa primeiro no chefe. A monstruosidade de Gregor é conveniente. A monstruosidade do sistema é anterior.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 22).toISOString(),
+  reactions: { "💥": 178, "🤔": 93, "✨": 61 },
+  replyCount: 74,
+},
+
+// --- BELOVED — Toni Morrison ---
+
+{
+  id: "mg_new_012",
+  bookId: "beloved",
+  userId: "user_14",
+  type: "INSIGHT",
+  excerpt: "124 was spiteful. Full of a baby's venom.",
+  reference: { page: 3, percentage: 1 },
+  commentary: "Morrison abre com uma casa que tem personalidade — e que personalidade. 'Spite' não é raiva, é algo mais frio, mais calculado. Um bebê que azeda o ambiente décadas depois de morto. Essa primeira frase já estabelece que Beloved vai operar no limite entre o psicológico e o sobrenatural sem se comprometer com nenhum dos dois. O trauma não precisa ser explicado para ser sentido.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 58).toISOString(),
+  reactions: { "🖤": 87, "✨": 54, "💥": 33 },
+  replyCount: 38,
+},
+
+// --- O SENHOR DOS ANÉIS — Tolkien ---
+
+{
+  id: "mg_new_013",
+  bookId: "o_senhor_dos_aneis",
+  userId: "user_15",
+  type: "TEORIA",
+  excerpt: "I wish it need not have happened in my time, said Frodo. So do I, said Gandalf, and so do all who live to see such times. But that is not for them to decide. All we have to decide is what to do with the time that is given us.",
+  reference: { page: 60, percentage: 4 },
+  commentary: "Tolkien escreveu isso depois de sobreviver à Primeira Guerra Mundial. Gandalf não está sendo filosófico — está sendo veterano. A frase não consola Frodo, só redistribui o peso. Você não escolhe a era em que vive. Você só escolhe o que faz com ela. E Tolkien sabia que essa escolha custa caro.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 112).toISOString(),
+  reactions: { "✨": 243, "🖤": 112, "💥": 67 },
+  replyCount: 98,
+},
+
+// --- ORGULHO E PRECONCEITO — Jane Austen ---
+
+{
+  id: "mg_new_014",
+  bookId: "orgulho_e_preconceito",
+  userId: "user_16",
+  type: "REAÇÃO",
+  excerpt: "É verdade universalmente reconhecida que um homem solteiro em boa situação financeira deve estar precisando de uma esposa.",
+  reference: { page: 5, percentage: 1 },
+  commentary: "Austen destroça toda a premissa do romance que está prestes a contar já na primeira linha — e faz isso com ironia tão fina que metade dos leitores da época provavelmente concordou com a frase em vez de rir dela. 'Verdade universalmente reconhecida' é sarcasmo puro. O que se segue é o livro inteiro desconstruindo essa 'verdade'. Elizabeth Bennet é a resposta à primeira frase.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 35).toISOString(),
+  reactions: { "😵": 109, "✨": 78, "🤔": 42 },
+  replyCount: 55,
+},
+
+// --- ULISSES — James Joyce ---
+
+{
+  id: "mg_new_015",
+  bookId: "ulisses",
+  userId: "user_17",
+  type: "INSIGHT",
+  excerpt: "History is a nightmare from which I am trying to awake.",
+  reference: { page: 28, percentage: 3 },
+  commentary: "Stephen Dedalus diz isso numa aula de história, para um professor que acredita na narrativa do império. Mas Joyce está falando de outra coisa: a história como peso acumulado que impede o presente de existir. A Irlanda de Joyce está presa num pesadelo de colonialismo, catolicismo e nacionalismo que ninguém consegue parar de sonhar. Ulisses inteiro é a tentativa de acordar — e de viver um único dia completamente.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 66).toISOString(),
+  reactions: { "🤔": 134, "✨": 87, "💥": 41 },
+  replyCount: 77,
+},
+
+// --- ENSAIO SOBRE A CEGUEIRA — Saramago ---
+
+{
+  id: "mg_new_016",
+  bookId: "ensaio_sobre_a_cegueira",
+  userId: "user_18",
+  type: "TEORIA",
+  excerpt: "Se podes olhar, vê. Se podes ver, repara.",
+  reference: { page: 7, percentage: 1 },
+  commentary: "A epígrafe que Saramago escolheu para o livro é o livro inteiro em duas frases. Há três níveis aqui: olhar (percepção física), ver (consciência) e reparar (responsabilidade ética). A cegueira branca que contamina os personagens não é uma metáfora simples da ignorância — é sobre a falência do terceiro nível. As pessoas do livro podiam ver. Escolheram não reparar. E aí vem a cegueira.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 44).toISOString(),
+  reactions: { "✨": 156, "💥": 78, "🤔": 55 },
+  replyCount: 63,
+},
+
+{
+  id: "mg_new_017",
+  bookId: "ensaio_sobre_a_cegueira",
+  userId: "user_03",
+  type: "REAÇÃO",
+  excerpt: "Somos todos cegos que podem ver, mas que não olham.",
+  reference: { page: 280, percentage: 88 },
+  commentary: "A mulher do médico é o personagem mais perturbador do livro porque ela nunca ficou cega. E Saramago a usa para mostrar que ver não é suficiente — é quase um fardo. Ela vê tudo que os outros fazem entre si na escuridão. E precisa escolher a cada momento se intervém ou sobrevive. Não é livro fácil de largar no meio.",
+  spoilerLevel: "MAJOR",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 19).toISOString(),
+  reactions: { "🖤": 143, "💥": 67, "✨": 38 },
+  replyCount: 48,
+},
+
+// --- MOBY DICK — Herman Melville ---
+
+{
+  id: "mg_new_018",
+  bookId: "moby_dick",
+  userId: "user_19",
+  type: "INSIGHT",
+  excerpt: "Call me Ishmael.",
+  reference: { page: 3, percentage: 1 },
+  commentary: "Três palavras que abrem um dos maiores romances já escritos. 'Call me' — não 'I am'. Ishmael está escolhendo o nome, ou pelo menos escolhendo apresentar um nome. Desde o início o narrador é escorregadio, não-confiável da maneira mais gentil possível. Melville não está dizendo que seu narrador mente. Está dizendo que toda narração é uma performance de identidade.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 83).toISOString(),
+  reactions: { "✨": 98, "🤔": 71, "🖤": 44 },
+  replyCount: 36,
+},
+
+// --- AS INTERMITÊNCIAS DA MORTE — Saramago ---
+
+{
+  id: "mg_new_019",
+  bookId: "as_intermitencias_da_morte",
+  userId: "user_20",
+  type: "TEORIA",
+  excerpt: "No dia seguinte ninguém morreu.",
+  reference: { page: 11, percentage: 3 },
+  commentary: "Saramago abre um livro sobre a morte com a morte suspensa — e isso não é alívio, é pesadelo. O livro todo é sobre como a imortalidade seria uma catástrofe. Não porque a vida não vale a pena, mas porque a nossa civilização inteira foi construída em torno da morte como prazo. Sem prazo, tudo desmorona: seguros, hospitais, a Igreja, o Estado. A ausência da morte revela o quanto ela nos organiza.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 39).toISOString(),
+  reactions: { "🤔": 167, "💥": 88, "✨": 52 },
+  replyCount: 71,
+},
+
+// --- O HOBBIT — Tolkien ---
+
+{
+  id: "mg_new_020",
+  bookId: "o_hobbit",
+  userId: "user_01",
+  type: "REAÇÃO",
+  excerpt: "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole... it was a hobbit-hole, and that means comfort.",
+  reference: { page: 1, percentage: 1 },
+  commentary: "Tolkien sabia exatamente o que estava fazendo ao começar assim. Antes de qualquer aventura, ele ancora o leitor no conforto — na lareira, na despensa cheia, na poltrona. Para que a partida de Bilbo signifique algo, a gente precisa entender o que ele está deixando para trás. E entender por que fica tentador ficar. A aventura nunca seria tão boa se a toca não fosse tão aconchegante.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 7).toISOString(),
+  reactions: { "✨": 189, "🖤": 77, "😵": 33 },
+  replyCount: 44,
+},
+
+// --- A REVOLUÇÃO DOS BICHOS — Orwell ---
+
+{
+  id: "mg_new_021",
+  bookId: "a_revolucao_dos_bichos",
+  userId: "user_02",
+  type: "INSIGHT",
+  excerpt: "Todos os animais são iguais, mas alguns animais são mais iguais que os outros.",
+  reference: { page: 112, percentage: 92 },
+  commentary: "Essa frase funciona como piada e como horror ao mesmo tempo, que é exatamente o que Orwell pretendia. A corrupção do ideal revolucionário não acontece de repente — o livro mostra o processo lento, cada concessão pequena que parece razoável no momento. Os porcos não acordaram vilões. Viraram vilões enquanto os outros dormiam. E a frase final é o resultado de um processo que todos viram e ninguém interrompeu.",
+  spoilerLevel: "ENDING",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 55).toISOString(),
+  reactions: { "💥": 211, "🤔": 98, "✨": 61 },
+  replyCount: 87,
+},
+
+// --- ÁGUA VIVA — Clarice Lispector ---
+
+{
+  id: "mg_new_022",
+  bookId: "agua_viva",
+  userId: "user_06",
+  type: "TEORIA",
+  excerpt: "Estou tentando capturar a quarta dimensão do instante-já que de tão fugidio não é mais porque agora tornou-se um novo instante-já que também não é mais.",
+  reference: { page: 9, percentage: 4 },
+  commentary: "Clarice não está escrevendo um romance. Está tentando capturar algo que a linguagem narrativa convencional é incapaz de tocar — o presente puro, sem antes e sem depois. Água Viva é um livro sobre a impossibilidade de escrever o que ela está tentando escrever, escrito enquanto tenta. É o esforço mais honesto da literatura brasileira.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 73).toISOString(),
+  reactions: { "🤔": 144, "✨": 88, "🖤": 56 },
+  replyCount: 59,
+},
+
+// --- O MORRO DOS VENTOS UIVANTES — Emily Brontë ---
+
+{
+  id: "mg_new_023",
+  bookId: "o_morro_dos_ventos_uivantes",
+  userId: "user_10",
+  type: "REAÇÃO",
+  excerpt: "He's more myself than I am. Whatever our souls are made of, his and mine are the same.",
+  reference: { page: 82, percentage: 38 },
+  commentary: "Catherine não está descrevendo amor romântico aqui — está descrevendo identidade. Heathcliff não é quem ela ama, é quem ela é. E é por isso que o livro não tem final feliz possível: você não pode se casar com você mesmo, não pode se separar de você mesmo, e certamente não pode sobreviver se você mesmo for destruído. Brontë inventou um tipo de amor que a maioria dos romances ainda não sabe como nomear.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 27).toISOString(),
+  reactions: { "🖤": 198, "💥": 87, "✨": 63 },
+  replyCount: 79,
+},
+
+// --- SAPIENS — Yuval Noah Harari ---
+
+{
+  id: "mg_new_024",
+  bookId: "sapiens",
+  userId: "user_14",
+  type: "INSIGHT",
+  excerpt: "Como se convence um chimpanzé a te dar a banana prometendo-lhe infinitas bananas no paraíso dos macacos após a morte?",
+  reference: { page: 31, percentage: 8 },
+  commentary: "Harari usa essa imagem para mostrar o que diferencia humanos de outros animais: não inteligência, não uso de ferramentas — ficção compartilhada. Nações, dinheiro, direitos humanos, religiões: nada disso existe na natureza. São histórias que acordamos coletivamente acreditar. O genial dessa página é que você termina ela olhando para o dinheiro na carteira e pensando: isso é papel.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 49).toISOString(),
+  reactions: { "😵": 223, "🤔": 134, "✨": 78 },
+  replyCount: 104,
+},
+
+// --- CEM ANOS DE SOLIDÃO — García Márquez ---
+
+{
+  id: "mg_new_025",
+  bookId: "cem_anos_solidao",
+  userId: "user_16",
+  type: "TEORIA",
+  excerpt: "Era como se Deus tivesse resolvido pôr à prova toda capacidade de assombro e tivesse mantido os habitantes de Macondo num eterno estado de exaltação.",
+  reference: { page: 16, percentage: 2 },
+  commentary: "Macondo começa como utopia — um lugar onde tudo é novo, onde a linguagem ainda está sendo inventada para as coisas. García Márquez está descrevendo o estado pré-colonial da América Latina, mas também algo mais universal: a infância coletiva de um povo antes que a história chegue. O resto do livro é o fim desse estado de assombro. E o leitor assiste, impotente, porque já sabe como a história termina.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 61).toISOString(),
+  reactions: { "✨": 176, "🖤": 88, "🤔": 54 },
+  replyCount: 67,
+},
+
+// --- O ALEPH — Jorge Luis Borges ---
+
+{
+  id: "mg_new_026",
+  bookId: "o_aleph",
+  userId: "user_17",
+  type: "REAÇÃO",
+  excerpt: "No Aleph vi a terra e na terra outra vez o Aleph e no Aleph a terra.",
+  reference: { page: 134, percentage: 78 },
+  commentary: "Borges escreve sobre o impossível com a precisão de um matemático e a beleza de um poeta. O Aleph é um ponto que contém todos os pontos — e a descrição que vem antes dessa frase é uma das coisas mais extraordinárias já escritas em espanhol. Borges não descreve o infinito. Descreve a tentativa de um homem limitado de colocar o ilimitado em palavras. E faz isso de forma que você sente a vertigem.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 88).toISOString(),
+  reactions: { "✨": 144, "😵": 91, "🤔": 67 },
+  replyCount: 58,
+},
+
+// --- SIDDHARTHA — Hermann Hesse ---
+
+{
+  id: "mg_new_027",
+  bookId: "siddhartha",
+  userId: "user_19",
+  type: "INSIGHT",
+  excerpt: "Dentro de você há um mestre. Ouça-o.",
+  reference: { page: 44, percentage: 28 },
+  commentary: "O paradoxo central de Siddhartha é que ele não encontra iluminação com o Buda — ele a encontra sozinho, depois de ter abandonado o Buda. Hesse está dizendo que nenhum ensinamento externo, por mais perfeito que seja, pode fazer o caminho por você. O mestre pode apontar o caminho. Mas o caminho é seu e só pode ser andado por você. É por isso que Siddhartha precisa cair antes de chegar.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 43).toISOString(),
+  reactions: { "✨": 201, "🖤": 99, "💥": 41 },
+  replyCount: 76,
+},
+
+// --- A PAIXÃO SEGUNDO G.H. — Clarice Lispector ---
+
+{
+  id: "mg_new_028",
+  bookId: "a_paixao_segundo_gh",
+  userId: "user_08",
+  type: "TEORIA",
+  excerpt: "A vida se me é. E eu não entendo o que digo. Então adoro.",
+  reference: { page: 172, percentage: 86 },
+  commentary: "G.H. mata uma barata e tem uma experiência mística que a despedaça. Clarice leva isso a sério — não como metáfora, mas como evento real dentro da consciência da personagem. Esse trecho é o ponto de chegada: G.H. não compreende o que atravessou, e a resposta à incompreensão é adoração. Clarice está propondo que o sagrado é exatamente o que resiste à explicação, não o que se explica.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 34).toISOString(),
+  reactions: { "🤔": 112, "🖤": 89, "✨": 67 },
+  replyCount: 51,
+},
+
+// --- O PEQUENO PRÍNCIPE — Saint-Exupéry ---
+
+{
+  id: "mg_new_029",
+  bookId: "o_pequeno_principe",
+  userId: "user_11",
+  type: "REAÇÃO",
+  excerpt: "Os homens grandes não compreendem nada por si sós, e as crianças ficam cansadas de sempre e sempre lhes dar explicações.",
+  reference: { page: 8, percentage: 5 },
+  commentary: "Adulto que lê O Pequeno Príncipe pela primeira vez acha que é livro pra criança. Adulto que relê depois dos 30 descobre que é o livro mais cruel que já leu. Porque reconhece que se tornou exatamente a pessoa que o narrador descreve aqui. A pergunta que fica: em que momento exato a gente para de ver as jiboias que engoliam elefantes?",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 16).toISOString(),
+  reactions: { "🖤": 267, "💥": 123, "✨": 89 },
+  replyCount: 112,
+},
+
+// --- LOLITA — Nabokov ---
+
+{
+  id: "mg_new_030",
+  bookId: "lolita",
+  userId: "user_12",
+  type: "INSIGHT",
+  excerpt: "Lolita, luz da minha vida, labareda do meu ventre. Lo-li-ta.",
+  reference: { page: 9, percentage: 1 },
+  commentary: "Nabokov criou um dos narradores mais perigosos da literatura: alguém que fala tão bem que você esquece o que está ouvindo. A beleza da prosa é armadilha deliberada. Humbert Humbert seduz o leitor da mesma forma que alega ter sido seduzido — com linguagem. O livro só funciona completamente se você perceber em algum momento que está sendo manipulado pelo narrador. Nabokov não está do lado de Humbert. Está do lado da literatura.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 91).toISOString(),
+  reactions: { "🤔": 188, "💥": 112, "✨": 44 },
+  replyCount: 93,
+},
+
+// --- PERSUASÃO — Jane Austen ---
+
+{
+  id: "mg_new_031",
+  bookId: "persuasao",
+  userId: "user_13",
+  type: "TEORIA",
+  excerpt: "You pierce my soul. I am half agony, half hope.",
+  reference: { page: 237, percentage: 89 },
+  commentary: "A carta de Wentworth é talvez a declaração de amor mais perfeita da língua inglesa — e é perfeita porque não tenta se controlar. Austen passou a vida escrevendo personagens que reprimem o que sentem por decoro social. Em Persuasão ela deixa o decoro quebrar. Anne e Wentworth são mais velhos, já perderam tempo demais. A carta é a literatura dizendo: às vezes a contenção tem um custo alto demais.",
+  spoilerLevel: "ENDING",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 29).toISOString(),
+  reactions: { "🖤": 234, "✨": 156, "💥": 78 },
+  replyCount: 101,
+},
+
+// --- O NOME DA ROSA — Umberto Eco ---
+
+{
+  id: "mg_new_032",
+  bookId: "o_nome_da_rosa",
+  userId: "user_20",
+  type: "TEORIA",
+  excerpt: "Stat rosa pristina nomine, nomina nuda tenemus.",
+  reference: { page: 502, percentage: 99 },
+  commentary: "A última frase do livro é latim medieval que significa: 'A rosa primitiva existe pelo nome, só temos nomes nus.' É o livro inteiro em uma linha. O manuscrito que todos morreram para esconder ou proteger existe agora apenas como referência, como nome sem corpo. Eco passou 500 páginas construindo um objeto e então o destruiu. O que ficou é a biblioteca da nossa memória de tê-lo lido.",
+  spoilerLevel: "ENDING",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 120).toISOString(),
+  reactions: { "🤔": 156, "✨": 112, "😵": 78 },
+  replyCount: 63,
+},
+
+// --- FRANKENSTEIN — Mary Shelley ---
+
+{
+  id: "mg_new_033",
+  bookId: "frankenstein",
+  userId: "user_01",
+  type: "REAÇÃO",
+  excerpt: "Beware; for I am fearless, and therefore powerful.",
+  reference: { page: 89, percentage: 54 },
+  commentary: "A criatura de Frankenstein começa o livro querendo amor e termina querendo vingança — e Shelley mostra cada passo da transformação com precisão clínica. Esse trecho é o momento da virada. O monstro descobriu que o que o criador recusou a ele pode ser substituído por poder. É uma das análises mais brutais do que o abandono faz com um ser consciente. E foi escrita por uma mulher de 18 anos.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 47).toISOString(),
+  reactions: { "💥": 143, "🖤": 88, "🤔": 61 },
+  replyCount: 55,
+},
+
+// --- A INSUSTENTÁVEL LEVEZA DO SER — Milan Kundera ---
+
+{
+  id: "mg_new_034",
+  bookId: "a_insustentavel_leveza_do_ser",
+  userId: "user_18",
+  type: "REAÇÃO",
+  excerpt: "A mais pesada das cargas nos esmaga, sucumbimos a ela, ela nos arrasa contra o solo. Mas na poesia amorosa de todos os séculos, a mulher deseja o peso do corpo do homem sobre si.",
+  reference: { page: 5, percentage: 2 },
+  commentary: "Kundera abre o livro com Nietzsche e o eterno retorno e constrói o argumento de que o peso pode ser mais belo que a leveza. Tomas quer leveza, Tereza quer peso. E o livro inteiro examina o custo de cada escolha sem dizer qual está certa. A resposta que você chega depende do momento da sua vida em que você lê.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 53).toISOString(),
+  reactions: { "🤔": 212, "🖤": 134, "✨": 78 },
+  replyCount: 94,
+},
+
+// --- SOLARIS — Stanislaw Lem ---
+
+{
+  id: "mg_new_035",
+  bookId: "solaris",
+  userId: "user_07",
+  type: "TEORIA",
+  excerpt: "Não queremos conquistar o cosmos. Queremos estender a Terra até as fronteiras do cosmos.",
+  reference: { page: 72, percentage: 35 },
+  commentary: "Lem escreveu o livro de ficção científica mais pessimista sobre o contato com o desconhecido: quando finalmente encontramos algo genuinamente outro, somos incapazes de entendê-lo. Solaris não é hostil. É incompreensível. E nossa resposta ao incompreensível é sempre a mesma — projetar sobre ele o que já conhecemos. Os visitantes que o oceano cria não são mensagens. São espelhos.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 68).toISOString(),
+  reactions: { "🤔": 189, "✨": 87, "💥": 43 },
+  replyCount: 72,
+},
+
+// --- O LOBO DA ESTEPE — Hermann Hesse ---
+
+{
+  id: "mg_new_036",
+  bookId: "o_lobo_da_estepe",
+  userId: "user_05",
+  type: "INSIGHT",
+  excerpt: "Eu creio que não há uma única natureza humana, mas pelo menos duas, e frequentemente muitas mais.",
+  reference: { page: 56, percentage: 22 },
+  commentary: "Haller não é um homem dividido entre o humano e o lobo — ele é um homem que recusou a simplificação que a sociedade exige. O Teatro Mágico no final não é fuga: é a aceitação de que você pode ser simultaneamente todas as suas contradições sem que uma anule as outras. Hesse escreveu o livro durante uma crise pessoal intensa e isso transpira em cada linha.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 38).toISOString(),
+  reactions: { "🖤": 167, "🤔": 99, "✨": 72 },
+  replyCount: 61,
+},
+
+// --- REFLEXÕES LIVRES (sem livro específico) ---
+
+{
+  id: "mg_new_037",
+  bookId: null,
+  userId: "user_04",
+  type: "INSIGHT",
+  excerpt: null,
+  reference: null,
+  commentary: "Tem livros que você lê na hora errada e eles não chegam. E tem livros que você lê na hora certa e eles mudam uma coisa específica em você que você não sabia que precisava mudar. O segundo tipo não depende da qualidade do livro — depende de onde você está quando o abre. É por isso que releitura existe. Você não está relendo o livro. Está lendo você de outro ponto.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
+  reactions: { "✨": 312, "🖤": 144, "🤔": 67 },
+  replyCount: 128,
+},
+
+{
+  id: "mg_new_038",
+  bookId: null,
+  userId: "user_09",
+  type: "REAÇÃO",
+  excerpt: null,
+  reference: null,
+  commentary: "Sabe o que é mais frustrante? Terminar um livro e não ter ninguém pra ligar imediatamente falando sobre ele. O Marginalia existe por causa disso.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+  reactions: { "💥": 398, "🖤": 201, "✨": 133 },
+  replyCount: 187,
+},
+
+{
+  id: "mg_new_039",
+  bookId: null,
+  userId: "user_15",
+  type: "INSIGHT",
+  excerpt: null,
+  reference: null,
+  commentary: "Ficção científica envelhecida mal é um documento histórico do que assustava uma época. Ficção científica envelhecida bem é filosofia com capas melhores. A diferença está em qual pergunta o autor estava fazendo: 'como será o futuro?' ou 'o que é ser humano?'",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 11).toISOString(),
+  reactions: { "✨": 276, "🤔": 134, "💥": 55 },
+  replyCount: 89,
+},
+
+{
+  id: "mg_new_040",
+  bookId: null,
+  userId: "user_13",
+  type: "INSIGHT",
+  excerpt: null,
+  reference: null,
+  commentary: "O personagem mais importante de qualquer livro é o leitor. É ele que decide se o narrador é confiável, se o final é trágico ou libertador, se a metáfora funciona. O autor escreve metade do livro. A outra metade você completa sozinho — com tudo que viveu antes de abrir a primeira página. Por isso dois leitores do mesmo livro nunca leram o mesmo livro.",
+  spoilerLevel: "NONE",
+  visibility: "PUBLIC",
+  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+  reactions: { "✨": 445, "🖤": 223, "💥": 98 },
+  replyCount: 201,
+},
+```
+
+-----
+
+## LIVROS NOVOS — adicionar ao MOCK_BOOKS se não existirem
+
+Para cada livro abaixo que ainda não constar no array `MOCK_BOOKS`, adicione com `bookColor` e `coverUrl` via Open Library (`https://covers.openlibrary.org/b/isbn/[ISBN]-L.jpg`):
+
+|Título                         |Autor              |bookColor|
+|-------------------------------|-------------------|---------|
+|Grande Sertão: Veredas         |João Guimarães Rosa|`#8B6914`|
+|Memórias Póstumas de Brás Cubas|Machado de Assis   |`#2C3E50`|
+|Crime e Castigo                |Dostoiévski        |`#6B2D2D`|
+|A Metamorfose                  |Kafka              |`#4A5240`|
+|Beloved                        |Toni Morrison      |`#1A1A2E`|
+|O Senhor dos Anéis             |Tolkien            |`#5C4A1E`|
+|Orgulho e Preconceito          |Jane Austen        |`#7D6B8A`|
+|Ulisses                        |James Joyce        |`#2E4057`|
+|Ensaio sobre a Cegueira        |Saramago           |`#C8B89A`|
+|Moby Dick                      |Herman Melville    |`#1B3A4B`|
+|As Intermitências da Morte     |Saramago           |`#3D3D5C`|
+|O Hobbit                       |Tolkien            |`#4A7C59`|
+|A Revolução dos Bichos         |Orwell             |`#8B4513`|
+|Água Viva                      |Clarice Lispector  |`#2B5F6B`|
+|O Morro dos Ventos Uivantes    |Emily Brontë       |`#4A3728`|
+|Sapiens                        |Yuval Noah Harari  |`#1C3A5E`|
+|O Aleph                        |Jorge Luis Borges  |`#2D1B69`|
+|Siddhartha                     |Hermann Hesse      |`#8B7355`|
+|A Paixão Segundo G.H.          |Clarice Lispector  |`#3B1F2B`|
+|Lolita                         |Nabokov            |`#C4A882`|
+|Persuasão                      |Jane Austen        |`#6B8E8E`|
+|O Nome da Rosa                 |Umberto Eco        |`#2C2416`|
+|Frankenstein                   |Mary Shelley       |`#1A2F1A`|
+|O Lobo da Estepe               |Hermann Hesse      |`#3D3D3D`|
+|Solaris                        |Stanislaw Lem      |`#0D2137`|
+|A Insustentável Leveza do Ser  |Milan Kundera      |`#8C3A3A`|
+
+-----
+
+## OBSERVAÇÕES FINAIS
+
+- Distribua os posts entre os `userId` já existentes no mock
+- Posts com `bookId: null` são reflexões livres — certifique-se que `MarginCard` suporta `bookId` nulo sem quebrar
+- Não remova nenhum post existente, apenas adicione os novos
+- Mantenha consistência com os campos já usados em `MOCK_MARGINS`

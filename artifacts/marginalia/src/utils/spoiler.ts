@@ -8,6 +8,9 @@ export function canUserSeeMargin(
 ): boolean {
   if (spoilerPreference === "all") return true;
 
+  // Free reflections (no book) are always visible
+  if (margin.bookId === null) return true;
+
   // protected: book must be in library, started, within progress, no spoiler flags
   if (!progress) return false;
   if (margin.spoilerLevel !== "none") return false;
@@ -54,6 +57,6 @@ export function filterMarginsForUser(
   progressMap: Record<number, BookProgress>
 ): Margin[] {
   return margins.filter((m) =>
-    canUserSeeMargin(m, spoilerPreference, progressMap[m.bookId])
+    canUserSeeMargin(m, spoilerPreference, m.bookId !== null ? progressMap[m.bookId] : undefined)
   );
 }

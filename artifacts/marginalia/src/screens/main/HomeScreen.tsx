@@ -25,6 +25,7 @@ const SUBTITLES = [
 function getMomentosDeHoje(margins: Margin[]) {
   const byBook = new Map<number, Margin[]>();
   margins.forEach((m) => {
+    if (m.bookId === null) return;
     if (!byBook.has(m.bookId)) byBook.set(m.bookId, []);
     byBook.get(m.bookId)!.push(m);
   });
