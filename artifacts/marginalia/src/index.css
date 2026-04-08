@@ -69,6 +69,11 @@
 
 /* LIGHT MODE */
 :root {
+  /* ── Readability text tokens ─────────────────────────────────────────── */
+  --text-primary:   #2C2A27;  /* titles, quotes, body, usernames             */
+  --text-secondary: #5C5650;  /* authors, dates, labels, descriptions        */
+  --text-tertiary:  #8C837A;  /* placeholders, micro-metadata, light notes   */
+
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
 

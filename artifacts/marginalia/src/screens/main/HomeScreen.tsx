@@ -67,7 +67,7 @@ function MomentosSection() {
         </span>
         <span className="font-sans text-[7px] font-light tracking-[0.14em] uppercase text-[#697962]/70">ao vivo</span>
       </div>
-      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
+      <p className="font-sans font-light text-[9px] text-[#8C837A] mb-3">
         Onde leitores estão parando agora
       </p>
       <div className="space-y-2">
@@ -90,26 +90,26 @@ function MomentosSection() {
                   <p className="font-sans text-[7px] font-light tracking-[0.2em] uppercase text-[#697962] mb-0.5">
                     {idx === 0 ? "✦ Mais ativo agora" : "Em alta"}
                   </p>
-                  <p className="font-serif italic text-[15px] text-[#3D3D3D] leading-tight">{book.title}</p>
-                  <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#2A2A2A]/35">{book.author}</p>
+                  <p className="font-serif italic text-[15px] text-[#2C2A27] leading-tight">{book.title}</p>
+                  <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#5C5650]">{book.author}</p>
                 </div>
 
                 {canSee ? (
                   <div className="border-l-2 border-[#AE8F7D]/40 pl-3 mb-2.5">
-                    <p className="font-serif italic text-[12px] text-[#2A2A2A]/65 leading-relaxed line-clamp-2">
+                    <p className="font-serif italic text-[12px] text-[#2C2A27] leading-[1.65] line-clamp-2">
                       &ldquo;{topMargin.excerpt}&rdquo;
                     </p>
                   </div>
                 ) : (
                   <div className="bg-[#EBE6DB]/60 rounded-[8px] px-3 py-2 mb-2.5 flex items-center gap-2">
                     <Shield className="w-3 h-3 text-[#AE8F7D]/50 flex-shrink-0" />
-                    <p className="font-sans font-light text-[9px] text-[#2A2A2A]/45 italic">
+                    <p className="font-sans font-light text-[9px] text-[#8C837A] italic">
                       Leitores estão reagindo intensamente neste ponto.
                     </p>
                   </div>
                 )}
 
-                <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35">
+                <p className="font-sans font-light text-[8px] text-[#8C837A]">
                   {reactionTotal > 0 ? `${reactionTotal} reações · ` : ""}
                   {topMargin.commentsCount} respostas
                   {topMargin.percent !== undefined ? ` · em ${topMargin.percent}% do livro` : ""}
@@ -165,7 +165,7 @@ function FeedBreak({ index }: { index: number }) {
   return (
     <div className="bg-[#EBE6DB]/35 border border-[#AE8F7D]/12 rounded-[14px] p-5">
       <p className={`font-sans text-[7px] font-light tracking-[0.2em] uppercase ${b.accent} mb-2`}>{b.label}</p>
-      <p className="font-serif italic text-[13px] text-[#2A2A2A]/60 leading-relaxed mb-3">{b.body}</p>
+      <p className="font-serif italic text-[13px] text-[#5C5650] leading-relaxed mb-3">{b.body}</p>
       {b.cta && b.href && (
         <Link href={b.href}>
           <button className="font-sans text-[9px] font-light tracking-[0.12em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/30 px-4 py-2 rounded-full hover:bg-[#AE8F7D]/8 transition-colors">
@@ -213,8 +213,8 @@ function ProtectedCommunityCard({ m }: { m: CommunityMargin }) {
       {/* Book header */}
       <div className="flex items-start gap-2 mb-3">
         <div className="flex-1 min-w-0">
-          <p className="font-serif italic text-[14px] text-[#3D3D3D] leading-tight truncate">{m.bookTitle}</p>
-          <p className="font-sans font-light text-[8px] tracking-[0.1em] uppercase text-[#2A2A2A]/40 mt-0.5">{m.bookAuthor}</p>
+          <p className="font-serif italic text-[14px] text-[#2C2A27] leading-tight truncate">{m.bookTitle}</p>
+          <p className="font-sans font-light text-[8px] tracking-[0.1em] uppercase text-[#5C5650] mt-0.5">{m.bookAuthor}</p>
         </div>
         <div className="flex items-center gap-1 bg-[#697962]/8 border border-[#697962]/15 rounded-full px-2 py-1 flex-shrink-0">
           <Shield className="w-2.5 h-2.5 text-[#697962]" />
@@ -224,7 +224,7 @@ function ProtectedCommunityCard({ m }: { m: CommunityMargin }) {
 
       {/* Atmospheric phrase */}
       <div className="bg-[#EBE6DB]/40 rounded-[8px] px-3 py-2.5 mb-3">
-        <p className="font-serif italic text-[13px] text-[#3D3D3D]/55 leading-relaxed">{phrase}</p>
+        <p className="font-serif italic text-[13px] text-[#5C5650] leading-relaxed">{phrase}</p>
       </div>
 
       {/* Activity counts */}
@@ -238,7 +238,7 @@ function ProtectedCommunityCard({ m }: { m: CommunityMargin }) {
         </div>
       )}
 
-      <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3 leading-relaxed">
+      <p className="font-sans font-light text-[9px] text-[#8C837A] mb-3 leading-relaxed">
         Trecho protegido para respeitar seu ritmo de leitura.
       </p>
 
@@ -315,17 +315,17 @@ function CommunityFeedSection() {
                 </div>
 
                 <div className="bg-[#EBE6DB]/50 rounded-[8px] px-3 py-2 mb-2.5">
-                  <p className="font-serif italic text-[13px] text-[#3D3D3D]/80 leading-relaxed line-clamp-3">
+                  <p className="font-serif italic text-[13px] text-[#2C2A27] leading-[1.65] line-clamp-3">
                     &ldquo;{m.excerpt}&rdquo;
                   </p>
                 </div>
 
                 {m.commentary && (
-                  <p className="font-sans font-light text-[11px] text-[#2A2A2A]/60 leading-relaxed mb-2 line-clamp-2">{m.commentary}</p>
+                  <p className="font-sans text-[11px] text-[#5C5650] leading-[1.65] mb-2 line-clamp-2">{m.commentary}</p>
                 )}
 
                 <div className="flex items-center gap-3">
-                  <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35 truncate flex-1">{m.bookTitle}</p>
+                  <p className="font-sans font-light text-[8px] text-[#8C837A] truncate flex-1">{m.bookTitle}</p>
                   {(rxTotal > 0 || m.commentsCount > 0) && (
                     <span className="font-sans font-light text-[8px] text-[#697962]/80 flex-shrink-0">
                       {rxTotal > 0 && `${rxTotal} reações`}
@@ -384,10 +384,10 @@ function WishlistSection() {
                   />
                 </div>
                 <div className="p-2.5">
-                  <p className="font-serif italic text-[11px] text-[#3D3D3D] leading-tight line-clamp-2 mb-0.5">
+                  <p className="font-serif italic text-[11px] text-[#2C2A27] leading-tight line-clamp-2 mb-0.5">
                     {book.title}
                   </p>
-                  <p className="font-sans font-light text-[7px] text-[#2A2A2A]/40 truncate">
+                  <p className="font-sans font-light text-[7px] text-[#5C5650] truncate">
                     {book.author}
                   </p>
                 </div>
@@ -497,8 +497,8 @@ export function HomeScreen() {
                     <div className="flex items-start gap-3 mb-3">
                       <BookCover title={book.title} bookColor={book.bookColor} coverUrl={book.coverUrl} size="sm" className="shadow-sm" />
                       <div className="flex-1 min-w-0">
-                        <h2 className="font-serif italic text-[15px] text-[#3D3D3D] leading-tight mb-0.5 line-clamp-2">{book.title}</h2>
-                        <p className="font-sans font-light text-[8px] tracking-[0.1em] uppercase text-[#2A2A2A]/45 mb-2">{book.author}</p>
+                        <h2 className="font-serif italic text-[15px] text-[#2C2A27] leading-tight mb-0.5 line-clamp-2">{book.title}</h2>
+                        <p className="font-sans font-light text-[8px] tracking-[0.1em] uppercase text-[#5C5650] mb-2">{book.author}</p>
                         <div className="w-full h-[2.5px] bg-[#EBE6DB] rounded-full overflow-hidden mb-1">
                           <div
                             className="h-full bg-[#AE8F7D] rounded-full transition-all duration-500"

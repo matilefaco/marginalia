@@ -18,7 +18,7 @@ export function OnboardingWelcomeScreen({ onStart, onLogin }: Props) {
           <LogoMark className="w-full h-full" />
         </div>
 
-        <h1 className="font-serif italic text-[42px] text-[#454545] leading-tight mb-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+        <h1 className="font-serif italic text-[42px] text-[#2C2A27] leading-tight mb-3 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
           Marginalia
         </h1>
 
@@ -34,7 +34,7 @@ export function OnboardingWelcomeScreen({ onStart, onLogin }: Props) {
             marginBottom: "0",
           }}
         >
-          <p className="font-serif italic text-[15px] text-[#454545]/60 leading-relaxed text-left">
+          <p className="font-serif italic text-[15px] text-[#5C5650] leading-[1.65] text-left">
             Um espaço para registrar trechos, compartilhar posts e descobrir como outras pessoas atravessam os mesmos livros.
           </p>
         </div>
@@ -51,7 +51,7 @@ export function OnboardingWelcomeScreen({ onStart, onLogin }: Props) {
         <button
           data-testid="button-already-have-account"
           onClick={onLogin}
-          className="w-full text-[#454545]/45 font-sans font-light text-[11px] tracking-[0.1em] py-3 hover:text-[#454545]/70 transition-colors"
+          className="w-full text-[#8C837A] font-sans font-light text-[11px] tracking-[0.1em] py-3 hover:text-[#5C5650] transition-colors"
         >
           Já tenho conta
         </button>

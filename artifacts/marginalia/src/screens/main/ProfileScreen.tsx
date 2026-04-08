@@ -55,7 +55,7 @@ function DnaDeLeiturasSection({ topArquetipos }: { topArquetipos: ArquetipoResul
           return (
             <div key={trait.id}>
               <div className="flex items-center justify-between mb-1">
-                <span className="font-sans font-light text-[11px] text-[#454545]/70">{trait.label}</span>
+                <span className="font-sans font-light text-[11px] text-[#5C5650]">{trait.label}</span>
                 <span className="font-sans font-light text-[9px] text-[#AE8F7D]">{pct}%</span>
               </div>
               <div className="h-[3px] bg-[#EBE6DB] rounded-full overflow-hidden">
@@ -313,10 +313,10 @@ export function ProfileScreen() {
               </div>
             ) : (
               <>
-                <h1 className="font-serif text-[22px] text-[#3D3D3D] leading-tight" data-testid="text-fullname">
+                <h1 className="font-serif text-[22px] text-[#2C2A27] leading-tight" data-testid="text-fullname">
                   {fullName}
                 </h1>
-                <p className="font-sans font-light text-[10px] text-[#8A8178] mt-0.5" data-testid="text-username">
+                <p className="font-sans font-light text-[10px] text-[#8C837A] mt-0.5" data-testid="text-username">
                   {currentUser.username}
                 </p>
               </>
@@ -349,11 +349,11 @@ export function ProfileScreen() {
               onChange={(e) => setEditBio(e.target.value)}
               placeholder="Bio — o que a leitura significa para você?"
               rows={2}
-              className="w-full font-serif italic text-[14px] text-[#2A2A2A]/60 bg-transparent border-b border-[#AE8F7D]/20 outline-none resize-none leading-relaxed"
+              className="w-full font-serif italic text-[14px] text-[#2C2A27] placeholder:text-[#8C837A] bg-transparent border-b border-[#AE8F7D]/20 outline-none resize-none leading-[1.65]"
             />
           ) : (
             currentUser.bio && (
-              <p className="font-serif italic text-[14px] text-[#2A2A2A]/60 leading-relaxed" data-testid="text-bio">
+              <p className="font-serif italic text-[14px] text-[#5C5650] leading-[1.65]" data-testid="text-bio">
                 {currentUser.bio}
               </p>
             )

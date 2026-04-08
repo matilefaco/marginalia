@@ -188,8 +188,8 @@ export function ThreadScreen() {
           </button>
         </Link>
         <div className="flex-1 min-w-0">
-          <p className="font-serif italic text-[13px] text-[#454545]/65 truncate">{margin.bookTitle}</p>
-          <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#454545]/30">{margin.bookAuthor}</p>
+          <p className="font-serif italic text-[13px] text-[#5C5650] truncate">{margin.bookTitle}</p>
+          <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#8C837A]">{margin.bookAuthor}</p>
         </div>
         <button
           data-testid="button-save-thread"
@@ -213,20 +213,20 @@ export function ThreadScreen() {
             {ref && (
               <>
                 <span className="text-[#AE8F7D]/30">·</span>
-                <span className="font-sans font-light text-[8px] text-[#454545]/38">{ref}</span>
+                <span className="font-sans font-light text-[8px] text-[#8C837A]">{ref}</span>
               </>
             )}
-            <span className="ml-auto font-sans font-light text-[7px] text-[#454545]/25">{timeAgo(margin.createdAt)}</span>
+            <span className="ml-auto font-sans font-light text-[7px] text-[#8C837A]">{timeAgo(margin.createdAt)}</span>
           </div>
 
           <div className="border-l-2 border-[#AE8F7D]/55 pl-4 mb-4">
-            <p className="font-serif italic text-[19px] text-[#2A2A2A] leading-[1.65]">
+            <p className="font-serif italic text-[19px] text-[#2C2A27] leading-[1.65]">
               &ldquo;{margin.excerpt}&rdquo;
             </p>
           </div>
 
           {margin.commentary && (
-            <p className="font-serif text-[14px] text-[#454545]/72 leading-[1.7] mb-4">
+            <p className="font-sans text-[14px] text-[#5C5650] leading-[1.7] mb-4">
               {margin.commentary}
             </p>
           )}
@@ -336,11 +336,11 @@ export function ThreadScreen() {
                     title={r.label}
                   >
                     <span className="text-[16px] leading-none">{r.emoji}</span>
-                    <span className={`font-sans font-light text-[9px] ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/45"}`}>
+                    <span className={`font-sans font-light text-[9px] ${isMine ? "text-[#AE8F7D]" : "text-[#5C5650]"}`}>
                       {r.label}
                     </span>
                     {count > 0 && (
-                      <span className={`font-sans font-light text-[9px] ${isMine ? "text-[#AE8F7D]" : "text-[#454545]/35"}`}>
+                      <span className={`font-sans font-light text-[9px] ${isMine ? "text-[#AE8F7D]" : "text-[#8C837A]"}`}>
                         · {count}
                       </span>
                     )}
@@ -419,7 +419,7 @@ export function ThreadScreen() {
                   timestamp={timeAgo(reply.createdAt)}
                 />
                 <div className="pl-7">
-                  <p className="font-serif text-[14px] text-[#454545]/78 leading-[1.65]">{reply.text}</p>
+                  <p className="font-sans text-[14px] text-[#2C2A27] leading-[1.65]">{reply.text}</p>
                   <CommentReactionBar commentId={reply.id} />
                 </div>
               </div>
@@ -442,13 +442,13 @@ export function ThreadScreen() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-1.5">
-                  <span className="font-sans font-light text-[10.5px] text-[#AE8F7D]">{currentUser.name}</span>
+                  <span className="font-sans font-light text-[10.5px] text-[#2C2A27]">{currentUser.name}</span>
                   {currentUser.username && (
-                    <span className="font-sans font-light text-[8.5px] text-[#454545]/28">@{currentUser.username}</span>
+                    <span className="font-sans font-light text-[8.5px] text-[#8C837A]">@{currentUser.username}</span>
                   )}
-                  <span className="font-sans font-light text-[8px] text-[#454545]/25">· agora</span>
+                  <span className="font-sans font-light text-[8px] text-[#8C837A]">· agora</span>
                 </div>
-                <p className="font-serif text-[14px] text-[#454545]/78 leading-[1.65]">{reply.text}</p>
+                <p className="font-sans text-[14px] text-[#2C2A27] leading-[1.65]">{reply.text}</p>
               </div>
             </div>
           ))}

@@ -216,7 +216,7 @@ function EmojiReactionBar({ margin }: { margin: Margin }) {
             {emoji}
             <span
               key={count}
-              className={`font-sans font-light text-[8px] count-pulse ${isMine ? "text-[#AE8F7D]" : "text-[#2A2A2A]/55"}`}
+              className={`font-sans font-light text-[8px] count-pulse ${isMine ? "text-[#AE8F7D]" : "text-[#5C5650]"}`}
             >
               {count}
             </span>
@@ -264,7 +264,7 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
     <button
       data-testid={`button-ecoar-${margin.id}`}
       onClick={(e) => { if (!linkToThread) { e.preventDefault(); e.stopPropagation(); } }}
-      className="flex items-center gap-1.5 font-sans text-[8.5px] font-light tracking-[0.1em] text-[#2A2A2A]/45 hover:text-[#AE8F7D] transition-colors"
+      className="flex items-center gap-1.5 font-sans text-[8.5px] font-light tracking-[0.1em] text-[#8C837A] hover:text-[#AE8F7D] transition-colors"
     >
       <MessageCircle className="w-3 h-3" />
       {margin.commentsCount > 0
@@ -315,26 +315,29 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all"
+      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all relative overflow-hidden"
       style={{
         border: "1px solid rgba(174,143,125,0.16)",
         borderLeft: `3px solid ${a.border}AA`,
-        backgroundColor: bookColor ? `${bookColor}CC` : "#EBE6DB4D",
+        backgroundColor: bookColor ? "transparent" : "#EBE6DB4D",
       }}
     >
+      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.12 }} />}
+      {bookColor && <div className="absolute inset-0 bg-[rgba(250,248,243,0.76)]" />}
+      <div className="relative z-10">
       <div className="flex items-center justify-between mb-3.5">
         <span className="font-sans text-[7.5px] font-light tracking-[0.22em] uppercase" style={{ color: a.label }}>
           ✦ Citação favorita
         </span>
-        <span className="font-sans font-light text-[7px] text-[#2A2A2A]/25">{timeAgo(margin.createdAt)}</span>
+        <span className="font-sans font-light text-[7px] text-[#8C837A]">{timeAgo(margin.createdAt)}</span>
       </div>
       <div className="text-center py-4 mb-3.5">
-        <p className="font-serif italic text-[18px] text-[#2A2A2A] leading-[1.75]">
+        <p className="font-serif italic text-[18px] text-[#2C2A27] leading-[1.75]">
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
       {showBook && (
-        <p className="font-sans font-light text-[8.5px] tracking-[0.1em] uppercase text-[#2A2A2A]/40 text-center mb-4">
+        <p className="font-sans font-light text-[8.5px] tracking-[0.1em] uppercase text-[#8C837A] text-center mb-4">
           {margin.bookTitle} {ref && `· ${ref}`}
         </p>
       )}
@@ -342,6 +345,7 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <EmojiReactionBar margin={margin} />
       </div>
       <EcoarBar margin={margin} linkToThread={linkToThread} />
+      </div>{/* /z-10 */}
     </div>
   );
   if (!linkToThread) return content;
@@ -355,31 +359,35 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all"
+      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all relative overflow-hidden"
       style={{
         border: "1px dashed rgba(189,171,156,0.35)",
         borderLeft: `3px solid ${a.border}AA`,
-        backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3",
+        backgroundColor: bookColor ? "transparent" : "#FAF8F3",
       }}
     >
+      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.10 }} />}
+      {bookColor && <div className="absolute inset-0 bg-[rgba(250,248,243,0.80)]" />}
+      <div className="relative z-10">
       <div className="flex items-center gap-2 mb-3.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase" style={{ color: a.label }}>❓ Pergunta</span>
-        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/45 truncate max-w-[100px]">{margin.bookTitle}</span></>}
-        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/35">{ref}</span></>}
-        <span className="ml-auto font-sans text-[7px] font-light text-[#2A2A2A]/25">{timeAgo(margin.createdAt)}</span>
+        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#5C5650] truncate max-w-[100px]">{margin.bookTitle}</span></>}
+        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#8C837A]">{ref}</span></>}
+        <span className="ml-auto font-sans text-[7px] font-light text-[#8C837A]">{timeAgo(margin.createdAt)}</span>
       </div>
       <div className="bg-[#FAF8F3]/80 pl-4 mb-4" style={{ borderLeft: `2px solid ${a.border}88` }}>
-        <p className="font-serif italic text-[15px] text-[#2A2A2A] leading-[1.75]">
+        <p className="font-serif italic text-[15px] text-[#2C2A27] leading-[1.7]">
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
       {margin.commentary && (
-        <p className="font-serif text-[15px] text-[#2A2A2A]/72 leading-[1.75] mb-4">{margin.commentary}</p>
+        <p className="font-sans text-[14px] text-[#5C5650] leading-[1.7] mb-4">{margin.commentary}</p>
       )}
       <div className="mb-3">
         <EmojiReactionBar margin={margin} />
       </div>
       <EcoarBar margin={margin} linkToThread={linkToThread} />
+      </div>{/* /z-10 */}
     </div>
   );
   if (!linkToThread) return content;
@@ -393,25 +401,28 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all shadow-sm"
+      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all shadow-sm relative overflow-hidden"
       style={{
         border: "1px solid rgba(107,122,107,0.18)",
         borderLeft: `3px solid ${a.border}CC`,
-        backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3",
+        backgroundColor: bookColor ? "transparent" : "#FAF8F3",
       }}
     >
+      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.10 }} />}
+      {bookColor && <div className="absolute inset-0 bg-[rgba(250,248,243,0.80)]" />}
+      <div className="relative z-10">
       <div className="flex items-center gap-2 mb-3.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase" style={{ color: a.label }}>🔭 Teoria</span>
-        {showBook && <><span style={{ color: `${a.border}40` }}>·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/45 truncate max-w-[90px]">{margin.bookTitle}</span></>}
-        <span className="ml-auto font-sans text-[7px] font-light text-[#2A2A2A]/25">{timeAgo(margin.createdAt)}</span>
+        {showBook && <><span style={{ color: `${a.border}40` }}>·</span><span className="font-sans text-[8px] font-light text-[#5C5650] truncate max-w-[90px]">{margin.bookTitle}</span></>}
+        <span className="ml-auto font-sans text-[7px] font-light text-[#8C837A]">{timeAgo(margin.createdAt)}</span>
       </div>
       <div className="pl-3 mb-4" style={{ borderLeft: `2px solid ${a.border}50` }}>
-        <p className="font-serif italic text-[14px] text-[#2A2A2A]/60 leading-[1.75] line-clamp-3">
+        <p className="font-serif italic text-[14px] text-[#5C5650] leading-[1.7] line-clamp-3">
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
       {margin.commentary && (
-        <p className="font-serif text-[15px] text-[#2A2A2A]/80 leading-[1.75] mb-4">{margin.commentary}</p>
+        <p className="font-sans text-[14px] text-[#2C2A27] leading-[1.7] mb-4">{margin.commentary}</p>
       )}
       <div className="mb-3">
         <EmojiReactionBar margin={margin} />
@@ -420,6 +431,7 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <p className="font-sans font-light text-[8px] mb-2" style={{ color: `${a.border}99` }}>{totalReactions} leitores responderam isso</p>
       )}
       <EcoarBar margin={margin} linkToThread={linkToThread} />
+      </div>{/* /z-10 */}
     </div>
   );
   if (!linkToThread) return content;
@@ -436,33 +448,36 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
-      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all"
+      className="rounded-[14px] p-5 hover:brightness-[0.98] transition-all relative overflow-hidden"
       style={{
         border: "1px solid rgba(174,143,125,0.14)",
         borderLeft: `3px solid ${a.border}99`,
-        backgroundColor: bookColor ? `${bookColor}99` : "#FAF8F3",
+        backgroundColor: bookColor ? "transparent" : "#FAF8F3",
       }}
     >
+      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.10 }} />}
+      {bookColor && <div className="absolute inset-0 bg-[rgba(250,248,243,0.80)]" />}
+      <div className="relative z-10">
       <div className="flex items-center gap-2 mb-3.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase flex items-center gap-1" style={{ color: a.label }}>
           <span>{typeIcon}</span>
           <span>{marginTypeLabel(margin.postType)}</span>
         </span>
-        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/45">{ref}</span></>}
-        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#2A2A2A]/45 truncate max-w-[100px]">{margin.bookTitle}</span></>}
-        <span className="ml-auto font-sans text-[7px] font-light text-[#2A2A2A]/25 flex-shrink-0">{timeAgo(margin.createdAt)}</span>
+        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#8C837A]">{ref}</span></>}
+        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#5C5650] truncate max-w-[100px]">{margin.bookTitle}</span></>}
+        <span className="ml-auto font-sans text-[7px] font-light text-[#8C837A] flex-shrink-0">{timeAgo(margin.createdAt)}</span>
       </div>
 
       {/* Quote block */}
       <div className="pl-4 mb-4" style={{ borderLeft: `2px solid ${a.border}66` }}>
-        <p className="font-serif italic text-[15px] text-[#2A2A2A] leading-[1.75]">
+        <p className="font-serif italic text-[15px] text-[#2C2A27] leading-[1.7]">
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
 
       {/* Commentary — visually separated from the quote */}
       {margin.commentary && (
-        <p className="font-serif text-[15px] text-[#2A2A2A]/72 leading-[1.75] mb-4">
+        <p className="font-sans text-[14px] text-[#5C5650] leading-[1.7] mb-4">
           {margin.commentary}
         </p>
       )}
@@ -471,11 +486,12 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <EmojiReactionBar margin={margin} />
       </div>
       {totalReactions > 0 && (
-        <p className="font-sans font-light text-[8px] text-[#2A2A2A]/35 mb-1">
+        <p className="font-sans font-light text-[8px] text-[#8C837A] mb-1">
           {totalReactions} {totalReactions === 1 ? "leitor respondeu" : "leitores responderam"} isso
         </p>
       )}
       <EcoarBar margin={margin} linkToThread={linkToThread} />
+      </div>{/* /z-10 */}
     </div>
   );
   if (!linkToThread) return content;

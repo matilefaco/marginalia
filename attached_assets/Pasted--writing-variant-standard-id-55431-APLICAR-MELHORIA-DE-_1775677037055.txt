@@ -1,0 +1,440 @@
+:::writing{variant=“standard” id=“55431”}
+APLICAR MELHORIA DE LEGIBILIDADE SEM PERDER A IDENTIDADE DO MARGINALIA
+
+Quero aplicar uma revisão completa de legibilidade no app, mas sem alterar a identidade visual do Marginalia.
+
+A paleta continua a mesma.
+O problema não está nas cores em si, e sim no papel que cada cor está desempenhando na interface.
+
+Hoje, muitos textos estão usando tons médios demais sobre fundos muito claros, o que deixa o app bonito, porém cansativo de ler. Isso gera esforço visual desnecessário, especialmente nas áreas mais usadas do produto: feed, cards de posts, metadados, nomes de autor, datas, categorias e textos corridos.
+
+Quero corrigir isso de forma estrutural.
+
+==================================================
+OBJETIVO GERAL
+
+Melhorar drasticamente a legibilidade do app, mantendo:
+	•	o mesmo clima editorial
+	•	a mesma estética sofisticada
+	•	a mesma paleta principal
+	•	a mesma sensação de delicadeza
+
+Mas com uma nova hierarquia visual:
+	•	textos importantes mais escuros
+	•	textos secundários mais estáveis
+	•	cores médias usadas como acento, não como texto principal
+
+==================================================
+DIAGNÓSTICO
+
+O problema central é este:
+
+Hoje, textos em tons como:
+	•	Heather Rose
+	•	Doeskin
+
+sobre fundos como:
+	•	Albescent
+	•	Albescent 2
+
+estão com contraste insuficiente para leitura confortável.
+
+Visualmente fica bonito, mas funcionalmente o olho faz muito esforço.
+
+Os principais culpados são:
+	•	labels de interface em Heather / Doeskin
+	•	metadados em tons médios
+	•	body text sobre fundos com tint de cor do livro
+	•	Cormorant Garamond em peso leve e tamanho pequeno
+	•	placeholders e legendas muito claros
+
+==================================================
+DECISÃO DE SISTEMA
+
+A paleta base do app continua.
+
+O que muda é a função de cada cor.
+
+A partir de agora:
+	•	Metal escuro e derivados quentes dele passam a ser a base textual do app
+	•	Heather e Doeskin deixam de ser usados como cor principal de texto corrido
+	•	Heather e Doeskin passam a ser usados principalmente como:
+	•	acentos
+	•	bordas
+	•	ícones
+	•	divisores
+	•	highlights decorativos
+	•	pequenos badges
+
+==================================================
+NOVO SISTEMA DE TEXTO
+
+Quero criar e aplicar estas variáveis novas de texto:
+	•	--text-primary: #2C2A27
+	•	--text-secondary: #5C5650
+	•	--text-tertiary: #8C837A
+
+Esses tons devem ser os novos responsáveis pela leitura do app.
+
+Função de cada um:
+
+text-primary
+
+Usar em:
+	•	títulos
+	•	texto corrido
+	•	citações
+	•	conteúdo dos posts
+	•	nomes de livros
+	•	nomes de usuários
+	•	headings importantes
+
+text-secondary
+
+Usar em:
+	•	autores
+	•	datas
+	•	descrições auxiliares
+	•	labels funcionais
+	•	subtítulos
+	•	metadados relevantes
+
+text-tertiary
+
+Usar em:
+	•	placeholders
+	•	informações menos importantes
+	•	metadados leves
+	•	observações
+	•	notas pequenas
+
+==================================================
+CORES QUE DEVEM PARAR DE SER TEXTO PRINCIPAL
+
+Quero restringir o uso de:
+	•	#AE8F7D (Heather Rose)
+	•	#BDAB9C (Doeskin)
+
+Essas cores não devem mais ser usadas como texto corrido principal.
+
+Elas podem continuar sendo usadas em:
+	•	bordas
+	•	ícones
+	•	linhas
+	•	indicadores
+	•	chips
+	•	detalhes editoriais
+	•	pequenos accents
+
+Mas não em:
+	•	blocos longos de leitura
+	•	body text
+	•	nome principal de conteúdo
+	•	metadados centrais
+
+==================================================
+TIPOGRAFIA — NOVA REGRA
+
+Quero ajustar o papel das fontes.
+
+Cormorant Garamond
+
+Usar apenas em:
+	•	citações destacadas
+	•	títulos editoriais grandes
+	•	momentos de impacto emocional
+	•	nome do app
+	•	nomes de arquétipos / identidade de leitura
+	•	frases de forte presença visual
+
+Regra:
+	•	tamanho mínimo: 16px
+	•	peso mínimo: 400
+	•	evitar usar 300 em tamanhos pequenos
+	•	evitar usar Cormorant leve em texto funcional
+
+Jost
+
+Usar em:
+	•	texto corrido
+	•	UI em geral
+	•	labels
+	•	botões
+	•	descrições
+	•	metadados
+	•	nomes de autor em contextos funcionais
+	•	estrutura operacional da interface
+
+Regra:
+	•	body de cards: 14px a 15px
+	•	line-height confortável
+	•	sem excesso de uppercase fora de labels curtas
+
+==================================================
+AJUSTE DE LINE-HEIGHT
+
+Quero aumentar a respirabilidade do texto.
+
+Citações
+	•	line-height: 1.65
+
+Corpo dos posts/cards
+	•	line-height: entre 1.65 e 1.75
+
+Comentários e respostas
+	•	line-height: no mínimo 1.6
+
+Isso deve reduzir fadiga visual e melhorar a sensação de leitura contínua.
+
+==================================================
+ONDE APLICAR
+
+Quero que o Replit revise principalmente estes pontos:
+	1.	variáveis CSS globais
+	2.	componentes de cards de post
+	3.	feed principal
+	4.	páginas de detalhe de post
+	5.	comentários / respostas
+	6.	página de livro
+	7.	listas de livros
+	8.	perfil
+	9.	preferências
+	10.	onboarding
+
+==================================================
+PARTE 1 — VARIÁVEIS GLOBAIS DE CSS
+
+No arquivo global de estilos (index.css, globals.css ou equivalente), adicionar:
+
+:root {
+  --text-primary: #2C2A27;
+  --text-secondary: #5C5650;
+  --text-tertiary: #8C837A;
+}
+
+Se já existir sistema de tokens, integrar esses novos tokens ao conjunto atual.
+
+Também quero revisar classes globais de texto para que o app use esses valores por padrão.
+
+==================================================
+PARTE 2 — MARGINCARD / POSTCARD / CARD PRINCIPAL DO FEED
+
+O componente mais importante do app é o card de post.
+
+Quero revisar especialmente esse componente, porque é o que mais sofre com baixa legibilidade.
+
+==================================================
+2.1. TEXTO DO CARD
+
+Dentro do card:
+	•	citação / trecho → var(--text-primary)
+	•	comentário / reflexão → var(--text-primary) ou var(--text-secondary) dependendo da hierarquia
+	•	autor / metadado / referência → var(--text-secondary)
+	•	detalhes menos importantes → var(--text-tertiary)
+
+==================================================
+2.2. TINT DO LIVRO NO FUNDO
+
+Se o card usa bookColor ou alguma cor derivada do livro no background, quero corrigir isso.
+
+Hoje o problema é que o texto às vezes compete com o fundo tintado.
+
+Quero usar esta lógica:
+	•	manter a cor do livro apenas como camada de atmosfera
+	•	aplicar essa cor com opacidade baixa
+	•	colocar por cima uma camada clara que estabilize a leitura
+	•	o conteúdo textual deve sempre ficar numa camada acima, com contraste consistente
+
+Implementação sugerida:
+
+<div className="absolute inset-0" style={{ background: bookColor, opacity: 0.12 }} />
+<div className="absolute inset-0 bg-[rgba(250,248,243,0.72)]" />
+<div className="relative z-10 text-[var(--text-primary)]">
+  ...
+</div>
+
+Ajustar a opacidade se necessário, mas o princípio é:
+👉 a cor do livro ambienta
+👉 o texto continua perfeitamente legível
+
+==================================================
+2.3. PADDING INTERNO
+
+Quero aumentar o respiro interno entre:
+	•	o trecho citado
+	•	a reflexão do leitor
+	•	as reações
+	•	a área de metadados
+
+Especialmente entre:
+	•	blockquote
+	•	comentário/reflexão
+
+A interface precisa respirar mais.
+
+==================================================
+PARTE 3 — LABELS E METADADOS
+
+Labels como:
+	•	tipo de post
+	•	autor
+	•	data
+	•	categoria
+	•	capítulo
+	•	porcentagem
+	•	referência
+
+devem deixar de usar tons muito claros demais.
+
+Quero a seguinte hierarquia:
+	•	labels operacionais → var(--text-secondary)
+	•	micro-metadados → var(--text-tertiary)
+	•	nunca usar Heather/Doeskin como texto principal desses elementos
+
+==================================================
+PARTE 4 — BOTÕES E CHIPS
+
+Botões e chips podem continuar com a identidade atual, mas o texto dentro deles precisa obedecer contraste adequado.
+
+Quero revisar:
+	•	chips de reação
+	•	chips de categoria
+	•	tabs
+	•	botões secundários
+	•	pills de filtro
+
+Regra:
+	•	se o fundo for claro, o texto deve ir para text-primary ou text-secondary
+	•	se o fundo for escuro, o texto pode ir claro
+	•	evitar texto “lavado”
+
+==================================================
+PARTE 5 — COMENTÁRIOS E RESPOSTAS
+
+Quero revisar a área de comentários/respostas porque ela também é muito lida.
+
+Aplicar:
+	•	texto dos comentários em text-primary
+	•	metadados do comentário em text-secondary
+	•	hora/data em text-tertiary
+	•	usernames clicáveis com contraste suficiente
+	•	line-height confortável
+
+==================================================
+PARTE 6 — ONBOARDING E FORMULÁRIOS
+
+Quero revisar o onboarding e os formulários também.
+
+Hoje há muitos labels suaves demais.
+
+Aplicar:
+	•	títulos grandes podem continuar em Cormorant
+	•	subtítulos e explicações devem usar Jost
+	•	labels de campo em text-secondary
+	•	placeholders em text-tertiary
+	•	texto digitado em text-primary
+
+Isso também vale para:
+	•	login
+	•	cadastro
+	•	preferências
+	•	edição de perfil
+
+==================================================
+PARTE 7 — PERFIL E DNA DE LEITURA
+
+No perfil do usuário:
+	•	nome principal → text-primary
+	•	username → text-secondary
+	•	bio → text-primary
+	•	descrições dos cards do leitor → text-secondary
+	•	dados estatísticos menores → text-tertiary
+
+Nos cards escuros do arquétipo:
+	•	manter identidade visual escura
+	•	mas garantir contraste suficiente do texto
+	•	revisar opacidade dos elementos secundários para não ficarem “sumidos”
+
+==================================================
+PARTE 8 — O QUE DEVE CONTINUAR DECORATIVO
+
+Quero manter Heather Rose e Doeskin como elementos decorativos e de personalidade.
+
+Continuar usando em:
+	•	linhas editoriais
+	•	divisores
+	•	bordas suaves
+	•	ícones
+	•	acentos
+	•	cantos dobrados
+	•	badges leves
+	•	pequenos destaques visuais
+
+Mas não mais como base do texto lido continuamente.
+
+==================================================
+PARTE 9 — IMPLEMENTAÇÃO TÉCNICA ESPERADA
+
+Quero que o Replit faça estes ajustes técnicos:
+	1.	criar os novos tokens:
+	•	--text-primary
+	•	--text-secondary
+	•	--text-tertiary
+	2.	revisar os componentes centrais para substituir:
+	•	Heather/Doeskin em texto corrido
+	•	por esses novos tokens
+	3.	revisar MarginCard.tsx ou componente equivalente de post/card principal;
+	4.	aplicar overlay claro nos fundos com bookColor;
+	5.	aumentar line-height dos trechos e comentários;
+	6.	restringir Cormorant a contextos editoriais e não funcionais;
+	7.	usar Jost em todo texto funcional e de interface;
+	8.	revisar contrastes de chips, botões e labels;
+	9.	revisar onboarding, perfil, páginas de livro e comentários;
+	10.	testar visualmente os estados mais usados do app.
+
+==================================================
+PARTE 10 — TESTES OBRIGATÓRIOS
+
+Depois das mudanças, testar:
+
+Feed
+	•	ler vários cards em sequência
+	•	verificar se o esforço visual diminuiu
+
+Página de post
+	•	verificar citação, comentário, metadados e reações
+
+Comentários
+	•	verificar legibilidade dos nomes, respostas e horários
+
+Perfil
+	•	verificar nome, bio, estatísticas, DNA e arquétipo
+
+Onboarding
+	•	verificar títulos, campos, placeholders e labels
+
+Páginas de livro
+	•	verificar títulos, autor, filtros, categorias e lista de posts
+
+==================================================
+RESULTADO FINAL ESPERADO
+
+Depois dessa revisão, quero que o app continue:
+	•	sofisticado
+	•	editorial
+	•	poético
+	•	estético
+
+Mas fique também:
+	•	mais legível
+	•	mais leve de usar
+	•	menos cansativo
+	•	mais funcional
+	•	mais profissional
+
+A meta é:
+👉 manter a beleza
+👉 eliminar o esforço desnecessário de leitura
+
+Essa é uma melhoria estrutural de experiência, não só cosmética.
+:::
