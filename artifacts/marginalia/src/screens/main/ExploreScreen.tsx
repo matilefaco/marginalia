@@ -72,7 +72,7 @@ const GENRE_ALL = [
 ];
 
 export function ExploreScreen() {
-  const { currentUser } = useApp();
+  const { currentUser, isDark } = useApp();
   const [query, setQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [genrePage, setGenrePage] = useState(0);
@@ -143,19 +143,17 @@ export function ExploreScreen() {
 
   const hasSearchResults = localResults.length > 0 || googleResults.length > 0 || communitySearchResults.length > 0;
 
-  // "For you" — books matching user's preferred genres, not already in library
   const forYouBooks = MOCK_BOOKS.filter((b) =>
     b.genres.some((g) => currentUser.preferredGenres.includes(g))
   )
     .sort((a, b) => b.trendingScore - a.trendingScore)
     .slice(0, 4);
 
-  // Most discussed
   const mostDiscussed = [...MOCK_BOOKS]
     .sort((a, b) => b.communityStats.debates - a.communityStats.debates)
     .slice(0, 4);
+  void mostDiscussed;
 
-  // Trending margins (most reactions)
   const trendingMargins = [...MOCK_MARGINS]
     .sort(
       (a, b) =>
@@ -164,55 +162,74 @@ export function ExploreScreen() {
     )
     .slice(0, 3);
 
+  /* ── Style helpers ─────────────────────────────────────────── */
+  const cardStyle = {
+    backgroundColor: isDark ? "#26211D" : "#F4EFE8",
+    border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(174,143,125,0.20)"}`,
+    boxShadow: isDark ? "0 1px 4px rgba(0,0,0,0.30)" : "0 1px 6px rgba(69,69,69,0.06)",
+  };
+  const searchBarStyle = {
+    backgroundColor: isDark ? "#201B17" : "rgba(235,230,219,0.75)",
+    border: `1px solid ${isDark ? "rgba(255,255,255,0.10)" : "rgba(174,143,125,0.14)"}`,
+  };
+  const dividerColor = isDark ? "rgba(174,143,125,0.18)" : "rgba(174,143,125,0.22)";
+  const sectionLabel = { color: "var(--text-secondary)" } as const;
+  const bookTitle = { color: "var(--text-primary)", fontWeight: 500 } as const;
+  const authorText = { color: "var(--text-tertiary)" } as const;
+  const metaText = { color: "var(--text-soft)" } as const;
 
   return (
-    <div className="min-h-full bg-[#FAF8F3]">
+    <div className="min-h-full" style={{ backgroundColor: isDark ? "#1C1916" : "#FAF8F3" }}>
       <div className="px-5 pt-10 pb-3">
-        <h1 className="font-serif italic text-[28px] text-[#3D3D3D] mb-1">Explorar</h1>
-        <p className="font-sans font-light text-[10px] text-[#2A2A2A]/40 mb-5 tracking-[0.04em]">
+        <h1 className="font-serif italic text-[28px] mb-1" style={{ color: "var(--text-primary)" }}>
+          Explorar
+        </h1>
+        <p className="font-sans font-light text-[10px] mb-5 tracking-[0.04em]" style={{ color: "var(--text-tertiary)" }}>
           Descubra além do que você já conhece.
         </p>
 
-        <div className="flex items-center gap-3 bg-[#EBE6DB]/70 rounded-[12px] px-4 py-3 mb-2 border border-[#AE8F7D]/10">
-          <Search className="w-4 h-4 text-[#2A2A2A]/35 flex-shrink-0" />
+        {/* Search bar */}
+        <div className="flex items-center gap-3 rounded-[12px] px-4 py-3 mb-2" style={searchBarStyle}>
+          <Search className="w-4 h-4 flex-shrink-0" style={{ color: "var(--text-soft)" }} />
           <input
             data-testid="input-explore-search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Livros, autores, trechos..."
-            className="flex-1 bg-transparent font-sans font-light text-[13px] text-[#2A2A2A] placeholder:text-[#2A2A2A]/30 outline-none"
+            className="flex-1 bg-transparent font-sans font-light text-[13px] outline-none"
+            style={{ color: "var(--text-primary)" }}
           />
           {query && (
-            <button onClick={() => setQuery("")} className="text-[#2A2A2A]/30 text-xs">✕</button>
+            <button onClick={() => setQuery("")} className="text-[9px]" style={{ color: "var(--text-soft)" }}>✕</button>
           )}
         </div>
       </div>
 
       <div className="px-5 pb-8 space-y-8">
-        {/* Search Results */}
+
+        {/* ── Search Results ─────────────────────────────────────────── */}
         {query.trim() && (
           <section>
             <div className="flex items-center gap-2 mb-3">
-              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              <span className="font-sans text-[8.5px] font-light tracking-[0.20em] uppercase" style={sectionLabel}>
                 Resultados para &ldquo;{query}&rdquo;
               </span>
               {isSearching && <Loader2 className="w-3 h-3 text-[#AE8F7D]/60 animate-spin" />}
             </div>
 
-            {/* Local results (Marginalia catalog) */}
             {localResults.length > 0 && (
               <div className="space-y-2 mb-4">
-                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#2A2A2A]/35 mb-2">
+                <p className="font-sans font-light text-[8px] tracking-[0.14em] uppercase mb-2" style={metaText}>
                   Na comunidade
                 </p>
                 {localResults.map((book) => (
                   <Link key={book.id} href={`/book/${book.id}`} data-testid={`search-result-${book.id}`}>
-                    <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[12px] p-4 flex items-center gap-3 hover:border-[#AE8F7D]/35 transition-colors">
+                    <div className="rounded-[12px] p-4 flex items-center gap-3 transition-opacity active:opacity-70" style={cardStyle}>
                       <BookCover title={book.title} bookColor={book.bookColor} coverUrl={book.coverUrl} size="sm" />
                       <div className="flex-1 min-w-0">
-                        <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
-                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#2A2A2A]/40 mb-1">{book.author}</p>
-                        <p className="font-sans font-light text-[9px] text-[#697962]">
+                        <p className="font-serif text-[15px] truncate" style={bookTitle}>{book.title}</p>
+                        <p className="font-sans font-light text-[9px] tracking-[0.10em] uppercase mb-1" style={authorText}>{book.author}</p>
+                        <p className="font-sans font-light text-[9px]" style={{ color: "#697962" }}>
                           {book.communityStats.totalMargins} posts · {book.communityStats.debates} debates
                         </p>
                       </div>
@@ -222,26 +239,25 @@ export function ExploreScreen() {
               </div>
             )}
 
-            {/* Community catalog results */}
             {communitySearchResults.filter((cr) => !localResults.some((lr) => lr.title.toLowerCase() === cr.title.toLowerCase())).length > 0 && (
               <div className="space-y-2 mb-4">
-                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#2A2A2A]/35 mb-2">
+                <p className="font-sans font-light text-[8px] tracking-[0.14em] uppercase mb-2" style={metaText}>
                   Na comunidade
                 </p>
                 {communitySearchResults
                   .filter((cr) => !localResults.some((lr) => lr.title.toLowerCase() === cr.title.toLowerCase()))
                   .map((book) => (
                     <Link key={book.id} href={`/book/${book.id}`} data-testid={`search-community-${book.id}`}>
-                      <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-3 hover:border-[#AE8F7D]/35 active:opacity-75 transition-all">
+                      <div className="rounded-[12px] p-4 flex items-center gap-3 transition-opacity active:opacity-70" style={cardStyle}>
                         {book.coverUrl ? (
-                          <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                          <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0" style={{ backgroundColor: isDark ? "#302820" : "#EBE6DB" }} onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                         ) : (
-                          <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
+                          <div className="w-10 h-14 rounded-[5px] flex-shrink-0" style={{ backgroundColor: isDark ? "#302820" : "#EBE6DB" }} />
                         )}
                         <div className="flex-1 min-w-0">
-                          <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
-                          <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#2A2A2A]/40 mb-1">{book.author}</p>
-                          <p className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} posts · {book.publicationYear ?? ""}</p>
+                          <p className="font-serif text-[15px] truncate" style={bookTitle}>{book.title}</p>
+                          <p className="font-sans font-light text-[9px] tracking-[0.10em] uppercase mb-1" style={authorText}>{book.author}</p>
+                          <p className="font-sans font-light text-[8px]" style={{ color: "#697962" }}>{book.marginCount} posts · {book.publicationYear ?? ""}</p>
                         </div>
                       </div>
                     </Link>
@@ -249,10 +265,9 @@ export function ExploreScreen() {
               </div>
             )}
 
-            {/* Google Books results — discovery only, not yet in catalog */}
             {googleResults.length > 0 && (
               <div className="space-y-2">
-                <p className="font-sans font-light text-[8px] tracking-[0.12em] uppercase text-[#2A2A2A]/35 mb-2">
+                <p className="font-sans font-light text-[8px] tracking-[0.14em] uppercase mb-2" style={metaText}>
                   Descobertos fora do catálogo
                 </p>
                 {googleResults
@@ -260,21 +275,17 @@ export function ExploreScreen() {
                   .map((book) => (
                     <div
                       key={book.externalId}
-                      className="bg-[#FAF8F3] border border-dashed border-[#AE8F7D]/20 rounded-[12px] p-4 flex items-center gap-3 opacity-80"
+                      className="rounded-[12px] p-4 flex items-center gap-3"
+                      style={{ ...cardStyle, opacity: 0.8, borderStyle: "dashed" }}
                     >
                       {book.coverUrl ? (
-                        <img
-                          src={book.coverUrl}
-                          alt={book.title}
-                          className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                        />
+                        <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0" style={{ backgroundColor: isDark ? "#302820" : "#EBE6DB" }} onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                       ) : (
-                        <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
+                        <div className="w-10 h-14 rounded-[5px] flex-shrink-0" style={{ backgroundColor: isDark ? "#302820" : "#EBE6DB" }} />
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="font-serif text-[15px] text-[#3D3D3D] truncate">{book.title}</p>
-                        <p className="font-sans font-light text-[9px] tracking-[0.08em] uppercase text-[#2A2A2A]/40 mb-1">{book.author}</p>
+                        <p className="font-serif text-[15px] truncate" style={bookTitle}>{book.title}</p>
+                        <p className="font-sans font-light text-[9px] tracking-[0.10em] uppercase mb-1" style={authorText}>{book.author}</p>
                         <p className="font-sans font-light text-[8px] text-[#AE8F7D]/60 italic">
                           Ainda não está no Marginalia
                         </p>
@@ -285,34 +296,41 @@ export function ExploreScreen() {
             )}
 
             {!isSearching && !hasSearchResults && (
-              <p className="font-serif italic text-[13px] text-[#2A2A2A]/35 text-center py-6">
+              <p className="font-serif italic text-[13px] text-center py-6" style={{ color: "var(--text-soft)" }}>
                 Nenhum resultado encontrado.
               </p>
             )}
           </section>
         )}
 
-        {/* For You */}
+        {/* ── Para você ─────────────────────────────────────────────── */}
         {forYouBooks.length > 0 && !query && (
           <section data-testid="section-for-you">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              <span className="font-sans text-[8.5px] font-light tracking-[0.20em] uppercase" style={sectionLabel}>
                 Para você
               </span>
-              <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+              <div className="flex-1 h-px" style={{ backgroundColor: dividerColor }} />
             </div>
-            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
+            <p className="font-sans font-light text-[9px] mb-3" style={{ color: "var(--text-soft)" }}>
               Baseado nos seus gêneros favoritos
             </p>
             <div className="grid grid-cols-2 gap-3">
               {forYouBooks.map((book) => (
                 <Link key={book.id} href={`/book/${book.id}`} data-testid={`card-for-you-${book.id}`}>
-                  <div className="bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[12px] overflow-hidden hover:border-[#AE8F7D]/35 transition-colors">
-                    <div className="h-24 bg-gradient-to-b from-[#EBE6DB] to-[#BDAB9C]/40" />
+                  <div className="rounded-[12px] overflow-hidden transition-opacity active:opacity-70" style={cardStyle}>
+                    {/* Cover or color block */}
+                    <div className="relative h-28 overflow-hidden">
+                      {book.coverUrl ? (
+                        <img src={book.coverUrl} alt={book.title} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      ) : (
+                        <div className="w-full h-full" style={{ backgroundColor: book.bookColor ?? "#BDAB9C", opacity: isDark ? 0.7 : 1 }} />
+                      )}
+                    </div>
                     <div className="p-3">
-                      <p className="font-serif text-[13px] text-[#3D3D3D] leading-tight line-clamp-2 mb-0.5">{book.title}</p>
-                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1.5">{book.author}</p>
-                      <p className="font-sans font-light text-[8px] text-[#697962]">
+                      <p className="font-serif text-[13px] leading-tight line-clamp-2 mb-0.5" style={bookTitle}>{book.title}</p>
+                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.10em] mb-1.5" style={authorText}>{book.author}</p>
+                      <p className="font-sans font-light text-[8px]" style={{ color: "#697962" }}>
                         {book.communityStats.activeReaders} leitores ativos
                       </p>
                     </div>
@@ -323,39 +341,54 @@ export function ExploreScreen() {
           </section>
         )}
 
-        {/* Community trending books */}
+        {/* ── Em alta na comunidade ─────────────────────────────────── */}
         {!query && communityTrending.length > 0 && (
           <section data-testid="section-most-discussed">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              <span className="font-sans text-[8.5px] font-light tracking-[0.20em] uppercase" style={sectionLabel}>
                 Em alta na comunidade
               </span>
-              <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+              <div className="flex-1 h-px" style={{ backgroundColor: dividerColor }} />
             </div>
-            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">Os livros mais anotados agora</p>
+            <p className="font-sans font-light text-[9px] mb-3" style={{ color: "var(--text-soft)" }}>Os livros mais anotados agora</p>
             <div className="space-y-2">
               {communityTrending.slice(0, 6).map((book, idx) => (
                 <Link key={book.id} href={`/book/${book.id}`} data-testid={`card-discussed-${book.id}`}>
-                  <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 active:opacity-75 transition-all">
-                    <span className="font-serif italic text-[22px] text-[#AE8F7D]/40 w-6 flex-shrink-0 text-center">{idx + 1}</span>
+                  <div className="rounded-[12px] p-4 flex items-center gap-4 transition-opacity active:opacity-70" style={cardStyle}>
+                    {/* Rank */}
+                    <span
+                      className="font-serif italic text-[20px] w-7 flex-shrink-0 text-center"
+                      style={{ color: idx === 0 ? "#AE8F7D" : "var(--text-soft)", fontWeight: idx === 0 ? 500 : 300 }}
+                    >
+                      {idx + 1}
+                    </span>
+                    {/* Cover */}
                     {book.coverUrl ? (
-                      <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                      <img src={book.coverUrl} alt={book.title} className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0" style={{ backgroundColor: isDark ? "#302820" : "#EBE6DB" }} onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                     ) : (
-                      <div className="w-10 h-14 rounded-[5px] bg-[#EBE6DB] flex-shrink-0" />
+                      <div className="w-10 h-14 rounded-[5px] flex-shrink-0" style={{ backgroundColor: isDark ? "#302820" : "#EBE6DB" }} />
                     )}
+                    {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1">{book.author}</p>
+                      <p className="font-serif text-[14px] truncate" style={bookTitle}>{book.title}</p>
+                      <p className="font-sans font-light text-[8px] uppercase tracking-[0.10em] mb-1" style={authorText}>{book.author}</p>
                       <div className="flex items-center gap-2">
-                        <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} posts</span>
-                        {book.genres && book.genres.length > 0 && (
+                        <span className="font-sans font-light text-[8px]" style={{ color: "#697962" }}>{book.marginCount} posts</span>
+                        {book.genres && (book.genres as string[]).length > 0 && (
                           <>
-                            <span className="text-[#AE8F7D]/25">·</span>
-                            <span className="font-sans font-light text-[8px] text-[#2A2A2A]/35">{(book.genres as string[])[0]}</span>
+                            <span style={{ color: "rgba(174,143,125,0.35)" }}>·</span>
+                            <span className="font-sans font-light text-[8px]" style={metaText}>{(book.genres as string[])[0]}</span>
                           </>
                         )}
                       </div>
                     </div>
+                    {/* Top badge for #1 */}
+                    {idx === 0 && (
+                      <span className="font-sans text-[7px] tracking-[0.12em] uppercase px-2 py-1 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: isDark ? "rgba(174,143,125,0.15)" : "rgba(174,143,125,0.12)", color: "#AE8F7D" }}>
+                        #1
+                      </span>
+                    )}
                   </div>
                 </Link>
               ))}
@@ -363,7 +396,7 @@ export function ExploreScreen() {
           </section>
         )}
 
-        {/* Principais gêneros — focused mode */}
+        {/* ── Genre focused view ────────────────────────────────────── */}
         {!query && genreFocused && selectedGenre && (() => {
           const PAGE_SIZE = 6;
           const mockBooks = MOCK_BOOKS.filter((b) =>
@@ -409,26 +442,32 @@ export function ExploreScreen() {
 
           return (
             <section data-testid="section-genres-trending" className="feed-enter">
-              {/* Genre header */}
+              {/* Genre section header */}
               <div className="flex items-center gap-2 mb-3">
                 <button
                   onClick={exitGenreFocus}
-                  className="text-[#2A2A2A]/40 hover:text-[#AE8F7D] transition-colors flex-shrink-0"
+                  className="transition-colors flex-shrink-0"
+                  style={{ color: "var(--text-soft)" }}
                   aria-label="Voltar aos gêneros"
                 >
                   ←
                 </button>
-                <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D] flex-1">
+                <span className="font-sans text-[8.5px] font-light tracking-[0.20em] uppercase flex-1" style={sectionLabel}>
                   Principais gêneros
                 </span>
               </div>
 
-              {/* Genre chip */}
-              <div className="flex items-center justify-between bg-[#AE8F7D]/10 border border-[#AE8F7D]/30 rounded-[10px] py-3 px-4 mb-5">
-                <span className="font-sans font-light text-[14px] text-[#3D3D3D]">{selectedGenre}</span>
+              {/* Selected genre chip */}
+              <div className="flex items-center justify-between rounded-[10px] py-3 px-4 mb-5"
+                style={{
+                  backgroundColor: isDark ? "rgba(174,143,125,0.10)" : "rgba(174,143,125,0.08)",
+                  border: "1px solid rgba(174,143,125,0.28)",
+                }}>
+                <span className="font-sans font-light text-[14px]" style={{ color: "var(--text-primary)" }}>{selectedGenre}</span>
                 <button
                   onClick={exitGenreFocus}
-                  className="font-sans text-[8px] font-light text-[#AE8F7D]/70 hover:text-[#AE8F7D] transition-colors border border-[#AE8F7D]/30 rounded-full px-2.5 py-1"
+                  className="font-sans text-[8px] font-light hover:text-[#AE8F7D] transition-colors rounded-full px-2.5 py-1"
+                  style={{ color: "var(--text-tertiary)", border: "1px solid rgba(174,143,125,0.30)" }}
                 >
                   Trocar gênero
                 </button>
@@ -437,59 +476,58 @@ export function ExploreScreen() {
               {communityGenreLoading && (
                 <div className="flex items-center justify-center py-8 gap-2">
                   <Loader2 className="w-4 h-4 text-[#AE8F7D]/50 animate-spin" />
-                  <span className="font-sans font-light text-[10px] text-[#2A2A2A]/30">Buscando livros...</span>
+                  <span className="font-sans font-light text-[10px]" style={{ color: "var(--text-soft)" }}>Buscando livros...</span>
                 </div>
               )}
 
               {!communityGenreLoading && allBooks.length === 0 && (
-                <p className="font-serif italic text-[13px] text-[#2A2A2A]/35 text-center py-6">
+                <p className="font-serif italic text-[13px] text-center py-6" style={{ color: "var(--text-soft)" }}>
                   Nenhum livro encontrado neste gênero ainda.
                 </p>
               )}
 
               {!communityGenreLoading && allBooks.length > 0 && (
                 <>
-                  {/* Count + page info */}
                   <div className="flex items-center justify-between mb-3">
                     <p className="font-sans text-[8px] font-light tracking-[0.14em] uppercase text-[#AE8F7D]">
                       {allBooks.length} {allBooks.length === 1 ? "livro" : "livros"}
                     </p>
                     {totalPages > 1 && (
-                      <p className="font-sans font-light text-[8px] text-[#2A2A2A]/30">
+                      <p className="font-sans font-light text-[8px]" style={metaText}>
                         página {safePage + 1} de {totalPages}
                       </p>
                     )}
                   </div>
 
-                  {/* Book list — current page */}
                   <div className="space-y-2 mb-5">
                     {pageBooks.map((book) => (
                       <Link key={`${book.id}`} href={`/book/${book.id}`} data-testid={`genre-book-${book.id}`}>
-                        <div className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] p-4 flex items-center gap-4 hover:border-[#AE8F7D]/30 active:opacity-75 transition-all">
+                        <div className="rounded-[12px] p-4 flex items-center gap-4 transition-opacity active:opacity-70" style={cardStyle}>
                           {book.coverUrl ? (
                             <img
                               src={book.coverUrl}
                               alt={book.title}
-                              className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0 bg-[#EBE6DB]"
+                              className="w-10 h-14 rounded-[5px] object-cover flex-shrink-0"
+                              style={{ backgroundColor: isDark ? "#302820" : "#EBE6DB" }}
                               onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                             />
                           ) : (
                             <div
                               className="w-10 h-14 rounded-[5px] flex-shrink-0"
-                              style={{ backgroundColor: book.bookColor ?? "#EBE6DB" }}
+                              style={{ backgroundColor: book.bookColor ?? (isDark ? "#302820" : "#EBE6DB") }}
                             />
                           )}
                           <div className="flex-1 min-w-0">
-                            <p className="font-serif text-[14px] text-[#3D3D3D] truncate">{book.title}</p>
-                            <p className="font-sans font-light text-[8px] uppercase tracking-[0.08em] text-[#2A2A2A]/40 mb-1">{book.author}</p>
+                            <p className="font-serif text-[14px] truncate" style={bookTitle}>{book.title}</p>
+                            <p className="font-sans font-light text-[8px] uppercase tracking-[0.10em] mb-1" style={authorText}>{book.author}</p>
                             <div className="flex items-center gap-2">
                               {(book.marginCount ?? 0) > 0 && (
-                                <span className="font-sans font-light text-[8px] text-[#697962]">{book.marginCount} posts</span>
+                                <span className="font-sans font-light text-[8px]" style={{ color: "#697962" }}>{book.marginCount} posts</span>
                               )}
                               {book.publicationYear && (
                                 <>
-                                  <span className="text-[#AE8F7D]/25">·</span>
-                                  <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{book.publicationYear}</span>
+                                  <span style={{ color: "rgba(174,143,125,0.30)" }}>·</span>
+                                  <span className="font-sans font-light text-[8px]" style={metaText}>{book.publicationYear}</span>
                                 </>
                               )}
                             </div>
@@ -499,14 +537,13 @@ export function ExploreScreen() {
                     ))}
                   </div>
 
-                  {/* Page navigation */}
                   {totalPages > 1 && (
                     <div className="flex items-center justify-between">
                       <button
                         type="button"
                         onClick={() => setGenrePage((p) => Math.max(0, p - 1))}
                         disabled={safePage === 0}
-                        className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#AE8F7D] disabled:text-[#2A2A2A]/20 border border-[#AE8F7D]/25 disabled:border-[#2A2A2A]/10 rounded-full px-4 py-2 hover:bg-[#AE8F7D]/5 disabled:cursor-not-allowed transition-all"
+                        className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#AE8F7D] disabled:opacity-30 border border-[#AE8F7D]/25 disabled:border-[#AE8F7D]/10 rounded-full px-4 py-2 hover:bg-[#AE8F7D]/5 disabled:cursor-not-allowed transition-all"
                       >
                         ← anterior
                       </button>
@@ -528,7 +565,7 @@ export function ExploreScreen() {
                         type="button"
                         onClick={() => setGenrePage((p) => Math.min(totalPages - 1, p + 1))}
                         disabled={safePage === totalPages - 1}
-                        className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#AE8F7D] disabled:text-[#2A2A2A]/20 border border-[#AE8F7D]/25 disabled:border-[#2A2A2A]/10 rounded-full px-4 py-2 hover:bg-[#AE8F7D]/5 disabled:cursor-not-allowed transition-all"
+                        className="font-sans text-[9px] font-light tracking-[0.1em] uppercase text-[#AE8F7D] disabled:opacity-30 border border-[#AE8F7D]/25 disabled:border-[#AE8F7D]/10 rounded-full px-4 py-2 hover:bg-[#AE8F7D]/5 disabled:cursor-not-allowed transition-all"
                       >
                         próxima →
                       </button>
@@ -540,17 +577,18 @@ export function ExploreScreen() {
           );
         })()}
 
-        {/* Principais gêneros — browse mode */}
+        {/* ── Principais gêneros — browse mode ─────────────────────── */}
         {!query && !genreFocused && (
           <section data-testid="section-genres-trending">
             <div className="flex items-center gap-2 mb-3">
-              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              <span className="font-sans text-[8.5px] font-light tracking-[0.20em] uppercase" style={sectionLabel}>
                 Principais gêneros
               </span>
-              <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+              <div className="flex-1 h-px" style={{ backgroundColor: dividerColor }} />
               <button
                 onClick={() => setShowAllGenres((v) => !v)}
-                className="font-sans text-[8px] font-light text-[#2A2A2A]/40 hover:text-[#AE8F7D] transition-colors"
+                className="font-sans text-[8px] font-light hover:text-[#AE8F7D] transition-colors"
+                style={{ color: "var(--text-soft)" }}
               >
                 {showAllGenres ? "Ver menos" : "Ver todos"}
               </button>
@@ -561,26 +599,37 @@ export function ExploreScreen() {
                   type="button"
                   key={label}
                   onClick={() => selectGenre(label)}
-                  className="w-full flex items-center justify-between py-2.5 px-3 rounded-[10px] border border-transparent hover:bg-[#EBE6DB]/60 hover:border-[#AE8F7D]/10 transition-all text-left"
+                  className="w-full flex items-center justify-between py-3 px-3 rounded-[10px] border border-transparent transition-all text-left"
+                  style={{
+                    ["--hover-bg" as string]: isDark ? "rgba(174,143,125,0.07)" : "rgba(235,230,219,0.65)",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = isDark ? "rgba(174,143,125,0.07)" : "rgba(235,230,219,0.65)";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = isDark ? "rgba(174,143,125,0.15)" : "rgba(174,143,125,0.12)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = "transparent";
+                  }}
                 >
-                  <span className="font-sans font-light text-[13px] text-[#2A2A2A]/70">{label}</span>
-                  <span className="text-[#2A2A2A]/20 text-[10px]">›</span>
+                  <span className="font-sans font-light text-[13.5px]" style={{ color: "var(--text-primary)" }}>{label}</span>
+                  <span className="text-[12px]" style={{ color: "var(--text-soft)" }}>›</span>
                 </button>
               ))}
             </div>
           </section>
         )}
 
-        {/* Trending Margins */}
+        {/* ── Em alta esta semana ───────────────────────────────────── */}
         {!query && (
           <section data-testid="section-trending">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">
+              <span className="font-sans text-[8.5px] font-light tracking-[0.20em] uppercase" style={sectionLabel}>
                 Em alta esta semana
               </span>
-              <div className="flex-1 h-px bg-[#AE8F7D]/20" />
+              <div className="flex-1 h-px" style={{ backgroundColor: dividerColor }} />
             </div>
-            <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40 mb-3">
+            <p className="font-sans font-light text-[9px] mb-3" style={{ color: "var(--text-soft)" }}>
               Os posts mais reagidos da comunidade
             </p>
             <div className="space-y-3">

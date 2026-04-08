@@ -70,9 +70,10 @@
 /* LIGHT MODE */
 :root {
   /* ── Readability text tokens ─────────────────────────────────────────── */
-  --text-primary:   #2C2A27;  /* titles, quotes, body, usernames             */
-  --text-secondary: #5C5650;  /* authors, dates, labels, descriptions        */
-  --text-tertiary:  #8C837A;  /* placeholders, micro-metadata, light notes   */
+  --text-primary:   #24211E;  /* titles, quotes, body, usernames             */
+  --text-secondary: #534C45;  /* authors, dates, labels, descriptions        */
+  --text-tertiary:  #7B726A;  /* placeholders, micro-metadata, light notes   */
+  --text-soft:      #9A9088;  /* decorative, faintest but still visible      */
 
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
@@ -221,32 +222,53 @@
   --shadow-xl: 0px 12px 48px rgba(0,0,0,0.65);
   --shadow-2xl: 0px 24px 64px rgba(0,0,0,0.75);
 
-  /* Warm literary text tokens */
-  --text-primary:   #E8E2D6;
-  --text-secondary: #B7AAA0;
-  --text-tertiary:  #9C8E82;
+  /* Warm literary text tokens — strong contrast for real readability */
+  --text-primary:   #F3EDE3;
+  --text-secondary: #D0C3B6;
+  --text-tertiary:  #A99B8F;
+  --text-soft:      #8B7E73;
 }
 
-/* ── Dark mode: global overrides for hardcoded bg classes ───────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK MODE — global overrides
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Body */
 html.dark body {
   background-color: #1C1916;
-  background-image: radial-gradient(circle, rgba(90,70,55,0.12) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(90,70,55,0.10) 1px, transparent 1px);
   background-size: 5px 5px;
 }
 
-/* Screens and containers */
+/* Screens and main containers */
 html.dark .min-h-full { background-color: #1C1916; }
 html.dark [class*="bg-[#FAF8F3]"] { background-color: #1C1916 !important; }
 html.dark [class*="bg-[#EBE6DB]"] { background-color: #252119 !important; }
 
-/* Card surfaces */
-html.dark .mg-card-surface { background-color: #252119 !important; }
+/* Named card surface helpers */
+html.dark .mg-card-surface     { background-color: #252119 !important; }
 html.dark .mg-card-surface-alt { background-color: #2A2320 !important; }
+html.dark .mg-overlay-cream    { background: rgba(28,25,22,0.82) !important; }
 
-/* Overlay whites / creams on cards */
-html.dark .mg-overlay-cream { background: rgba(28,25,22,0.82) !important; }
+/* ── Text: ALL hardcoded dark/near-black classes → warm light tokens ─── */
+html.dark .text-\[\#24211E\],
+html.dark .text-\[\#2C2A27\],
+html.dark .text-\[\#2A2A2A\],
+html.dark .text-\[\#3D3D3D\],
+html.dark .text-\[\#3D3A36\],
+html.dark .text-\[\#454545\] {
+  color: var(--text-primary) !important;
+}
+html.dark .text-\[\#534C45\],
+html.dark .text-\[\#5C5650\] {
+  color: var(--text-secondary) !important;
+}
+html.dark .text-\[\#7B726A\],
+html.dark .text-\[\#8C837A\] {
+  color: var(--text-tertiary) !important;
+}
 
-/* Inputs and textareas — ensure readable text in dark mode */
+/* ── Inputs, textareas, search fields ───────────────────────────────── */
 html.dark input,
 html.dark textarea {
   color: var(--text-primary) !important;
@@ -254,18 +276,45 @@ html.dark textarea {
 }
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-  color: color-mix(in srgb, var(--text-tertiary) 45%, transparent) !important;
+  color: var(--text-soft) !important;
+  opacity: 1 !important;
 }
 
-/* Common hardcoded text colors that need to adapt */
-html.dark .text-\[\#2C2A27\],
-html.dark .text-\[\#2A2A2A\],
-html.dark .text-\[\#3D3A36\],
-html.dark .text-\[\#454545\] {
-  color: var(--text-primary) !important;
+/* Input/field container backgrounds (search bars, composer fields) */
+html.dark [class*="bg-[#EBE6DB]"]:has(input),
+html.dark [class*="bg-[#EBE6DB]"]:has(textarea) {
+  background-color: #201B17 !important;
+  border-color: rgba(255,255,255,0.10) !important;
 }
-html.dark .text-\[\#5C5650\] {
-  color: var(--text-secondary) !important;
+
+/* ── Buttons / chips — inactive state legibility ─────────────────────── */
+html.dark button,
+html.dark [role="button"] {
+  color: inherit;
+}
+
+/* Border-only chips that use near-black text */
+html.dark .text-\[\#454545\]\/55,
+html.dark .text-\[\#2A2A2A\]\/70,
+html.dark .text-\[\#2A2A2A\]\/60,
+html.dark .text-\[\#2A2A2A\]\/50,
+html.dark .text-\[\#2A2A2A\]\/40,
+html.dark .text-\[\#2A2A2A\]\/35,
+html.dark .text-\[\#2A2A2A\]\/30,
+html.dark .text-\[\#2A2A2A\]\/25,
+html.dark .text-\[\#2A2A2A\]\/20,
+html.dark .text-\[\#454545\]\/45,
+html.dark .text-\[\#454545\]\/40,
+html.dark .text-\[\#454545\]\/35,
+html.dark .text-\[\#454545\]\/30,
+html.dark .text-\[\#454545\]\/25 {
+  color: var(--text-tertiary) !important;
+}
+
+/* Section subtitle / soft descriptive text */
+html.dark .text-\[\#8C837A\],
+html.dark .text-\[\#9A9088\] {
+  color: var(--text-soft) !important;
 }
 
 @layer base {

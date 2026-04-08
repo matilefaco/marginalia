@@ -14,7 +14,7 @@ export function NewMarginScreen() {
   const replyToId = params.get("replyTo");
   const preBookId = params.get("bookId") ? parseInt(params.get("bookId")!) : null;
 
-  const { addMargin, progress, currentUser } = useApp();
+  const { addMargin, progress, currentUser, isDark } = useApp();
 
   const replyToMargin = replyToId ? MOCK_MARGINS.find((m) => m.id === parseInt(replyToId)) ?? null : null;
 
@@ -83,20 +83,29 @@ export function NewMarginScreen() {
     setTimeout(() => navigate("/"), 1800);
   };
 
+  const fieldBg = isDark ? "#201B17" : "#FAF8F3";
+  const fieldBorder = isDark ? "rgba(255,255,255,0.10)" : "rgba(174,143,125,0.22)";
+  const fieldStyle = {
+    backgroundColor: fieldBg,
+    border: `1px solid ${fieldBorder}`,
+    color: "var(--text-primary)",
+  };
+
   if (published) {
     return (
       <div
-        className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col items-center justify-center px-8 text-center"
+        className="min-h-[100dvh] flex flex-col items-center justify-center px-8 text-center"
         style={{
-          backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
+          backgroundColor: isDark ? "#1C1916" : "#FAF8F3",
+          backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.10) 1px, transparent 1px)",
           backgroundSize: "5px 5px",
         }}
       >
         <div className="w-16 h-16 rounded-full bg-[#697962]/15 flex items-center justify-center mb-6 animate-in zoom-in duration-500">
           <Check className="w-8 h-8 text-[#697962]" />
         </div>
-        <h2 className="font-serif italic text-[26px] text-[#454545] mb-2">Post publicado</h2>
-        <p className="font-sans font-light text-[11px] text-[#454545]/40 tracking-[0.08em]">
+        <h2 className="font-serif italic text-[26px] mb-2" style={{ color: "var(--text-primary)" }}>Post publicado</h2>
+        <p className="font-sans font-light text-[11px] tracking-[0.08em]" style={{ color: "var(--text-soft)" }}>
           Guardada no seu livro para sempre.
         </p>
       </div>
@@ -105,9 +114,10 @@ export function NewMarginScreen() {
 
   return (
     <div
-      className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col screen-enter overflow-x-hidden"
+      className="min-h-[100dvh] flex flex-col screen-enter overflow-x-hidden"
       style={{
-        backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
+        backgroundColor: isDark ? "#1C1916" : "#FAF8F3",
+        backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.10) 1px, transparent 1px)",
         backgroundSize: "5px 5px",
       }}
     >
@@ -157,10 +167,11 @@ export function NewMarginScreen() {
             value={excerpt}
             onChange={(e) => setExcerpt(e.target.value)}
             placeholder="Cole ou escreva o trecho que ficou com você…"
-            className="w-full font-serif italic text-[17px] text-[#2A2A2A] placeholder:text-[#454545]/20 bg-[#FAF8F3] border border-[#AE8F7D]/20 rounded-[12px] p-4 outline-none focus:border-[#AE8F7D]/50 transition-colors resize-none leading-[1.75] min-h-[120px]"
+            className="w-full font-serif italic text-[17px] rounded-[12px] p-4 outline-none focus:border-[#AE8F7D]/60 transition-colors resize-none leading-[1.75] min-h-[120px]"
+            style={fieldStyle}
             rows={4}
           />
-          <p className="font-sans font-light text-[8px] text-[#454545]/25 mt-1 text-right">
+          <p className="font-sans font-light text-[8px] mt-1 text-right" style={{ color: "var(--text-soft)" }}>
             {excerpt.length} caracteres · respeite direitos autorais
           </p>
         </div>
@@ -195,21 +206,31 @@ export function NewMarginScreen() {
                         key={b.id}
                         data-testid={`quick-select-book-${b.id}`}
                         onClick={() => { setBookId(b.id); setShowBookSearch(false); }}
-                        className="font-sans text-[9px] font-light px-3 py-1.5 rounded-full border border-[#454545]/10 text-[#454545]/55 hover:border-[#AE8F7D]/40 hover:text-[#454545] transition-all bg-[#FAF8F3]"
+                        className="font-sans text-[9px] font-light px-3 py-1.5 rounded-full transition-all"
+                        style={{
+                          backgroundColor: isDark ? "#252119" : "#FAF8F3",
+                          border: `1px solid ${isDark ? "rgba(255,255,255,0.10)" : "rgba(69,69,69,0.12)"}`,
+                          color: "var(--text-secondary)",
+                        }}
                       >
                         {b.title.length > 20 ? b.title.slice(0, 20) + "…" : b.title}
                       </button>
                     ))}
                   </div>
                 )}
-                <div className="flex items-center gap-2 bg-[#EBE6DB]/60 rounded-[10px] px-4 py-3 border border-[#AE8F7D]/10">
+                <div className="flex items-center gap-2 rounded-[10px] px-4 py-3"
+                  style={{
+                    backgroundColor: isDark ? "#201B17" : "rgba(235,230,219,0.65)",
+                    border: `1px solid ${isDark ? "rgba(255,255,255,0.10)" : "rgba(174,143,125,0.12)"}`,
+                  }}>
                   <input
                     data-testid="input-book-search"
                     value={bookSearch}
                     onChange={(e) => { setBookSearch(e.target.value); setShowBookSearch(true); }}
                     onFocus={() => setShowBookSearch(true)}
                     placeholder="Buscar outro livro..."
-                    className="flex-1 bg-transparent font-sans font-light text-[12px] text-[#454545] placeholder:text-[#454545]/30 outline-none"
+                    className="flex-1 bg-transparent font-sans font-light text-[12px] outline-none"
+                    style={{ color: "var(--text-primary)" }}
                   />
                 </div>
                 {showBookSearch && searchResults.length > 0 && (
@@ -219,11 +240,15 @@ export function NewMarginScreen() {
                         key={book.id}
                         data-testid={`select-book-${book.id}`}
                         onClick={() => { setBookId(book.id); setBookSearch(""); setShowBookSearch(false); }}
-                        className="w-full flex items-center gap-3 p-3 rounded-[8px] border border-[#454545]/8 text-left hover:border-[#AE8F7D]/30 transition-colors bg-[#FAF8F3]"
+                        className="w-full flex items-center gap-3 p-3 rounded-[8px] text-left transition-colors"
+                        style={{
+                          backgroundColor: isDark ? "#252119" : "#FAF8F3",
+                          border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(69,69,69,0.08)"}`,
+                        }}
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="font-serif text-[13px] text-[#454545] truncate">{book.title}</p>
-                          <p className="font-sans font-light text-[9px] text-[#454545]/40">{book.author}</p>
+                          <p className="font-serif text-[13px] truncate" style={{ color: "var(--text-primary)" }}>{book.title}</p>
+                          <p className="font-sans font-light text-[9px]" style={{ color: "var(--text-tertiary)" }}>{book.author}</p>
                         </div>
                       </button>
                     ))}
@@ -248,11 +273,11 @@ export function NewMarginScreen() {
                     key={type.id}
                     data-testid={`margin-type-${type.id}`}
                     onClick={() => setPostType(type.id)}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-full border font-sans text-[10px] font-light transition-all ${
-                      postType === type.id
-                        ? "bg-[#454545] text-[#FAF8F3] border-transparent"
-                        : "bg-transparent text-[#454545]/55 border-[#454545]/10 hover:border-[#AE8F7D]/30"
-                    }`}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-full font-sans text-[10px] font-light transition-all"
+                    style={postType === type.id
+                      ? { backgroundColor: isDark ? "#F3EDE3" : "#454545", color: isDark ? "#24211E" : "#FAF8F3", border: "1px solid transparent" }
+                      : { backgroundColor: "transparent", color: "var(--text-secondary)", border: `1px solid ${isDark ? "rgba(255,255,255,0.12)" : "rgba(69,69,69,0.12)"}` }
+                    }
                   >
                     <span className="text-[11px]">{type.icon}</span>
                     {type.label}
@@ -277,11 +302,11 @@ export function NewMarginScreen() {
                     key={rt.id}
                     data-testid={`ref-type-${rt.id}`}
                     onClick={() => setReferenceType(rt.id as typeof referenceType)}
-                    className={`py-2.5 rounded-[8px] border font-sans text-[9px] font-light tracking-[0.06em] transition-all ${
-                      referenceType === rt.id
-                        ? "bg-[#454545] text-[#FAF8F3] border-transparent"
-                        : "bg-transparent text-[#454545]/50 border-[#454545]/10 hover:border-[#AE8F7D]/30"
-                    }`}
+                    className="py-2.5 rounded-[8px] font-sans text-[9px] font-light tracking-[0.06em] transition-all"
+                    style={referenceType === rt.id
+                      ? { backgroundColor: isDark ? "#F3EDE3" : "#454545", color: isDark ? "#24211E" : "#FAF8F3", border: "1px solid transparent" }
+                      : { backgroundColor: "transparent", color: "var(--text-secondary)", border: `1px solid ${isDark ? "rgba(255,255,255,0.12)" : "rgba(69,69,69,0.12)"}` }
+                    }
                   >
                     {rt.label}
                   </button>
@@ -313,7 +338,8 @@ export function NewMarginScreen() {
                 value={commentary}
                 onChange={(e) => setCommentary(e.target.value)}
                 placeholder="O que esse trecho abriu em você?"
-                className="w-full font-serif text-[15px] text-[#2A2A2A]/80 placeholder:text-[#454545]/22 bg-[#FAF8F3] border border-[#AE8F7D]/15 rounded-[10px] p-4 outline-none focus:border-[#AE8F7D]/40 transition-colors resize-none leading-[1.75]"
+                className="w-full font-serif text-[15px] rounded-[10px] p-4 outline-none focus:border-[#AE8F7D]/50 transition-colors resize-none leading-[1.75]"
+                style={fieldStyle}
                 rows={3}
               />
             </div>
@@ -405,9 +431,15 @@ export function NewMarginScreen() {
       </div>
 
       {/* Sticky publish button */}
-      <div className="px-5 py-4 border-t border-[#AE8F7D]/10 bg-[#FAF8F3]/95 backdrop-blur-sm">
+      <div
+        className="px-5 py-4 backdrop-blur-sm"
+        style={{
+          borderTop: "1px solid rgba(174,143,125,0.12)",
+          backgroundColor: isDark ? "rgba(28,25,22,0.97)" : "rgba(250,248,243,0.97)",
+        }}
+      >
         {!canPublish && (
-          <p className="font-sans font-light text-[9px] text-center text-[#454545]/30 mb-2">
+          <p className="font-sans font-light text-[9px] text-center mb-2" style={{ color: "var(--text-soft)" }}>
             {excerpt.trim().length === 0
               ? "Digite o trecho que ficou com você"
               : !bookId
@@ -419,7 +451,11 @@ export function NewMarginScreen() {
           data-testid="button-publish-margin"
           onClick={handlePublish}
           disabled={!canPublish}
-          className="w-full bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-25 hover:bg-[#454545]/90 active:scale-[0.99] transition-all"
+          className="w-full font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-25 active:scale-[0.99] transition-all"
+          style={{
+            backgroundColor: isDark ? "#F3EDE3" : "#454545",
+            color: isDark ? "#24211E" : "#FAF8F3",
+          }}
         >
           {replyToMargin ? "Publicar resposta" : "Publicar post"}
         </button>

@@ -1,0 +1,371 @@
+:::writing{variant=“standard” id=“24857”}
+CORRIGIR LEGIBILIDADE DA TELA EXPLORAR + REVISAR CONTRASTE GLOBAL NO MODO PADRÃO E NO DARK MODE
+
+Quero uma correção profunda de legibilidade e contraste visual no app, com foco principal na tela Explorar, mas também revisando o sistema de cores de texto do produto inteiro.
+
+Pelas telas atuais, a leitura ainda está fraca no modo padrão e piora ainda mais no dark mode em vários pontos.
+
+Os principais problemas são:
+	•	na tela Explorar, os livros não estão suficientemente destacados;
+	•	as listas parecem apagadas, sem hierarquia visual;
+	•	vários textos pequenos estão claros demais sobre fundo claro;
+	•	no dark mode, alguns textos praticamente somem porque a cor da fonte não contrasta o suficiente;
+	•	a interface continua bonita, mas está cansativa e pouco clara para uso real.
+
+Quero corrigir isso sem perder a identidade sofisticada/editorial do Marginalia.
+
+==================================================
+OBJETIVO GERAL
+
+Quero que a leitura fique muito clara, muito fácil, muito confortável em:
+	•	modo padrão
+	•	dark mode
+
+E quero que a tela Explorar fique mais viva, mais legível e mais hierárquica, especialmente nas seções:
+	•	gêneros
+	•	listas de livros
+	•	blocos “em alta”
+	•	conteúdos protegidos
+	•	cards de descoberta
+
+==================================================
+PARTE 1 — REVISÃO DO SISTEMA DE TEXTO
+
+Quero trocar a lógica atual de contraste por um sistema mais forte e consistente.
+
+Criar/ajustar estes tokens de texto:
+
+Modo claro
+	•	--text-primary: #24211E
+	•	--text-secondary: #534C45
+	•	--text-tertiary: #7B726A
+	•	--text-soft: #9A9088
+
+Modo escuro
+	•	--text-primary-dark: #F3EDE3
+	•	--text-secondary-dark: #D0C3B6
+	•	--text-tertiary-dark: #A99B8F
+	•	--text-soft-dark: #8B7E73
+
+Esses tons precisam virar a base real de leitura do app.
+
+REGRA:
+	•	nenhum texto importante pode depender só de Heather ou Doeskin;
+	•	Heather e Doeskin ficam como acento visual, não como texto principal corrido;
+	•	nomes de livros, títulos e conteúdos precisam ter contraste muito maior.
+
+==================================================
+PARTE 2 — CORRIGIR O DARK MODE NOS TEXTOS
+
+No dark mode, vários textos estão fracos demais e quase invisíveis.
+
+Quero revisar especificamente:
+	•	labels
+	•	subtítulos
+	•	placeholders
+	•	autores
+	•	contadores
+	•	nomes de seção
+	•	microtextos
+	•	textos dentro de cards protegidos
+	•	textos dentro de campos e chips
+	•	textos de botões secundários
+
+REGRAS:
+	•	texto principal no dark mode deve sempre usar --text-primary-dark
+	•	texto secundário no dark mode deve usar --text-secondary-dark
+	•	texto terciário no dark mode deve usar --text-tertiary-dark
+	•	textos suaves ainda precisam continuar legíveis, nunca “sumidos”
+
+Muito importante:
+o dark mode não pode ficar com texto quase preto sobre fundo escuro, nem com marrom apagado demais.
+
+Quero contraste real.
+
+==================================================
+PARTE 3 — REESTRUTURAR A TELA EXPLORAR
+
+A tela Explorar ainda está fraca visualmente.
+Ela precisa ficar mais clara, mais organizada e mais interessante de ler.
+
+Quero que o Replit revise a tela Explorar com a seguinte lógica:
+
+==================================================
+3.1. USAR A HOME COMO REFERÊNCIA DE HIERARQUIA
+
+Quero que a tela Explorar siga mais o padrão visual da tela Início, que parece mais clara em hierarquia.
+
+Isso significa:
+	•	títulos de seção mais visíveis;
+	•	melhor contraste;
+	•	mais respiro;
+	•	cards mais definidos;
+	•	destaque maior para os livros.
+
+Não precisa copiar a Home exatamente, mas deve trazer a mesma clareza estrutural.
+
+==================================================
+3.2. LIVROS PRECISAM FICAR MAIS DESTACADOS
+
+Hoje os livros em Explorar estão “apagados”.
+
+Quero melhorar:
+	•	capa do livro mais visível;
+	•	nome do livro com mais peso e contraste;
+	•	nome do autor mais legível;
+	•	metadados com hierarquia melhor;
+	•	melhor separação entre um card e outro;
+	•	menos sensação de bloco lavado.
+
+Ajustes desejados:
+	•	título do livro → usar text-primary
+	•	autor → usar text-secondary
+	•	metadados → usar text-tertiary
+	•	aumentar um pouco o peso do título
+	•	aumentar contraste da capa em relação ao fundo
+	•	se necessário, aumentar levemente tamanho do título
+
+==================================================
+3.3. CARDS DE LIVRO NA EXPLORAR
+
+Quero que os cards de livro na Explorar tenham mais definição visual.
+
+Aplicar:
+	•	fundo ligeiramente mais destacado que o fundo da página
+	•	borda sutil mais clara no modo claro
+	•	borda sutil mais visível no dark mode
+	•	sombra muito suave, editorial, sem parecer app genérico
+	•	padding melhor distribuído
+
+Modo claro:
+	•	fundo do card: próximo de #F7F3EC ou #F4EFE8
+	•	borda: tom suave, mas visível
+
+Modo escuro:
+	•	fundo do card: próximo de #26211D ou #2A241F
+	•	borda: rgba(255,255,255,0.08) ou equivalente
+	•	texto precisa saltar visualmente
+
+==================================================
+3.4. TÍTULOS DE SEÇÃO DA EXPLORAR
+
+Exemplos:
+	•	“Principais gêneros”
+	•	“Em alta esta semana”
+	•	“Livros em filosofia”
+	•	etc.
+
+Esses títulos precisam ficar mais claros e legíveis.
+
+Quero:
+	•	manter a estética editorial
+	•	mas com contraste maior
+	•	e espaçamento melhor
+
+Sugestão:
+	•	usar Jost uppercase para labels de seção
+	•	aumentar tracking com moderação
+	•	usar text-secondary no claro
+	•	usar text-secondary-dark no dark
+	•	linhas divisórias mais discretas que não sumam
+
+==================================================
+3.5. ESTADOS PROTEGIDOS
+
+Na Explorar, os cards protegidos ainda estão visualmente fracos.
+
+Quero que o conteúdo protegido tenha:
+	•	estrutura clara
+	•	mensagem legível
+	•	CTA bem visível
+	•	distinção clara entre:
+	•	conteúdo ocultado
+	•	livro relacionado
+	•	ação disponível
+
+Os botões:
+	•	“Adicionar à biblioteca”
+	•	“Ver mesmo assim”
+
+precisam ter contraste e legibilidade melhores.
+
+==================================================
+PARTE 4 — MELHORAR O MODO PADRÃO TAMBÉM
+
+Não é só dark mode.
+
+No modo padrão, vários textos ainda estão claros demais.
+Quero reforçar o contraste no modo claro sem perder delicadeza.
+
+REGRA:
+	•	texto importante: mais escuro
+	•	texto funcional: estável
+	•	texto secundário: ainda legível
+	•	texto decorativo: suave, mas nunca invisível
+
+Revisar:
+	•	explorar
+	•	feed
+	•	páginas de livro
+	•	cards protegidos
+	•	perfil
+	•	comentários
+	•	composer
+	•	listas de gênero
+
+==================================================
+PARTE 5 — AJUSTAR CAMPOS E INPUTS NO DARK MODE
+
+Na imagem da tela de “Criar Post”, o dark mode está com campos difíceis de ler.
+
+Quero revisar:
+	•	campo de trecho
+	•	campo de busca de livro
+	•	campo de comentário
+	•	labels do formulário
+	•	chips de tipo de post
+	•	referência
+	•	placeholders
+	•	contadores
+
+No dark mode, aplicar:
+	•	fundo dos campos mais distinto do fundo geral
+	•	borda visível
+	•	placeholder legível
+	•	texto digitado com contraste alto
+	•	chips inativos com contraste melhor
+	•	chips ativos bem definidos
+
+Sugestão:
+	•	fundo do input: #201B17
+	•	borda: rgba(255,255,255,0.10)
+	•	texto digitado: --text-primary-dark
+	•	placeholder: --text-tertiary-dark
+
+==================================================
+PARTE 6 — AJUSTE DE BOTÕES E CHIPS
+
+Quero revisar botões e chips no claro e no dark.
+
+Especialmente:
+	•	tabs
+	•	filtros
+	•	botões de ação secundária
+	•	chips de tipo de post
+	•	chips de categoria
+	•	botão “ver mesmo assim”
+	•	botão “adicionar à biblioteca”
+
+No dark mode, alguns chips e botões estão ficando sem leitura boa.
+
+Regras:
+	•	texto dentro de botão/chip precisa sempre contrastar bem com o fundo
+	•	se fundo escuro → texto claro
+	•	se fundo claro → texto escuro
+	•	estado ativo deve ser imediatamente reconhecível
+	•	estado inativo não pode parecer quebrado ou invisível
+
+==================================================
+PARTE 7 — PROPOSTA ESPECÍFICA PARA A TELA EXPLORAR
+
+Quero estes ajustes visuais concretos:
+
+A. Cards de livro mais elegantes
+	•	título mais escuro
+	•	autor mais estável
+	•	metadados mais discretos, mas visíveis
+	•	capa melhor integrada
+	•	altura dos cards ligeiramente mais consistente
+
+B. Seções mais limpas
+	•	melhor espaço entre títulos e conteúdo
+	•	linhas divisórias menos dominantes
+	•	evitar a sensação de “lavado”
+
+C. Hierarquia mais clara
+
+Dentro de cada card:
+	1.	título do livro
+	2.	autor
+	3.	metadado pequeno
+	4.	ação ou estado
+
+D. Explorar mais “viva”
+
+A tela precisa parecer uma curadoria ativa, não só uma lista apagada.
+
+Se achar adequado, pode:
+	•	destacar sutilmente o primeiro item da seção
+	•	usar micro-badges melhores
+	•	dar mais peso aos livros em alta
+	•	usar mini-destaque visual no card principal da seção
+
+Mas sem poluir.
+
+==================================================
+PARTE 8 — REVISÃO GERAL DO CONTRASTE
+
+Quero uma revisão global de contraste em todos os lugares onde o texto esteja fraco.
+
+Buscar problemas especialmente em:
+	•	textos sobre fundos tintados
+	•	textos em Heather/Doeskin
+	•	labels pequenos
+	•	placeholders
+	•	metadados
+	•	contadores
+	•	chips
+	•	textos em dark mode
+	•	textos dentro de blocos protegidos
+	•	campos do composer
+
+Objetivo:
+Nenhum texto deve parecer “sumido”.
+
+==================================================
+PARTE 9 — TESTES OBRIGATÓRIOS
+
+Depois de aplicar tudo, testar:
+
+Modo claro
+	•	Explorar
+	•	Criar Post
+	•	Feed
+	•	Página de livro
+	•	Perfil
+	•	Preferências
+
+Dark mode
+	•	Explorar
+	•	Criar Post
+	•	Feed
+	•	Página de livro
+	•	Perfil
+	•	Preferências
+	•	cards protegidos
+	•	inputs
+	•	chips
+
+Verificar:
+	•	legibilidade imediata
+	•	contraste real
+	•	hierarquia clara
+	•	títulos de livro bem visíveis
+	•	nenhum texto “apagado”
+
+==================================================
+PARTE 10 — RESULTADO FINAL ESPERADO
+
+Quero que, depois dessa revisão:
+	•	a tela Explorar fique muito mais clara de ler;
+	•	os livros fiquem mais destacados;
+	•	o modo padrão fique mais confortável;
+	•	o dark mode finalmente funcione com texto realmente legível;
+	•	nenhum texto importante fique apagado;
+	•	o app continue sofisticado, editorial e bonito;
+	•	mas muito mais usável.
+
+IMPORTANTE:
+Não quero perder a identidade do Marginalia.
+Quero apenas corrigir o contraste, a hierarquia e a legibilidade com muito mais rigor.
+:::
