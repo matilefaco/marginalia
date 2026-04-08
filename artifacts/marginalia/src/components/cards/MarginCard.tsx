@@ -11,6 +11,10 @@ import { ShareCardModal } from "./ShareCardModal";
 import { UserIdentity } from "@/components/UserIdentity";
 import { AvatarIcon } from "@/components/AvatarIcon";
 
+const DARK_SURFACE = "#252119";
+const DARK_SURFACE_ALT = "#2A2320";
+const DARK_OVERLAY = "rgba(28,25,22,0.85)";
+
 const USER_USERNAME_MAP: Record<string, string> = Object.fromEntries(
   MOCK_USERS.map((u) => [u.id, u.username])
 );
@@ -275,7 +279,7 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
   );
 
   return (
-    <div className="pt-3 border-t border-[#454545]/6 mt-4 space-y-2.5">
+    <div className="pt-3 mt-4 space-y-2.5" style={{ borderTop: "1px solid rgba(174,143,125,0.10)" }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
           <UserIdentity
@@ -310,8 +314,11 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
 
 /* ─── CARD: Citação favorita ─── */
 function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
+  const { isDark } = useApp();
   const ref = formatReference(margin);
   const a = accent(margin.postType);
+  const baseBg = isDark ? DARK_SURFACE : "#EBE6DB4D";
+  const overlay = isDark ? DARK_OVERLAY : "rgba(250,248,243,0.76)";
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
@@ -319,11 +326,11 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
       style={{
         border: "1px solid rgba(174,143,125,0.16)",
         borderLeft: `3px solid ${a.border}AA`,
-        backgroundColor: bookColor ? "transparent" : "#EBE6DB4D",
+        backgroundColor: bookColor ? "transparent" : baseBg,
       }}
     >
-      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.12 }} />}
-      {bookColor && <div className="absolute inset-0 bg-[rgba(250,248,243,0.76)]" />}
+      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.08 }} />}
+      {bookColor && <div className="absolute inset-0" style={{ background: overlay }} />}
       <div className="relative z-10">
       <div className="flex items-center justify-between mb-3.5">
         <span className="font-sans text-[7.5px] font-light tracking-[0.22em] uppercase" style={{ color: a.label }}>
@@ -332,12 +339,12 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <span className="font-sans font-light text-[7px] text-[#8C837A]">{timeAgo(margin.createdAt)}</span>
       </div>
       <div className="text-center py-4 mb-3.5">
-        <p className="font-serif italic text-[18px] text-[#2C2A27] leading-[1.75]">
+        <p className="font-serif italic text-[18px] leading-[1.75]" style={{ color: "var(--text-primary)" }}>
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
       {showBook && (
-        <p className="font-sans font-light text-[8.5px] tracking-[0.1em] uppercase text-[#8C837A] text-center mb-4">
+        <p className="font-sans font-light text-[8.5px] tracking-[0.1em] uppercase text-center mb-4" style={{ color: "var(--text-tertiary)" }}>
           {margin.bookTitle} {ref && `· ${ref}`}
         </p>
       )}
@@ -354,8 +361,12 @@ function QuoteCard({ margin, showBook, linkToThread, bookColor }: Props) {
 
 /* ─── CARD: Pergunta ─── */
 function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
+  const { isDark } = useApp();
   const ref = formatReference(margin);
   const a = accent(margin.postType);
+  const baseBg = isDark ? DARK_SURFACE : "#FAF8F3";
+  const overlay = isDark ? DARK_OVERLAY : "rgba(250,248,243,0.80)";
+  const innerBg = isDark ? "rgba(37,33,25,0.60)" : "rgba(250,248,243,0.80)";
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
@@ -363,25 +374,25 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
       style={{
         border: "1px dashed rgba(189,171,156,0.35)",
         borderLeft: `3px solid ${a.border}AA`,
-        backgroundColor: bookColor ? "transparent" : "#FAF8F3",
+        backgroundColor: bookColor ? "transparent" : baseBg,
       }}
     >
-      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.10 }} />}
-      {bookColor && <div className="absolute inset-0 bg-[rgba(250,248,243,0.80)]" />}
+      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.08 }} />}
+      {bookColor && <div className="absolute inset-0" style={{ background: overlay }} />}
       <div className="relative z-10">
       <div className="flex items-center gap-2 mb-3.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase" style={{ color: a.label }}>❓ Pergunta</span>
-        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#5C5650] truncate max-w-[100px]">{margin.bookTitle}</span></>}
+        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#5C5650] dark:text-[#B7AAA0] truncate max-w-[100px]">{margin.bookTitle}</span></>}
         {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#8C837A]">{ref}</span></>}
         <span className="ml-auto font-sans text-[7px] font-light text-[#8C837A]">{timeAgo(margin.createdAt)}</span>
       </div>
-      <div className="bg-[#FAF8F3]/80 pl-4 mb-4" style={{ borderLeft: `2px solid ${a.border}88` }}>
-        <p className="font-serif italic text-[15px] text-[#2C2A27] leading-[1.7]">
+      <div className="pl-4 mb-4" style={{ borderLeft: `2px solid ${a.border}88`, background: innerBg }}>
+        <p className="font-serif italic text-[15px] leading-[1.7]" style={{ color: "var(--text-primary)" }}>
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
       {margin.commentary && (
-        <p className="font-sans text-[14px] text-[#5C5650] leading-[1.7] mb-4">{margin.commentary}</p>
+        <p className="font-sans text-[14px] leading-[1.7] mb-4" style={{ color: "var(--text-secondary)" }}>{margin.commentary}</p>
       )}
       <div className="mb-3">
         <EmojiReactionBar margin={margin} />
@@ -396,8 +407,11 @@ function QuestionCard({ margin, showBook, linkToThread, bookColor }: Props) {
 
 /* ─── CARD: Teoria ─── */
 function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
+  const { isDark } = useApp();
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
   const a = accent(margin.postType);
+  const baseBg = isDark ? DARK_SURFACE : "#FAF8F3";
+  const overlay = isDark ? DARK_OVERLAY : "rgba(250,248,243,0.80)";
   const content = (
     <div
       data-testid={`card-margin-${margin.id}`}
@@ -405,24 +419,24 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
       style={{
         border: "1px solid rgba(107,122,107,0.18)",
         borderLeft: `3px solid ${a.border}CC`,
-        backgroundColor: bookColor ? "transparent" : "#FAF8F3",
+        backgroundColor: bookColor ? "transparent" : baseBg,
       }}
     >
-      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.10 }} />}
-      {bookColor && <div className="absolute inset-0 bg-[rgba(250,248,243,0.80)]" />}
+      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.08 }} />}
+      {bookColor && <div className="absolute inset-0" style={{ background: overlay }} />}
       <div className="relative z-10">
       <div className="flex items-center gap-2 mb-3.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase" style={{ color: a.label }}>🔭 Teoria</span>
-        {showBook && <><span style={{ color: `${a.border}40` }}>·</span><span className="font-sans text-[8px] font-light text-[#5C5650] truncate max-w-[90px]">{margin.bookTitle}</span></>}
-        <span className="ml-auto font-sans text-[7px] font-light text-[#8C837A]">{timeAgo(margin.createdAt)}</span>
+        {showBook && <><span style={{ color: `${a.border}40` }}>·</span><span className="font-sans text-[8px] font-light truncate max-w-[90px]" style={{ color: "var(--text-secondary)" }}>{margin.bookTitle}</span></>}
+        <span className="ml-auto font-sans text-[7px] font-light" style={{ color: "var(--text-tertiary)" }}>{timeAgo(margin.createdAt)}</span>
       </div>
       <div className="pl-3 mb-4" style={{ borderLeft: `2px solid ${a.border}50` }}>
-        <p className="font-serif italic text-[14px] text-[#5C5650] leading-[1.7] line-clamp-3">
+        <p className="font-serif italic text-[14px] leading-[1.7] line-clamp-3" style={{ color: "var(--text-secondary)" }}>
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
       {margin.commentary && (
-        <p className="font-sans text-[14px] text-[#2C2A27] leading-[1.7] mb-4">{margin.commentary}</p>
+        <p className="font-sans text-[14px] leading-[1.7] mb-4" style={{ color: "var(--text-primary)" }}>{margin.commentary}</p>
       )}
       <div className="mb-3">
         <EmojiReactionBar margin={margin} />
@@ -440,10 +454,13 @@ function TheoryCard({ margin, showBook, linkToThread, bookColor }: Props) {
 
 /* ─── CARD: Standard (insight / reaction / critique / symbolic / personal) ─── */
 function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
+  const { isDark } = useApp();
   const totalReactions = Object.values(margin.reactions as Record<string, number>).reduce((a, b) => a + b, 0);
   const ref = formatReference(margin);
   const typeIcon = MARGIN_TYPES.find((t) => t.id === margin.postType)?.icon || "";
   const a = accent(margin.postType);
+  const baseBg = isDark ? DARK_SURFACE : "#FAF8F3";
+  const overlay = isDark ? DARK_OVERLAY : "rgba(250,248,243,0.80)";
 
   const content = (
     <div
@@ -452,25 +469,25 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
       style={{
         border: "1px solid rgba(174,143,125,0.14)",
         borderLeft: `3px solid ${a.border}99`,
-        backgroundColor: bookColor ? "transparent" : "#FAF8F3",
+        backgroundColor: bookColor ? "transparent" : baseBg,
       }}
     >
-      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.10 }} />}
-      {bookColor && <div className="absolute inset-0 bg-[rgba(250,248,243,0.80)]" />}
+      {bookColor && <div className="absolute inset-0" style={{ background: bookColor, opacity: 0.08 }} />}
+      {bookColor && <div className="absolute inset-0" style={{ background: overlay }} />}
       <div className="relative z-10">
       <div className="flex items-center gap-2 mb-3.5">
         <span className="font-sans text-[8px] font-light tracking-[0.18em] uppercase flex items-center gap-1" style={{ color: a.label }}>
           <span>{typeIcon}</span>
           <span>{marginTypeLabel(margin.postType)}</span>
         </span>
-        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#8C837A]">{ref}</span></>}
-        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light text-[#5C5650] truncate max-w-[100px]">{margin.bookTitle}</span></>}
-        <span className="ml-auto font-sans text-[7px] font-light text-[#8C837A] flex-shrink-0">{timeAgo(margin.createdAt)}</span>
+        {ref && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light" style={{ color: "var(--text-tertiary)" }}>{ref}</span></>}
+        {showBook && <><span className="text-[#AE8F7D]/25">·</span><span className="font-sans text-[8px] font-light truncate max-w-[100px]" style={{ color: "var(--text-secondary)" }}>{margin.bookTitle}</span></>}
+        <span className="ml-auto font-sans text-[7px] font-light flex-shrink-0" style={{ color: "var(--text-tertiary)" }}>{timeAgo(margin.createdAt)}</span>
       </div>
 
       {/* Quote block */}
       <div className="pl-4 mb-3" style={{ borderLeft: `2px solid ${a.border}66` }}>
-        <p className="font-serif italic text-[17px] text-[#2C2A27] leading-[1.7]">
+        <p className="font-serif italic text-[17px] leading-[1.7]" style={{ color: "var(--text-primary)" }}>
           &ldquo;{margin.excerpt}&rdquo;
         </p>
       </div>
@@ -478,8 +495,8 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
       {/* Commentary — visually separated from the quote */}
       {margin.commentary && (
         <>
-          <div className="h-px bg-[#EBE6DB]/80 mb-3" />
-          <p className="font-sans text-[14px] text-[#3D3A36] leading-[1.65] mb-4">
+          <div className="h-px mb-3" style={{ backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "#EBE6DB" }} />
+          <p className="font-sans text-[14px] leading-[1.65] mb-4" style={{ color: "var(--text-secondary)" }}>
             {margin.commentary}
           </p>
         </>
@@ -489,7 +506,7 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
         <EmojiReactionBar margin={margin} />
       </div>
       {totalReactions > 0 && (
-        <p className="font-sans font-light text-[8px] text-[#8C837A] mb-1">
+        <p className="font-sans font-light text-[8px] mb-1" style={{ color: "var(--text-tertiary)" }}>
           {totalReactions} {totalReactions === 1 ? "leitor respondeu" : "leitores responderam"} isso
         </p>
       )}

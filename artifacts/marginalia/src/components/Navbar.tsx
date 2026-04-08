@@ -17,7 +17,7 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FAF8F3]/95 backdrop-blur-md border-t border-[#AE8F7D]/15">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FAF8F3]/95 dark:bg-[#1C1916]/95 backdrop-blur-md border-t border-[#AE8F7D]/15 dark:border-[#AE8F7D]/8">
       <div className="flex items-center justify-around h-16 max-w-md mx-auto px-1">
         {navItems.map((item) => {
           const isActive = location === item.path;
@@ -29,11 +29,11 @@ export function Navbar() {
               href={item.path}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full transition-colors duration-300",
-                isActive ? "text-[#AE8F7D]" : "text-[#454545]/30",
+                isActive ? "text-[#AE8F7D]" : "text-[#454545]/30 dark:text-[#E8E2D6]/30",
               )}
             >
               {isCenter ? (
-                <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[#454545] shadow-lg mt-[-20px] border-4 border-[#FAF8F3] hover:bg-[#454545]/90 transition-colors">
+                <div className="flex items-center justify-center w-14 h-14 rounded-full bg-[#454545] dark:bg-[#AE8F7D] shadow-lg mt-[-20px] border-4 border-[#FAF8F3] dark:border-[#1C1916] hover:opacity-90 transition-opacity">
                   <Plus className="w-6 h-6 text-[#FAF8F3]" strokeWidth={1.5} />
                 </div>
               ) : (

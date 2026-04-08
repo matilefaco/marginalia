@@ -1,0 +1,411 @@
+:::writing{variant=“standard” id=“63824”}
+MARGINALIA — CHECKLIST DE IMPLEMENTAÇÃO POR PRIORIDADE (VERSÃO MANDATÓRIA)
+
+Implementar as mudanças abaixo no Marginalia com foco em:
+	•	correção do dark mode;
+	•	melhoria radical do fluxo de postagem;
+	•	melhoria de legibilidade;
+	•	consistência real dos dados;
+	•	qualidade intelectual da comunidade;
+	•	manutenção da identidade editorial do produto.
+
+Não tratar isso como sugestão visual solta.
+Tratar como plano de implementação de produto.
+
+==================================================
+FASE 1 — CORREÇÕES CRÍTICAS IMEDIATAS
+
+==================================================
+	1.	CORRIGIR O DARK MODE DE VERDADE
+==================================================
+
+PROBLEMA:
+O dark mode está bugado.
+Hoje só algumas bordas ou detalhes escurecem, mas o fundo da página inteira continua claro ou inconsistente.
+
+AÇÃO OBRIGATÓRIA:
+Revisar o sistema global de tema e fazer o dark mode afetar a aplicação inteira.
+
+APLICAR EM:
+	•	html
+	•	body
+	•	container raiz da app
+	•	feed
+	•	cards
+	•	páginas de livro
+	•	perfil
+	•	comentários
+	•	onboarding
+	•	preferências
+	•	modais / bottom sheets
+	•	inputs
+	•	composer de post
+
+PALETA DO DARK MODE:
+	•	background: #1C1916
+	•	surface/card: #252119
+	•	texto primário: #E8E2D6
+	•	texto secundário: #9C8E82
+	•	heather ajustado: #C4A090
+	•	old vine ajustado: #8A9E82
+
+REGRAS:
+	•	não usar dark mode azulado;
+	•	manter clima quente e literário;
+	•	garantir contraste real.
+
+REVISAR:
+	•	classe dark ou data-theme="dark"
+	•	variáveis CSS globais
+	•	componentes com cores hardcoded
+	•	estados hover/active/focus no dark
+
+RESULTADO ESPERADO:
+Toda a aplicação fica realmente escura, não só as bordas.
+
+==================================================
+2. REVISAR E CORRIGIR CONTAGENS FALSAS
+
+PROBLEMA:
+Livros mostram “X posts”, mas ao abrir têm zero.
+Posts mostram “X respostas”, mas não existe nenhuma resposta real.
+
+AÇÃO OBRIGATÓRIA:
+Garantir que toda contagem do app seja 100% precisa e verdadeira.
+
+REVISAR:
+	•	contagem de posts por livro
+	•	contagem de respostas/comentários por post
+	•	contagem de conteúdos protegidos
+	•	contagem em feed, explorar, biblioteca e página do livro
+
+REGRA:
+Se mostra “6 posts”, precisam existir 6 posts reais daquele livro.
+Se mostra “3 respostas”, precisam existir 3 respostas reais daquele post.
+
+NÃO ACEITAR:
+	•	números decorativos
+	•	mocks sem correspondência
+	•	discrepância entre card e página interna
+
+==================================================
+3. CONTEÚDOS PROTEGIDOS NÃO PODEM GERAR ESTADO VAZIO FALSO
+
+PROBLEMA:
+Quando existem conteúdos protegidos, a tela ainda mostra:
+“Nenhum post nesta categoria ainda”.
+
+AÇÃO:
+Corrigir a lógica do estado vazio.
+
+REGRA:
+Essa mensagem só pode aparecer se:
+	•	totalPosts === 0
+	•	e protectedPosts === 0
+
+Se existir conteúdo protegido:
+	•	não mostrar estado vazio
+	•	mostrar conteúdos protegidos ou bloco correspondente
+
+==================================================
+FASE 2 — NOVO FLUXO DE POSTAGEM
+
+==================================================
+4. SUBSTITUIR O WIZARD DE MÚLTIPLOS PASSOS POR UM COMPOSITOR UNIFICADO
+
+PROBLEMA:
+O fluxo atual de criação de post com várias etapas gera fricção cognitiva.
+
+AÇÃO:
+Criar uma única tela de postagem, rolável, com seções organizadas.
+
+ARQUIVO PRINCIPAL:
+	•	NovaMargem.tsx ou equivalente
+
+NOVA ESTRUTURA:
+	1.	livro selecionado
+	2.	campo de trecho
+	3.	referência (página / % / capítulo)
+	4.	tipo de post
+	5.	comentário/reflexão
+	6.	spoiler e visibilidade colapsados
+	7.	botão publicar
+
+REGRAS:
+	•	tudo em uma única tela;
+	•	sem sensação de wizard;
+	•	spoiler e visibilidade fechados por padrão;
+	•	botão publicar só habilita com:
+	•	livro
+	•	trecho
+	•	tipo
+
+PLACEHOLDERS DINÂMICOS:
+	•	Insight → “Que trecho desencadeou esse pensamento?”
+	•	Reação → “O que exatamente te atingiu?”
+	•	Teoria → “Em que trecho isso está baseado?”
+	•	Destaque → “Que trecho você quer guardar?”
+
+COMENTÁRIO:
+	•	soft cap de 800;
+	•	contador discreto;
+	•	sem aparência de bloqueio agressivo
+
+RASCUNHO:
+	•	auto-save a cada 3s
+	•	ao voltar, oferecer retomada do rascunho
+
+==================================================
+FASE 3 — MELHORIAS DE LEITURA E LEGIBILIDADE
+
+==================================================
+5. APLICAR NOVA HIERARQUIA TIPOGRÁFICA
+
+Criar e usar tokens:
+	•	--text-primary: #2C2A27
+	•	--text-secondary: #5C5650
+	•	--text-tertiary: #8C837A
+
+No dark:
+	•	--text-primary-dark: #E8E2D6
+	•	--text-secondary-dark: #B7AAA0
+	•	--text-tertiary-dark: #9C8E82
+
+REGRA DE USO:
+	•	Cormorant Garamond:
+	•	apenas citações
+	•	títulos editoriais
+	•	nome do app
+	•	momentos de impacto
+	•	Jost:
+	•	UI inteira
+	•	texto funcional
+	•	comentários
+	•	descrições
+	•	metadados
+
+LINE-HEIGHT:
+	•	citação: 1.65
+	•	comentário/post: 1.65–1.75
+	•	resposta: mínimo 1.6
+
+==================================================
+6. REVISAR O CARD DE POST (MarginCard)
+
+AÇÃO:
+Melhorar hierarquia visual do card principal.
+
+ESTRUTURA:
+	•	tipo + livro → Jost 10px uppercase
+	•	trecho → Cormorant 17px italic, 1.7
+	•	referência → Jost 11px
+	•	comentário → Jost 14px, 1.65
+	•	username + tempo → Jost 12px
+
+IMPLEMENTAR:
+	•	linha horizontal fina entre trecho e comentário
+	•	isso separa claramente:
+	•	o que o autor escreveu
+	•	do que o leitor pensou
+
+==================================================
+7. CORRIGIR O TINT DE COR DO LIVRO NO FUNDO DOS CARDS
+
+PROBLEMA:
+Quando o livro tem cor forte, o fundo atrapalha a legibilidade.
+
+AÇÃO:
+Usar a cor do livro apenas como atmosfera.
+
+REGRA:
+	•	opacidade máxima ~8%
+	•	misturar com Albescent
+	•	nunca deixar o texto competir com o fundo
+
+Implementar overlay claro e conteúdo em camada superior legível.
+
+==================================================
+8. MELHORAR O THREADSCREEN
+
+AÇÃO:
+Melhorar leitura de respostas.
+
+IMPLEMENTAR:
+	•	padding vertical maior: 20px
+	•	avatar + nome inline com a primeira linha
+	•	botão “ver mais” em respostas longas
+	•	trecho original fixado de forma compacta ao rolar
+	•	modo foco:
+	•	esconder reações e metadados
+	•	deixar só texto + respostas
+
+==================================================
+FASE 4 — CONTEÚDO DA COMUNIDADE
+
+==================================================
+9. SUBSTITUIR MOCK DATA GENÉRICO POR CONTEÚDO REAL
+
+AÇÃO:
+Inserir os posts descritos no documento como dados reais de exemplo.
+
+INCLUIR:
+	•	Dom Casmurro
+	•	O Processo
+	•	Cem Anos de Solidão
+	•	A Hora da Estrela
+	•	1984
+	•	reflexões livres sobre leitura
+
+REGRAS:
+	•	associar corretamente ao livro certo
+	•	associar corretamente ao tipo certo
+	•	garantir que respostas/reações batam com a contagem exibida
+	•	não deixar thread vazia se o número mostrar respostas
+
+==================================================
+10. AUMENTAR SIGNIFICATIVAMENTE OS POSTS REAIS DA COMUNIDADE
+
+AÇÃO:
+Popular o app com muito mais posts reais.
+
+METAS:
+	•	livros principais: 8 a 20 posts reais por livro
+	•	livros secundários: 4 a 8
+	•	livros menores: 2 a 4
+
+VARIAR TIPOS:
+	•	insight
+	•	interpretação
+	•	crítica
+	•	pergunta
+	•	reação
+	•	citação favorita
+	•	leitura simbólica
+	•	conexão pessoal
+
+VARIAR TONALIDADE:
+	•	emocional
+	•	reflexivo
+	•	analítico
+	•	poético
+	•	curto
+	•	médio
+	•	denso
+
+==================================================
+FASE 5 — BACKLOG PRIORIZADO DE DIFERENCIAÇÃO
+
+==================================================
+11. ALTA PRIORIDADE
+
+11.1. Modo noturno funcional
+11.2. Progresso visual no card
+	•	mini barra de progresso abaixo do nome do livro
+
+11.3. “Lendo junto”
+	•	exibir na página do livro:
+“3 pessoas lendo neste ponto agora.”
+
+==================================================
+12. MÉDIA PRIORIDADE
+
+12.1. Seção editorial:
+“Trechos que estão fazendo leitores parar”
+	•	mostrar trecho
+	•	mostrar livro
+	•	mostrar tempo médio de pausa
+
+12.2. Reação silenciosa
+	•	reação privada ao autor
+	•	o autor vê o número, mas não quem reagiu
+
+12.3. Primeira anotação do livro
+	•	badge:
+“Primeiro post registrado neste livro”
+
+12.4. Modo foco do ThreadScreen
+	•	conforme descrito acima
+
+==================================================
+13. LONGO PRAZO
+
+13.1. DNA de leitura animado
+13.2. Wrapped com “Seu trecho do ano”
+13.3. Biblioteca privada de trechos favoritos
+
+==================================================
+FASE 6 — REVISÃO DE LINGUAGEM
+
+==================================================
+14. REVISAR GLOBALMENTE “MARGEM / ECO / ECOS”
+
+AÇÃO:
+Buscar e revisar em todo o projeto qualquer ocorrência de:
+	•	margem
+	•	margens
+	•	eco
+	•	ecos
+	•	ecoar
+	•	derivados
+
+SUBSTITUIR POR:
+	•	post
+	•	posts
+	•	resposta
+	•	respostas
+	•	conversa
+	•	comentário
+	•	destaque
+	•	reflexão
+	•	discussão
+
+APLICAR EM:
+	•	feed
+	•	detalhe de post
+	•	perfil
+	•	página de livro
+	•	filtros
+	•	estatísticas
+	•	botões
+	•	empty states
+	•	onboarding
+	•	compartilhamento
+
+==================================================
+FASE 7 — TESTES FINAIS OBRIGATÓRIOS
+
+==================================================
+15. TESTAR TUDO
+
+TESTAR:
+	1.	dark mode em todas as telas
+	2.	compositor unificado de post
+	3.	auto-save de rascunho
+	4.	legibilidade dos cards
+	5.	separação entre trecho e comentário
+	6.	contagem de posts por livro
+	7.	contagem de respostas por post
+	8.	thread real com respostas reais
+	9.	posts protegidos sem estado vazio falso
+	10.	feed, biblioteca, explorar e livro sincronizados
+	11.	mock data novo aparecendo corretamente
+	12.	mobile first
+	13.	nenhum termo residual confuso
+
+==================================================
+RESULTADO FINAL ESPERADO
+
+Quero que o Marginalia fique:
+	•	mais fluido para postar
+	•	mais legível
+	•	mais coerente
+	•	mais confiável
+	•	intelectualmente mais forte
+	•	com comunidade que pareça viva de verdade
+	•	com dark mode real e bonito
+	•	sem perder a identidade editorial
+
+IMPORTANTE:
+Executar sem quebrar o app.
+Se precisar fazer em blocos, mantenha a consistência estrutural e visual em cada etapa.
+:::

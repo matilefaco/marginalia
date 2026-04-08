@@ -1,0 +1,463 @@
+MARGINALIA — IMPLEMENTAÇÃO DAS MELHORIAS DE UX, LEITURA, MOCK DATA E CORREÇÃO DO DARK MODE
+
+Quero implementar um conjunto grande de melhorias no Marginalia. Leia tudo com atenção e execute por blocos, mas garantindo consistência entre eles. O objetivo é melhorar a fluidez de postagem, a legibilidade, a coerência do conteúdo, a profundidade intelectual dos posts e o funcionamento visual do dark mode.
+
+IMPORTANTE:
+- preservar a identidade visual editorial do Marginalia;
+- não descaracterizar a paleta;
+- manter Cormorant Garamond para momentos editoriais/emocionais;
+- manter Jost como fonte funcional da interface;
+- priorizar legibilidade, contraste e clareza de fluxo;
+- revisar tudo no mobile primeiro.
+
+==================================================
+1. CORRIGIR O DARK MODE
+==================================================
+
+PROBLEMA ATUAL:
+O dark mode está bugado. Hoje apenas algumas bordas ou detalhes ficam escuros, mas o fundo real da página não muda corretamente. Parece que só a moldura muda e não a interface inteira.
+
+QUERO:
+O dark mode precisa afetar a aplicação inteira de forma consistente:
+- background global;
+- cards;
+- textos;
+- inputs;
+- modais;
+- sheets;
+- composer de posts;
+- páginas de livro;
+- perfil;
+- comentários;
+- feed;
+- onboarding;
+- preferências;
+- botões e estados interativos.
+
+HIPÓTESE DO PROBLEMA:
+Provavelmente o dark mode está sendo aplicado apenas em componentes isolados ou em bordas, sem trocar corretamente:
+- o `background-color` do `body`;
+- o background do container raiz da app;
+- os tokens globais;
+- os cards e superfícies elevadas;
+- os textos primários e secundários.
+
+AÇÃO TÉCNICA:
+1. revisar o sistema global de tema;
+2. garantir que exista uma classe ou atributo de tema no root, por exemplo:
+   - `data-theme="dark"`
+   - ou `class="dark"`
+3. garantir que `html`, `body` e o container principal da aplicação recebam o fundo correto;
+4. revisar componentes que usam cores hardcoded e substituir por tokens;
+5. eliminar casos em que o componente usa borda escura mas fundo herdado claro;
+6. garantir consistência em overlays, bottom sheets, composer, cards e listas.
+
+PALETA DO DARK MODE:
+Usar esta base:
+
+- Background principal: #1C1916
+- Surface / card: #252119
+- Texto primário: #E8E2D6
+- Texto secundário: #9C8E82
+- Heather ajustado no dark: #C4A090
+- Old Vine ajustado no dark: #8A9E82
+
+REGRAS:
+- o dark mode não deve ficar azulado;
+- deve continuar quente, literário, editorial;
+- o fundo da página inteira deve ficar escuro;
+- cards devem ter contraste suficiente com o fundo;
+- texto principal deve ficar legível imediatamente.
+
+TESTES OBRIGATÓRIOS DO DARK MODE:
+- feed principal;
+- tela de post;
+- thread/comentários;
+- página de livro;
+- perfil;
+- preferências;
+- onboarding;
+- composer de novo post;
+- modal/bottom sheet de compartilhamento;
+- inputs e placeholders;
+- estados ativos/inativos de botões e chips.
+
+==================================================
+2. NOVO FLUXO DE POSTAGEM — COMPOSITOR UNIFICADO
+==================================================
+
+PROBLEMA:
+O fluxo atual de criação de post com múltiplos passos cria fricção cognitiva. Quero abandonar o wizard fragmentado e transformar isso em uma experiência mais natural, como escrever à margem de um livro físico.
+
+OBJETIVO:
+Criar uma tela única de postagem, rolável, com seções organizadas e progressivamente reveladas.
+
+SUBSTITUIR O WIZARD POR UMA ÚNICA TELA:
+Estrutura esperada:
+
+1. livro selecionado no topo
+2. campo de trecho
+3. campo de referência
+4. seleção do tipo de post
+5. campo de comentário/reflexão
+6. opções colapsáveis de spoiler e visibilidade
+7. botão publicar
+
+ESTRUTURA DE UX:
+- tudo em uma única tela;
+- seções com ótimo espaçamento;
+- spoiler e visibilidade colapsados por padrão;
+- nenhuma sensação de “faltam muitos passos”.
+
+SEÇÕES:
+
+A. BLOCO DO LIVRO
+- exibir capa, título e autor;
+- botão/tap para trocar livro;
+- se nenhum livro estiver selecionado, mostrar estado vazio elegante.
+
+B. CAMPO DE TRECHO
+- textarea principal;
+- placeholder muda conforme o tipo de post selecionado:
+  - Insight → “Que trecho desencadeou esse pensamento?”
+  - Reação → “O que exatamente te atingiu?”
+  - Teoria → “Em que trecho isso está baseado?”
+  - Destaque → “Que trecho você quer guardar?”
+- contador discreto;
+- soft cap de 400 caracteres;
+- não bloquear de forma agressiva, apenas avisar se passar demais.
+
+C. CAMPO DE REFERÊNCIA
+- aceitar página;
+- aceitar porcentagem;
+- aceitar capítulo se já existir essa lógica;
+- visual simples e direto.
+
+D. TIPO DE POST
+- chips inline;
+- opções:
+  - Insight
+  - Reação
+  - Teoria
+  - Destaque
+- revisar o naming se necessário, mas manter coerência com a linguagem simplificada do app.
+
+E. CAMPO DE COMENTÁRIO
+- texto livre do leitor;
+- placeholder tipo: “O que isso te causou?”
+- line-height confortável;
+- contador discreto;
+- soft cap de 800 caracteres.
+
+F. SPOILER E VISIBILIDADE
+- colapsados por padrão;
+- poucos usuários vão mexer sempre nisso;
+- manter acessível, mas sem poluir a tela.
+- spoiler com seletor:
+  - nenhum
+  - leve
+  - moderado
+  - alto
+- visibilidade:
+  - todos
+  - só eu, se existir
+  - outros estados somente se realmente usados no produto
+
+G. PUBLICAR
+- botão só habilita se houver:
+  - livro
+  - trecho
+  - tipo
+- comentário pode ser opcional se fizer sentido, mas idealmente incentivar preenchimento.
+- botão vai ganhando destaque conforme os campos essenciais são preenchidos.
+
+AUTO-SAVE DE RASCUNHO:
+- salvar rascunho a cada 3 segundos no localStorage;
+- ao retornar à tela, mostrar banner discreto:
+  “Você tem um rascunho de [livro] — retomar?”
+- permitir descartar.
+
+ARQUIVO PRINCIPAL:
+- criar/reestruturar `NovaMargem.tsx` ou equivalente.
+
+==================================================
+3. MELHORIAS DE LEITURA NOS POSTS
+==================================================
+
+==================================================
+3.1. MARGINCARD / CARD DE POST
+==================================================
+
+Melhorar hierarquia visual e legibilidade.
+
+TIPOGRAFIA:
+- tipo + livro → Jost 10px uppercase, cor secundária
+- trecho citado → Cormorant Garamond italic 17px, line-height 1.7, cor primária
+- referência (página, capítulo etc.) → Jost 11px, cor terciária
+- comentário/reflexão → Jost 14px, line-height 1.65, cor secundária forte
+- username + tempo → Jost 12px, cor terciária
+- ações e contadores → espaçamento generoso
+
+SEPARAÇÃO ENTRE TRECHO E COMENTÁRIO:
+Adicionar uma linha horizontal fina entre:
+- o trecho do livro
+- e o comentário do leitor
+
+Objetivo:
+Deixar muito claro o que é:
+- texto do autor
+- texto do leitor
+
+Essa distinção é central no Marginalia.
+
+BOOKCOLOR NO FUNDO:
+Hoje o tint do `bookColor` pode estar atrapalhando contraste.
+Quero limitar isso.
+
+Usar algo conceitualmente equivalente a:
+- a cor do livro entra só como atmosfera
+- com opacidade baixa
+- misturada com Albescent
+
+Implementar com cap de 8%, não 15%.
+
+Se possível usar:
+`color-mix(in srgb, var(--book-color) 8%, #FAF8F3)`
+
+Se não for viável, simular isso manualmente.
+
+==================================================
+3.2. THREADSCREEN / TELA DE RESPOSTAS
+==================================================
+
+Melhorar leitura de respostas.
+
+QUERO:
+- padding vertical maior por resposta: 20px
+- avatar + nome inline com a primeira linha do texto
+- respostas longas com “ver mais”
+- fixar o trecho original no topo em versão compacta ao rolar
+- evitar sensação de muro de texto
+
+Também quero um MODO FOCO:
+- botão que esconda reações e metadados
+- mostrando apenas:
+  - trecho
+  - comentário principal
+  - respostas
+- sem influência visual de números
+- leitura mais limpa
+
+==================================================
+4. NOVO MOCK DATA — CONTEÚDO MAIS REAL E INTELECTUAL
+==================================================
+
+Quero substituir os conteúdos genéricos da comunidade por posts reais e densos.
+
+IMPLEMENTAR OS POSTS DESCRITOS NO DOCUMENTO COMO MOCK DATA REAL:
+- Dom Casmurro
+- O Processo
+- Cem Anos de Solidão
+- A Hora da Estrela
+- 1984
+- Nota avulsa sobre leitura
+
+AÇÃO:
+- inserir esses posts no `mockData.ts` ou fonte equivalente;
+- garantir que estejam aparecendo no feed;
+- garantir que estejam associados aos livros corretos;
+- garantir que seus contadores de reações e respostas estejam coerentes com o que é exibido;
+- garantir que as threads correspondentes tenham comentários reais quando o número indicar respostas;
+- não exibir “12 respostas” se a thread estiver vazia;
+- não exibir livro com “6 posts” se a página do livro mostrar zero.
+
+COERÊNCIA OBRIGATÓRIA:
+Toda contagem mostrada no app precisa bater com o conteúdo real:
+- posts por livro
+- respostas por post
+- reações por post
+
+==================================================
+5. MODO NOTURNO + LEGIBILIDADE — AJUSTE GERAL DE SISTEMA
+==================================================
+
+Sem alterar a identidade visual do Marginalia, quero também revisar a legibilidade global.
+
+NOVOS TOKENS DE TEXTO:
+- `--text-primary: #2C2A27`
+- `--text-secondary: #5C5650`
+- `--text-tertiary: #8C837A`
+
+No dark mode, equivalentes quentes:
+- `--text-primary-dark: #E8E2D6`
+- `--text-secondary-dark: #B7AAA0`
+- `--text-tertiary-dark: #9C8E82`
+
+REGRA:
+- Heather e Doeskin deixam de ser texto corrido principal;
+- passam a ser acentos, bordas, ícones, linhas, detalhes editoriais;
+- texto lido de verdade deve usar os novos tokens.
+
+TIPOGRAFIA:
+- Cormorant apenas para:
+  - citações
+  - títulos editoriais grandes
+  - nome do app
+  - momentos emocionais
+- Jost para:
+  - UI
+  - texto funcional
+  - comentários
+  - descrições
+  - labels
+
+LINE-HEIGHT:
+- citações: 1.65
+- comentários/posts: 1.65 a 1.75
+- respostas: mínimo 1.6
+
+==================================================
+6. BACKLOG PRIORIZADO — IMPLEMENTAR
+==================================================
+
+==================================================
+6.1. ALTA PRIORIDADE
+==================================================
+
+A. Modo noturno funcional
+Implementar e corrigir de verdade.
+
+B. Progresso visual no card
+Quando um post estiver associado a um ponto do livro, mostrar mini barra/progresso discreto abaixo do nome do livro.
+
+C. “Lendo junto”
+Na página do livro, se houver usuários na mesma faixa de progresso:
+mostrar algo como:
+“3 pessoas lendo neste ponto agora.”
+
+==================================================
+6.2. MÉDIA PRIORIDADE
+==================================================
+
+A. “Trechos que estão fazendo leitores parar”
+Nova seção editorial no feed.
+Mostrar:
+- trecho
+- livro
+- e um indicador de pausa média
+Exemplo:
+“Leitores levaram em média 2 dias para continuar depois desse trecho.”
+
+B. Eco silencioso / reação silenciosa
+Reação privada ao autor, não pública.
+Pode ser um símbolo especial.
+O autor vê quantas, mas não quem reagiu.
+
+C. Primeira anotação do livro
+Quando alguém publica o primeiro post de um livro no app:
+mostrar badge discreto:
+“Primeiro post registrado neste livro”
+
+D. Modo foco no ThreadScreen
+Descrito acima.
+
+==================================================
+6.3. LONGO PRAZO
+==================================================
+
+A. DNA de Leitura animado
+Animação muito sutil no card do perfil.
+
+B. Marginalia Wrapped
+Com destaque para:
+“Seu trecho do ano”
+
+C. Biblioteca de trechos favoritos
+Separada da biblioteca de livros.
+Uma espécie de jardim privado de trechos.
+
+==================================================
+7. REVISÕES DE NOMENCLATURA E LINGUAGEM
+==================================================
+
+Revisar se ainda existe em qualquer parte do app:
+- “margem”
+- “margens”
+- “eco”
+- “ecos”
+
+Quero simplificar a linguagem em todo o produto.
+
+Substituir por termos mais intuitivos, dependendo do contexto:
+- post
+- resposta
+- conversa
+- comentário
+- trecho
+- destaque
+- reflexão
+- discussão
+
+Revisar:
+- feed
+- detalhe de post
+- perfil
+- página de livro
+- filtros
+- cards
+- estatísticas
+- empty states
+- botões
+- onboarding
+
+==================================================
+8. REVISÃO FINAL DE FUNCIONAMENTO
+==================================================
+
+Quero revisão geral para garantir que tudo funcione de forma consistente.
+
+TESTAR:
+1. dark mode em todas as telas
+2. criação de post com compositor unificado
+3. auto-save de rascunho
+4. posts reais aparecendo no feed
+5. contagem de posts por livro correta
+6. contagem de respostas correta
+7. página de livro batendo com quantidade exibida nas listas
+8. thread abrindo corretamente
+9. modo foco da thread
+10. posts com fundo baseado em cor do livro sem prejudicar contraste
+11. mobile primeiro
+12. nenhuma tela quebrando visualmente
+
+==================================================
+9. ARQUIVOS PRINCIPAIS A REVISAR
+==================================================
+
+- `NovaMargem.tsx` ou equivalente
+- `MarginCard.tsx`
+- `ThreadScreen.tsx`
+- `mockData.ts`
+- `index.css` / `globals.css` / tokens globais
+- componentes de theme/dark mode
+- qualquer arquivo de provider de tema
+- página de livro
+- feed principal
+
+==================================================
+10. RESULTADO FINAL ESPERADO
+==================================================
+
+Quero que o Marginalia fique:
+- mais fluido para postar
+- mais agradável de ler
+- mais intelectualmente interessante
+- mais consistente na comunidade
+- com dark mode real e bonito
+- com dados coerentes
+- com identidade editorial preservada
+- e com menos fricção e confusão
+
+IMPORTANTE:
+Execute isso sem quebrar o restante do app.
+Se precisar, faça em etapas, mas mantenha consistência estrutural e visual.

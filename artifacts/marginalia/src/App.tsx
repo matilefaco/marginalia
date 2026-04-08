@@ -43,7 +43,7 @@ function Splash({ onDone }: { onDone: () => void }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#FAF8F3]"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#FAF8F3] dark:bg-[#1C1916]"
       style={{
         backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
         backgroundSize: "5px 5px",
@@ -64,7 +64,7 @@ function Splash({ onDone }: { onDone: () => void }) {
 
 function LoadingDots() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#FAF8F3]">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FAF8F3] dark:bg-[#1C1916]">
       <div className="flex gap-1.5">
         {[0, 1, 2].map((i) => (
           <div
@@ -189,7 +189,7 @@ function MainApp() {
   const hideNavbar = NO_NAVBAR_PATHS.includes(location) || location.startsWith("/thread/") || location.startsWith("/eco/");
 
   return (
-    <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto relative bg-[#FAF8F3] shadow-2xl overflow-x-hidden">
+    <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto relative bg-[#FAF8F3] dark:bg-[#1C1916] shadow-2xl overflow-x-hidden">
       <div className="flex-1 pb-20 overflow-x-hidden">
         <Switch>
           <Route path="/" component={HomeScreen} />
@@ -264,7 +264,7 @@ function AppContent() {
 
   if (gate === "onboarding") {
     return (
-      <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto bg-[#FAF8F3] shadow-2xl">
+      <div className="min-h-[100dvh] flex flex-col w-full max-w-md mx-auto bg-[#FAF8F3] dark:bg-[#1C1916] shadow-2xl">
         <OnboardingFlow onComplete={() => setGate("app")} />
       </div>
     );

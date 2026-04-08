@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useParams, Link, useLocation } from "wouter";
-import { ArrowLeft, Send, Bookmark, BookmarkCheck } from "lucide-react";
+import { ArrowLeft, Send, Bookmark, BookmarkCheck, Eye, EyeOff } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { MOCK_MARGINS, MOCK_REPLIES, MOCK_USERS, USER_AVATAR_MAP } from "@/data/mockData";
 import { EMOJI_REACTIONS } from "@/data/constants";
@@ -119,6 +119,7 @@ export function ThreadScreen() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [showAllReplies, setShowAllReplies] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState<Set<number>>(new Set());
+  const [focusMode, setFocusMode] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
 
@@ -180,26 +181,37 @@ export function ThreadScreen() {
   };
 
   return (
-    <div className="min-h-full bg-[#FAF8F3] flex flex-col screen-enter">
+    <div className="min-h-full flex flex-col screen-enter" style={{ backgroundColor: "var(--background)" }}>
       {/* Header */}
-      <div className="flex items-center gap-3 px-5 pt-8 pb-4 border-b border-[#AE8F7D]/12">
+      <div className="flex items-center gap-3 px-5 pt-8 pb-4" style={{ borderBottom: "1px solid rgba(174,143,125,0.10)" }}>
         <Link href={`/book/${margin.bookId}`}>
-          <button data-testid="button-back-thread" className="text-[#454545]/40 hover:text-[#454545]/70 transition-colors">
+          <button data-testid="button-back-thread" style={{ color: "var(--text-tertiary)" }} className="hover:opacity-70 transition-opacity">
             <ArrowLeft className="w-5 h-5" />
           </button>
         </Link>
         <div className="flex-1 min-w-0">
-          <p className="font-serif italic text-[13px] text-[#5C5650] truncate">{margin.bookTitle}</p>
-          <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#8C837A]">{margin.bookAuthor}</p>
+          <p className="font-serif italic text-[13px] truncate" style={{ color: "var(--text-secondary)" }}>{margin.bookTitle}</p>
+          <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase" style={{ color: "var(--text-tertiary)" }}>{margin.bookAuthor}</p>
         </div>
-        <button
-          data-testid="button-save-thread"
-          onClick={() => toggleSaveMargin(margin.id)}
-          className={`transition-all active:scale-90 ${isSaved ? "text-[#AE8F7D]" : "text-[#454545]/25 hover:text-[#AE8F7D]/60"}`}
-          title={isSaved ? "Post salvo" : "Salvar post"}
-        >
-          {isSaved ? <BookmarkCheck className="w-4.5 h-4.5" /> : <Bookmark className="w-4.5 h-4.5" />}
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            title={focusMode ? "Sair do modo foco" : "Modo foco"}
+            onClick={() => setFocusMode((f) => !f)}
+            className="transition-all active:scale-90"
+            style={{ color: focusMode ? "#AE8F7D" : "var(--text-tertiary)", opacity: focusMode ? 1 : 0.5 }}
+          >
+            {focusMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </button>
+          <button
+            data-testid="button-save-thread"
+            onClick={() => toggleSaveMargin(margin.id)}
+            className={`transition-all active:scale-90 ${isSaved ? "text-[#AE8F7D]" : "opacity-30 hover:opacity-60"}`}
+            style={{ color: isSaved ? "#AE8F7D" : "var(--text-primary)" }}
+            title={isSaved ? "Post salvo" : "Salvar post"}
+          >
+            {isSaved ? <BookmarkCheck className="w-4.5 h-4.5" /> : <Bookmark className="w-4.5 h-4.5" />}
+          </button>
+        </div>
       </div>
 
       {/* Content */}
@@ -221,13 +233,13 @@ export function ThreadScreen() {
           </div>
 
           <div className="border-l-2 border-[#AE8F7D]/55 pl-4 mb-4">
-            <p className="font-serif italic text-[19px] text-[#2C2A27] leading-[1.65]">
+            <p className="font-serif italic text-[19px] leading-[1.65]" style={{ color: "var(--text-primary)" }}>
               &ldquo;{margin.excerpt}&rdquo;
             </p>
           </div>
 
           {margin.commentary && (
-            <p className="font-sans text-[14px] text-[#5C5650] leading-[1.7] mb-4">
+            <p className="font-sans text-[14px] leading-[1.7] mb-4" style={{ color: "var(--text-secondary)" }}>
               {margin.commentary}
             </p>
           )}
@@ -246,8 +258,8 @@ export function ThreadScreen() {
             />
           </div>
 
-          {/* Compact Reaction Row + Full Picker */}
-          <div className="bg-[#EBE6DB]/35 rounded-[12px] p-3.5" onClick={(e) => e.stopPropagation()}>
+          {/* Compact Reaction Row + Full Picker — hidden in focus mode */}
+          {!focusMode && <div className="rounded-[12px] p-3.5" style={{ backgroundColor: "var(--muted)", opacity: 0.9 }} onClick={(e) => e.stopPropagation()}>
             <p className="font-sans text-[7.5px] font-light tracking-[0.16em] uppercase text-[#454545]/38 mb-2.5">
               Como isso te afetou?
             </p>
@@ -356,7 +368,7 @@ export function ThreadScreen() {
                 <button onClick={(e) => handleReact(myEmoji, e)} className="underline underline-offset-2">remover</button>
               </p>
             )}
-          </div>
+          </div>}
 
           {/* Action buttons */}
           <div className="flex items-center gap-4 mt-3 px-0.5">
@@ -382,12 +394,12 @@ export function ThreadScreen() {
 
         {/* Divider */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="flex-1 h-px bg-[#454545]/6" />
+          <div className="flex-1 h-px" style={{ backgroundColor: "rgba(174,143,125,0.10)" }} />
           <span className="font-sans text-[7px] font-light tracking-[0.2em] uppercase text-[#AE8F7D]/55">
-            Vozes nesse trecho
-            {totalVoices > 0 && <span className="ml-1 text-[#454545]/30">· {totalVoices}</span>}
+            {focusMode ? "Leitura" : "Vozes nesse trecho"}
+            {!focusMode && totalVoices > 0 && <span className="ml-1" style={{ color: "var(--text-tertiary)", opacity: 0.5 }}>· {totalVoices}</span>}
           </span>
-          <div className="flex-1 h-px bg-[#454545]/6" />
+          <div className="flex-1 h-px" style={{ backgroundColor: "rgba(174,143,125,0.10)" }} />
         </div>
 
         {/* Replies */}
@@ -425,7 +437,7 @@ export function ThreadScreen() {
                   timestamp={timeAgo(reply.createdAt)}
                 />
                 <div className="pl-7">
-                  <p className="font-sans text-[14px] text-[#2C2A27] leading-[1.65]">{displayText}</p>
+                  <p className="font-sans text-[14px] leading-[1.65]" style={{ color: "var(--text-primary)" }}>{displayText}</p>
                   {isLong && !isExpanded && (
                     <button
                       onClick={() => setExpandedReplies((prev) => new Set([...prev, reply.id]))}
@@ -462,7 +474,7 @@ export function ThreadScreen() {
                   )}
                   <span className="font-sans font-light text-[8px] text-[#8C837A]">· agora</span>
                 </div>
-                <p className="font-sans text-[14px] text-[#2C2A27] leading-[1.65]">{reply.text}</p>
+                <p className="font-sans text-[14px] leading-[1.65]" style={{ color: "var(--text-primary)" }}>{reply.text}</p>
               </div>
             </div>
           ))}
@@ -470,7 +482,13 @@ export function ThreadScreen() {
       </div>
 
       {/* Reply Input */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#FAF8F3]/96 backdrop-blur-md border-t border-[#AE8F7D]/15 px-5 py-3 flex items-center gap-3 max-w-md mx-auto">
+      <div
+        className="fixed bottom-0 left-0 right-0 backdrop-blur-md px-5 py-3 flex items-center gap-3 max-w-md mx-auto"
+        style={{
+          backgroundColor: "color-mix(in srgb, var(--background) 96%, transparent)",
+          borderTop: "1px solid rgba(174,143,125,0.12)",
+        }}
+      >
         <AvatarIcon avatarId={currentUser.avatarId} initials={currentUser.initials} size={24} />
         <input
           ref={inputRef}
@@ -479,7 +497,8 @@ export function ThreadScreen() {
           onChange={(e) => setReplyText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleReply()}
           placeholder="Escreva um comentário…"
-          className="flex-1 font-serif italic text-[14px] text-[#2A2A2A] placeholder:text-[#454545]/28 bg-transparent outline-none"
+          className="flex-1 font-serif italic text-[14px] bg-transparent outline-none"
+          style={{ color: "var(--text-primary)" }}
         />
         <button
           data-testid="button-send-reply"
