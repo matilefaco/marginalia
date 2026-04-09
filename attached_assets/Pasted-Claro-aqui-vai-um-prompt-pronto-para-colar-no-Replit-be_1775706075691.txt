@@ -1,0 +1,128 @@
+Claro — aqui vai um prompt pronto para colar no Replit, bem claro, objetivo e com direção estética forte:
+
+⸻
+
+PROMPT PRONTO PARA COLAR NO REPLIT
+
+Quero alterar o texto principal da tela inicial/onboarding do Marginalia para uma versão mais forte, mais curiosa, mais sofisticada e mais alinhada ao conceito central do app.
+
+Objetivo
+
+A nova mensagem precisa:
+	•	despertar curiosidade imediata
+	•	transmitir que a leitura no Marginalia é uma experiência compartilhada
+	•	manter elegância literária
+	•	soar premium, emocional e inteligente
+	•	ter estrutura visual de duas camadas:
+	1.	headline de impacto
+	2.	subheadline explicativa, curta e delicada
+
+Novo texto
+
+Headline principal:
+
+Você não leu esse livro sozinho.
+
+Subheadline:
+
+Veja o que outros sentiram exatamente onde você está.
+
+⸻
+
+Direção de copy
+
+Essa frase deve substituir o texto atual mais contemplativo da tela inicial.
+A intenção agora não é apenas ser bonita: é criar mistério + identificação + vontade de explorar.
+
+A headline deve ter presença, mas sem parecer publicitária demais.
+Ela precisa soar como uma verdade íntima descoberta pelo usuário.
+
+A subheadline deve explicar o conceito sem matar a curiosidade.
+Ela deve reforçar o diferencial do app: acompanhar ecos, margens e reações de outros leitores de acordo com o ponto da leitura em que a pessoa está.
+
+⸻
+
+Direção visual
+
+Quero que essa nova composição fique mais refinada editorialmente.
+
+Hierarquia:
+	•	a headline deve ser o elemento textual mais importante da tela
+	•	a subheadline deve vir logo abaixo, com menos contraste e menor peso visual
+	•	o conjunto precisa parecer sofisticado, respirado e intencional
+
+Estilo tipográfico sugerido:
+	•	headline com a fonte serif principal do app
+	•	subheadline com a mesma serif ou com a sans do sistema, dependendo do que ficar mais elegante
+	•	evitar aparência genérica de app comum
+
+Sensação:
+	•	literária
+	•	íntima
+	•	contemporânea
+	•	premium
+	•	delicada, mas memorável
+
+⸻
+
+Ajustes de layout
+
+Quero revisar essa área da hero section da tela inicial para que o novo texto respire melhor.
+
+Aplicar:
+	•	melhorar espaçamento vertical entre logo, headline, subheadline e botão
+	•	reduzir sensação de bloco solto
+	•	dar mais centralidade emocional para a frase principal
+	•	ajustar largura máxima do texto para leitura bonita em mobile
+	•	quebrar linha de forma elegante se necessário
+	•	evitar que o texto pareça comprimido ou perdido no vazio
+
+⸻
+
+Sugestão de estrutura
+
+Quero algo nessa lógica visual:
+	•	logo/símbolo
+	•	nome Marginalia
+	•	assinatura “Leia junto. Sinta junto.” (se ainda fizer sentido manter, pode ficar menor)
+	•	headline principal
+	•	subheadline
+	•	botão “Começar”
+	•	link “Já tenho conta”
+
+Mas, se ficar melhor, pode reposicionar a assinatura “Leia junto. Sinta junto.” para não competir com a nova headline.
+
+Se a assinatura estiver enfraquecendo a mensagem principal, pode deixá-la menor, mais discreta, ou até remover da área principal e priorizar totalmente a nova dupla de textos.
+
+⸻
+
+Resultado esperado
+
+A tela inicial precisa ficar com mais força de marca e mais curiosidade.
+Quero que o usuário bata o olho e pense:
+
+“Como assim eu não li sozinho?”
+“Quero ver isso.”
+
+Essa abertura precisa vender a essência do Marginalia em poucos segundos:
+ler com outras sensibilidades, sem perder o mistério do próprio livro.
+
+⸻
+
+Texto final a ser usado
+
+Headline:
+
+Você não leu esse livro sozinho.
+
+Subheadline:
+
+Veja o que outros sentiram exatamente onde você está.
+
+⸻
+
+Se quiser, eu também posso fazer a versão ainda mais refinada, com instruções de:
+	•	tamanho ideal de fonte
+	•	quebra de linha exata
+	•	espaçamento entre blocos
+	•	e tom visual mais “luxo editorial”.

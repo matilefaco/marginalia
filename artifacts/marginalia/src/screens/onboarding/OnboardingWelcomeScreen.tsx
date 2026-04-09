@@ -8,73 +8,69 @@ interface Props {
 export function OnboardingWelcomeScreen({ onStart, onLogin }: Props) {
   return (
     <div
-      className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col items-center justify-between px-8 py-14"
+      className="min-h-[100dvh] bg-[#FAF8F3] flex flex-col px-8"
       style={{
         backgroundImage: "radial-gradient(circle, rgba(189,171,156,0.12) 1px, transparent 1px)",
         backgroundSize: "5px 5px",
       }}
     >
-      <div className="flex-1 flex flex-col items-center justify-center text-center max-w-xs">
-        {/* Logo */}
-        <div
-          className="w-20 h-24 mb-8"
-          style={{ animation: "fadeIn 600ms ease both" }}
-        >
+      {/* Top: logo + wordmark */}
+      <div
+        className="flex items-center gap-3 pt-14"
+        style={{ animation: "fadeIn 500ms ease both" }}
+      >
+        <div className="w-8 h-10">
           <LogoMark className="w-full h-full" />
         </div>
-
-        {/* Name */}
-        <h1
-          className="font-serif italic leading-tight mb-3"
-          style={{
-            fontSize: "52px",
-            color: "#1E1C19",
-            animation: "fadeSlideUp 800ms ease 200ms both",
-          }}
-        >
-          Marginalia
-        </h1>
-
-        {/* Tagline */}
-        <p
-          className="font-sans font-light uppercase mb-10"
-          style={{
-            fontSize: "11px",
-            letterSpacing: "0.22em",
-            color: "#7A726A",
-            animation: "fadeIn 600ms ease 500ms both",
-          }}
-        >
-          Leia junto. Sinta junto.
-        </p>
-
-        {/* Manifesto */}
-        <div
-          style={{
-            borderLeft: "2px solid #697962",
-            paddingLeft: "16px",
-            animation: "fadeIn 600ms ease 700ms both",
-          }}
-        >
+        <div>
+          <span className="font-serif italic text-[22px] text-[#2C2A27] leading-none">
+            Marginalia
+          </span>
           <p
-            className="font-serif italic text-left"
-            style={{
-              fontSize: "18px",
-              color: "#1E1C19",
-              lineHeight: 1.8,
-            }}
+            className="font-sans font-light uppercase mt-0.5"
+            style={{ fontSize: "8px", letterSpacing: "0.2em", color: "#9C948C" }}
           >
-            Livros mudam a gente por dentro.<br />
-            Marginalia é onde essa mudança<br />
-            encontra outras pessoas.
+            Leia junto. Sinta junto.
           </p>
         </div>
       </div>
 
+      {/* Hero text block */}
+      <div
+        className="flex-1 flex flex-col justify-center"
+        style={{ paddingBottom: "8px" }}
+      >
+        {/* Headline */}
+        <h1
+          className="font-serif italic leading-[1.15] mb-5"
+          style={{
+            fontSize: "clamp(34px, 9vw, 42px)",
+            color: "#1E1C19",
+            maxWidth: "300px",
+            animation: "fadeSlideUp 700ms ease 200ms both",
+          }}
+        >
+          Você não leu esse livro sozinho.
+        </h1>
+
+        {/* Subheadline */}
+        <p
+          className="font-sans font-light leading-[1.65]"
+          style={{
+            fontSize: "15px",
+            color: "#7A726A",
+            maxWidth: "260px",
+            animation: "fadeSlideUp 700ms ease 380ms both",
+          }}
+        >
+          Veja o que outros sentiram exatamente onde você está.
+        </p>
+      </div>
+
       {/* Buttons */}
       <div
-        className="w-full max-w-xs space-y-3"
-        style={{ animation: "fadeIn 600ms ease 900ms both" }}
+        className="pb-14 space-y-3"
+        style={{ animation: "fadeIn 600ms ease 600ms both" }}
       >
         <button
           data-testid="button-start-onboarding"
@@ -105,7 +101,7 @@ export function OnboardingWelcomeScreen({ onStart, onLogin }: Props) {
           to   { opacity: 1; }
         }
         @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(8px); }
+          from { opacity: 0; transform: translateY(10px); }
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
