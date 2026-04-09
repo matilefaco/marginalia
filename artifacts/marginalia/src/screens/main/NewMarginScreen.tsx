@@ -8,10 +8,14 @@ import type { MarginType, SpoilerLevel, Visibility } from "@/data/constants";
 import { formatReference } from "@/utils/formatting";
 
 type ComposerMode = "EXCERPT" | "THOUGHT";
+type ThoughtTone = "noturno" | "intenso" | "gentil" | "confuso";
 
-const THOUGHT_TYPES = MARGIN_TYPES.filter((t) =>
-  ["insight", "reaction", "theory"].includes(t.id)
-);
+const TONE_OPTIONS: { id: ThoughtTone; emoji: string; label: string }[] = [
+  { id: "noturno", emoji: "🌙", label: "noturno" },
+  { id: "intenso", emoji: "🔥", label: "intenso" },
+  { id: "gentil", emoji: "🤍", label: "gentil" },
+  { id: "confuso", emoji: "🌀", label: "confuso" },
+];
 
 export function NewMarginScreen() {
   const [, navigate] = useLocation();
@@ -52,7 +56,7 @@ export function NewMarginScreen() {
 
   /* ── THOUGHT mode state ── */
   const [thoughtText, setThoughtText] = useState("");
-  const [thoughtPostType, setThoughtPostType] = useState<MarginType>("insight");
+  const [thoughtTone, setThoughtTone] = useState<ThoughtTone | null>(null);
   const [thoughtVisibility, setThoughtVisibility] = useState<Visibility>("public");
   const [showThoughtSettings, setShowThoughtSettings] = useState(false);
 
@@ -120,8 +124,9 @@ export function NewMarginScreen() {
       bookAuthor: "",
       excerpt: "",
       referenceType: "none",
-      postType: thoughtPostType,
+      postType: "insight",
       composerMode: "THOUGHT",
+      tone: thoughtTone ?? undefined,
       commentary: thoughtText.trim(),
       spoilerLevel: "none",
       visibility: thoughtVisibility,
@@ -629,27 +634,6 @@ export function NewMarginScreen() {
         {composerMode === "THOUGHT" && (
           <div className="space-y-5 animate-in fade-in duration-200">
 
-            {/* Post type — only insight / reaction / theory */}
-            <div>
-              <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-                Tipo de post
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {THOUGHT_TYPES.map((type) => (
-                  <button
-                    key={type.id}
-                    data-testid={`thought-type-${type.id}`}
-                    onClick={() => setThoughtPostType(type.id)}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-full font-sans text-[10px] font-light transition-all"
-                    style={thoughtPostType === type.id ? activeChipStyle : inactiveChipStyle}
-                  >
-                    <span className="text-[11px]">{type.icon}</span>
-                    {type.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Free-text field */}
             <div>
               <textarea
@@ -679,6 +663,33 @@ export function NewMarginScreen() {
               >
                 {thoughtText.length}/1000 caracteres
               </p>
+            </div>
+
+            {/* TOM — optional tone tag */}
+            <div>
+              <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+                Tom{" "}
+                <span className="normal-case tracking-normal text-[#454545]/30">· opcional</span>
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {TONE_OPTIONS.map((tone) => (
+                  <button
+                    key={tone.id}
+                    data-testid={`thought-tone-${tone.id}`}
+                    onClick={() => setThoughtTone(thoughtTone === tone.id ? null : tone.id)}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-full font-sans font-light transition-all"
+                    style={{
+                      fontSize: "11px",
+                      letterSpacing: "0.08em",
+                      ...(thoughtTone === tone.id
+                        ? { backgroundColor: "#697962", color: "#FAF8F3", border: "1px solid transparent" }
+                        : { backgroundColor: "transparent", color: "#8C837A", border: "1px solid #D4CBB8" }),
+                    }}
+                  >
+                    {tone.emoji} {tone.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Collapsible settings */}
@@ -753,14 +764,24 @@ export function NewMarginScreen() {
                   </p>
                 </div>
                 <div className="px-4 pt-3.5 pb-4">
-                  <div className="flex items-center gap-1.5 mb-3">
+                  <div className="flex items-center gap-2 flex-wrap mb-3">
                     <span
                       className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase"
                       style={{ color: isDark ? "#CDB9AA" : "#AE8F7D" }}
                     >
-                      {THOUGHT_TYPES.find((t) => t.id === thoughtPostType)?.icon}{" "}
-                      {THOUGHT_TYPES.find((t) => t.id === thoughtPostType)?.label}
+                      ✏️ Pensamento
                     </span>
+                    {thoughtTone && (
+                      <span
+                        className="font-sans text-[10px] font-light px-[6px] py-[2px] rounded-[4px]"
+                        style={{
+                          backgroundColor: isDark ? "rgba(240,234,224,0.12)" : "#F0EAE0",
+                          color: "#8C837A",
+                        }}
+                      >
+                        {TONE_OPTIONS.find((t) => t.id === thoughtTone)?.emoji} {thoughtTone}
+                      </span>
+                    )}
                   </div>
                   <p
                     className="font-sans font-light text-[14px] leading-[1.75]"

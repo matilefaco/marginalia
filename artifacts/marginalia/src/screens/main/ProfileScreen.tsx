@@ -125,6 +125,7 @@ export function ProfileScreen() {
   const myBooks = progress.filter((p) => p.userId === currentUser.id);
 
   const topArquetipos = calcularArquetipos({ margins: myMargins, progress: myBooks, userReactions });
+  const isForming = topArquetipos.length === 0;
   const primaryArquetipo = topArquetipos[0]?.arquetipo ?? ARQUETIPOS.find((a) => a.id === "observador")!;
   const secondaryArquetipo = topArquetipos[1]?.arquetipo ?? null;
 
@@ -150,7 +151,7 @@ export function ProfileScreen() {
 
   const dominantMarginType = (() => {
     const counts: Record<string, number> = {};
-    myMargins.forEach((m) => { counts[m.type] = (counts[m.type] || 0) + 1; });
+    myMargins.forEach((m) => { counts[m.postType] = (counts[m.postType] || 0) + 1; });
     const top = Object.entries(counts).sort(([, a], [, b]) => b - a)[0];
     if (!top) return null;
     return MARGIN_TYPES.find((t) => t.id === top[0]) ?? null;
@@ -441,7 +442,98 @@ export function ProfileScreen() {
           </div>
         )}
 
+        {/* ─── Contextual label + subtitle above archetype card ─── */}
+        <div className="mb-3">
+          <p
+            className="font-sans font-light tracking-[0.18em] uppercase mb-1"
+            style={{ fontSize: "10px", color: "#8C837A" }}
+          >
+            Impressão de Leitura
+          </p>
+          {myMargins.length === 0 && (
+            <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
+              Poste sua primeira margem para começar a descobrir seu perfil de leitor.
+            </p>
+          )}
+          {myMargins.length >= 1 && myMargins.length <= 2 && (
+            <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
+              Você está começando a deixar sua marca. Mais alguns posts e seu perfil vai tomar forma.
+            </p>
+          )}
+          {myMargins.length >= 3 && myMargins.length <= 6 && (
+            <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
+              Seu perfil está emergindo. Quanto mais você posta, mais preciso ele fica.
+            </p>
+          )}
+        </div>
+
         {/* ─── Impressão de leitura — identity card with archetype colors ─── */}
+        {isForming ? (
+          /* Forming state card */
+          <div
+            className="rounded-[16px] p-5 mb-5 relative overflow-hidden"
+            style={{ backgroundColor: "#2C2A27" }}
+          >
+            {/* Dog-ear */}
+            <div className="absolute top-0 right-0 w-8 h-8 overflow-hidden">
+              <div
+                className="absolute top-0 right-0 w-0 h-0"
+                style={{
+                  borderStyle: "solid",
+                  borderWidth: "0 32px 32px 0",
+                  borderColor: "transparent rgba(255,255,255,0.08) transparent transparent",
+                }}
+              />
+            </div>
+            <div className="relative z-10">
+              <p
+                className="font-sans text-[7px] font-light tracking-[0.22em] uppercase mb-4"
+                style={{ color: "#9C8E82" }}
+              >
+                05 · Impressão de leitura
+              </p>
+              <p
+                className="font-serif italic leading-tight mb-4"
+                style={{ fontSize: "32px", color: "#EBE6DB" }}
+              >
+                Seu perfil ainda<br />está se formando
+              </p>
+              <p
+                className="font-serif italic leading-relaxed mb-5"
+                style={{ fontSize: "14px", color: "#9C8E82" }}
+              >
+                &ldquo;Cada post revela um pouco mais de quem você é como leitor.&rdquo;
+              </p>
+              <div className="h-px mb-4 opacity-20" style={{ backgroundColor: "#9C8E82" }} />
+              <p
+                className="font-sans text-[7px] font-light tracking-[0.22em] uppercase mb-2"
+                style={{ color: "#9C8E82" }}
+              >
+                Assinatura de leitura
+              </p>
+              <p
+                className="font-serif italic leading-snug mb-5"
+                style={{ fontSize: "15px", color: "#EBE6DB" }}
+              >
+                &ldquo;Ainda escrevendo minha história&rdquo;
+              </p>
+              <button
+                disabled
+                className="flex items-center gap-2 rounded-[8px] px-4 py-2.5 opacity-40 cursor-not-allowed"
+                style={{
+                  backgroundColor: "rgba(243,237,229,0.08)",
+                  border: "1px solid rgba(156,142,130,0.25)",
+                  color: "#EBE6DB",
+                }}
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span className="font-sans text-[9px] font-light tracking-[0.12em]">
+                  Compartilhar identidade de leitura
+                </span>
+              </button>
+            </div>
+          </div>
+        ) : (
         <div
           className="rounded-[16px] p-5 mb-5 relative overflow-hidden"
           style={{ backgroundColor: primaryArquetipo.cor }}
@@ -545,6 +637,7 @@ export function ProfileScreen() {
             </button>
           </div>
         </div>
+        )}
 
         {/* DNA de Leitura */}
         <DnaDeLeiturasSection topArquetipos={topArquetipos} />

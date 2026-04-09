@@ -1,0 +1,269 @@
+# PROMPT 1 — Reformular modo “Pensamento” (remover tipos, adicionar tags de tom)
+
+# Colar no agente do Replit
+
+-----
+
+## O QUE MUDAR
+
+No modo “Pensamento” do compositor de posts (`NovaMargem` ou `CreatePost`), remover completamente a seção “TIPO DE POST” (chips de Insight / Teoria / Reação). Substituir por uma seção de tag de tom opcional e leve.
+
+-----
+
+### Remover
+
+A seção com label “TIPO DE POST” e os chips (Insight, Teoria, Reação) que aparecem no modo Pensamento. Essa taxonomia só faz sentido para posts com trecho — no modo livre ela cria atrito sem propósito.
+
+No modo “Sobre um trecho”, os chips continuam existindo normalmente.
+
+-----
+
+### Adicionar
+
+Abaixo do campo de texto livre, antes das opções de visibilidade, adicionar uma seção chamada “TOM” com 4 opções em chips pequenos, horizontais, **todos opcionais** (nenhum selecionado por padrão):
+
+```
+🌙 noturno   🔥 intenso   🤍 gentil   🌀 confuso
+```
+
+Comportamento:
+
+- Nenhum selecionado por padrão
+- Tap seleciona, tap novamente deseleciona
+- Máximo 1 selecionado por vez
+- Se nenhum for selecionado, o post vai sem tag de tom — isso é permitido e não bloqueia publicação
+- Chip selecionado: fundo Old Vine (#697962), texto branco
+- Chip não selecionado: fundo transparente, borda #D4CBB8, texto #8C837A
+- Fonte dos chips: Jost 11px, letter-spacing 0.08em
+
+Salvar o valor no campo `tone` do objeto de post: `"noturno" | "intenso" | "gentil" | "confuso" | null`
+
+-----
+
+### Como exibir o tom no MarginCard (modo THOUGHT)
+
+Se o post tiver `tone` definido, exibir a tag discretamente no header do card, ao lado do timestamp:
+
+```
+✏️ PENSAMENTO          🌙 noturno      2h
+```
+
+Tag com fundo #F0EAE0, texto #8C837A, Jost 10px, border-radius 4px, padding 2px 6px.
+
+Se `tone` for null, o header fica sem tag — apenas o tipo e o timestamp.
+
+-----
+
+### Atualizar o tipo TypeScript
+
+No tipo `Margin` (ou como estiver nomeado), adicionar:
+
+```typescript
+tone?: "noturno" | "intenso" | "gentil" | "confuso" | null;
+```
+
+-----
+
+### Atualizar o label do botão de publicar
+
+O botão deve dizer:
+
+- No modo THOUGHT: **“PUBLICAR PENSAMENTO”** ← já está assim, manter
+- No modo EXCERPT: **“PUBLICAR POST”**
+
+-----
+
+## OBSERVAÇÕES
+
+- Não mexer em nada do modo “Sobre um trecho” — tipos continuam lá
+- O campo `tone` é completamente opcional e não afeta nenhuma lógica existente
+- Posts antigos sem `tone` renderizam normalmente sem a tag
+
+-----
+
+-----
+
+# PROMPT 2 — Corrigir algoritmo de Impressão de Leitura + adicionar mensagem contextual
+
+# Colar no agente do Replit (pode ser junto ou separado do Prompt 1)
+
+-----
+
+## CONTEXTO
+
+Atualmente todo novo usuário recebe o mesmo card de “Impressão de Leitura” independente do seu comportamento. Preciso corrigir o algoritmo e adicionar uma mensagem contextual acima do card.
+
+-----
+
+## PARTE 1 — Corrigir o algoritmo
+
+### Onde está o problema
+
+Provavelmente no arquivo onde o arquétipo é calculado (pode estar em `AppContext.tsx`, `ProfileScreen.tsx`, ou em um utilitário separado). Procure pela função que determina qual arquétipo exibir. O bug é que quando o usuário não tem posts suficientes, o código retorna o primeiro item do array de arquétipos em vez de um estado neutro.
+
+### Como deve funcionar
+
+**Regra de dados mínimos:**
+Se o usuário tiver menos de 3 posts publicados, NÃO calcular arquétipo. Retornar `null` e exibir o estado de “ainda descobrindo” (descrito abaixo).
+
+**Algoritmo de cálculo (quando há dados suficientes):**
+
+Analisar os posts do usuário atual (`currentUser.id`) e pontuar cada arquétipo com base nas seguintes regras:
+
+```typescript
+function calcularArquetipo(posts: Margin[]): string | null {
+  if (posts.length < 3) return null;
+
+  const scores: Record<string, number> = {
+    "O Analista": 0,
+    "O Detetive": 0,
+    "O Rebelde": 0,
+    "O Intenso": 0,
+    "O Interpretador": 0,
+    "O Observador": 0,
+    "O Questionador": 0,
+    "O Imersivo": 0,
+    "O Editor Mental": 0,
+    "O Teórico": 0,
+  };
+
+  for (const post of posts) {
+    // Comprimento do comentário
+    const len = post.commentary?.length ?? 0;
+
+    if (len > 400) {
+      scores["O Analista"] += 2;
+      scores["O Teórico"] += 1;
+    } else if (len > 200) {
+      scores["O Interpretador"] += 2;
+      scores["O Editor Mental"] += 1;
+    } else if (len < 80) {
+      scores["O Imersivo"] += 2;
+      scores["O Observador"] += 1;
+    }
+
+    // Tipo do post
+    if (post.type === "TEORIA") {
+      scores["O Detetive"] += 3;
+      scores["O Teórico"] += 2;
+    }
+    if (post.type === "INSIGHT") {
+      scores["O Analista"] += 2;
+      scores["O Interpretador"] += 2;
+    }
+    if (post.type === "REAÇÃO") {
+      scores["O Intenso"] += 3;
+      scores["O Imersivo"] += 1;
+    }
+    if (post.type === "DESTAQUE") {
+      scores["O Editor Mental"] += 3;
+      scores["O Observador"] += 2;
+    }
+
+    // Nível de spoiler — usuários que controlam spoiler são mais cuidadosos
+    if (post.spoilerLevel !== "NONE") {
+      scores["O Observador"] += 1;
+      scores["O Analista"] += 1;
+    }
+
+    // Tom (se existir)
+    if (post.tone === "intenso") scores["O Intenso"] += 2;
+    if (post.tone === "noturno") scores["O Observador"] += 2;
+    if (post.tone === "confuso") scores["O Questionador"] += 3;
+    if (post.tone === "gentil") scores["O Imersivo"] += 2;
+
+    // Posts sem livro vinculado (pensamentos livres) = reflexivo
+    if (!post.bookId) {
+      scores["O Questionador"] += 2;
+      scores["O Intenso"] += 1;
+    }
+  }
+
+  // Retornar o arquétipo com maior pontuação
+  return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+}
+```
+
+Usar essa função para determinar o arquétipo do usuário atual. Chamar a função passando apenas os posts do `currentUser.id`, não os posts do mock de outros usuários.
+
+-----
+
+## PARTE 2 — Mensagem contextual acima do card
+
+No `ProfileScreen.tsx`, acima do card de Impressão de Leitura, adicionar um texto contextual que muda de acordo com o estado do usuário.
+
+### Estado 1 — Sem posts (0 posts)
+
+```
+IMPRESSÃO DE LEITURA
+Poste sua primeira margem para começar a descobrir seu perfil de leitor.
+```
+
+### Estado 2 — Poucos posts (1–2 posts)
+
+```
+IMPRESSÃO DE LEITURA
+Você está começando a deixar sua marca. Mais alguns posts e seu perfil vai tomar forma.
+```
+
+### Estado 3 — Em construção (3–6 posts)
+
+```
+IMPRESSÃO DE LEITURA
+Seu perfil está emergindo. Quanto mais você posta, mais preciso ele fica.
+```
+
+### Estado 4 — Perfil definido (7+ posts)
+
+```
+IMPRESSÃO DE LEITURA
+```
+
+*(sem subtítulo — o card fala por si)*
+
+-----
+
+### Estilo da mensagem contextual
+
+```
+Label "IMPRESSÃO DE LEITURA":
+  Jost 10px, uppercase, letter-spacing 0.18em, cor #8C837A
+
+Subtítulo (quando presente):
+  Jost 13px, cor #8C837A, line-height 1.5
+  Margem inferior antes do card: 12px
+```
+
+-----
+
+### Estado do card quando arquétipo é null (menos de 3 posts)
+
+Em vez de mostrar um arquétipo padrão falso, exibir o card em estado “descobrindo”:
+
+```
+┌─────────────────────────────────────────┐  ← fundo #2C2A27 (mesmo escuro)
+│  05 · IMPRESSÃO DE LEITURA              │
+│                                         │
+│  Seu perfil ainda                       │  ← Cormorant Garamond italic
+│  está se formando                       │    32px, cor #EBE6DB
+│                                         │
+│  "Cada post revela um pouco mais        │  ← italic, #9C8E82, 14px
+│   de quem você é como leitor."          │
+│                                         │
+│  ── ── ── ── ── ── ── ── ── ── ──      │
+│                                         │
+│  ASSINATURA DE LEITURA                  │
+│  "Ainda escrevendo minha história"      │  ← texto placeholder
+│                                         │
+│  [ Compartilhar identidade de leitura ] │  ← botão desabilitado, opacidade 0.4
+└─────────────────────────────────────────┘
+```
+
+-----
+
+## OBSERVAÇÕES FINAIS
+
+- O algoritmo deve rodar apenas sobre os posts do `currentUser` — nunca sobre os posts mock de outros usuários
+- Toda vez que o usuário publica um novo post, recalcular o arquétipo (o AppContext já dispara re-renders quando posts mudam, aproveitar isso)
+- O arquétipo calculado pode ser cacheado em `localStorage` como `mg_archetype_${uid}` para evitar recálculo em cada render, mas deve ser invalidado quando novos posts são adicionados
+- Não remover os 10 arquétipos existentes de `constants.ts` — o algoritmo usa os nomes exatos deles

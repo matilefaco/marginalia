@@ -74,6 +74,7 @@ export interface Margin {
   percent?: number;
   postType: MarginType;
   composerMode?: "EXCERPT" | "THOUGHT";
+  tone?: "noturno" | "intenso" | "gentil" | "confuso" | null;
   commentary: string;
   spoilerLevel: SpoilerLevel;
   visibility: Visibility;

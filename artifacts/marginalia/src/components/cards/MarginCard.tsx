@@ -540,8 +540,8 @@ function ThoughtCard({ margin, linkToThread }: Props) {
         padding: "20px",
       }}
     >
-      {/* Header: type icon + label + timestamp */}
-      <div className="flex items-center gap-2 mb-4">
+      {/* Header: type icon + label + tone tag (optional) + timestamp */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
         <span
           className="font-sans text-[8px] font-light tracking-[0.18em] uppercase flex items-center gap-1"
           style={{ color: a.label }}
@@ -549,6 +549,17 @@ function ThoughtCard({ margin, linkToThread }: Props) {
           <span>{typeIcon}</span>
           <span>{marginTypeLabel(margin.postType)}</span>
         </span>
+        {margin.tone && (
+          <span
+            className="font-sans text-[10px] font-light px-[6px] py-[2px] rounded-[4px]"
+            style={{
+              backgroundColor: isDark ? "rgba(240,234,224,0.12)" : "#F0EAE0",
+              color: "#8C837A",
+            }}
+          >
+            {margin.tone === "noturno" ? "🌙" : margin.tone === "intenso" ? "🔥" : margin.tone === "gentil" ? "🤍" : "🌀"} {margin.tone}
+          </span>
+        )}
         <span className="ml-auto font-sans text-[7px] font-light flex-shrink-0" style={{ color: "var(--text-tertiary)" }}>
           {timeAgo(margin.createdAt)}
         </span>

@@ -214,11 +214,19 @@ interface UserReadingData {
 export function calcularArquetipos(data: UserReadingData): ArquetipoResult[] {
   const { margins, progress, userReactions } = data;
 
+  if (margins.length < 3) return [];
+
   const typeCounts: Record<string, number> = {};
   margins.forEach((m) => {
-    typeCounts[m.type] = (typeCounts[m.type] || 0) + 1;
+    typeCounts[m.postType] = (typeCounts[m.postType] || 0) + 1;
   });
   const totalMargins = margins.length || 1;
+
+  // Tone frequency boosts
+  const toneCounts: Record<string, number> = {};
+  margins.forEach((m) => {
+    if (m.tone) toneCounts[m.tone] = (toneCounts[m.tone] || 0) + 1;
+  });
 
   const completedBooks = progress.filter((p) => p.status === "completed").length;
   const readingBooks = progress.filter((p) => p.status === "reading").length;
@@ -284,6 +292,12 @@ export function calcularArquetipos(data: UserReadingData): ArquetipoResult[] {
 
   scores.estetico    += ((m.favorite_quote || 0) / t) * 60;
   scores.estetico    += reactionEmojis.filter((e) => e === "✨").length * 10;
+
+  // Tone-based boosts
+  scores.intenso     += (toneCounts["intenso"] || 0) * 3;
+  scores.observador  += (toneCounts["noturno"] || 0) * 3;
+  scores.curioso     += (toneCounts["confuso"] || 0) * 4;
+  scores.imersivo    += (toneCounts["gentil"] || 0) * 3;
 
   const maxScore = Math.max(...Object.values(scores), 1);
   const normalized: Record<string, number> = {};
