@@ -1,24 +1,42 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useSearch } from "wouter";
-import { ChevronLeft, Check, ChevronDown, ChevronUp, CornerUpRight } from "lucide-react";
+import { ChevronLeft, Check, CornerUpRight } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { MOCK_BOOKS, MOCK_MARGINS } from "@/data/mockData";
-import { MARGIN_TYPES, SPOILER_LEVELS, VISIBILITY_OPTIONS } from "@/data/constants";
+import { MARGIN_TYPES, SPOILER_LEVELS } from "@/data/constants";
 import type { MarginType, SpoilerLevel, Visibility } from "@/data/constants";
 import { formatReference } from "@/utils/formatting";
+
+type ComposerMode = "EXCERPT" | "THOUGHT";
+
+const THOUGHT_TYPES = MARGIN_TYPES.filter((t) =>
+  ["insight", "reaction", "theory"].includes(t.id)
+);
 
 export function NewMarginScreen() {
   const [, navigate] = useLocation();
   const search = useSearch();
   const params = new URLSearchParams(search);
   const replyToId = params.get("replyTo");
-  const preBookId = params.get("bookId") ? parseInt(params.get("bookId")!) : null;
+  const preBookIdRaw = params.get("bookId");
+  const preBookId =
+    preBookIdRaw && preBookIdRaw !== "null"
+      ? parseInt(preBookIdRaw) || null
+      : null;
 
   const { addMargin, progress, currentUser, isDark } = useApp();
 
-  const replyToMargin = replyToId ? MOCK_MARGINS.find((m) => m.id === parseInt(replyToId)) ?? null : null;
+  const replyToMargin = replyToId
+    ? MOCK_MARGINS.find((m) => m.id === parseInt(replyToId)) ?? null
+    : null;
 
-  const [bookId, setBookId] = useState<number | null>(preBookId ?? (replyToMargin?.bookId ?? null));
+  /* ── Composer mode ── */
+  const [composerMode, setComposerMode] = useState<ComposerMode>("EXCERPT");
+
+  /* ── EXCERPT mode state ── */
+  const [bookId, setBookId] = useState<number | null>(
+    preBookId ?? (replyToMargin?.bookId ?? null)
+  );
   const [bookSearch, setBookSearch] = useState("");
   const [showBookSearch, setShowBookSearch] = useState(false);
   const [excerpt, setExcerpt] = useState("");
@@ -28,24 +46,32 @@ export function NewMarginScreen() {
   const [commentary, setCommentary] = useState("");
   const [spoilerLevel, setSpoilerLevel] = useState<SpoilerLevel>("none");
   const [visibility, setVisibility] = useState<Visibility>("public");
-  const [published, setPublished] = useState(false);
   const [showSecondary, setShowSecondary] = useState<boolean>(
     preBookId !== null || replyToMargin?.bookId != null
   );
-  const excerptRef = useRef<HTMLTextAreaElement>(null);
 
-  // Progressive disclosure: secondary fields appear as soon as a book is selected
+  /* ── THOUGHT mode state ── */
+  const [thoughtText, setThoughtText] = useState("");
+  const [thoughtPostType, setThoughtPostType] = useState<MarginType>("insight");
+  const [thoughtVisibility, setThoughtVisibility] = useState<Visibility>("public");
+  const [showThoughtSettings, setShowThoughtSettings] = useState(false);
+
+  const [published, setPublished] = useState(false);
+
+  const excerptRef = useRef<HTMLTextAreaElement>(null);
+  const thoughtRef = useRef<HTMLTextAreaElement>(null);
+
   useEffect(() => {
-    if (bookId !== null) {
-      setShowSecondary(true);
-    }
+    if (bookId !== null) setShowSecondary(true);
   }, [bookId]);
 
-  // Autofocus excerpt
   useEffect(() => {
-    const t = setTimeout(() => excerptRef.current?.focus(), 180);
+    const t = setTimeout(() => {
+      if (composerMode === "EXCERPT") excerptRef.current?.focus();
+      else thoughtRef.current?.focus();
+    }, 180);
     return () => clearTimeout(t);
-  }, []);
+  }, [composerMode]);
 
   const myBooks = progress
     .filter((p) => p.userId === currentUser.id && p.status !== "wishlist")
@@ -61,10 +87,12 @@ export function NewMarginScreen() {
     : [];
 
   const selectedBook = MOCK_BOOKS.find((b) => b.id === bookId);
-  const canPublish = bookId !== null && excerpt.trim().length > 0;
 
-  const handlePublish = () => {
-    if (!canPublish || !selectedBook) return;
+  const canPublishExcerpt = bookId !== null && excerpt.trim().length > 0;
+  const canPublishThought = thoughtText.trim().length >= 20;
+
+  const handlePublishExcerpt = () => {
+    if (!canPublishExcerpt || !selectedBook) return;
     addMargin({
       bookId: selectedBook.id,
       bookTitle: selectedBook.title,
@@ -74,10 +102,29 @@ export function NewMarginScreen() {
       ...(referenceType === "page" ? { page: parseInt(refValue) || 0 } : {}),
       ...(referenceType === "chapter" ? { chapter: refValue } : {}),
       postType,
+      composerMode: "EXCERPT",
       commentary: commentary.trim(),
       spoilerLevel,
       visibility,
-      ...(replyToId ? { parentEcoId: replyToId } : {}),
+      ...(replyToId ? { parentEcoId: parseInt(replyToId) } : {}),
+    });
+    setPublished(true);
+    setTimeout(() => navigate("/"), 1800);
+  };
+
+  const handlePublishThought = () => {
+    if (!canPublishThought) return;
+    addMargin({
+      bookId: null,
+      bookTitle: "",
+      bookAuthor: "",
+      excerpt: "",
+      referenceType: "none",
+      postType: thoughtPostType,
+      composerMode: "THOUGHT",
+      commentary: thoughtText.trim(),
+      spoilerLevel: "none",
+      visibility: thoughtVisibility,
     });
     setPublished(true);
     setTimeout(() => navigate("/"), 1800);
@@ -89,6 +136,17 @@ export function NewMarginScreen() {
     backgroundColor: fieldBg,
     border: `1px solid ${fieldBorder}`,
     color: "var(--text-primary)",
+  };
+
+  const activeChipStyle = {
+    backgroundColor: isDark ? "#F3EDE3" : "#454545",
+    color: isDark ? "#24211E" : "#FAF8F3",
+    border: "1px solid transparent",
+  };
+  const inactiveChipStyle = {
+    backgroundColor: "transparent",
+    color: "var(--text-secondary)",
+    border: `1px solid ${isDark ? "rgba(255,255,255,0.12)" : "rgba(69,69,69,0.12)"}`,
   };
 
   if (published) {
@@ -104,9 +162,13 @@ export function NewMarginScreen() {
         <div className="w-16 h-16 rounded-full bg-[#697962]/15 flex items-center justify-center mb-6 animate-in zoom-in duration-500">
           <Check className="w-8 h-8 text-[#697962]" />
         </div>
-        <h2 className="font-serif italic text-[26px] mb-2" style={{ color: "var(--text-primary)" }}>Post publicado</h2>
+        <h2 className="font-serif italic text-[26px] mb-2" style={{ color: "var(--text-primary)" }}>
+          Post publicado
+        </h2>
         <p className="font-sans font-light text-[11px] tracking-[0.08em]" style={{ color: "var(--text-soft)" }}>
-          Guardada no seu livro para sempre.
+          {composerMode === "THOUGHT"
+            ? "Seu pensamento está no ar."
+            : "Guardada no seu livro para sempre."}
         </p>
       </div>
     );
@@ -123,7 +185,10 @@ export function NewMarginScreen() {
     >
       {/* Header */}
       <div className="flex items-center gap-3 px-5 pt-10 pb-4 border-b border-[#AE8F7D]/10">
-        <button onClick={() => navigate("/")} className="text-[#454545]/40 hover:text-[#454545]/70 transition-colors">
+        <button
+          onClick={() => navigate("/")}
+          className="text-[#454545]/40 hover:text-[#454545]/70 transition-colors"
+        >
           <ChevronLeft className="w-5 h-5" />
         </button>
         <div>
@@ -131,7 +196,11 @@ export function NewMarginScreen() {
             {replyToMargin ? "Responder com post" : "Criar Post"}
           </h1>
           <p className="font-sans font-light text-[9px] tracking-[0.14em] uppercase text-[#AE8F7D]">
-            {replyToMargin ? "Sua resposta" : "Criar post com esse trecho"}
+            {replyToMargin
+              ? "Sua resposta"
+              : composerMode === "THOUGHT"
+              ? "Pensamento livre"
+              : "Sobre um trecho"}
           </p>
         </div>
         {replyToMargin && (
@@ -142,142 +211,437 @@ export function NewMarginScreen() {
       </div>
 
       {/* Scrollable Form */}
-      <div className="flex-1 overflow-auto px-5 py-6 space-y-6">
+      <div className="flex-1 overflow-auto px-5 py-5 space-y-5">
 
-        {/* Reply context banner */}
+        {/* ── Mode toggle (hidden when replying) ── */}
+        {!replyToMargin && (
+          <div
+            className="flex rounded-[10px] overflow-hidden"
+            style={{
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.10)" : "rgba(174,143,125,0.22)"}`,
+            }}
+          >
+            <button
+              onClick={() => setComposerMode("EXCERPT")}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 font-sans text-[10px] font-light tracking-[0.08em] transition-all"
+              style={
+                composerMode === "EXCERPT"
+                  ? { backgroundColor: "#697962", color: "#FAF8F3" }
+                  : {
+                      backgroundColor: "transparent",
+                      color: "var(--text-tertiary)",
+                      borderRight: `1px solid ${isDark ? "rgba(255,255,255,0.10)" : "rgba(174,143,125,0.22)"}`,
+                    }
+              }
+            >
+              <span>📖</span> Sobre um trecho
+            </button>
+            <button
+              onClick={() => setComposerMode("THOUGHT")}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 font-sans text-[10px] font-light tracking-[0.08em] transition-all"
+              style={
+                composerMode === "THOUGHT"
+                  ? { backgroundColor: "#697962", color: "#FAF8F3" }
+                  : { backgroundColor: "transparent", color: "var(--text-tertiary)" }
+              }
+            >
+              <span>✏️</span> Pensamento
+            </button>
+          </div>
+        )}
+
+        {/* ── Reply context banner ── */}
         {replyToMargin && (
           <div className="rounded-[12px] border border-[#697962]/20 bg-[#697962]/5 px-4 py-3.5">
             <p className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase text-[#697962] mb-1.5">
               Respondendo a {replyToMargin.userName ?? "outro leitor"}
             </p>
             <p className="font-serif italic text-[13px] text-[#454545]/65 leading-relaxed border-l-2 border-[#697962]/30 pl-3">
-              &ldquo;{replyToMargin.excerpt.slice(0, 100)}{replyToMargin.excerpt.length > 100 ? "…" : ""}&rdquo;
+              &ldquo;
+              {(replyToMargin.excerpt || replyToMargin.commentary).slice(0, 100)}
+              {(replyToMargin.excerpt || replyToMargin.commentary).length > 100 ? "…" : ""}
+              &rdquo;
             </p>
           </div>
         )}
 
-        {/* STEP 1: Excerpt — always first and most prominent */}
-        <div>
-          <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-            Trecho
-          </p>
-          <textarea
-            ref={excerptRef}
-            data-testid="input-excerpt"
-            value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
-            placeholder="Cole ou escreva o trecho que ficou com você…"
-            className="w-full font-serif italic text-[17px] rounded-[12px] p-4 outline-none focus:border-[#AE8F7D]/60 transition-colors resize-none leading-[1.75] min-h-[120px]"
-            style={fieldStyle}
-            rows={4}
-          />
-          <p className="font-sans font-light text-[8px] mt-1 text-right" style={{ color: "var(--text-soft)" }}>
-            {excerpt.length} caracteres · respeite direitos autorais
-          </p>
-        </div>
+        {/* ════════════════════════════════════════
+            EXCERPT MODE FIELDS
+            ════════════════════════════════════════ */}
+        {composerMode === "EXCERPT" && (
+          <>
+            {/* Excerpt field */}
+            <div>
+              <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+                Trecho
+              </p>
+              <textarea
+                ref={excerptRef}
+                data-testid="input-excerpt"
+                value={excerpt}
+                onChange={(e) => setExcerpt(e.target.value)}
+                placeholder="Cole ou escreva o trecho que ficou com você…"
+                className="w-full font-serif italic text-[17px] rounded-[12px] p-4 outline-none focus:border-[#AE8F7D]/60 transition-colors resize-none leading-[1.75] min-h-[120px]"
+                style={fieldStyle}
+                rows={4}
+              />
+              <p className="font-sans font-light text-[8px] mt-1 text-right" style={{ color: "var(--text-soft)" }}>
+                {excerpt.length} caracteres · respeite direitos autorais
+              </p>
+            </div>
 
-        {/* STEP 2: Book — always visible */}
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-              Livro
-            </p>
-
-            {selectedBook ? (
-              <button
-                data-testid="selected-book-display"
-                onClick={() => { setBookId(null); setShowBookSearch(true); }}
-                className="w-full flex items-center gap-3 p-3.5 rounded-[10px] border border-[#AE8F7D]/30 bg-[#AE8F7D]/4 text-left"
-              >
-                <div className="w-8 h-11 rounded-[4px] bg-[#EBE6DB] flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="font-serif text-[14px] text-[#454545] truncate">{selectedBook.title}</p>
-                  <p className="font-sans font-light text-[9px] tracking-[0.06em] uppercase text-[#454545]/40">
-                    {selectedBook.author}
-                  </p>
+            {/* Book field */}
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+                Livro
+              </p>
+              {selectedBook ? (
+                <button
+                  data-testid="selected-book-display"
+                  onClick={() => { setBookId(null); setShowBookSearch(true); }}
+                  className="w-full flex items-center gap-3 p-3.5 rounded-[10px] border border-[#AE8F7D]/30 bg-[#AE8F7D]/4 text-left"
+                >
+                  <div className="w-8 h-11 rounded-[4px] bg-[#EBE6DB] flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-serif text-[14px] text-[#454545] truncate">{selectedBook.title}</p>
+                    <p className="font-sans font-light text-[9px] tracking-[0.06em] uppercase text-[#454545]/40">
+                      {selectedBook.author}
+                    </p>
+                  </div>
+                  <span className="font-sans text-[9px] text-[#454545]/30">trocar</span>
+                </button>
+              ) : (
+                <div>
+                  {myBooks.length > 0 && (
+                    <div className="mb-2 flex flex-wrap gap-1.5">
+                      {myBooks.slice(0, 4).map((b) => (
+                        <button
+                          key={b.id}
+                          data-testid={`quick-select-book-${b.id}`}
+                          onClick={() => { setBookId(b.id); setShowBookSearch(false); }}
+                          className="font-sans text-[9px] font-light px-3 py-1.5 rounded-full transition-all"
+                          style={{
+                            backgroundColor: isDark ? "#252119" : "#FAF8F3",
+                            border: `1px solid ${isDark ? "rgba(255,255,255,0.10)" : "rgba(69,69,69,0.12)"}`,
+                            color: "var(--text-secondary)",
+                          }}
+                        >
+                          {b.title.length > 20 ? b.title.slice(0, 20) + "…" : b.title}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <div
+                    className="flex items-center gap-2 rounded-[10px] px-4 py-3"
+                    style={{
+                      backgroundColor: isDark ? "#201B17" : "rgba(235,230,219,0.65)",
+                      border: `1px solid ${isDark ? "rgba(255,255,255,0.10)" : "rgba(174,143,125,0.12)"}`,
+                    }}
+                  >
+                    <input
+                      data-testid="input-book-search"
+                      value={bookSearch}
+                      onChange={(e) => { setBookSearch(e.target.value); setShowBookSearch(true); }}
+                      onFocus={() => setShowBookSearch(true)}
+                      placeholder="Buscar outro livro..."
+                      className="flex-1 bg-transparent font-sans font-light text-[12px] outline-none"
+                      style={{ color: "var(--text-primary)" }}
+                    />
+                  </div>
+                  {showBookSearch && searchResults.length > 0 && (
+                    <div className="mt-1 space-y-1">
+                      {searchResults.map((book) => (
+                        <button
+                          key={book.id}
+                          data-testid={`select-book-${book.id}`}
+                          onClick={() => { setBookId(book.id); setBookSearch(""); setShowBookSearch(false); }}
+                          className="w-full flex items-center gap-3 p-3 rounded-[8px] text-left transition-colors"
+                          style={{
+                            backgroundColor: isDark ? "#252119" : "#FAF8F3",
+                            border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(69,69,69,0.08)"}`,
+                          }}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className="font-serif text-[13px] truncate" style={{ color: "var(--text-primary)" }}>{book.title}</p>
+                            <p className="font-sans font-light text-[9px]" style={{ color: "var(--text-tertiary)" }}>{book.author}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <span className="font-sans text-[9px] text-[#454545]/30">trocar</span>
-              </button>
-            ) : (
-              <div>
-                {myBooks.length > 0 && (
-                  <div className="mb-2 flex flex-wrap gap-1.5">
-                    {myBooks.slice(0, 4).map((b) => (
+              )}
+            </div>
+
+            {/* Secondary fields — appear when book is selected */}
+            {showSecondary && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-400">
+
+                {/* Post type */}
+                <div>
+                  <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+                    Tipo de post
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {MARGIN_TYPES.map((type) => (
                       <button
-                        key={b.id}
-                        data-testid={`quick-select-book-${b.id}`}
-                        onClick={() => { setBookId(b.id); setShowBookSearch(false); }}
-                        className="font-sans text-[9px] font-light px-3 py-1.5 rounded-full transition-all"
-                        style={{
-                          backgroundColor: isDark ? "#252119" : "#FAF8F3",
-                          border: `1px solid ${isDark ? "rgba(255,255,255,0.10)" : "rgba(69,69,69,0.12)"}`,
-                          color: "var(--text-secondary)",
-                        }}
+                        key={type.id}
+                        data-testid={`margin-type-${type.id}`}
+                        onClick={() => setPostType(type.id)}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-full font-sans text-[10px] font-light transition-all"
+                        style={postType === type.id ? activeChipStyle : inactiveChipStyle}
                       >
-                        {b.title.length > 20 ? b.title.slice(0, 20) + "…" : b.title}
+                        <span className="text-[11px]">{type.icon}</span>
+                        {type.label}
                       </button>
                     ))}
                   </div>
-                )}
-                <div className="flex items-center gap-2 rounded-[10px] px-4 py-3"
-                  style={{
-                    backgroundColor: isDark ? "#201B17" : "rgba(235,230,219,0.65)",
-                    border: `1px solid ${isDark ? "rgba(255,255,255,0.10)" : "rgba(174,143,125,0.12)"}`,
-                  }}>
-                  <input
-                    data-testid="input-book-search"
-                    value={bookSearch}
-                    onChange={(e) => { setBookSearch(e.target.value); setShowBookSearch(true); }}
-                    onFocus={() => setShowBookSearch(true)}
-                    placeholder="Buscar outro livro..."
-                    className="flex-1 bg-transparent font-sans font-light text-[12px] outline-none"
-                    style={{ color: "var(--text-primary)" }}
-                  />
                 </div>
-                {showBookSearch && searchResults.length > 0 && (
-                  <div className="mt-1 space-y-1">
-                    {searchResults.map((book) => (
+
+                {/* Reference */}
+                <div>
+                  <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+                    Referência{" "}
+                    <span className="text-[#454545]/25 normal-case tracking-normal">
+                      · ajuda outros leitores a evitar spoilers
+                    </span>
+                  </p>
+                  <div className="grid grid-cols-4 gap-1.5 mb-3">
+                    {[
+                      { id: "none", label: "Sem ref." },
+                      { id: "page", label: "Página" },
+                      { id: "chapter", label: "Capítulo" },
+                      { id: "free_text", label: "Livre" },
+                    ].map((rt) => (
                       <button
-                        key={book.id}
-                        data-testid={`select-book-${book.id}`}
-                        onClick={() => { setBookId(book.id); setBookSearch(""); setShowBookSearch(false); }}
-                        className="w-full flex items-center gap-3 p-3 rounded-[8px] text-left transition-colors"
-                        style={{
-                          backgroundColor: isDark ? "#252119" : "#FAF8F3",
-                          border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(69,69,69,0.08)"}`,
-                        }}
+                        key={rt.id}
+                        data-testid={`ref-type-${rt.id}`}
+                        onClick={() => setReferenceType(rt.id as typeof referenceType)}
+                        className="py-2.5 rounded-[8px] font-sans text-[9px] font-light tracking-[0.06em] transition-all"
+                        style={referenceType === rt.id ? activeChipStyle : inactiveChipStyle}
                       >
-                        <div className="flex-1 min-w-0">
-                          <p className="font-serif text-[13px] truncate" style={{ color: "var(--text-primary)" }}>{book.title}</p>
-                          <p className="font-sans font-light text-[9px]" style={{ color: "var(--text-tertiary)" }}>{book.author}</p>
-                        </div>
+                        {rt.label}
                       </button>
                     ))}
+                  </div>
+                  {referenceType !== "none" && (
+                    <input
+                      data-testid="input-ref-value"
+                      value={refValue}
+                      onChange={(e) => setRefValue(e.target.value)}
+                      type={referenceType === "page" ? "number" : "text"}
+                      placeholder={
+                        referenceType === "page"
+                          ? "Ex: 87"
+                          : referenceType === "chapter"
+                          ? "Ex: IX ou 5"
+                          : "Ex: 'O sonho dela'"
+                      }
+                      className="w-full font-serif italic text-[17px] text-[#454545] placeholder:text-[#454545]/20 bg-transparent border-b border-[#454545]/12 pb-2 outline-none focus:border-[#AE8F7D]/60 transition-colors"
+                    />
+                  )}
+                </div>
+
+                {/* Commentary */}
+                <div>
+                  <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+                    Seu pensamento
+                  </p>
+                  <textarea
+                    data-testid="input-commentary"
+                    value={commentary}
+                    onChange={(e) => setCommentary(e.target.value)}
+                    placeholder="O que esse trecho abriu em você?"
+                    className="w-full font-serif text-[15px] rounded-[10px] p-4 outline-none focus:border-[#AE8F7D]/50 transition-colors resize-none leading-[1.75]"
+                    style={fieldStyle}
+                    rows={3}
+                  />
+                </div>
+
+                {/* Spoiler + Visibility */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+                      Spoiler
+                    </p>
+                    <div className="space-y-1.5">
+                      {SPOILER_LEVELS.map((level) => (
+                        <button
+                          key={level.id}
+                          data-testid={`spoiler-level-${level.id}`}
+                          onClick={() => setSpoilerLevel(level.id as SpoilerLevel)}
+                          className={`w-full flex items-center gap-2 px-3 py-2 rounded-[8px] border text-left transition-all ${
+                            spoilerLevel === level.id
+                              ? "border-[#AE8F7D]/40 bg-[#AE8F7D]/5"
+                              : "border-[#454545]/8 hover:border-[#AE8F7D]/20"
+                          }`}
+                        >
+                          <div
+                            className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                              spoilerLevel === level.id ? "bg-[#AE8F7D]" : "bg-[#454545]/15"
+                            }`}
+                          />
+                          <span
+                            className={`font-sans font-light text-[10px] leading-tight ${
+                              spoilerLevel === level.id ? "text-[#454545]" : "text-[#454545]/50"
+                            }`}
+                          >
+                            {level.label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
+                      Visibilidade
+                    </p>
+                    <div className="space-y-1.5">
+                      {([
+                        { id: "public", label: "Pública", sub: "Visível para todos" },
+                        { id: "private", label: "Privada", sub: "Só você pode ver" },
+                      ] as const).map((vis) => (
+                        <button
+                          key={vis.id}
+                          data-testid={`visibility-${vis.id}`}
+                          onClick={() => setVisibility(vis.id as Visibility)}
+                          className={`w-full flex items-start gap-2 px-3 py-2 rounded-[8px] border text-left transition-all ${
+                            visibility === vis.id
+                              ? "border-[#AE8F7D]/40 bg-[#AE8F7D]/5"
+                              : "border-[#454545]/8 hover:border-[#AE8F7D]/20"
+                          }`}
+                        >
+                          <div
+                            className={`w-2 h-2 rounded-full flex-shrink-0 mt-1 ${
+                              visibility === vis.id ? "bg-[#AE8F7D]" : "bg-[#454545]/15"
+                            }`}
+                          />
+                          <div>
+                            <span
+                              className={`font-sans font-light text-[10px] block ${
+                                visibility === vis.id ? "text-[#454545]" : "text-[#454545]/50"
+                              }`}
+                            >
+                              {vis.label}
+                            </span>
+                            <span className="font-sans font-light text-[8px] text-[#454545]/30">
+                              {vis.sub}
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview */}
+                {selectedBook && excerpt.trim() && (
+                  <div
+                    className="rounded-[14px] overflow-hidden"
+                    style={{
+                      backgroundColor: isDark ? "#1F1A17" : "#FAF8F3",
+                      border: `1px solid ${isDark ? "rgba(216,183,167,0.18)" : "rgba(174,143,125,0.20)"}`,
+                    }}
+                  >
+                    <div
+                      className="px-4 py-2.5 border-b flex items-center gap-2"
+                      style={{
+                        backgroundColor: isDark ? "rgba(215,183,167,0.06)" : "rgba(174,143,125,0.08)",
+                        borderColor: isDark ? "rgba(216,183,167,0.10)" : "rgba(174,143,125,0.12)",
+                      }}
+                    >
+                      <p
+                        className="font-sans text-[6.5px] font-light tracking-[0.22em] uppercase"
+                        style={{ color: isDark ? "#CDB9AA" : "#AE8F7D" }}
+                      >
+                        Preview · como vai aparecer no feed
+                      </p>
+                    </div>
+                    <div className="px-4 pt-3.5 pb-4">
+                      <div className="flex items-center gap-1.5 mb-3">
+                        <span
+                          className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase"
+                          style={{ color: isDark ? "#CDB9AA" : "#AE8F7D" }}
+                        >
+                          {MARGIN_TYPES.find((t) => t.id === postType)?.icon}{" "}
+                          {MARGIN_TYPES.find((t) => t.id === postType)?.label}
+                        </span>
+                        <span style={{ color: isDark ? "rgba(216,183,167,0.25)" : "rgba(174,143,125,0.30)" }}>·</span>
+                        <span
+                          className="font-sans font-light text-[7.5px] truncate"
+                          style={{ color: isDark ? "#B7A697" : "#8C837A" }}
+                        >
+                          {selectedBook.title}
+                        </span>
+                      </div>
+                      <div
+                        className="pl-3 mb-3"
+                        style={{
+                          borderLeft: `2px solid ${isDark ? "rgba(216,183,167,0.45)" : "rgba(174,143,125,0.50)"}`,
+                        }}
+                      >
+                        <p
+                          className="font-serif italic text-[15px] leading-[1.72]"
+                          style={{ color: isDark ? "#EADFD4" : "#24211E" }}
+                        >
+                          &ldquo;{excerpt.slice(0, 140)}{excerpt.length > 140 ? "…" : ""}&rdquo;
+                        </p>
+                      </div>
+                      {commentary.trim() && (
+                        <p
+                          className="font-sans text-[12.5px] leading-[1.65] mb-3"
+                          style={{ color: isDark ? "#F3EDE5" : "#24211E" }}
+                        >
+                          {commentary.slice(0, 140)}{commentary.length > 140 ? "…" : ""}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span
+                          className="font-sans font-light text-[7px] tracking-[0.1em] uppercase border px-1.5 py-0.5 rounded-full"
+                          style={{
+                            color: isDark ? "#B7A697" : "#8C837A",
+                            borderColor: isDark ? "rgba(216,183,167,0.22)" : "rgba(174,143,125,0.28)",
+                          }}
+                        >
+                          {spoilerLevel === "none" ? "Sem spoiler" : spoilerLevel}
+                        </span>
+                        <span
+                          className="font-sans font-light text-[7px] tracking-[0.1em] uppercase border px-1.5 py-0.5 rounded-full"
+                          style={{
+                            color: isDark ? "#B7A697" : "#8C837A",
+                            borderColor: isDark ? "rgba(216,183,167,0.22)" : "rgba(174,143,125,0.28)",
+                          }}
+                        >
+                          {visibility === "public" ? "Público" : "Privado"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
             )}
-          </div>
+          </>
+        )}
 
-        {/* STEP 3: Secondary fields — progressive disclosure */}
-        {showSecondary && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-400">
+        {/* ════════════════════════════════════════
+            THOUGHT MODE FIELDS
+            ════════════════════════════════════════ */}
+        {composerMode === "THOUGHT" && (
+          <div className="space-y-5 animate-in fade-in duration-200">
 
-            {/* Type */}
+            {/* Post type — only insight / reaction / theory */}
             <div>
               <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
                 Tipo de post
               </p>
               <div className="flex flex-wrap gap-1.5">
-                {MARGIN_TYPES.map((type) => (
+                {THOUGHT_TYPES.map((type) => (
                   <button
                     key={type.id}
-                    data-testid={`margin-type-${type.id}`}
-                    onClick={() => setPostType(type.id)}
+                    data-testid={`thought-type-${type.id}`}
+                    onClick={() => setThoughtPostType(type.id)}
                     className="flex items-center gap-1.5 px-3 py-2 rounded-full font-sans text-[10px] font-light transition-all"
-                    style={postType === type.id
-                      ? { backgroundColor: isDark ? "#F3EDE3" : "#454545", color: isDark ? "#24211E" : "#FAF8F3", border: "1px solid transparent" }
-                      : { backgroundColor: "transparent", color: "var(--text-secondary)", border: `1px solid ${isDark ? "rgba(255,255,255,0.12)" : "rgba(69,69,69,0.12)"}` }
-                    }
+                    style={thoughtPostType === type.id ? activeChipStyle : inactiveChipStyle}
                   >
                     <span className="text-[11px]">{type.icon}</span>
                     {type.label}
@@ -286,142 +650,96 @@ export function NewMarginScreen() {
               </div>
             </div>
 
-            {/* Reference */}
+            {/* Free-text field */}
             <div>
-              <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-                Referência <span className="text-[#454545]/25 normal-case tracking-normal">· ajuda outros leitores a evitar spoilers</span>
-              </p>
-              <div className="grid grid-cols-4 gap-1.5 mb-3">
-                {[
-                  { id: "none", label: "Sem ref." },
-                  { id: "page", label: "Página" },
-                  { id: "chapter", label: "Capítulo" },
-                  { id: "free_text", label: "Livre" },
-                ].map((rt) => (
-                  <button
-                    key={rt.id}
-                    data-testid={`ref-type-${rt.id}`}
-                    onClick={() => setReferenceType(rt.id as typeof referenceType)}
-                    className="py-2.5 rounded-[8px] font-sans text-[9px] font-light tracking-[0.06em] transition-all"
-                    style={referenceType === rt.id
-                      ? { backgroundColor: isDark ? "#F3EDE3" : "#454545", color: isDark ? "#24211E" : "#FAF8F3", border: "1px solid transparent" }
-                      : { backgroundColor: "transparent", color: "var(--text-secondary)", border: `1px solid ${isDark ? "rgba(255,255,255,0.12)" : "rgba(69,69,69,0.12)"}` }
-                    }
-                  >
-                    {rt.label}
-                  </button>
-                ))}
-              </div>
-              {referenceType !== "none" && (
-                <input
-                  data-testid="input-ref-value"
-                  value={refValue}
-                  onChange={(e) => setRefValue(e.target.value)}
-                  type={referenceType === "page" ? "number" : "text"}
-                  placeholder={
-                    referenceType === "page" ? "Ex: 87" :
-                    referenceType === "chapter" ? "Ex: IX ou 5" :
-                    "Ex: 'O sonho dela'"
-                  }
-                  className="w-full font-serif italic text-[17px] text-[#454545] placeholder:text-[#454545]/20 bg-transparent border-b border-[#454545]/12 pb-2 outline-none focus:border-[#AE8F7D]/60 transition-colors"
-                />
-              )}
-            </div>
-
-            {/* Seu pensamento (commentary) */}
-            <div>
-              <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-                Seu pensamento
-              </p>
               <textarea
-                data-testid="input-commentary"
-                value={commentary}
-                onChange={(e) => setCommentary(e.target.value)}
-                placeholder="O que esse trecho abriu em você?"
-                className="w-full font-serif text-[15px] rounded-[10px] p-4 outline-none focus:border-[#AE8F7D]/50 transition-colors resize-none leading-[1.75]"
-                style={fieldStyle}
-                rows={3}
+                ref={thoughtRef}
+                data-testid="input-thought-text"
+                value={thoughtText}
+                onChange={(e) => setThoughtText(e.target.value.slice(0, 1000))}
+                placeholder="O que está na sua cabeça agora?"
+                className="w-full rounded-[12px] p-4 outline-none focus:border-[#AE8F7D]/60 transition-colors resize-none"
+                style={{
+                  ...fieldStyle,
+                  fontFamily: "Jost, sans-serif",
+                  fontSize: "15px",
+                  fontWeight: 300,
+                  lineHeight: 1.7,
+                  minHeight: "120px",
+                }}
+                rows={5}
               />
+              <p
+                className="font-sans font-light text-[8px] mt-1 text-right"
+                style={{
+                  color: thoughtText.length > 900
+                    ? "#C0704A"
+                    : "var(--text-soft)",
+                }}
+              >
+                {thoughtText.length}/1000 caracteres
+              </p>
             </div>
 
-            {/* Spoiler + Visibility */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-                  Spoiler
-                </p>
-                <div className="space-y-1.5">
-                  {SPOILER_LEVELS.map((level) => (
-                    <button
-                      key={level.id}
-                      data-testid={`spoiler-level-${level.id}`}
-                      onClick={() => setSpoilerLevel(level.id as SpoilerLevel)}
-                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-[8px] border text-left transition-all ${
-                        spoilerLevel === level.id
-                          ? "border-[#AE8F7D]/40 bg-[#AE8F7D]/5"
-                          : "border-[#454545]/8 hover:border-[#AE8F7D]/20"
-                      }`}
-                    >
-                      <div
-                        className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                          spoilerLevel === level.id ? "bg-[#AE8F7D]" : "bg-[#454545]/15"
-                        }`}
-                      />
-                      <span className={`font-sans font-light text-[10px] leading-tight ${spoilerLevel === level.id ? "text-[#454545]" : "text-[#454545]/50"}`}>
-                        {level.label}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] mb-2">
-                  Visibilidade
-                </p>
-                <div className="space-y-1.5">
+            {/* Collapsible settings */}
+            <div>
+              <button
+                onClick={() => setShowThoughtSettings((v) => !v)}
+                className="flex items-center gap-1.5 font-sans text-[9px] font-light tracking-[0.12em] uppercase transition-colors"
+                style={{ color: "var(--text-tertiary)" }}
+              >
+                <span>{showThoughtSettings ? "▲" : "▼"}</span>
+                Visibilidade
+              </button>
+              {showThoughtSettings && (
+                <div className="mt-3 flex flex-wrap gap-1.5 animate-in fade-in duration-200">
                   {([
-                    { id: "public", label: "Pública", sub: "Visível para todos" },
-                    { id: "private", label: "Privada", sub: "Só você pode ver" },
+                    { id: "public", label: "Público" },
+                    { id: "private", label: "Privado" },
                   ] as const).map((vis) => (
                     <button
                       key={vis.id}
-                      data-testid={`visibility-${vis.id}`}
-                      onClick={() => setVisibility(vis.id as Visibility)}
-                      className={`w-full flex items-start gap-2 px-3 py-2 rounded-[8px] border text-left transition-all ${
-                        visibility === vis.id
-                          ? "border-[#AE8F7D]/40 bg-[#AE8F7D]/5"
-                          : "border-[#454545]/8 hover:border-[#AE8F7D]/20"
-                      }`}
+                      data-testid={`thought-visibility-${vis.id}`}
+                      onClick={() => setThoughtVisibility(vis.id as Visibility)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-[8px] border font-sans text-[10px] font-light transition-all"
+                      style={
+                        thoughtVisibility === vis.id
+                          ? {
+                              borderColor: "rgba(174,143,125,0.40)",
+                              backgroundColor: "rgba(174,143,125,0.05)",
+                              color: "var(--text-primary)",
+                            }
+                          : {
+                              borderColor: "rgba(69,69,69,0.10)",
+                              color: "var(--text-tertiary)",
+                            }
+                      }
                     >
                       <div
-                        className={`w-2 h-2 rounded-full flex-shrink-0 mt-1 ${
-                          visibility === vis.id ? "bg-[#AE8F7D]" : "bg-[#454545]/15"
-                        }`}
+                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        style={{
+                          backgroundColor:
+                            thoughtVisibility === vis.id ? "#AE8F7D" : "rgba(69,69,69,0.15)",
+                        }}
                       />
-                      <div>
-                        <span className={`font-sans font-light text-[10px] block ${visibility === vis.id ? "text-[#454545]" : "text-[#454545]/50"}`}>
-                          {vis.label}
-                        </span>
-                        <span className="font-sans font-light text-[8px] text-[#454545]/30">{vis.sub}</span>
-                      </div>
+                      {vis.label}
                     </button>
                   ))}
                 </div>
-              </div>
+              )}
             </div>
 
-            {/* Preview */}
-            {selectedBook && excerpt.trim() && (
+            {/* THOUGHT preview */}
+            {thoughtText.trim().length >= 20 && (
               <div
-                className="rounded-[14px] overflow-hidden"
+                className="rounded-[14px] overflow-hidden animate-in fade-in duration-300"
                 style={{
                   backgroundColor: isDark ? "#1F1A17" : "#FAF8F3",
                   border: `1px solid ${isDark ? "rgba(216,183,167,0.18)" : "rgba(174,143,125,0.20)"}`,
                 }}
               >
-                {/* Preview header band */}
                 <div
-                  className="px-4 py-2.5 border-b flex items-center gap-2"
+                  className="px-4 py-2.5 border-b"
                   style={{
                     backgroundColor: isDark ? "rgba(215,183,167,0.06)" : "rgba(174,143,125,0.08)",
                     borderColor: isDark ? "rgba(216,183,167,0.10)" : "rgba(174,143,125,0.12)",
@@ -434,73 +752,22 @@ export function NewMarginScreen() {
                     Preview · como vai aparecer no feed
                   </p>
                 </div>
-
-                {/* Preview body */}
                 <div className="px-4 pt-3.5 pb-4">
-                  {/* Post type + book */}
                   <div className="flex items-center gap-1.5 mb-3">
                     <span
                       className="font-sans text-[7.5px] font-light tracking-[0.18em] uppercase"
                       style={{ color: isDark ? "#CDB9AA" : "#AE8F7D" }}
                     >
-                      {MARGIN_TYPES.find((t) => t.id === postType)?.icon}{" "}
-                      {MARGIN_TYPES.find((t) => t.id === postType)?.label}
-                    </span>
-                    <span style={{ color: isDark ? "rgba(216,183,167,0.25)" : "rgba(174,143,125,0.30)" }}>·</span>
-                    <span
-                      className="font-sans font-light text-[7.5px] truncate"
-                      style={{ color: isDark ? "#B7A697" : "#8C837A" }}
-                    >
-                      {selectedBook.title}
+                      {THOUGHT_TYPES.find((t) => t.id === thoughtPostType)?.icon}{" "}
+                      {THOUGHT_TYPES.find((t) => t.id === thoughtPostType)?.label}
                     </span>
                   </div>
-
-                  {/* Excerpt quote */}
-                  <div
-                    className="pl-3 mb-3"
-                    style={{
-                      borderLeft: `2px solid ${isDark ? "rgba(216,183,167,0.45)" : "rgba(174,143,125,0.50)"}`,
-                    }}
+                  <p
+                    className="font-sans font-light text-[14px] leading-[1.75]"
+                    style={{ color: isDark ? "#EADFD4" : "#2C2A27" }}
                   >
-                    <p
-                      className="font-serif italic text-[15px] leading-[1.72]"
-                      style={{ color: isDark ? "#EADFD4" : "#24211E" }}
-                    >
-                      &ldquo;{excerpt.slice(0, 140)}{excerpt.length > 140 ? "…" : ""}&rdquo;
-                    </p>
-                  </div>
-
-                  {/* Commentary if present */}
-                  {commentary.trim() && (
-                    <p
-                      className="font-sans text-[12.5px] leading-[1.65] mb-3"
-                      style={{ color: isDark ? "#F3EDE5" : "#24211E" }}
-                    >
-                      {commentary.slice(0, 140)}{commentary.length > 140 ? "…" : ""}
-                    </p>
-                  )}
-
-                  {/* Meta chips */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span
-                      className="font-sans font-light text-[7px] tracking-[0.1em] uppercase border px-1.5 py-0.5 rounded-full"
-                      style={{
-                        color: isDark ? "#B7A697" : "#8C837A",
-                        borderColor: isDark ? "rgba(216,183,167,0.22)" : "rgba(174,143,125,0.28)",
-                      }}
-                    >
-                      {spoilerLevel === "none" ? "Sem spoiler" : spoilerLevel}
-                    </span>
-                    <span
-                      className="font-sans font-light text-[7px] tracking-[0.1em] uppercase border px-1.5 py-0.5 rounded-full"
-                      style={{
-                        color: isDark ? "#B7A697" : "#8C837A",
-                        borderColor: isDark ? "rgba(216,183,167,0.22)" : "rgba(174,143,125,0.28)",
-                      }}
-                    >
-                      {visibility === "public" ? "Público" : visibility === "followers" ? "Seguidores" : "Privado"}
-                    </span>
-                  </div>
+                    {thoughtText.slice(0, 200)}{thoughtText.length > 200 ? "…" : ""}
+                  </p>
                 </div>
               </div>
             )}
@@ -518,7 +785,7 @@ export function NewMarginScreen() {
           backgroundColor: isDark ? "rgba(28,25,22,0.97)" : "rgba(250,248,243,0.97)",
         }}
       >
-        {!canPublish && (
+        {composerMode === "EXCERPT" && !canPublishExcerpt && (
           <p className="font-sans font-light text-[9px] text-center mb-2" style={{ color: "var(--text-soft)" }}>
             {excerpt.trim().length === 0
               ? "Digite o trecho que ficou com você"
@@ -527,17 +794,26 @@ export function NewMarginScreen() {
               : ""}
           </p>
         )}
+        {composerMode === "THOUGHT" && !canPublishThought && thoughtText.length > 0 && (
+          <p className="font-sans font-light text-[9px] text-center mb-2" style={{ color: "var(--text-soft)" }}>
+            Escreva pelo menos 20 caracteres
+          </p>
+        )}
         <button
           data-testid="button-publish-margin"
-          onClick={handlePublish}
-          disabled={!canPublish}
+          onClick={composerMode === "EXCERPT" ? handlePublishExcerpt : handlePublishThought}
+          disabled={composerMode === "EXCERPT" ? !canPublishExcerpt : !canPublishThought}
           className="w-full font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-25 active:scale-[0.99] transition-all"
           style={{
             backgroundColor: isDark ? "#F3EDE3" : "#454545",
             color: isDark ? "#24211E" : "#FAF8F3",
           }}
         >
-          {replyToMargin ? "Publicar resposta" : "Publicar post"}
+          {replyToMargin
+            ? "Publicar resposta"
+            : composerMode === "THOUGHT"
+            ? "Publicar pensamento"
+            : "Publicar post"}
         </button>
       </div>
     </div>

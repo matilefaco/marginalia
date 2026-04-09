@@ -261,7 +261,8 @@ function EcoarBar({ margin, linkToThread }: { margin: Margin; linkToThread?: boo
   const handleReplyWithMargin = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/nova-margem?replyTo=${margin.id}&bookId=${margin.bookId}`);
+    const bookParam = margin.bookId !== null ? `&bookId=${margin.bookId}` : "";
+    navigate(`/nova-margem?replyTo=${margin.id}${bookParam}`);
   };
 
   const ecoarContent = (
@@ -522,6 +523,66 @@ function StandardCard({ margin, showBook, linkToThread, bookColor }: Props) {
   return <Link href={`/thread/${margin.id}`} className="block active:scale-[0.99] active:opacity-90 transition-all duration-150">{content}</Link>;
 }
 
+/* ─── CARD: Pensamento (THOUGHT — sem livro, sem trecho) ─── */
+function ThoughtCard({ margin, linkToThread }: Props) {
+  const { isDark } = useApp();
+  const typeIcon = MARGIN_TYPES.find((t) => t.id === margin.postType)?.icon || "✏️";
+  const a = accent(margin.postType);
+  const text = margin.commentary || margin.excerpt;
+
+  const content = (
+    <div
+      data-testid={`card-margin-${margin.id}`}
+      className="rounded-[14px] hover:brightness-[0.98] transition-all"
+      style={{
+        border: "1px solid rgba(174,143,125,0.14)",
+        backgroundColor: isDark ? DARK_SURFACE : "#FAF8F3",
+        padding: "20px",
+      }}
+    >
+      {/* Header: type icon + label + timestamp */}
+      <div className="flex items-center gap-2 mb-4">
+        <span
+          className="font-sans text-[8px] font-light tracking-[0.18em] uppercase flex items-center gap-1"
+          style={{ color: a.label }}
+        >
+          <span>{typeIcon}</span>
+          <span>{marginTypeLabel(margin.postType)}</span>
+        </span>
+        <span className="ml-auto font-sans text-[7px] font-light flex-shrink-0" style={{ color: "var(--text-tertiary)" }}>
+          {timeAgo(margin.createdAt)}
+        </span>
+      </div>
+
+      {/* Free text — no quotes, Jost, generous line-height */}
+      <p
+        className="font-sans font-light text-[15px] leading-[1.75] mb-5"
+        style={{ color: isDark ? "#F3EDE5" : "#2C2A27" }}
+      >
+        {text}
+      </p>
+
+      {/* Dashed separator */}
+      <div
+        className="mb-4"
+        style={{ borderTop: `1px dashed ${isDark ? "rgba(212,203,184,0.30)" : "#D4CBB8"}` }}
+      />
+
+      <div className="mb-3">
+        <EmojiReactionBar margin={margin} />
+      </div>
+      <EcoarBar margin={margin} linkToThread={linkToThread} />
+    </div>
+  );
+
+  if (!linkToThread) return content;
+  return (
+    <Link href={`/thread/${margin.id}`} className="block active:scale-[0.99] active:opacity-90 transition-all duration-150">
+      {content}
+    </Link>
+  );
+}
+
 export function MarginCard({ margin, showBook = false, linkToThread = true }: Props) {
   const { currentUser, getProgressForBook } = useApp();
   const progress = margin.bookId !== null ? getProgressForBook(margin.bookId) : undefined;
@@ -529,6 +590,10 @@ export function MarginCard({ margin, showBook = false, linkToThread = true }: Pr
 
   const book = MOCK_BOOKS.find((b) => b.id === margin.bookId);
   const bookColor = book?.bookColor;
+
+  // Derive effective composer mode — fall back based on whether excerpt exists
+  const effectiveMode: "EXCERPT" | "THOUGHT" =
+    margin.composerMode ?? (margin.excerpt ? "EXCERPT" : "THOUGHT");
 
   if (!canSee) {
     return (
@@ -538,6 +603,11 @@ export function MarginCard({ margin, showBook = false, linkToThread = true }: Pr
         inLibrary={!!progress}
       />
     );
+  }
+
+  // THOUGHT posts get their own layout — no quotes, no book context
+  if (effectiveMode === "THOUGHT") {
+    return <ThoughtCard margin={margin} showBook={showBook} linkToThread={linkToThread} />;
   }
 
   if (margin.postType === "favorite_quote") {

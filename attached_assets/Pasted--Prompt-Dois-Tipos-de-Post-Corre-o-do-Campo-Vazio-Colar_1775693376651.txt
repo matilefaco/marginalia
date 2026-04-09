@@ -1,0 +1,154 @@
+# Prompt — Dois Tipos de Post + Correção do Campo Vazio
+
+# Colar direto no agente do Replit
+
+-----
+
+## CONTEXTO DO PROBLEMA
+
+Atualmente, posts que não têm trecho nem livro vinculado mostram o campo de citação vazio com apenas `""` na tela, o que parece um bug visual. Preciso corrigir isso criando dois tipos de post claramente distintos, com estruturas visuais diferentes.
+
+-----
+
+## O QUE FAZER
+
+### 1. Criar dois modos no compositor (NovaMargem / CreatePost)
+
+No topo da tela de criação, adicionar um seletor de modo com dois botões:
+
+```
+[ 📖 Sobre um trecho ]   [ ✏️ Pensamento ]
+```
+
+- **“Sobre um trecho”** — fluxo atual com livro + citação + comentário
+- **“Pensamento”** — sem livro, sem citação, apenas texto livre
+
+O modo selecionado fica com fundo Old Vine (#697962) e texto branco. O outro fica com fundo transparente e borda #EBE6DB.
+
+Salvar o modo escolhido no campo `postType` do objeto de margem: `"EXCERPT"` ou `"THOUGHT"`.
+
+-----
+
+### 2. Modo “Sobre um trecho” (postType: “EXCERPT”)
+
+Estrutura igual ao que já existe, mas com validação: o botão de publicar só habilita se livro + trecho + tipo estiverem preenchidos. **Trecho não pode ser vazio.**
+
+-----
+
+### 3. Modo “Pensamento” (postType: “THOUGHT”)
+
+Campos exibidos:
+
+- Tipo de post (chips: Insight / Reação / Teoria) — sem “Destaque” nesse modo
+- Campo de texto livre (grande, sem label de “trecho”, sem aspas decorativas)
+  - Placeholder: *“O que está na sua cabeça agora?”*
+  - Fonte: Jost 15px, line-height 1.7
+  - Mínimo 3 linhas, expansível
+  - Contador de caracteres, limite soft 1000
+- Spoiler e visibilidade (colapsados por padrão, como no outro modo)
+- Botão “Publicar post” — habilita quando texto tiver pelo menos 20 caracteres
+
+**Sem campo de livro, sem campo de trecho, sem referência de página.**
+
+-----
+
+### 4. Atualizar o componente MarginCard
+
+O card precisa renderizar de forma diferente dependendo do `postType`.
+
+#### Quando postType === “EXCERPT” (ou postType não definido — compatibilidade com posts antigos):
+
+Estrutura atual — com barra lateral, citação em Cormorant Garamond, separador, comentário.
+
+#### Quando postType === “THOUGHT”:
+
+Estrutura completamente diferente:
+
+```
+┌──────────────────────────────────────┐
+│  💡 INSIGHT              2h          │  ← header igual
+│                                      │
+│  O personagem mais importante de     │  ← texto corrido, sem aspas,
+│  qualquer livro é o leitor. É ele    │    sem barra lateral esquerda
+│  que decide se o narrador é          │    Jost 15px, line-height 1.75
+│  confiável, se o final é trágico...  │    cor #2C2A27
+│                                      │
+│  ── ── ── ── ── ── ── ── ── ──      │  ← separador pontilhado sutil
+│                                      │
+│  @username · 2h                      │
+│  ✨ 445  🖤 223  💥 98               │
+└──────────────────────────────────────┘
+```
+
+Diferenças visuais específicas para THOUGHT:
+
+- **Sem** barra lateral colorida (a `borderLeft` que existe nos outros cards)
+- **Sem** aspas decorativas (`""`)
+- **Sem** referência de página
+- **Sem** nome do livro no header (o header mostra só o tipo + timestamp)
+- Texto em Jost 15px regular (não Cormorant Garamond italic)
+- Line-height 1.75 (mais respiro que o card de trecho)
+- Separador antes do rodapé: linha pontilhada `border-top: 1px dashed #D4CBB8` em vez da linha sólida
+- Fundo: Albescent White puro (#FAF8F3), sem tint de bookColor (não tem livro)
+- Padding interno: 20px
+
+-----
+
+### 5. Atualizar os posts existentes com bookId: null no mockData
+
+No arquivo `src/data/mockData.ts`, encontre todos os posts que têm `bookId: null` e `excerpt: null` e adicione `postType: "THOUGHT"` a eles. Isso corrige o visual dos posts de reflexão livre já existentes.
+
+Exemplo do que procurar e corrigir:
+
+```typescript
+// ANTES:
+{
+  id: "mg_new_037",
+  bookId: null,
+  excerpt: null,
+  // ...
+}
+
+// DEPOIS:
+{
+  id: "mg_new_037",
+  bookId: null,
+  excerpt: null,
+  postType: "THOUGHT",
+  // ...
+}
+```
+
+-----
+
+### 6. Atualizar o tipo TypeScript da margem
+
+No arquivo onde o tipo `Margin` (ou `MarginPost`, ou como estiver nomeado) está definido — provavelmente em `src/types/` ou dentro do `mockData.ts` — adicionar o campo opcional:
+
+```typescript
+postType?: "EXCERPT" | "THOUGHT";
+```
+
+Posts sem `postType` definido devem ser tratados como `"EXCERPT"` por padrão (compatibilidade retroativa).
+
+-----
+
+### 7. Lógica de fallback no MarginCard
+
+No componente `MarginCard.tsx`, adicionar no início da renderização:
+
+```typescript
+const effectivePostType = margin.postType ?? (margin.excerpt ? "EXCERPT" : "THOUGHT");
+```
+
+Isso garante que posts antigos sem `postType` se comportem corretamente com base na presença ou ausência de trecho.
+
+-----
+
+## OBSERVAÇÕES FINAIS
+
+- Não quebrar nenhuma funcionalidade existente (reações, respostas, compartilhamento, anti-spoiler)
+- O sistema anti-spoiler só se aplica a posts `EXCERPT` — posts `THOUGHT` nunca são bloqueados pelo SpoilerShield
+- Manter a identidade visual: Cormorant Garamond italic só aparece em trechos citados (`EXCERPT`), nunca em `THOUGHT`
+- O campo `""`  vazio nunca deve aparecer em nenhum cenário após essa mudança
+- Testar os dois modos no compositor e verificar que o card renderiza corretamente em ambos os casos
