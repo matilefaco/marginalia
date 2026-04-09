@@ -26,7 +26,7 @@ export function OnboardingGenresScreen({ selected: initial, onContinue, onBack }
       }}
     >
       {onBack && (
-        <button onClick={onBack} className="text-[#454545]/40 mb-6 w-fit">
+        <button onClick={onBack} className="text-[#4A4540]/60 mb-6 w-fit hover:opacity-70 transition-opacity">
           <ArrowLeft className="w-5 h-5" />
         </button>
       )}
@@ -36,12 +36,12 @@ export function OnboardingGenresScreen({ selected: initial, onContinue, onBack }
           1 de 4
         </span>
         <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full mt-2 mb-6">
-          <div className="h-full bg-[#AE8F7D] rounded-full w-1/4" />
+          <div className="h-full bg-[#697962] rounded-full w-1/4" />
         </div>
-        <h2 className="font-serif italic text-[28px] text-[#454545] leading-tight mb-2">
+        <h2 className="font-serif italic text-[28px] text-[#1E1C19] leading-tight mb-2">
           Que leituras mais chamam você?
         </h2>
-        <p className="font-sans font-light text-[11px] tracking-[0.06em] text-[#454545]/50">
+        <p className="font-sans font-light text-[15px] text-[#4A4540]">
           Selecione quantas quiser. Isso personaliza seu feed.
         </p>
       </div>
@@ -55,11 +55,15 @@ export function OnboardingGenresScreen({ selected: initial, onContinue, onBack }
                 key={genre}
                 data-testid={`chip-genre-${genre}`}
                 onClick={() => toggle(genre)}
-                className={`font-sans text-[11px] font-light px-4 py-2.5 rounded-full border transition-all duration-200 ${
-                  isSelected
-                    ? "bg-[#454545] text-[#FAF8F3] border-transparent"
-                    : "bg-transparent text-[#454545]/60 border-[#454545]/15 hover:border-[#AE8F7D]/40"
-                }`}
+                className="font-sans text-[15px] font-light transition-all duration-200"
+                style={{
+                  padding: "10px 18px",
+                  borderRadius: "100px",
+                  border: `1.5px solid ${isSelected ? "#697962" : "#C8BFB4"}`,
+                  backgroundColor: isSelected ? "#697962" : "#FFFFFF",
+                  color: isSelected ? "#FFFFFF" : "#1E1C19",
+                  fontWeight: isSelected ? 500 : 400,
+                }}
               >
                 {genre}
               </button>
@@ -70,7 +74,7 @@ export function OnboardingGenresScreen({ selected: initial, onContinue, onBack }
 
       <div className="pt-4">
         {!canContinue && (
-          <p className="font-sans font-light text-[10px] text-[#AE8F7D]/70 text-center mb-3 tracking-[0.06em]">
+          <p className="font-sans font-light text-[14px] text-[#697962] text-center mb-3">
             {selected.length === 0
               ? "Escolha pelo menos 3 interesses"
               : `Mais ${3 - selected.length} para continuar`}
@@ -80,14 +84,19 @@ export function OnboardingGenresScreen({ selected: initial, onContinue, onBack }
           data-testid="button-genres-continue"
           onClick={() => onContinue(selected)}
           disabled={!canContinue}
-          className="w-full flex items-center justify-center gap-2 bg-[#AE8F7D] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#AE8F7D]/90 active:scale-[0.99] transition-all"
+          className="w-full flex items-center justify-center gap-2 text-[#FFFFFF] font-sans font-light text-[13px] tracking-[0.14em] uppercase active:scale-[0.99] transition-all"
+          style={{
+            backgroundColor: canContinue ? "#697962" : "#C8BFB4",
+            borderRadius: "8px",
+            padding: "16px",
+          }}
         >
           Continuar
           <ArrowRight className="w-4 h-4" />
         </button>
         <button
           onClick={() => onContinue([])}
-          className="w-full text-[#454545]/30 font-sans font-light text-[10px] tracking-[0.08em] py-2 mt-1"
+          className="w-full text-[#7A726A] font-sans font-light text-[13px] tracking-[0.08em] py-2 mt-1"
         >
           Pular por agora
         </button>

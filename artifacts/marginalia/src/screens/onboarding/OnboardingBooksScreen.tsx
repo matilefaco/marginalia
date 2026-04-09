@@ -87,7 +87,7 @@ export function OnboardingBooksScreen({ onComplete, onBack }: Props) {
       }}
     >
       {onBack && (
-        <button onClick={onBack} className="text-[#454545]/40 mb-6 w-fit">
+        <button onClick={onBack} className="text-[#4A4540]/60 mb-6 w-fit hover:opacity-70 transition-opacity">
           <ArrowLeft className="w-5 h-5" />
         </button>
       )}
@@ -97,12 +97,12 @@ export function OnboardingBooksScreen({ onComplete, onBack }: Props) {
           4 de 4
         </span>
         <div className="w-full h-[2px] bg-[#EBE6DB] rounded-full mt-2 mb-6">
-          <div className="h-full bg-[#AE8F7D] rounded-full w-full" />
+          <div className="h-full bg-[#697962] rounded-full w-full" />
         </div>
-        <h2 className="font-serif italic text-[28px] text-[#454545] leading-tight mb-2">
+        <h2 className="font-serif italic text-[28px] text-[#1E1C19] leading-tight mb-2">
           O que você está lendo agora?
         </h2>
-        <p className="font-sans font-light text-[11px] text-[#454545]/50">
+        <p className="font-sans font-light text-[15px] text-[#4A4540]">
           Isso alimenta seu feed e protege seu ritmo de leitura.
         </p>
       </div>
@@ -135,19 +135,24 @@ export function OnboardingBooksScreen({ onComplete, onBack }: Props) {
                 className="w-full flex items-center gap-3 p-4"
               >
                 <div
-                  className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
-                    isSelected ? "border-[#AE8F7D] bg-[#AE8F7D]" : "border-[#454545]/20"
-                  }`}
+                  className="w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center"
+                  style={{
+                    borderColor: isSelected ? "#697962" : "#C8BFB4",
+                    backgroundColor: isSelected ? "#697962" : "#FFFFFF",
+                  }}
                 >
                   {isSelected && <div className="w-2 h-2 rounded-full bg-[#FAF8F3]" />}
                 </div>
                 <div className="flex-1 text-left">
-                  <div className="font-serif text-[14px] text-[#2A2A2A]">{book.title}</div>
-                  <div className="font-sans font-light text-[10px] tracking-[0.06em] uppercase text-[#454545]/45">
+                  <div className="font-sans text-[16px] font-medium text-[#1E1C19]">{book.title}</div>
+                  <div
+                    className="font-sans font-light text-[13px] tracking-[0.08em] uppercase"
+                    style={{ color: "#4A4540" }}
+                  >
                     {book.author}
                   </div>
                 </div>
-                {isSelected && <CheckCircle className="w-4 h-4 text-[#AE8F7D] flex-shrink-0" />}
+                {isSelected && <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: "#697962" }} />}
               </button>
 
               {isSelected && (
@@ -226,7 +231,8 @@ export function OnboardingBooksScreen({ onComplete, onBack }: Props) {
         <button
           data-testid="button-books-complete"
           onClick={handleComplete}
-          className="w-full flex items-center justify-center gap-2 bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.14em] uppercase py-4 rounded-[10px] hover:bg-[#454545]/90 active:scale-[0.99] transition-all"
+          className="w-full flex items-center justify-center gap-2 text-[#FAF8F3] font-sans font-light text-[13px] tracking-[0.14em] uppercase active:scale-[0.99] transition-all"
+          style={{ backgroundColor: "#1E1C19", borderRadius: "8px", padding: "16px" }}
         >
           {selectedCount > 0
             ? `Entrar no Marginalia · ${selectedCount} ${selectedCount === 1 ? "livro" : "livros"}`

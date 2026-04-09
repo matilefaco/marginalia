@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { MOCK_MARGINS, MOCK_BOOKS } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { ArchetypeShareModal } from "@/components/cards/ArchetypeShareModal";
+import { generateShareCard } from "@/utils/shareCard";
 import { BookCover } from "@/components/BookCover";
 import { AvatarIcon } from "@/components/AvatarIcon";
 import { AvatarPicker } from "@/components/AvatarPicker";
@@ -173,28 +174,35 @@ export function ProfileScreen() {
   }, null);
 
   const handleShareIdentity = async () => {
-    const arquetipo = isForming ? null : primaryArquetipo.nome;
-    const assinatura = currentUser.readingSignature ?? "Cada livro me deixa diferente";
-    const shareText = `Minha impressão de leitura no Marginalia:\n\n${arquetipo ?? "Leitor em formação"}\n\n"${assinatura}"\n\nmarginalia.replit.app`;
+    setShareLabel("Gerando card…");
+    try {
+      const arquetipo = isForming ? "Leitor em formação" : primaryArquetipo.nome;
+      const assinatura = currentUser.readingSignature ?? "Cada livro me deixa diferente";
+      const username = currentUser.username ?? currentUser.firstName ?? "leitor";
 
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({
-          title: "Minha identidade de leitura — Marginalia",
-          text: shareText,
-          url: "https://marginalia.replit.app",
-        });
-      } catch {
-        // user cancelled or error — silent
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(shareText);
-        setShareLabel("Copiado!");
+      const blob = await generateShareCard({
+        type: "reader_identity",
+        archetype: arquetipo,
+        readingSignature: assinatura,
+        username,
+        format: "story",
+      });
+
+      const file = new File([blob], "marginalia-identidade.png", { type: "image/png" });
+
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "Minha identidade de leitura — Marginalia" });
+        setShareLabel("Compartilhar identidade de leitura");
+      } else {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "marginalia-identidade.png";
+        a.click();
+        setShareLabel("Baixado!");
         setTimeout(() => setShareLabel("Compartilhar identidade de leitura"), 2000);
-      } catch {
-        // clipboard unavailable
       }
+    } catch {
+      setShareLabel("Compartilhar identidade de leitura");
     }
   };
 
@@ -685,7 +693,7 @@ export function ProfileScreen() {
         {/* Estatísticas de leitura */}
         <div className="mb-7">
           <div className="flex items-center gap-2 mb-3">
-            <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Estatísticas de leitura</span>
+            <span className="font-sans text-[12px] font-light tracking-[0.18em] uppercase text-[#4A4540]">Estatísticas de leitura</span>
             <div className="flex-1 h-px bg-[#AE8F7D]/20" />
           </div>
 
@@ -699,8 +707,8 @@ export function ProfileScreen() {
             ].map((stat) => (
               <div key={stat.label} data-testid={`stat-${stat.label.toLowerCase()}`} className="bg-[#FAF8F3] border border-[#AE8F7D]/12 rounded-[12px] py-3 text-center">
                 <div className="text-[13px] mb-0.5">{stat.icon}</div>
-                <div className="font-serif text-[20px] text-[#3D3D3D] leading-none mb-0.5">{stat.value}</div>
-                <div className="font-sans font-light text-[7px] tracking-[0.08em] uppercase text-[#2A2A2A]/35">{stat.label}</div>
+                <div className="font-serif italic text-[24px] text-[#1E1C19] leading-none mb-0.5">{stat.value}</div>
+                <div className="font-sans font-light text-[11px] tracking-[0.14em] uppercase text-[#7A726A]">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -712,8 +720,8 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">✨</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Respostas nos seus posts</p>
-                  <p className="font-serif italic text-[13px] text-[#3D3D3D]">{reacoesRecebidas} {reacoesRecebidas === 1 ? "reação" : "reações"}</p>
+                  <p className="font-sans text-[12px] font-light tracking-[0.14em] uppercase text-[#4A4540]">Respostas nos seus posts</p>
+                  <p className="font-serif italic text-[15px] text-[#1E1C19]">{reacoesRecebidas} {reacoesRecebidas === 1 ? "reação" : "reações"}</p>
                 </div>
               </div>
             )}
@@ -721,16 +729,16 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">{dominantEmojiEntry.emoji}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Reação mais usada</p>
-                  <p className="font-serif italic text-[13px] text-[#3D3D3D] capitalize">{dominantEmojiEntry.label}</p>
+                  <p className="font-sans text-[12px] font-light tracking-[0.14em] uppercase text-[#4A4540]">Reação mais usada</p>
+                  <p className="font-serif italic text-[15px] text-[#1E1C19] capitalize">{dominantEmojiEntry.label}</p>
                 </div>
               </div>
             ) : (
               <div className="flex items-center gap-3 px-4 py-3">
-                <span className="text-[15px] flex-shrink-0 opacity-30">🤍</span>
+                <span className="text-[15px] flex-shrink-0 opacity-40">🤍</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Reação mais usada</p>
-                  <p className="font-serif italic text-[12px] text-[#2A2A2A]/30">Reaja a posts para aparecer aqui</p>
+                  <p className="font-sans text-[12px] font-light tracking-[0.14em] uppercase text-[#4A4540]">Reação mais usada</p>
+                  <p className="font-serif italic text-[14px] text-[#7A726A]">Reaja a posts para aparecer aqui</p>
                 </div>
               </div>
             )}
@@ -738,8 +746,8 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">{dominantMarginType.icon}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Tipo de post dominante</p>
-                  <p className="font-serif italic text-[13px] text-[#3D3D3D]">{dominantMarginType.label}</p>
+                  <p className="font-sans text-[12px] font-light tracking-[0.14em] uppercase text-[#4A4540]">Tipo de post dominante</p>
+                  <p className="font-serif italic text-[15px] text-[#1E1C19]">{dominantMarginType.label}</p>
                 </div>
               </div>
             )}
@@ -749,8 +757,8 @@ export function ProfileScreen() {
                 <div className="flex items-start gap-3 px-4 py-3">
                   <span className="text-[15px] flex-shrink-0 mt-0.5">✨</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Post mais popular · {total} reações</p>
-                    <p className="font-serif italic text-[12px] text-[#3D3D3D] leading-snug line-clamp-2">
+                    <p className="font-sans text-[12px] font-light tracking-[0.14em] uppercase text-[#4A4540]">Post mais popular · {total} reações</p>
+                    <p className="font-serif italic text-[13px] text-[#1E1C19] leading-snug line-clamp-2">
                       &ldquo;{topEco.excerpt.slice(0, 80)}{topEco.excerpt.length > 80 ? "…" : ""}&rdquo;
                     </p>
                   </div>
@@ -761,15 +769,15 @@ export function ProfileScreen() {
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-[15px] flex-shrink-0">📖</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-sans text-[8px] font-light tracking-[0.08em] uppercase text-[#2A2A2A]/35">Livro mais anotado</p>
-                  <p className="font-serif italic text-[13px] text-[#3D3D3D] truncate">{topAnnotatedBook.title}</p>
-                  <p className="font-sans font-light text-[9px] text-[#2A2A2A]/40">{topAnnotatedBook.author}</p>
+                  <p className="font-sans text-[12px] font-light tracking-[0.14em] uppercase text-[#4A4540]">Livro mais anotado</p>
+                  <p className="font-serif italic text-[15px] text-[#1E1C19] truncate">{topAnnotatedBook.title}</p>
+                  <p className="font-sans font-light text-[12px] text-[#7A726A]">{topAnnotatedBook.author}</p>
                 </div>
               </div>
             )}
             {!dominantMarginType && !topAnnotatedBook && reacoesRecebidas === 0 && reacoesFeitas === 0 && !dominantEmojiEntry && (
               <div className="px-4 py-4 text-center">
-                <p className="font-serif italic text-[13px] text-[#2A2A2A]/35">As estatísticas aparecem conforme você lê e reage</p>
+                <p className="font-serif italic text-[14px] text-[#7A726A]">As estatísticas aparecem conforme você lê e reage</p>
               </div>
             )}
           </div>
@@ -778,7 +786,7 @@ export function ProfileScreen() {
         {/* ─── Meus posts ─── */}
         <section className="mb-7">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Meus posts</span>
+            <span className="font-sans text-[12px] font-light tracking-[0.18em] uppercase text-[#4A4540]">Meus posts</span>
             <div className="flex-1 h-px bg-[#AE8F7D]/20" />
             {myMargins.length > 0 && (
               <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{myMargins.length}</span>
@@ -788,9 +796,9 @@ export function ProfileScreen() {
             Trechos e reflexões que você publicou
           </p>
           {myMargins.length === 0 ? (
-            <div className="border border-dashed border-[#AE8F7D]/20 rounded-[14px] px-5 py-8 text-center">
-              <p className="font-serif italic text-[15px] text-[#2A2A2A]/30 mb-1.5">Nenhum post ainda</p>
-              <p className="font-sans font-light text-[10px] text-[#2A2A2A]/25">
+            <div className="rounded-[12px] px-5 py-8 text-center" style={{ border: "1.5px dashed #C8BFB4" }}>
+              <p className="font-serif italic text-[16px] text-[#4A4540] mb-1.5">Nenhum post ainda</p>
+              <p className="font-sans font-light text-[14px] text-[#7A726A]">
                 Seus trechos e reflexões aparecerão aqui
               </p>
             </div>
@@ -809,7 +817,7 @@ export function ProfileScreen() {
           return (
             <section className="mb-7">
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Posts salvos</span>
+                <span className="font-sans text-[12px] font-light tracking-[0.18em] uppercase text-[#4A4540]">Posts salvos</span>
                 <div className="flex-1 h-px bg-[#AE8F7D]/20" />
                 {saved.length > 0 && (
                   <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{saved.length}</span>
@@ -819,9 +827,9 @@ export function ProfileScreen() {
                 Posts que tocaram você
               </p>
               {saved.length === 0 ? (
-                <div className="border border-dashed border-[#AE8F7D]/20 rounded-[14px] px-5 py-8 text-center">
-                  <p className="font-serif italic text-[15px] text-[#2A2A2A]/30 mb-1.5">Nenhum post salvo</p>
-                  <p className="font-sans font-light text-[10px] text-[#2A2A2A]/25">
+                <div className="rounded-[12px] px-5 py-8 text-center" style={{ border: "1.5px dashed #C8BFB4" }}>
+                  <p className="font-serif italic text-[16px] text-[#4A4540] mb-1.5">Nenhum post salvo</p>
+                  <p className="font-sans font-light text-[14px] text-[#7A726A]">
                     Os posts que tocarem você aparecerão aqui
                   </p>
                 </div>
@@ -840,7 +848,7 @@ export function ProfileScreen() {
         {wishlistBooks.length > 0 && (
           <section className="mb-7">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-sans text-[8px] font-light tracking-[0.22em] uppercase text-[#AE8F7D]">Quero ler</span>
+              <span className="font-sans text-[12px] font-light tracking-[0.18em] uppercase text-[#4A4540]">Quero ler</span>
               <div className="flex-1 h-px bg-[#AE8F7D]/20" />
               <span className="font-sans font-light text-[8px] text-[#2A2A2A]/30">{wishlistBooks.length}</span>
             </div>
