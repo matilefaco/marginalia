@@ -546,8 +546,8 @@ function ThoughtCard({ margin, linkToThread }: Props) {
           className="font-sans text-[8px] font-light tracking-[0.18em] uppercase flex items-center gap-1"
           style={{ color: a.label }}
         >
-          <span>{typeIcon}</span>
-          <span>{marginTypeLabel(margin.postType)}</span>
+          <span>✏️</span>
+          <span>Pensamento</span>
         </span>
         {margin.tone && (
           <span

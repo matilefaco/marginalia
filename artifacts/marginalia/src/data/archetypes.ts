@@ -214,7 +214,7 @@ interface UserReadingData {
 export function calcularArquetipos(data: UserReadingData): ArquetipoResult[] {
   const { margins, progress, userReactions } = data;
 
-  if (margins.length < 3) return [];
+  if (margins.length < 2) return [];
 
   const typeCounts: Record<string, number> = {};
   margins.forEach((m) => {

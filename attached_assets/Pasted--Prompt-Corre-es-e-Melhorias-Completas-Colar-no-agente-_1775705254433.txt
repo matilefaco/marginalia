@@ -1,0 +1,301 @@
+# Prompt — Correções e Melhorias Completas
+
+# Colar no agente do Replit
+
+-----
+
+Preciso que você aplique as seguintes melhorias e correções no Marginalia. São 8 itens independentes — aplique todos.
+
+-----
+
+## 1. LEGIBILIDADE GLOBAL — Fontes maiores e mais escuras
+
+Aplique as seguintes regras de tipografia em TODAS as telas do app (onboarding, welcome, login, cadastro, feed, perfil, biblioteca, explorar, thread, detail):
+
+### Tamanhos mínimos
+
+```css
+/* Nunca usar abaixo desses valores */
+body, p, textarea, input         → font-size: 16px
+Labels UI (Jost uppercase)       → font-size: 12px (era 10px)
+Metadados secundários            → font-size: 13px (era 11px)
+Títulos de seção                 → font-size: 14px (era 10-11px)
+Texto de cards (comentários)     → font-size: 16px, line-height: 1.7
+Trechos citados (Cormorant)      → font-size: 18px, line-height: 1.75
+```
+
+### Cores de texto — escurecer tudo
+
+```css
+--text-primary:    #1E1C19   /* era #2C2A27 — mais escuro */
+--text-secondary:  #4A4540   /* era #5C5650 — mais escuro */
+--text-tertiary:   #7A726A   /* era #8C837A — mais escuro */
+--text-placeholder:#9C948C   /* placeholders */
+```
+
+Aplicar essas variáveis em todos os lugares onde há texto no app. Verificar especialmente:
+
+- Labels de navegação (INÍCIO, EXPLORAR, BIBLIOTECA, PERFIL)
+- Metadados dos cards (@username, timestamps, contadores)
+- Labels de seção (EM ALTA, HOJE PARA VOCÊ, etc.)
+- Textos de onboarding e welcome
+- Campos de input e textarea
+
+-----
+
+## 2. TELA DE WELCOME / APRESENTAÇÃO — Redesenho completo
+
+Substituir o conteúdo atual da tela de boas-vindas (splash/welcome) por este:
+
+### Estrutura visual
+
+**Fundo:** Albescent White `#FAF8F3` com textura dot-matrix sutil (manter o que já existe)
+
+**Topo — espaço generoso antes do logo**
+
+**Logo/ícone:** manter o SVG atual do livro/documento
+
+**Nome:** *Marginalia* em Cormorant Garamond italic, 52px, cor `#1E1C19`
+
+**Tagline:** `LEIA JUNTO. SINTA JUNTO.` em Jost uppercase 11px, letter-spacing 0.22em, cor `#7A726A`
+
+**Manifesto** — substituir o texto atual por este, mantendo a barra lateral esquerda (Old Vine `#697962`, 2px):
+
+```
+Livros mudam a gente por dentro.
+Marginalia é onde essa mudança
+encontra outras pessoas.
+```
+
+Fonte: Cormorant Garamond italic, 18px, line-height 1.8, cor `#1E1C19`
+
+**Animação sutil de entrada** (CSS only, não JS pesado):
+
+- O logo aparece com `opacity: 0 → 1` em 600ms
+- O nome aparece com `opacity: 0 → 1, translateY(8px → 0)` em 800ms, delay 200ms
+- A tagline aparece com `opacity: 0 → 1` em 600ms, delay 500ms
+- O manifesto aparece com `opacity: 0 → 1` em 600ms, delay 700ms
+- Os botões aparecem com `opacity: 0 → 1` em 600ms, delay 900ms
+
+**Botões:**
+
+- “COMEÇAR” — fundo `#1E1C19`, texto branco, Jost uppercase 13px, border-radius 8px, padding 16px, width 100%
+- “Já tenho conta” — texto simples, Jost 14px, cor `#7A726A`, sem fundo
+
+-----
+
+## 3. TELAS DE LOGIN E CADASTRO — Melhorias de legibilidade
+
+Nas telas de login e cadastro, aplicar:
+
+**Campos de input:**
+
+- `font-size: 16px` (impede o iOS de dar zoom automático — muito importante)
+- `color: #1E1C19`
+- `background: #FFFFFF`
+- `border: 1px solid #D4CBB8`
+- `border-radius: 8px`
+- `padding: 14px 16px`
+- Placeholder: cor `#9C948C`
+- Focus: `border-color: #697962`, sem outline padrão do browser
+
+**Labels dos campos:**
+
+- Jost 12px uppercase, letter-spacing 0.14em, cor `#4A4540`
+- Margem inferior 6px antes do input
+
+**Botões de ação (Entrar, Criar conta):**
+
+- `font-size: 15px`
+- `padding: 16px`
+- Mesma estética do botão COMEÇAR da welcome
+
+**Textos de erro:**
+
+- Jost 13px, cor `#C0392B`, margem top 6px
+
+-----
+
+## 4. POSTS SEM REFERÊNCIA — Corrigir exibição do tipo no feed
+
+### Problema
+
+Posts do tipo `postType: "THOUGHT"` ainda aparecem no feed com o label do tipo (INSIGHT, REAÇÃO, etc.) mesmo quando não têm categoria definida. Isso precisa parar.
+
+### Correção no componente MarginCard
+
+No header do card, usar a seguinte lógica:
+
+```typescript
+// Determinar o que mostrar no header
+const effectivePostType = margin.postType ?? (margin.excerpt ? "EXCERPT" : "THOUGHT");
+
+const headerLabel = effectivePostType === "THOUGHT"
+  ? "PENSAMENTO"  // sempre, independente de ter tone ou não
+  : margin.type;  // INSIGHT, REAÇÃO, TEORIA, DESTAQUE — só para EXCERPT
+
+const headerIcon = effectivePostType === "THOUGHT"
+  ? "✏️"
+  : getTypeIcon(margin.type); // função já existente
+```
+
+Ou seja: todo post THOUGHT mostra `✏️ PENSAMENTO` — nunca INSIGHT, nunca REAÇÃO, nunca TEORIA. O campo `tone` (noturno, intenso, etc.) aparece ao lado se existir, mas o label principal é sempre PENSAMENTO.
+
+Aplicar essa correção em todos os lugares onde o tipo do post é exibido: feed home, explorar, perfil, thread.
+
+-----
+
+## 5. TEXTO ACIMA DO CARD DE IMPRESSÃO DE LEITURA — Corrigir
+
+No `ProfileScreen.tsx`, o texto contextual acima do card de Impressão de Leitura precisa:
+
+1. **Não usar a palavra “margem”** — substituir por “post”
+1. **Usar textos mais motivadores e precisos**
+
+Substituir os textos por estes:
+
+```typescript
+// 0 posts
+titulo: "IMPRESSÃO DE LEITURA"
+subtitulo: "Publique seu primeiro post para começar a descobrir seu perfil de leitor."
+
+// 1-2 posts  
+titulo: "IMPRESSÃO DE LEITURA"
+subtitulo: "Você está começando. Quanto mais você postar, mais preciso seu perfil fica."
+
+// 3-6 posts
+titulo: "IMPRESSÃO DE LEITURA"  
+subtitulo: "Seu perfil está emergindo. Continue postando — cada vez fica mais preciso."
+
+// 7+ posts
+titulo: "IMPRESSÃO DE LEITURA"
+subtitulo: "" // sem subtítulo, o card fala por si
+```
+
+-----
+
+## 6. ALGORITMO DE IMPRESSÃO — Reduzir threshold para 2 posts
+
+No algoritmo de cálculo do arquétipo (implementado anteriormente), alterar:
+
+```typescript
+// ERA:
+if (posts.length < 3) return null;
+
+// AGORA:
+if (posts.length < 2) return null;
+```
+
+Com apenas 2 posts o usuário já vê um arquétipo calculado (mesmo que ainda não seja preciso). Isso elimina a frustração de ter que postar 3 vezes antes de ver qualquer resultado. O card de “perfil ainda se formando” só aparece para usuários com 0 ou 1 post.
+
+Também ajustar os textos contextuais:
+
+```typescript
+// 0 posts → "Publique seu primeiro post..."
+// 1 post  → "Mais um post e seu perfil começa a tomar forma."
+// 2+ posts → arquétipo calculado, sem subtítulo de incentivo
+```
+
+-----
+
+## 7. BOTÃO “COMPARTILHAR IDENTIDADE DE LEITURA” — Corrigir
+
+O botão no card de Impressão de Leitura não está funcionando. Implementar o seguinte comportamento:
+
+```typescript
+const handleShareReaderIdentity = async () => {
+  const arquetipo = calcularArquetipo(userPosts); // função já existente
+  const assinatura = profile?.reading_signature ?? "Cada livro me deixa diferente";
+  
+  const shareText = `Minha impressão de leitura no Marginalia:\n\n${arquetipo ?? "Leitor em formação"}\n\n"${assinatura}"\n\nmarginalia.replit.app`;
+
+  if (navigator.share) {
+    // Web Share API — abre sheet nativa no iOS/Android
+    try {
+      await navigator.share({
+        title: "Minha identidade de leitura — Marginalia",
+        text: shareText,
+        url: "https://marginalia.replit.app",
+      });
+    } catch (err) {
+      // usuário cancelou ou erro — silencioso
+    }
+  } else {
+    // Fallback: copiar para clipboard
+    await navigator.clipboard.writeText(shareText);
+    // Mostrar feedback visual: trocar texto do botão por "Copiado!" por 2 segundos
+    setShareButtonLabel("Copiado!");
+    setTimeout(() => setShareButtonLabel("Compartilhar identidade de leitura"), 2000);
+  }
+};
+```
+
+Vincular esse handler ao botão existente. Garantir que o botão esteja habilitado quando `arquetipo !== null` e com `opacity: 0.4` quando desabilitado (usuário sem posts suficientes).
+
+-----
+
+## 8. NAVEGAÇÃO — Corrigir redirecionamento errado ao clicar em posts
+
+### Problema
+
+Ao clicar em um post no feed, o app redireciona para um post diferente do clicado.
+
+### Causa provável
+
+O `onClick` do card está usando um índice do array em vez do `id` do post, ou há um mapeamento incorreto entre a lista renderizada e os dados.
+
+### Correção
+
+No componente `MarginCard` e em todos os lugares onde o card é clicável, verificar que o handler de navegação usa o `id` do próprio post:
+
+```typescript
+// ERRADO — usar índice ou variável de closure errada:
+onClick={() => navigate(`/thread/${margins[index].id}`)}
+
+// CORRETO — usar o id do próprio objeto:
+onClick={() => navigate(`/thread/${margin.id}`)}
+```
+
+Procurar por todos os usos de `navigate('/thread/')` no código e garantir que o ID passado corresponde ao post que está sendo renderizado naquele momento. Verificar especialmente listas com `.map()` onde o parâmetro pode estar sendo capturado incorretamente no closure.
+
+Testar: clicar em cada post do feed deve abrir o thread daquele post específico, não de outro.
+
+-----
+
+## 9. PRIMEIRO ACESSO — Redirecionar para Home, não para post aleatório
+
+### Problema
+
+Quando um novo usuário cria conta e entra no app pela primeira vez, é direcionado para um post aleatório em vez da tela Home.
+
+### Correção no fluxo de auth
+
+No `AuthContext.tsx` ou no componente que controla o redirecionamento pós-login/cadastro:
+
+```typescript
+// Após signUp bem-sucedido e conclusão do onboarding:
+navigate("/", { replace: true });
+// O replace: true garante que o usuário não volta para o onboarding
+// ao pressionar o botão de voltar
+
+// Após signIn:
+navigate("/", { replace: true });
+```
+
+Verificar também se há algum `useEffect` que detecta a sessão Supabase e redireciona para uma rota que não seja `/`. Se houver, garantir que o redirecionamento padrão seja sempre para `/` (HomeScreen).
+
+Adicionalmente, garantir que ao completar o onboarding (último passo de seleção de livros), o redirect final seja:
+
+```typescript
+navigate("/", { replace: true });
+```
+
+-----
+
+## OBSERVAÇÕES GERAIS
+
+- Não quebrar nenhuma funcionalidade existente (auth, anti-spoiler, localStorage)
+- As melhorias de legibilidade (item 1) se aplicam a TODAS as telas sem exceção
+- A animação de entrada da welcome (item 2) deve usar apenas CSS — sem bibliotecas de animação adicionais
+- O `font-size: 16px` nos inputs (item 3) é crítico para iOS — impede o zoom automático que quebra o layout
+- Testar o fluxo completo de cadastro → onboarding → home após corrigir o item 9

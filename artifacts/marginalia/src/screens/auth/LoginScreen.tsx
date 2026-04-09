@@ -38,7 +38,7 @@ export function LoginScreen({ onLogin, onBack }: Props) {
         backgroundSize: "5px 5px",
       }}
     >
-      <button onClick={onBack} className="text-[#454545]/40 mb-8 w-fit">
+      <button onClick={onBack} className="text-[#4A4540]/60 mb-8 w-fit hover:opacity-70 transition-opacity">
         <ArrowLeft className="w-5 h-5" />
       </button>
 
@@ -46,15 +46,15 @@ export function LoginScreen({ onLogin, onBack }: Props) {
         <div className="w-10 h-12 mb-4">
           <LogoMark />
         </div>
-        <h1 className="font-serif italic text-[28px] text-[#454545] mb-1">Bem-vindo de volta</h1>
-        <p className="font-sans font-light text-[11px] tracking-[0.1em] text-[#454545]/40">
+        <h1 className="font-serif italic text-[28px] text-[#1E1C19] mb-1">Bem-vindo de volta</h1>
+        <p className="font-sans font-light text-[11px] tracking-[0.12em] text-[#7A726A]">
           Continue sua leitura
         </p>
       </div>
 
       <div className="space-y-6 mb-8">
         <div>
-          <label className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D] block mb-2">
+          <label className="font-sans text-[11px] font-light tracking-[0.12em] uppercase text-[#4A4540] block mb-2">
             E-mail ou nome de usuário
           </label>
           <input
@@ -65,30 +65,28 @@ export function LoginScreen({ onLogin, onBack }: Props) {
             value={identifier}
             onChange={(e) => { setIdentifier(e.target.value); setError(""); }}
             placeholder="seu@email.com ou @usuario"
-            className="w-full font-serif italic text-[16px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent border-b border-[#454545]/15 pb-2.5 outline-none focus:border-[#AE8F7D]/60 transition-colors"
+            className="w-full font-serif italic text-[16px] text-[#1E1C19] placeholder:text-[#9C948C] bg-transparent border-b border-[#4A4540]/20 pb-2.5 outline-none focus:border-[#697962]/70 transition-colors"
             onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           />
         </div>
         <div>
-          <div className="flex justify-between items-baseline mb-2">
-            <label className="font-sans text-[9px] font-light tracking-[0.18em] uppercase text-[#AE8F7D]">
-              Senha
-            </label>
-          </div>
+          <label className="font-sans text-[11px] font-light tracking-[0.12em] uppercase text-[#4A4540] block mb-2">
+            Senha
+          </label>
           <input
             data-testid="input-login-password"
             type="password"
             value={password}
             onChange={(e) => { setPassword(e.target.value); setError(""); }}
             placeholder="Sua senha"
-            className="w-full font-serif italic text-[16px] text-[#454545] placeholder:text-[#454545]/25 bg-transparent border-b border-[#454545]/15 pb-2.5 outline-none focus:border-[#AE8F7D]/60 transition-colors"
+            className="w-full font-serif italic text-[16px] text-[#1E1C19] placeholder:text-[#9C948C] bg-transparent border-b border-[#4A4540]/20 pb-2.5 outline-none focus:border-[#697962]/70 transition-colors"
             onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           />
         </div>
       </div>
 
       {error && (
-        <p className="font-sans text-[11px] text-red-400 mb-4 text-center leading-snug px-2">
+        <p className="font-sans text-[13px] text-red-600 mb-4 text-center leading-snug px-2">
           {error}
         </p>
       )}
@@ -97,7 +95,12 @@ export function LoginScreen({ onLogin, onBack }: Props) {
         data-testid="button-login"
         onClick={handleLogin}
         disabled={!valid || loading}
-        className="w-full flex items-center justify-center gap-2 bg-[#454545] text-[#FAF8F3] font-sans font-light text-[12px] tracking-[0.16em] uppercase py-4 rounded-[10px] disabled:opacity-30 hover:bg-[#454545]/90 active:scale-[0.99] transition-all mb-4"
+        className="w-full flex items-center justify-center gap-2 text-[#FAF8F3] font-sans font-light text-[13px] tracking-[0.16em] uppercase disabled:opacity-30 active:scale-[0.99] transition-all mb-4"
+        style={{
+          backgroundColor: "#1E1C19",
+          borderRadius: "8px",
+          padding: "16px",
+        }}
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Entrar"}
       </button>

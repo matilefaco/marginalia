@@ -70,10 +70,10 @@
 /* LIGHT MODE */
 :root {
   /* ── Readability text tokens ─────────────────────────────────────────── */
-  --text-primary:   #24211E;  /* titles, quotes, body, usernames             */
-  --text-secondary: #534C45;  /* authors, dates, labels, descriptions        */
-  --text-tertiary:  #7B726A;  /* placeholders, micro-metadata, light notes   */
-  --text-soft:      #9A9088;  /* decorative, faintest but still visible      */
+  --text-primary:   #1E1C19;  /* titles, quotes, body, usernames             */
+  --text-secondary: #4A4540;  /* authors, dates, labels, descriptions        */
+  --text-tertiary:  #7A726A;  /* placeholders, micro-metadata, light notes   */
+  --text-soft:      #9C948C;  /* decorative, faintest but still visible      */
 
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);

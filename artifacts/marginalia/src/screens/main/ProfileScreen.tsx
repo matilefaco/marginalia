@@ -99,6 +99,7 @@ export function ProfileScreen() {
   const [editTikTok, setEditTikTok] = useState(currentUser.tiktok || "");
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [shareLabel, setShareLabel] = useState("Compartilhar identidade de leitura");
   const [savedToast, setSavedToast] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -170,6 +171,32 @@ export function ProfileScreen() {
     const bestTotal = best ? Object.values(best.reactions as Record<string, number>).reduce((a, b) => a + b, 0) : -1;
     return total > bestTotal ? m : best;
   }, null);
+
+  const handleShareIdentity = async () => {
+    const arquetipo = isForming ? null : primaryArquetipo.nome;
+    const assinatura = currentUser.readingSignature ?? "Cada livro me deixa diferente";
+    const shareText = `Minha impressão de leitura no Marginalia:\n\n${arquetipo ?? "Leitor em formação"}\n\n"${assinatura}"\n\nmarginalia.replit.app`;
+
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: "Minha identidade de leitura — Marginalia",
+          text: shareText,
+          url: "https://marginalia.replit.app",
+        });
+      } catch {
+        // user cancelled or error — silent
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        setShareLabel("Copiado!");
+        setTimeout(() => setShareLabel("Compartilhar identidade de leitura"), 2000);
+      } catch {
+        // clipboard unavailable
+      }
+    }
+  };
 
   const saveEdit = async () => {
     if (isSaving) return;
@@ -452,17 +479,17 @@ export function ProfileScreen() {
           </p>
           {myMargins.length === 0 && (
             <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
-              Poste sua primeira margem para começar a descobrir seu perfil de leitor.
+              Publique seu primeiro post para começar a descobrir seu perfil de leitor.
             </p>
           )}
-          {myMargins.length >= 1 && myMargins.length <= 2 && (
+          {myMargins.length === 1 && (
             <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
-              Você está começando a deixar sua marca. Mais alguns posts e seu perfil vai tomar forma.
+              Mais um post e seu perfil começa a tomar forma.
             </p>
           )}
-          {myMargins.length >= 3 && myMargins.length <= 6 && (
+          {myMargins.length >= 2 && myMargins.length <= 6 && (
             <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
-              Seu perfil está emergindo. Quanto mais você posta, mais preciso ele fica.
+              Seu perfil está emergindo. Continue postando — cada vez fica mais preciso.
             </p>
           )}
         </div>
@@ -621,20 +648,33 @@ export function ProfileScreen() {
               &ldquo;{currentUser.readingSignature}&rdquo;
             </p>
 
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-2 rounded-[8px] px-4 py-2.5 transition-all hover:opacity-90"
-              style={{
-                backgroundColor: `${primaryArquetipo.corTexto}18`,
-                border: `1px solid ${primaryArquetipo.corAccent}40`,
-                color: primaryArquetipo.corTexto,
-              }}
-            >
-              <Share2 className="w-3.5 h-3.5" />
-              <span className="font-sans text-[9px] font-light tracking-[0.12em]">
-                Compartilhar identidade de leitura
-              </span>
-            </button>
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={handleShareIdentity}
+                className="flex items-center gap-2 rounded-[8px] px-4 py-2.5 transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: `${primaryArquetipo.corTexto}18`,
+                  border: `1px solid ${primaryArquetipo.corAccent}40`,
+                  color: primaryArquetipo.corTexto,
+                }}
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span className="font-sans text-[9px] font-light tracking-[0.12em]">
+                  {shareLabel}
+                </span>
+              </button>
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="flex items-center gap-2 rounded-[8px] px-3 py-2.5 transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: `${primaryArquetipo.corTexto}10`,
+                  border: `1px solid ${primaryArquetipo.corAccent}30`,
+                  color: primaryArquetipo.corTexto,
+                }}
+              >
+                <Instagram className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
         )}
