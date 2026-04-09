@@ -111,7 +111,7 @@ function CommentReactionBar({ commentId }: { commentId: number }) {
 export function ThreadScreen() {
   const params = useParams<{ id: string }>();
   const [, navigate] = useLocation();
-  const id = parseInt(params.id || "1", 10);
+  const id = params.id ? parseInt(params.id, 10) : 0;
   const { addReaction, userReactions, savedMargins, toggleSaveMargin, currentUser, margins } = useApp();
 
   const [replyText, setReplyText] = useState("");

@@ -114,7 +114,7 @@ function MomentosSection() {
                   {topMargin.percent !== undefined ? ` · em ${topMargin.percent}% do livro` : ""}
                 </p>
                 {idx === 0 && (
-                  <Link href={`/eco/${topMargin.id}`}>
+                  <Link href={`/thread/${topMargin.id}`}>
                     <button className="font-sans text-[8px] font-light tracking-[0.12em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/30 px-3 py-1 rounded-full hover:bg-[#AE8F7D]/8 transition-colors flex-shrink-0 ml-2">
                       Ver post
                     </button>

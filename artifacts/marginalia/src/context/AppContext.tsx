@@ -334,7 +334,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setUserProgress(loadFromStorage<BookProgress[]>(`mg_progress_${uid}`, []));
     setUserReactions(loadFromStorage<Record<number, string>>(`mg_reactions_${uid}`, {}));
     setSavedMargins(loadFromStorage<number[]>(`mg_saved_${uid}`, []));
-    setUserMargins(loadFromStorage<Margin[]>(`mg_margins_${uid}`, []));
+    // Patch: ensure all locally stored margins have userId set to current user
+    const storedMargins = loadFromStorage<Margin[]>(`mg_margins_${uid}`, []).map((m) =>
+      m.userId ? m : { ...m, userId: uid }
+    );
+    setUserMargins(storedMargins);
 
     // Authoritative hydration from DB
     setProgressLoading(true);
@@ -458,6 +462,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const newMargin: Margin = {
         ...margin,
         id: tempId,
+        userId: uid,
         createdAt: new Date().toISOString(),
         reactions: {},
         commentsCount: 0,

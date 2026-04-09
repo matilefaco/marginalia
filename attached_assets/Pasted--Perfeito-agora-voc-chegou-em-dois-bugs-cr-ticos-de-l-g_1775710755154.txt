@@ -1,0 +1,266 @@
+
+
+Perfeito — agora você chegou em dois bugs críticos de lógica, não é mais só UI:
+	1.	Posts abrindo o conteúdo errado (routing/data binding quebrado)
+	2.	Sistema de progresso do perfil (arquétipo) não atualizando
+
+Isso aqui já é nível produto quebrando comportamento central, então o prompt precisa ser bem preciso.
+
+Aqui vai o PROMPT PERFEITO pra colar no Replit 👇
+
+⸻
+
+🚨 PROMPT — CORREÇÃO DE BUGS CRÍTICOS (ROUTING + PROGRESSO DO PERFIL)
+
+Quero corrigir dois problemas críticos de lógica no app Marginalia:
+
+⸻
+
+1) BUG: POSTS ABRINDO CONTEÚDO ERRADO
+
+Problema
+
+Na seção “ao vivo” / “mais ativo agora”, ao clicar em um post (ex: A Hora da Estrela), o app está abrindo outro post completamente diferente.
+
+Isso indica erro em:
+	•	binding de dados
+	•	navegação
+	•	identificação do post (id)
+	•	ou query incorreta
+
+⸻
+
+Comportamento correto esperado
+
+Cada post deve:
+
+👉 abrir exatamente o mesmo post em versão detalhada
+👉 com os mesmos dados (livro, trecho, autor, conteúdo, reações)
+
+⸻
+
+O que corrigir
+
+1. Garantir uso correto de ID único
+
+Cada post deve ter um identificador único:
+	•	post.id (obrigatório)
+	•	nunca usar index do array
+	•	nunca usar posição da lista
+	•	nunca usar fallback genérico
+
+ERRADO (exemplo):
+
+onClick={() => openPost(posts[index])}
+
+CERTO:
+
+onClick={() => openPost(post.id)}
+
+
+⸻
+
+2. Corrigir navegação para usar ID
+
+Ao navegar:
+	•	passar o post.id corretamente
+	•	não passar objeto errado ou incompleto
+	•	não depender de estado antigo
+
+Exemplo esperado:
+
+navigate(`/post/${post.id}`)
+
+
+⸻
+
+3. Corrigir busca do post na tela de detalhe
+
+Na tela de detalhe:
+	•	buscar o post pelo ID recebido
+	•	nunca usar “primeiro da lista”
+	•	nunca usar fallback genérico
+
+Exemplo:
+
+const post = posts.find(p => p.id === route.params.id)
+
+
+⸻
+
+4. Verificar origem dos dados
+
+Se estiver usando:
+	•	cache
+	•	estado global
+	•	mock
+	•	Supabase
+
+Garantir que:
+	•	não está sobrescrevendo o post
+	•	não está usando lista errada
+	•	não está retornando sempre o mesmo item
+
+⸻
+
+5. Validar todas as entradas de navegação
+
+Corrigir isso em:
+	•	feed
+	•	explorar
+	•	“ao vivo”
+	•	“em alta”
+	•	perfil
+	•	meus posts
+	•	posts protegidos
+	•	qualquer card clicável
+
+⸻
+
+Resultado esperado
+	•	clicar em qualquer post → abre o post correto
+	•	nenhuma inconsistência de conteúdo
+	•	nenhuma troca de livro inesperada
+
+⸻
+
+2) BUG: PROGRESSO DO PERFIL NÃO ATUALIZA (ARQUÉTIPO)
+
+Problema
+
+Mesmo criando vários posts:
+	•	o perfil continua travado em:
+“+1 post e seu perfil será gerado”
+	•	o arquétipo nunca é gerado
+	•	contador não atualiza
+
+⸻
+
+Comportamento correto esperado
+	•	cada post criado deve incrementar progresso
+	•	ao atingir o mínimo necessário:
+→ gerar perfil automaticamente
+→ atualizar UI
+→ remover mensagem de “perfil em formação”
+
+⸻
+
+O que corrigir
+
+1. Corrigir contagem de posts do usuário
+
+Verificar:
+	•	se os posts estão sendo salvos corretamente
+	•	se estão sendo associados ao usuário correto
+	•	se estão sendo buscados corretamente
+
+Exemplo:
+
+const userPosts = posts.filter(p => p.userId === currentUser.id)
+
+
+⸻
+
+2. Garantir atualização após criar post
+
+Após criar um post:
+	•	atualizar estado global
+	•	refazer fetch (ou atualizar cache)
+	•	não depender de refresh manual
+
+Exemplo:
+
+await createPost(data)
+await refetchUserPosts()
+
+
+⸻
+
+3. Corrigir lógica de cálculo do progresso
+
+Exemplo esperado:
+
+const MIN_POSTS = 3
+
+if (userPosts.length >= MIN_POSTS) {
+  generateProfile()
+}
+
+
+⸻
+
+4. Garantir que o perfil não está travado
+
+Verificar se:
+	•	profileGenerated está sendo salvo corretamente
+	•	não está sempre false
+	•	não está sendo resetado ao recarregar
+
+⸻
+
+5. Persistência correta
+
+Garantir que:
+	•	progresso é salvo no banco ou estado persistente
+	•	não é perdido ao navegar
+	•	não depende só de estado local
+
+⸻
+
+6. Atualização imediata da UI
+
+Após atingir o mínimo:
+	•	remover mensagem “+1 post…”
+	•	mostrar perfil gerado
+	•	atualizar estatísticas
+	•	atualizar assinatura de leitura
+
+⸻
+
+7. Debug recomendado
+
+Adicionar logs temporários:
+
+console.log("userPosts:", userPosts.length)
+console.log("profileGenerated:", profileGenerated)
+
+
+⸻
+
+Resultado esperado
+	•	posts contam corretamente
+	•	progresso avança em tempo real
+	•	arquétipo é gerado automaticamente
+	•	UI atualiza sem travar
+
+⸻
+
+3) VALIDAÇÃO FINAL
+
+Depois das correções, testar:
+
+Navegação:
+	•	clicar em 5+ posts diferentes → todos abrem corretamente
+
+Perfil:
+	•	criar posts → contador sobe
+	•	atingir limite → perfil aparece
+
+Persistência:
+	•	recarregar app → progresso mantido
+	•	navegar entre telas → estado mantido
+
+⸻
+
+RESULTADO FINAL
+
+Quero que:
+	•	nenhum post abra conteúdo errado
+	•	navegação seja 100% confiável
+	•	sistema de perfil funcione de verdade
+	•	progresso seja real e persistente
+	•	experiência pareça sólida, não bugada
+
+⸻
+
+
