@@ -14,6 +14,9 @@ export interface Arquetipo {
   marginTypes: string[];
 }
 
+/** Número mínimo de posts para gerar o perfil — única fonte da verdade */
+export const MIN_POSTS_FOR_ARCHETYPE = 2;
+
 export const ARQUETIPOS: Arquetipo[] = [
   {
     id: "observador",
@@ -208,21 +211,28 @@ export interface ArquetipoResult {
 interface UserReadingData {
   margins: Margin[];
   progress: BookProgress[];
-  userReactions: Record<string, string>;
+  userReactions: Record<string | number, string>;
 }
+
+/** Emojis disponíveis no Marginalia e seus pesos por dimensão emocional */
+const EMOJI_WEIGHTS = {
+  intense:       ["🔥", "😭", "😮"],  // intensidade/emoção alta
+  sensitive:     ["🤍", "✨"],         // sensível/estético
+  reflective:    ["🤔"],               // reflexivo/analítico
+} as const;
 
 export function calcularArquetipos(data: UserReadingData): ArquetipoResult[] {
   const { margins, progress, userReactions } = data;
 
-  if (margins.length < 2) return [];
+  if (margins.length < MIN_POSTS_FOR_ARCHETYPE) return [];
 
   const typeCounts: Record<string, number> = {};
   margins.forEach((m) => {
-    typeCounts[m.postType] = (typeCounts[m.postType] || 0) + 1;
+    const type = m.postType || "insight";
+    typeCounts[type] = (typeCounts[type] || 0) + 1;
   });
   const totalMargins = margins.length || 1;
 
-  // Tone frequency boosts
   const toneCounts: Record<string, number> = {};
   margins.forEach((m) => {
     if (m.tone) toneCounts[m.tone] = (toneCounts[m.tone] || 0) + 1;
@@ -234,8 +244,11 @@ export function calcularArquetipos(data: UserReadingData): ArquetipoResult[] {
   const percentCompleted = completedBooks / totalBooks;
 
   const reactionEmojis = Object.values(userReactions);
-  const intenseEmojis = ["🔥", "😭"];
-  const usaEmojiIntensidade = reactionEmojis.some((e) => intenseEmojis.includes(e));
+  const usaIntensidade  = reactionEmojis.some((e) => EMOJI_WEIGHTS.intense.includes(e as never));
+  const usaSensivel     = reactionEmojis.some((e) => EMOJI_WEIGHTS.sensitive.includes(e as never));
+  const usaReflexivo    = reactionEmojis.some((e) => EMOJI_WEIGHTS.reflective.includes(e as never));
+  const countStar       = reactionEmojis.filter((e) => e === "✨").length;
+  const countHeart      = reactionEmojis.filter((e) => e === "🤍").length;
   const usaPrimeiraPessoa = margins.some((m) =>
     m.commentary?.toLowerCase().includes(" eu ") ||
     m.commentary?.toLowerCase().startsWith("eu ") ||
@@ -245,73 +258,91 @@ export function calcularArquetipos(data: UserReadingData): ArquetipoResult[] {
   const scores: Record<string, number> = {};
   ARQUETIPOS.forEach((a) => { scores[a.id] = 0; });
 
-  const m = typeCounts;
+  const mc = typeCounts;
   const t = totalMargins;
 
-  scores.observador  += ((m.insight || 0) / t) * 40;
-  scores.observador  += usaPrimeiraPessoa ? 0 : 30;
-  scores.observador  += Math.min(margins.length * 2, 30);
+  scores.observador    += ((mc.insight || 0) / t) * 40;
+  scores.observador    += usaPrimeiraPessoa ? 0 : 30;
+  scores.observador    += Math.min(margins.length * 2, 30);
 
-  scores.sensivel    += ((m.reaction || 0) / t) * 35;
-  scores.sensivel    += ((m.favorite_quote || 0) / t) * 25;
-  scores.sensivel    += usaEmojiIntensidade ? 40 : 0;
+  scores.sensivel      += ((mc.reaction || 0) / t) * 35;
+  scores.sensivel      += ((mc.favorite_quote || 0) / t) * 25;
+  scores.sensivel      += usaIntensidade ? 30 : 0;
+  scores.sensivel      += usaSensivel   ? 40 : 0;
+  scores.sensivel      += countHeart * 5;
 
-  scores.analitico   += ((m.theory || 0) / t) * 35;
-  scores.analitico   += ((m.critique || 0) / t) * 30;
-  scores.analitico   += ((m.question || 0) / t) * 35;
+  scores.analitico     += ((mc.theory || 0) / t) * 35;
+  scores.analitico     += ((mc.critique || 0) / t) * 30;
+  scores.analitico     += ((mc.question || 0) / t) * 35;
+  scores.analitico     += usaReflexivo  ? 20 : 0;
 
-  scores.intenso     += Math.min(margins.length * 4, 50);
-  scores.intenso     += usaEmojiIntensidade ? 30 : 0;
-  scores.intenso     += readingBooks > 2 ? 20 : 0;
+  scores.intenso       += Math.min(margins.length * 4, 50);
+  scores.intenso       += usaIntensidade ? 30 : 0;
+  scores.intenso       += readingBooks > 2 ? 20 : 0;
 
   scores.contemplativo += percentCompleted < 0.3 ? 50 : 10;
-  scores.contemplativo += ((m.symbolic_reading || 0) / t) * 30;
-  scores.contemplativo += ((m.personal_connection || 0) / t) * 20;
+  scores.contemplativo += ((mc.symbolic_reading || 0) / t) * 30;
+  scores.contemplativo += ((mc.personal_connection || 0) / t) * 20;
 
-  scores.conector    += usaPrimeiraPessoa ? 30 : 0;
-  scores.conector    += ((m.personal_connection || 0) / t) * 50;
-  scores.conector    += ((m.favorite_quote || 0) / t) * 20;
+  scores.conector      += usaPrimeiraPessoa ? 30 : 0;
+  scores.conector      += ((mc.personal_connection || 0) / t) * 50;
+  scores.conector      += ((mc.favorite_quote || 0) / t) * 20;
 
-  scores.interpretador += ((m.symbolic_reading || 0) / t) * 60;
-  scores.interpretador += ((m.insight || 0) / t) * 40;
+  scores.interpretador += ((mc.symbolic_reading || 0) / t) * 60;
+  scores.interpretador += ((mc.insight || 0) / t) * 40;
 
-  scores.imersivo    += percentCompleted > 0.5 ? 50 : 10;
-  scores.imersivo    += ((m.favorite_quote || 0) / t) * 30;
-  scores.imersivo    += completedBooks > 3 ? 20 : 0;
+  scores.imersivo      += percentCompleted > 0.5 ? 50 : 10;
+  scores.imersivo      += ((mc.favorite_quote || 0) / t) * 30;
+  scores.imersivo      += completedBooks > 3 ? 20 : 0;
 
-  scores.curioso     += ((m.question || 0) / t) * 50;
-  scores.curioso     += ((m.theory || 0) / t) * 30;
-  scores.curioso     += ((m.insight || 0) / t) * 20;
+  scores.curioso       += ((mc.question || 0) / t) * 50;
+  scores.curioso       += ((mc.theory || 0) / t) * 30;
+  scores.curioso       += ((mc.insight || 0) / t) * 20;
+  scores.curioso       += usaReflexivo  ? 20 : 0;
 
-  scores.seletivo    += margins.length < 10 ? 40 : 0;
-  scores.seletivo    += ((m.favorite_quote || 0) / t) * 35;
-  scores.seletivo    += ((m.insight || 0) / t) * 25;
+  scores.seletivo      += margins.length < 10 ? 40 : 0;
+  scores.seletivo      += ((mc.favorite_quote || 0) / t) * 35;
+  scores.seletivo      += ((mc.insight || 0) / t) * 25;
 
   scores.introspectivo += usaPrimeiraPessoa ? 50 : 0;
-  scores.introspectivo += ((m.personal_connection || 0) / t) * 50;
+  scores.introspectivo += ((mc.personal_connection || 0) / t) * 50;
 
-  scores.estetico    += ((m.favorite_quote || 0) / t) * 60;
-  scores.estetico    += reactionEmojis.filter((e) => e === "✨").length * 10;
+  scores.estetico      += ((mc.favorite_quote || 0) / t) * 60;
+  scores.estetico      += countStar * 10;
+  scores.estetico      += usaSensivel   ? 20 : 0;
 
   // Tone-based boosts
-  scores.intenso     += (toneCounts["intenso"] || 0) * 3;
-  scores.observador  += (toneCounts["noturno"] || 0) * 3;
-  scores.curioso     += (toneCounts["confuso"] || 0) * 4;
-  scores.imersivo    += (toneCounts["gentil"] || 0) * 3;
+  scores.intenso       += (toneCounts["intenso"] || 0) * 3;
+  scores.observador    += (toneCounts["noturno"]  || 0) * 3;
+  scores.curioso       += (toneCounts["confuso"]  || 0) * 4;
+  scores.imersivo      += (toneCounts["gentil"]   || 0) * 3;
 
+  // Normalize to 0–100
   const maxScore = Math.max(...Object.values(scores), 1);
   const normalized: Record<string, number> = {};
   Object.keys(scores).forEach((k) => {
     normalized[k] = Math.round((scores[k] / maxScore) * 100);
   });
 
-  return Object.entries(normalized)
+  const result = Object.entries(normalized)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3)
     .map(([id, score]) => ({
       arquetipo: ARQUETIPOS.find((a) => a.id === id)!,
       score,
     }));
+
+  if (process.env.NODE_ENV !== "production") {
+    console.group("[Marginalia] Arquétipo calculado");
+    console.log("Posts do usuário:", margins.length, "| Mínimo:", MIN_POSTS_FOR_ARCHETYPE);
+    console.log("Tipos de post:", typeCounts);
+    console.log("Reações:", reactionEmojis);
+    console.log("usaIntensidade:", usaIntensidade, "| usaSensivel:", usaSensivel, "| usaReflexivo:", usaReflexivo);
+    console.log("Top arquétipos:", result.map((r) => `${r.arquetipo.nome} (${r.score})`));
+    console.groupEnd();
+  }
+
+  return result;
 }
 
 export const DNA_TRAITS = [

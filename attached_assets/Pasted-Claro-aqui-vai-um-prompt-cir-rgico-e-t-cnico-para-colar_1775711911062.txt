@@ -1,0 +1,312 @@
+Claro — aqui vai um prompt cirúrgico e técnico para colar no Replit, focado só no sistema de arquétipo/perfil do leitor, com base no que aparece no repositório público: o algoritmo existe em artifacts/marginalia/src/data/archetypes.ts, já calcula scores por tipo de post, progresso e reações, retorna top 3 arquétipos, mas há sinais de desalinhamento entre a lógica e a integração com os dados reais do app. Também há um trecho suspeito nas reações intensas e uma regra mínima de posts que pode estar batendo de frente com a UI.
+
+PROMPT PRONTO PARA COLAR NO REPLIT
+
+Quero revisar e corrigir a integração completa do sistema de arquétipo/perfil do leitor do Marginalia.
+
+O algoritmo já existe, mas o comportamento atual indica que ele não está sendo alimentado ou acionado corretamente.
+
+⸻
+
+OBJETIVO
+
+Fazer o sistema de arquétipos funcionar de verdade, de ponta a ponta:
+	•	contar corretamente os posts do usuário
+	•	passar os dados corretos para o algoritmo
+	•	gerar o perfil no momento certo
+	•	persistir o resultado
+	•	atualizar a interface automaticamente
+	•	garantir que o arquétipo reflita o comportamento real de leitura/postagem do usuário
+
+⸻
+
+CONTEXTO IMPORTANTE
+
+O arquivo do algoritmo já existe em:
+
+artifacts/marginalia/src/data/archetypes.ts
+
+Ele já define os arquétipos, scores e função de cálculo.
+Então o problema provavelmente está em um ou mais desses pontos:
+	•	dados errados chegando no algoritmo
+	•	posts do usuário não sendo buscados corretamente
+	•	postType incompatível com o que o algoritmo espera
+	•	regra mínima de posts desalinhada com a interface
+	•	reações do usuário não sendo consideradas
+	•	resultado calculado, mas não salvo ou não exibido
+
+⸻
+
+1) REVISAR A REGRA MÍNIMA DE POSTS
+
+No algoritmo atual, verificar a lógica mínima para geração do perfil.
+
+O que precisa fazer
+	•	encontrar exatamente qual é a regra mínima atual
+	•	comparar com a UX atual do app
+	•	corrigir o desalinhamento entre lógica e interface
+
+Regra obrigatória
+
+A mensagem da interface precisa refletir a regra real.
+
+Exemplo:
+
+Se o algoritmo só gera perfil com 2 posts ou 3 posts:
+	•	a UI não pode dizer algo incoerente
+	•	o contador precisa mostrar exatamente quanto falta
+
+Quero:
+	•	uma constante central como MIN_POSTS_FOR_ARCHETYPE
+	•	essa mesma constante sendo usada:
+	•	no algoritmo
+	•	na mensagem da UI
+	•	no cálculo de progresso
+
+⸻
+
+2) GARANTIR QUE OS POSTS DO USUÁRIO ESTÃO SENDO BUSCADOS CORRETAMENTE
+
+Revisar o fluxo completo que alimenta o algoritmo.
+
+Verificar:
+	•	de onde os posts do usuário são carregados
+	•	se estão sendo filtrados pelo usuário correto
+	•	se estão chegando completos
+	•	se estão chegando na ordem certa
+	•	se o cálculo usa posts reais e não mocks ou estado antigo
+
+Corrigir:
+	•	fetch dos posts do usuário
+	•	filtro por userId
+	•	atualização após criar post
+	•	re-fetch automático quando necessário
+
+Resultado esperado
+
+Sempre que o usuário publicar um novo post:
+	•	a lista de posts dele deve atualizar
+	•	o sistema de arquétipo deve reavaliar automaticamente
+
+⸻
+
+3) REVISAR O MAPEAMENTO DE TIPO DE POST (postType)
+
+O algoritmo depende de tipos específicos de post.
+
+Verificar se os posts estão sendo salvos com os nomes exatos esperados pelo algoritmo
+
+Exemplos possíveis que precisam ser conferidos:
+	•	insight
+	•	reaction
+	•	favorite_quote
+	•	theory
+	•	critique
+	•	question
+	•	symbolic_reading
+	•	personal_connection
+
+Problema possível
+
+A UI pode estar usando labels bonitos e o banco/estado pode estar salvando outro valor.
+
+Exemplo de erro:
+	•	UI mostra “Leitura simbólica”
+	•	banco salva symbolic
+	•	algoritmo espera symbolic_reading
+
+Nesse caso o score quebra ou fica incompleto.
+
+O que fazer
+
+Criar uma camada explícita de normalização/mapeamento.
+
+Quero algo assim:
+	•	um enum ou objeto central de tipos de post
+	•	a criação de post salva valores padronizados
+	•	o algoritmo consome esses mesmos valores padronizados
+
+Resultado esperado
+
+Nenhum post deve deixar de contar por incompatibilidade de string.
+
+⸻
+
+4) REVISAR AS REAÇÕES DO USUÁRIO NO CÁLCULO
+
+O algoritmo também leva em conta reações do usuário.
+
+Verificar:
+	•	se userReactions realmente está chegando
+	•	se as reações estão associadas ao usuário correto
+	•	se as reações têm o formato esperado
+	•	se o cálculo considera as reações reais do app
+
+Corrigir integração se necessário
+
+Se o usuário reagiu muito com emoções intensas, reflexivas, sensíveis etc., isso precisa entrar no perfil.
+
+⸻
+
+5) CORRIGIR O TRECHO SUSPEITO DAS REAÇÕES INTENSAS
+
+Revisar no arquivo archetypes.ts a lógica de emojis/reações intensas.
+
+Atenção especial
+
+Existe um trecho suspeito que parece incorreto e pode estar inutilizando parte da pontuação ligada a intensidade emocional.
+
+O que fazer
+	•	localizar a lista usada para detectar reações intensas
+	•	corrigir os valores
+	•	substituir placeholders ou strings vazias por reações reais do app
+	•	alinhar isso com os emojis/reações realmente disponíveis no Marginalia
+
+Resultado esperado
+
+Arquétipos ligados a intensidade, sensibilidade e emoção devem conseguir pontuar corretamente.
+
+⸻
+
+6) GARANTIR QUE O ARQUÉTIPO É GERADO AUTOMATICAMENTE
+
+Depois que o usuário atinge o mínimo necessário de posts:
+	•	o perfil deve ser calculado automaticamente
+	•	sem precisar refresh manual
+	•	sem depender de sair e entrar
+	•	sem ficar travado na mensagem de “ainda falta 1 post”
+
+Implementar
+
+Após criação de post:
+	1.	salvar post
+	2.	atualizar lista de posts do usuário
+	3.	recalcular arquétipo
+	4.	salvar resultado
+	5.	atualizar UI imediatamente
+
+⸻
+
+7) PERSISTIR O RESULTADO DO PERFIL
+
+Mesmo depois de calculado, o arquétipo não pode sumir.
+
+Garantir:
+	•	salvar perfil gerado em estado persistente ou banco
+	•	salvar data de atualização
+	•	salvar top arquétipos
+	•	salvar DNA de leitura / traits derivados, se houver
+	•	recuperar isso ao reabrir o app
+
+Resultado esperado
+
+O usuário não deve perder o perfil ao navegar ou recarregar.
+
+⸻
+
+8) ATUALIZAR A INTERFACE CORRETAMENTE
+
+Quando o arquétipo for gerado:
+	•	remover o estado “perfil ainda está se formando”
+	•	remover a mensagem errada de “+1 post”
+	•	mostrar o perfil real
+	•	mostrar assinatura de leitura correta
+	•	atualizar estatísticas relacionadas
+	•	refletir o novo estado em todo o perfil
+
+Se ainda não atingiu o mínimo:
+
+mostrar uma mensagem precisa e real.
+
+Exemplo:
+	•	“Falta 1 post para revelar seu perfil”
+	•	“Faltam 2 posts para revelar seu perfil”
+
+Não quero mensagem travada ou genérica.
+
+⸻
+
+9) CRIAR LOGS TEMPORÁRIOS DE DEBUG
+
+Quero adicionar logs temporários para identificar onde o fluxo está falhando.
+
+Logar:
+	•	quantidade de posts do usuário
+	•	tipos de post recebidos
+	•	reações recebidas
+	•	mínimo exigido para gerar perfil
+	•	resultado retornado pelo algoritmo
+	•	momento em que o perfil é salvo
+	•	motivo pelo qual não foi gerado, se não for gerado
+
+Exemplo de debug desejado
+	•	userPosts.length
+	•	normalizedPostTypes
+	•	userReactions
+	•	canGenerateProfile
+	•	archetypeResult
+	•	profileSaved
+
+Esses logs podem ser removidos depois.
+
+⸻
+
+10) REVISÃO FINAL DE CONSISTÊNCIA
+
+Depois da correção, testar estes cenários:
+
+Cenário 1
+
+Usuário com 0 posts:
+	•	perfil em formação aparece corretamente
+
+Cenário 2
+
+Usuário cria 1 post:
+	•	progresso atualiza
+	•	mensagem correta
+
+Cenário 3
+
+Usuário cria o número mínimo exigido:
+	•	perfil é gerado automaticamente
+
+Cenário 4
+
+Usuário fecha e reabre o app:
+	•	perfil continua salvo
+
+Cenário 5
+
+Usuário cria mais posts depois:
+	•	perfil pode ser recalculado/refinado corretamente
+
+⸻
+
+RESULTADO FINAL ESPERADO
+
+Quero que o sistema de arquétipos fique confiável de verdade:
+	•	posts contam corretamente
+	•	tipos de post são reconhecidos
+	•	reações influenciam o perfil
+	•	o mínimo exigido é coerente com a UI
+	•	o arquétipo é gerado automaticamente
+	•	o resultado é persistido
+	•	a interface atualiza sem travar
+
+⸻
+
+OBSERVAÇÃO IMPORTANTE
+
+Não quero recriar o algoritmo do zero.
+Quero consertar a integração e revisar os pontos frágeis da implementação atual, mantendo a base conceitual já existente.
+
+Se houver necessidade, pode refatorar:
+	•	a camada de mapeamento de postType
+	•	o fluxo de atualização após criar post
+	•	a persistência do perfil
+	•	a comunicação entre algoritmo e UI
+
+⸻
+
+Se você quiser, eu também posso fazer a versão ultra curta em checklist técnico, para colar logo em seguida no Replit.

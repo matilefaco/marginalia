@@ -322,23 +322,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   /* ── Load user data: localStorage first, then hydrate from DB ── */
   useEffect(() => {
     const uid = currentUser.id;
-    if (uid === "user_me") {
-      setUserProgress([]);
-      setUserReactions({});
-      setSavedMargins([]);
-      setUserMargins([]);
-      return;
-    }
 
-    // Fast load from localStorage
+    // Fast load from localStorage (inclusive para user_me — persiste posts no mock)
     setUserProgress(loadFromStorage<BookProgress[]>(`mg_progress_${uid}`, []));
     setUserReactions(loadFromStorage<Record<number, string>>(`mg_reactions_${uid}`, {}));
     setSavedMargins(loadFromStorage<number[]>(`mg_saved_${uid}`, []));
-    // Patch: ensure all locally stored margins have userId set to current user
+    // Patch: garante que todos os margins tenham userId do usuário atual
     const storedMargins = loadFromStorage<Margin[]>(`mg_margins_${uid}`, []).map((m) =>
       m.userId ? m : { ...m, userId: uid }
     );
     setUserMargins(storedMargins);
+
+    if (uid === "user_me") return;
 
     // Authoritative hydration from DB
     setProgressLoading(true);
@@ -362,12 +357,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Persist reactions & saved margins to localStorage
   useEffect(() => {
-    if (currentUser.id === "user_me") return;
     saveToStorage(`mg_reactions_${currentUser.id}`, userReactions);
   }, [userReactions, currentUser.id]);
 
   useEffect(() => {
-    if (currentUser.id === "user_me") return;
     saveToStorage(`mg_saved_${currentUser.id}`, savedMargins);
   }, [savedMargins, currentUser.id]);
 

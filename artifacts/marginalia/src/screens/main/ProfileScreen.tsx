@@ -18,6 +18,7 @@ import {
   DNA_TRAITS,
   calcularDnaTrait,
   getTexturaStyle,
+  MIN_POSTS_FOR_ARCHETYPE,
   type ArquetipoResult,
 } from "@/data/archetypes";
 
@@ -504,21 +505,26 @@ export function ProfileScreen() {
           >
             Impressão de Leitura
           </p>
-          {myMargins.length === 0 && (
-            <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
-              Publique seu primeiro post para começar a descobrir seu perfil de leitor.
-            </p>
-          )}
-          {myMargins.length === 1 && (
-            <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
-              Mais um post e seu perfil começa a tomar forma.
-            </p>
-          )}
-          {myMargins.length >= 2 && myMargins.length <= 6 && (
-            <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
-              Seu perfil está emergindo. Continue postando — cada vez fica mais preciso.
-            </p>
-          )}
+          {(() => {
+            const faltam = MIN_POSTS_FOR_ARCHETYPE - myMargins.length;
+            if (faltam > 0) {
+              return (
+                <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
+                  {faltam === 1
+                    ? "Falta 1 post para revelar seu perfil de leitor."
+                    : `Faltam ${faltam} posts para revelar seu perfil de leitor.`}
+                </p>
+              );
+            }
+            if (myMargins.length <= 6) {
+              return (
+                <p className="font-sans font-light leading-[1.5] mb-3" style={{ fontSize: "13px", color: "#8C837A" }}>
+                  Seu perfil está emergindo. Continue postando — cada vez fica mais preciso.
+                </p>
+              );
+            }
+            return null;
+          })()}
         </div>
 
         {/* ─── Impressão de leitura — identity card with archetype colors ─── */}
