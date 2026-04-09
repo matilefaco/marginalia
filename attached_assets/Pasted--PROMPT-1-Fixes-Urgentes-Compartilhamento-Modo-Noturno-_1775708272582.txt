@@ -1,0 +1,191 @@
+# PROMPT 1 — Fixes Urgentes: Compartilhamento + Modo Noturno
+
+# Colar no Replit
+
+-----
+
+## FIX 1 — BOTÃO “COMPARTILHAR IDENTIDADE DE LEITURA” (card do perfil)
+
+O botão no card escuro de Impressão de Leitura (“Compartilhar identidade de leitura”) não está funcionando. Precisa funcionar mesmo quando o perfil ainda está “em formação” (sem arquétipo calculado).
+
+### Implementação
+
+No `ProfileScreen.tsx`, localizar o botão de compartilhar dentro do card de Impressão de Leitura e substituir o handler por:
+
+```typescript
+const handleShareReaderIdentity = async () => {
+  // Funciona em QUALQUER estado — com ou sem arquétipo calculado
+  const archetypeText = currentArchetype ?? "Leitor em formação";
+  const signature = profile?.reading_signature ?? profile?.bio ?? "Cada livro me deixa diferente";
+  const username = currentUser?.username ?? currentUser?.full_name ?? "leitor";
+
+  try {
+    const blob = await generateShareCard({
+      type: "reader_identity",
+      archetype: archetypeText,
+      readingSignature: signature,
+      username: username,
+      format: "story",
+    });
+
+    const file = new File([blob], "marginalia-identidade.png", { type: "image/png" });
+
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: "Minha identidade de leitura — Marginalia",
+        text: `Meu perfil de leitura no Marginalia: ${archetypeText}`,
+      });
+    } else {
+      // Fallback: download direto
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "marginalia-identidade.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  } catch (err) {
+    console.error("Erro ao compartilhar:", err);
+  }
+};
+```
+
+**Importante:** o botão deve estar habilitado (`opacity: 1`, clicável) em TODOS os estados do card — incluindo o estado “Seu perfil ainda está se formando”. Remover qualquer condição que desabilite o botão. Mesmo sem arquétipo, o usuário pode compartilhar o card com o texto “Leitor em formação”.
+
+Se o arquivo `shareCard.ts` (geração via Canvas) ainda não existir ou não tiver a função `generateShareCard`, criar um fallback simples que usa a Web Share API com texto apenas:
+
+```typescript
+// Fallback se generateShareCard não estiver disponível
+const shareText = `Minha identidade de leitura no Marginalia\n\n${archetypeText}\n\n"${signature}"\n\nmarginalia.replit.app`;
+
+if (navigator.share) {
+  await navigator.share({
+    title: "Marginalia — Identidade de Leitura",
+    text: shareText,
+    url: "https://marginalia.replit.app",
+  });
+} else {
+  await navigator.clipboard.writeText(shareText);
+  // Feedback visual: trocar texto do botão por "Copiado!" por 2 segundos
+}
+```
+
+-----
+
+## FIX 2 — TODOS OS BOTÕES DE COMPARTILHAR
+
+Auditar TODOS os lugares onde existe um botão de compartilhar no app e garantir que cada um está conectado a um handler funcional:
+
+1. **MarginCard → ShareButton** — deve abrir o modal de compartilhamento com o post atual
+1. **ThreadScreen → ShareButton** — deve compartilhar o post da thread atual
+1. **ProfileScreen → “Compartilhar identidade de leitura”** — corrigido acima
+1. **BookDetail → compartilhar livro** — se existir, deve funcionar
+
+Para qualquer ShareButton que ainda não tenha handler, implementar o fallback de texto simples:
+
+```typescript
+const text = `${margin.excerpt ?? margin.commentary}\n\n— via Marginalia\nmarginalia.replit.app`;
+if (navigator.share) {
+  await navigator.share({ text, url: "https://marginalia.replit.app" });
+} else {
+  await navigator.clipboard.writeText(text);
+}
+```
+
+-----
+
+## FEATURE — TOGGLE DE MODO NOTURNO NO HEADER
+
+### Posicionamento
+
+No header da HomeScreen (onde ficam o logo “Marginalia”, o ícone de notificações e o ícone de filtro), adicionar um botão de toggle de tema ao lado das notificações.
+
+Layout do header após a mudança:
+
+```
+[logo Marginalia]          [🌙] [🔔] [⊟]
+```
+
+O botão fica entre o logo e as notificações, ou à esquerda das notificações — o que ficar mais natural visualmente.
+
+### O botão
+
+- **Ícone:** 🌙 quando está no modo claro (clicar ativa modo escuro), ☀️ quando está no modo escuro (clicar volta ao claro)
+- **Tamanho:** igual aos outros ícones do header (aprox. 22-24px)
+- **Sem label de texto** — só o ícone
+- **Sem borda, sem fundo** — apenas o ícone, igual ao estilo dos outros botões do header
+- Animação suave na troca: `transition: opacity 200ms`
+
+### Implementação do tema
+
+Criar um contexto de tema ou usar o que já existe. Salvar preferência em `localStorage` com a chave `mg_theme_${userId ?? 'default'}`.
+
+```typescript
+// src/context/ThemeContext.tsx
+import { createContext, useContext, useEffect, useState } from "react";
+
+type Theme = "light" | "dark";
+
+const ThemeContext = createContext<{
+  theme: Theme;
+  toggleTheme: () => void;
+}>({ theme: "light", toggleTheme: () => {} });
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<Theme>(() => {
+    return (localStorage.getItem("mg_theme") as Theme) ?? "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    localStorage.setItem("mg_theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(t => t === "light" ? "dark" : "light");
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export const useTheme = () => useContext(ThemeContext);
+```
+
+Envolver o app com `<ThemeProvider>` no `main.tsx` ou `App.tsx`.
+
+### Variáveis CSS para modo escuro
+
+No `index.css`, adicionar:
+
+```css
+:root {
+  --bg-primary:      #FAF8F3;
+  --bg-surface:      #FFFFFF;
+  --bg-surface-2:    #EBE6DB;
+  --text-primary:    #1E1C19;
+  --text-secondary:  #4A4540;
+  --text-tertiary:   #7A726A;
+  --border-color:    #D4CBB8;
+  --card-bg:         #FFFFFF;
+}
+
+html.dark {
+  --bg-primary:      #1A1816;
+  --bg-surface:      #232018;
+  --bg-surface-2:    #2C2820;
+  --text-primary:    #EBE6DB;
+  --text-secondary:  #BDB5A8;
+  --text-tertiary:   #8C8278;
+  --border-color:    #3A342C;
+  --card-bg:         #232018;
+}
+```
+
+Substituir todas as cores hardcoded no CSS por essas variáveis onde fizer sentido. Priorizar pelo menos: fundo do app, cards (MarginCard, BookCard), navbar, header, inputs.
+
+O card escuro de Impressão de Leitura no perfil **não muda** com o tema — ele já é escuro por design e deve permanecer assim.

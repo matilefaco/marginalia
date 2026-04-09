@@ -553,8 +553,8 @@ export function ProfileScreen() {
                 &ldquo;Ainda escrevendo minha história&rdquo;
               </p>
               <button
-                disabled
-                className="flex items-center gap-2 rounded-[8px] px-4 py-2.5 opacity-40 cursor-not-allowed"
+                onClick={handleShareIdentity}
+                className="flex items-center gap-2 rounded-[8px] px-4 py-2.5 transition-opacity active:opacity-70"
                 style={{
                   backgroundColor: "rgba(243,237,229,0.08)",
                   border: "1px solid rgba(156,142,130,0.25)",
@@ -563,7 +563,7 @@ export function ProfileScreen() {
               >
                 <Share2 className="w-3.5 h-3.5" />
                 <span className="font-sans text-[9px] font-light tracking-[0.12em]">
-                  Compartilhar identidade de leitura
+                  {shareLabel}
                 </span>
               </button>
             </div>

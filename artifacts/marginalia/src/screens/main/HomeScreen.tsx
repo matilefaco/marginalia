@@ -1,4 +1,5 @@
-import { Bell, SlidersHorizontal } from "lucide-react";
+import { Bell, SlidersHorizontal, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 import { Link, useLocation } from "wouter";
 import { useApp } from "@/context/AppContext";
 import { MarginCard } from "@/components/cards/MarginCard";
@@ -403,6 +404,7 @@ function WishlistSection() {
 
 export function HomeScreen() {
   const { currentUser, margins, notifications, progress } = useApp();
+  const { theme, toggleTheme } = useTheme();
 
   const progressMap = Object.fromEntries(
     progress.filter((p) => p.userId === currentUser.id).map((p) => [p.bookId, p])
@@ -452,13 +454,21 @@ export function HomeScreen() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={toggleTheme}
+            className="text-[#2A2A2A]/40 hover:text-[#2A2A2A]/70 dark:text-white/30 dark:hover:text-white/60 transition-opacity p-1"
+            title={theme === "light" ? "Ativar modo noturno" : "Ativar modo claro"}
+            style={{ transition: "opacity 200ms" }}
+          >
+            {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+          </button>
           <Link href="/notifications">
-            <button data-testid="button-notifications" className="relative text-[#2A2A2A]/40 hover:text-[#2A2A2A]/70 transition-colors p-1">
+            <button data-testid="button-notifications" className="relative text-[#2A2A2A]/40 hover:text-[#2A2A2A]/70 dark:text-white/30 dark:hover:text-white/60 transition-colors p-1">
               <Bell className="w-5 h-5" />
               {unread > 0 && <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[#AE8F7D]" />}
             </button>
           </Link>
-          <button className="text-[#2A2A2A]/30 hover:text-[#2A2A2A]/60 transition-colors p-1">
+          <button className="text-[#2A2A2A]/30 hover:text-[#2A2A2A]/60 dark:text-white/25 dark:hover:text-white/50 transition-colors p-1">
             <SlidersHorizontal className="w-4 h-4" />
           </button>
         </div>

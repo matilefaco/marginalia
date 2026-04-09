@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useParams, Link, useLocation } from "wouter";
-import { ArrowLeft, Send, Bookmark, BookmarkCheck, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Send, Bookmark, BookmarkCheck, Eye, EyeOff, Share2 } from "lucide-react";
+import { ShareCardModal } from "@/components/cards/ShareCardModal";
 import { useApp } from "@/context/AppContext";
 import { MOCK_MARGINS, MOCK_REPLIES, MOCK_USERS, USER_AVATAR_MAP } from "@/data/mockData";
 import { EMOJI_REACTIONS } from "@/data/constants";
@@ -120,6 +121,7 @@ export function ThreadScreen() {
   const [showAllReplies, setShowAllReplies] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState<Set<number>>(new Set());
   const [focusMode, setFocusMode] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
 
@@ -203,6 +205,15 @@ export function ThreadScreen() {
             {focusMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
           <button
+            data-testid="button-share-thread"
+            onClick={() => setShareModalOpen(true)}
+            className="opacity-30 hover:opacity-60 transition-opacity active:scale-90"
+            style={{ color: "var(--text-primary)" }}
+            title="Compartilhar post"
+          >
+            <Share2 className="w-4 h-4" />
+          </button>
+          <button
             data-testid="button-save-thread"
             onClick={() => toggleSaveMargin(margin.id)}
             className={`transition-all active:scale-90 ${isSaved ? "text-[#AE8F7D]" : "opacity-30 hover:opacity-60"}`}
@@ -213,6 +224,9 @@ export function ThreadScreen() {
           </button>
         </div>
       </div>
+      {shareModalOpen && (
+        <ShareCardModal context={{ type: "eco", margin }} onClose={() => setShareModalOpen(false)} />
+      )}
 
       {/* Content */}
       <div className="flex-1 overflow-auto pb-28 px-5 pt-5">
