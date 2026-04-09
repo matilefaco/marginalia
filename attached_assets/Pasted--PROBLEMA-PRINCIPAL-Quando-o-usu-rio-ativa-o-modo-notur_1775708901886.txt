@@ -1,0 +1,298 @@
+
+
+PROBLEMA PRINCIPAL
+
+Quando o usuário ativa o modo noturno pelo atalho da página, várias telas ficam inconsistentes:
+	•	partes da interface continuam no tema claro
+	•	outras partes entram no tema escuro
+	•	cards aparecem claros em telas escuras
+	•	formulários aparecem claros quando deveriam estar escuros
+	•	páginas como feed, explorar, perfil e criar post ficam visualmente híbridas e erradas
+	•	a hierarquia visual quebra completamente
+	•	a experiência parece bugada e não intencional
+
+Ou seja: o app não está aplicando o tema de forma global, consistente e confiável.
+
+⸻
+
+OBJETIVO
+
+Quero que o sistema de tema do app seja refatorado para funcionar como uma fonte única de verdade, garantindo que o dark mode seja aplicado corretamente em toda a aplicação, inclusive quando ativado pelo atalho/página/feed.
+
+⸻
+
+O QUE PRECISA SER CORRIGIDO
+
+1) CENTRALIZAR O ESTADO DE TEMA
+
+O app precisa ter um único estado global de tema, e todas as telas e componentes devem consumir esse mesmo estado.
+
+Regras:
+	•	o tema não pode ser decidido localmente em cada componente
+	•	o tema não pode depender de lógica duplicada
+	•	o tema não pode mudar só em partes da tela
+	•	o dark mode precisa ser consistente do topo ao rodapé
+
+Quero:
+	•	um provider/context/store único para theme
+	•	valor controlado por algo como light | dark
+	•	persistência real da escolha do usuário
+	•	carregamento correto do tema ao abrir o app novamente
+
+⸻
+
+2) GARANTIR QUE O TEMA SEJA APLICADO EM TODA A ÁRVORE DA UI
+
+Hoje o problema parece ser que algumas áreas usam dark mode e outras continuam usando tokens claros.
+
+Quero revisar a aplicação do tema em:
+	•	layout principal
+	•	header
+	•	navegação inferior
+	•	cards do feed
+	•	cards protegidos
+	•	seção “hoje para você”
+	•	seção “explorar”
+	•	perfil
+	•	“meus posts”
+	•	“posts salvos”
+	•	criar post
+	•	preview do post
+	•	inputs
+	•	chips
+	•	tabs
+	•	botões
+	•	modais
+	•	páginas de detalhe
+	•	post aberto via atalho/feed
+
+Regra obrigatória:
+
+Se o app estiver em dark mode, nenhum componente pode continuar usando cores do modo claro.
+
+⸻
+
+3) REVISAR A FORMA COMO AS CORES SÃO DEFINIDAS
+
+Quero eliminar qualquer mistura de:
+	•	cor hardcoded dentro de componente
+	•	background fixo claro
+	•	texto fixo escuro
+	•	borda fixa que não responde ao tema
+
+Quero refatorar para tokens semânticos, por exemplo:
+	•	bg-app
+	•	bg-surface
+	•	bg-card
+	•	bg-card-muted
+	•	text-primary
+	•	text-secondary
+	•	text-tertiary
+	•	border-subtle
+	•	border-strong
+	•	accent
+	•	accent-soft
+
+Esses tokens precisam mudar automaticamente de acordo com o tema.
+
+Proibido:
+	•	usar branco fixo em card que deveria respeitar tema
+	•	usar fundo parchment fixo em tela que deveria estar em dark mode
+	•	usar texto claro com opacidade baixa sobre fundo claro
+	•	usar componentes parcialmente temáticos
+
+⸻
+
+4) CORRIGIR ESPECIFICAMENTE AS TELAS QUE ESTÃO QUEBRANDO
+
+A) Feed / Início
+
+No modo noturno ativado pelo atalho:
+	•	o fundo geral deve ficar correto
+	•	os cards não podem aparecer claros se a tela estiver escura
+	•	a seção “hoje para você” deve respeitar dark mode
+	•	os textos precisam continuar legíveis
+	•	as ações do card precisam seguir o mesmo tema
+
+B) Explorar
+
+Atualmente a tela está aparecendo clara enquanto header/nav continuam escuros.
+Isso precisa ser corrigido.
+
+Quero que:
+	•	o fundo da página respeite o dark mode
+	•	campo de busca respeite o dark mode
+	•	cards de livros respeitem o dark mode
+	•	subtítulos, títulos e metadata respeitem o dark mode
+	•	nada fique com aparência de “modo claro vazando”
+
+C) Perfil
+
+No perfil, os blocos de estatísticas e os cards de “meus posts” precisam seguir o dark mode inteiro.
+
+Quero:
+	•	fundo do perfil correto
+	•	cards corretos
+	•	contadores corretos
+	•	títulos de seção corretos
+	•	estados vazios corretos
+	•	rodapé e conteúdo integrados visualmente
+
+D) Criar Post
+
+A tela de criação de post não pode abrir clara se o usuário estiver no modo noturno.
+
+Corrigir:
+	•	fundo da página
+	•	área do formulário
+	•	toggle/tabs tipo “sobre um trecho” / “pensamento”
+	•	textarea
+	•	placeholder
+	•	chips de livros
+	•	campo “buscar outro livro”
+	•	preview
+	•	botão publicar
+
+Tudo precisa responder ao mesmo tema.
+
+⸻
+
+5) CORRIGIR NAVEGAÇÃO ENTRE TELAS SEM RESETAR O TEMA
+
+Quero revisar a navegação para que o tema permaneça consistente ao trocar de tela.
+
+Garantir consistência ao navegar entre:
+	•	início → explorar
+	•	feed → post
+	•	feed → post protegido
+	•	perfil → post
+	•	perfil → criar post
+	•	explorar → livro
+	•	qualquer tela aberta a partir de atalho
+	•	qualquer ação do Safari/webview que hoje esteja disparando render inconsistente
+
+Regra:
+
+Se o usuário estiver em dark mode, a navegação não pode resetar nem trocar partes da interface para light mode.
+
+⸻
+
+6) PERSISTÊNCIA DO TEMA
+
+Quero que o tema escolhido pelo usuário continue correto mesmo se:
+	•	a página recarregar
+	•	o app reabrir
+	•	a pessoa navegar por várias rotas
+	•	o post for aberto por atalho
+	•	a pessoa voltar usando histórico/navegação interna
+
+Implementar:
+	•	persistência em localStorage ou estado persistido equivalente
+	•	hidratação segura no carregamento inicial
+	•	evitar flicker entre light e dark na primeira renderização
+
+Quero evitar:
+	•	flash de tela clara antes de aplicar dark mode
+	•	componentes renderizando em light antes do estado carregar
+	•	inconsistência entre server render / client render, se houver
+
+⸻
+
+7) REVISAR O ROOT LAYOUT E A ESTRUTURA DE CLASSES/TEMA
+
+Quero que você revise a estrutura inteira de tema no nível mais alto da aplicação.
+
+Verificar:
+	•	classe dark ou atributo data-theme sendo aplicado no elemento correto
+	•	root container da aplicação
+	•	body / html / app shell
+	•	wrappers de rota
+	•	overlays
+	•	páginas internas
+	•	componentes compartilhados
+
+Garantir:
+
+O tema precisa nascer do topo e ser herdado corretamente por toda a interface.
+
+⸻
+
+8) PADRONIZAR COMPONENTES REUTILIZÁVEIS
+
+Revisar componentes reutilizados no app para garantir que todos consumam tokens semânticos.
+
+Componentes que precisam ser padronizados:
+	•	post card
+	•	post protected card
+	•	book card
+	•	chip
+	•	button
+	•	input
+	•	textarea
+	•	tabs/segmented control
+	•	stat block
+	•	section title
+	•	bottom nav
+	•	top bar
+	•	modal / drawer / sheet
+	•	spoiler/protection block
+	•	preview card
+
+Regra:
+
+Nenhum componente reutilizável pode carregar cor fixa do tema claro por padrão.
+
+⸻
+
+9) MELHORAR A LEGIBILIDADE JUNTO COM A CORREÇÃO
+
+Além de corrigir o bug do tema, quero aproveitar para garantir legibilidade real no dark mode.
+
+Ajustar:
+	•	contraste dos textos
+	•	contraste de placeholders
+	•	contraste dos labels
+	•	contraste de metadados
+	•	contraste das bordas
+	•	contraste dos cards
+	•	contraste dos campos de input
+	•	contraste de contadores e microcopy
+
+Resultado esperado:
+
+Dark mode bonito, sofisticado e finalmente utilizável.
+
+⸻
+
+10) RESULTADO FINAL ESPERADO
+
+Depois da correção, quero que:
+	•	o dark mode funcione de forma global
+	•	o atalho da página/feed não quebre mais a interface
+	•	nenhuma tela fique híbrida entre claro e escuro
+	•	feed, explorar, perfil e criar post respeitem o mesmo tema
+	•	os componentes usem tokens semânticos e não cores fixas
+	•	o tema persista corretamente entre navegações e reload
+	•	a experiência pareça premium, consistente e intencional
+
+⸻
+
+11) IMPLEMENTAÇÃO TÉCNICA
+
+Quero que você:
+	1.	identifique todos os pontos onde o tema está sendo aplicado localmente ou de forma inconsistente
+	2.	centralize o estado do tema em uma única fonte de verdade
+	3.	refatore os componentes para usar tokens semânticos por tema
+	4.	corrija a persistência do dark mode
+	5.	corrija a hidratação inicial para evitar flicker ou tema errado
+	6.	revise todas as telas principais do app
+	7.	entregue tudo já funcionando, sem quebrar a identidade visual do Marginalia
+
+⸻
+
+OBSERVAÇÃO IMPORTANTE
+
+O objetivo não é só “escurecer” a interface.
+O objetivo é fazer o app ter um sistema de tema consistente e elegante, em que o dark mode seja um modo completo da aplicação, e não um efeito parcial aplicado por cima.
+
+⸻

@@ -234,75 +234,66 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   DARK MODE — global overrides
+   DARK MODE — global overrides (single source of truth)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Body */
+/* ── Body & root ──────────────────────────────────────────────────── */
 html.dark body {
   background-color: #12100F;
   background-image: radial-gradient(circle, rgba(90,70,55,0.08) 1px, transparent 1px);
   background-size: 5px 5px;
 }
 
-/* Screens and main containers */
-/* bg-[#FAF8F3] elements: screen wrappers and cards both get #1C1916.
-   Cards differentiate via border/shadow. MarginCard and Explore use
-   isDark inline styles to set #1E1A18 (slightly lighter) for elevation. */
-html.dark .min-h-full { background-color: #1C1916; }
-html.dark [class*="bg-[#FAF8F3]"] { background-color: #1C1916 !important; }
-html.dark [class*="bg-[#FDF9F5]"] { background-color: #1E1A18 !important; }
-/* EBE6DB secondary/inner blocks → a slightly lighter warm tone for contrast */
-html.dark [class*="bg-[#EBE6DB]"] { background-color: #252119 !important; }
+/* ── Screen / layout containers ──────────────────────────────────── */
+html.dark .min-h-full,
+html.dark .min-h-screen,
+html.dark .min-h-\[100dvh\] {
+  background-color: #1C1916;
+}
+/* Parchment backgrounds → dark surface */
+html.dark [class*="bg-\[#FAF8F3\]"] { background-color: #1C1916 !important; }
+html.dark [class*="bg-\[#FDF9F5\]"] { background-color: #1E1A18 !important; }
+html.dark .bg-background            { background-color: #1C1916 !important; }
+/* White surfaces → elevated dark card */
+html.dark [class*="bg-white"],
+html.dark .bg-white                 { background-color: #1E1A18 !important; }
+/* Secondary warm surface */
+html.dark [class*="bg-\[#EBE6DB\]"] { background-color: #252119 !important; }
+/* Semi-transparent warm tints */
+html.dark [class*="bg-\[#EBE6DB\]\/"] { background-color: rgba(37,33,25,0.65) !important; }
 
 /* Named card surface helpers */
 html.dark .mg-card-surface     { background-color: #1E1A18 !important; }
 html.dark .mg-card-surface-alt { background-color: #252119 !important; }
 html.dark .mg-overlay-cream    { background: rgba(12,10,9,0.90) !important; }
 
-/* ── Text: ALL hardcoded dark/near-black classes → warm light tokens ─── */
+/* ── Text tokens: hardcoded light colors → dark equivalents ───────── */
+
+/* Primary text: #1E1C19, #2A2A2A, #3D3D3D, #454545, #24211E, #2C2A27, #3D3A36 */
+html.dark .text-\[\#1E1C19\],
 html.dark .text-\[\#24211E\],
-html.dark .text-\[\#2C2A27\],
 html.dark .text-\[\#2A2A2A\],
+html.dark .text-\[\#2C2A27\],
 html.dark .text-\[\#3D3D3D\],
 html.dark .text-\[\#3D3A36\],
-html.dark .text-\[\#454545\] {
-  color: var(--text-primary) !important;
-}
+html.dark .text-\[\#454545\]  { color: var(--text-primary) !important; }
+
+/* Secondary text: #4A4540, #534C45, #5C5650 */
+html.dark .text-\[\#4A4540\],
 html.dark .text-\[\#534C45\],
-html.dark .text-\[\#5C5650\] {
-  color: var(--text-secondary) !important;
-}
+html.dark .text-\[\#5C5650\]  { color: var(--text-secondary) !important; }
+
+/* Tertiary text: #7A726A, #7B726A, #8C837A, #9A9088 */
+html.dark .text-\[\#7A726A\],
 html.dark .text-\[\#7B726A\],
-html.dark .text-\[\#8C837A\] {
-  color: var(--text-tertiary) !important;
-}
+html.dark .text-\[\#8C837A\],
+html.dark .text-\[\#9A9088\]  { color: var(--text-tertiary) !important; }
 
-/* ── Inputs, textareas, search fields ───────────────────────────────── */
-html.dark input,
-html.dark textarea {
-  color: var(--text-primary) !important;
-  caret-color: #AE8F7D;
-}
-html.dark input::placeholder,
-html.dark textarea::placeholder {
-  color: var(--text-soft) !important;
-  opacity: 1 !important;
-}
+/* Soft/muted text: #9C948C, #BDAB9C (light stone, readable in both modes) */
+html.dark .text-\[\#9C948C\],
+html.dark .text-\[\#BDAB9C\]  { color: var(--text-soft) !important; }
 
-/* Input/field container backgrounds (search bars, composer fields) */
-html.dark [class*="bg-[#EBE6DB]"]:has(input),
-html.dark [class*="bg-[#EBE6DB]"]:has(textarea) {
-  background-color: #201B17 !important;
-  border-color: rgba(255,255,255,0.10) !important;
-}
-
-/* ── Buttons / chips — inactive state legibility ─────────────────────── */
-html.dark button,
-html.dark [role="button"] {
-  color: inherit;
-}
-
-/* Border-only chips and near-black with opacity — map to warm tokens */
+/* Opacity-variant near-black → map to readable dark tokens */
 html.dark .text-\[\#2A2A2A\]\/80,
 html.dark .text-\[\#2A2A2A\]\/70,
 html.dark .text-\[\#2A2A2A\]\/65,
@@ -328,32 +319,57 @@ html.dark .text-\[\#454545\]\/38,
 html.dark .text-\[\#454545\]\/35,
 html.dark .text-\[\#454545\]\/30,
 html.dark .text-\[\#454545\]\/28,
-html.dark .text-\[\#454545\]\/25 {
-  color: var(--text-tertiary) !important;
-}
+html.dark .text-\[\#454545\]\/25,
+html.dark .text-\[\#454545\]\/70,
+html.dark .text-\[\#454545\]\/60 { color: var(--text-tertiary) !important; }
 
-/* Low-opacity dark text (barely visible in light) → still readable in dark */
+/* Very-low-opacity dark → soft readable */
 html.dark .text-\[\#2A2A2A\]\/15,
-html.dark .text-\[\#454545\]\/15 {
+html.dark .text-\[\#454545\]\/15,
+html.dark .text-\[\#2A2A2A\]\/10 { color: var(--text-soft) !important; }
+
+/* ── Inputs & textareas ──────────────────────────────────────────── */
+html.dark input,
+html.dark textarea {
+  color: var(--text-primary) !important;
+  caret-color: #AE8F7D;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder {
   color: var(--text-soft) !important;
+  opacity: 1 !important;
 }
 
-/* Section subtitle / soft descriptive text */
-html.dark .text-\[\#8C837A\],
-html.dark .text-\[\#9A9088\] {
-  color: var(--text-soft) !important;
+/* Input/field container backgrounds */
+html.dark [class*="bg-\[#EBE6DB\]"]:has(input),
+html.dark [class*="bg-\[#EBE6DB\]"]:has(textarea) {
+  background-color: #201B17 !important;
+  border-color: rgba(255,255,255,0.10) !important;
 }
 
-/* Borders: map light borders to visible dark borders */
-html.dark [class*="border-[#AE8F7D]"] {
-  --tw-border-opacity: 0.22;
+/* ── Borders ─────────────────────────────────────────────────────── */
+html.dark [class*="border-\[#AE8F7D\]"]  { border-color: rgba(174,143,125,0.22) !important; }
+html.dark [class*="border-\[#EBE6DB\]"]  { border-color: rgba(215,198,182,0.16) !important; }
+html.dark [class*="border-\[#C8BFB4\]"]  { border-color: rgba(200,191,180,0.20) !important; }
+html.dark [class*="border-\[#D4CBB8\]"]  { border-color: rgba(212,203,184,0.18) !important; }
+html.dark [class*="border-\[#697962\]"]  { border-color: rgba(105,121,98,0.35) !important; }
+html.dark [class*="border-\[#BDAB9C\]"]  { border-color: rgba(189,171,156,0.20) !important; }
+html.dark [class*="border-dashed"][class*="border-\[#C8BFB4\]"] {
+  border-color: rgba(200,191,180,0.25) !important;
 }
-html.dark [class*="border-[#EBE6DB]"] {
-  border-color: rgba(215, 198, 182, 0.16) !important;
-}
-html.dark [class*="border-[#697962]"] {
-  --tw-border-opacity: 0.28;
-}
+
+/* ── Reaction chips & card inner surfaces ────────────────────────── */
+html.dark [class*="bg-\[#EBE6DB\]\/70"],
+html.dark [class*="bg-\[#EBE6DB\]\/50"],
+html.dark [class*="bg-\[#EBE6DB\]\/35"],
+html.dark [class*="bg-\[#EBE6DB\]\/30"] { background-color: rgba(37,33,25,0.65) !important; }
+
+html.dark [class*="bg-\[#697962\]\/8"]  { background-color: rgba(105,121,98,0.15) !important; }
+html.dark [class*="bg-\[#697962\]\/5"]  { background-color: rgba(105,121,98,0.10) !important; }
+
+/* ── Buttons / chips ─────────────────────────────────────────────── */
+html.dark button,
+html.dark [role="button"] { color: inherit; }
 
 @layer base {
   *, *::before, *::after {

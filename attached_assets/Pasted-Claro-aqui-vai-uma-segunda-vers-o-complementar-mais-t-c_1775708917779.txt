@@ -1,0 +1,166 @@
+Claro — aqui vai uma segunda versão complementar, mais técnica, mais curta e mais cirúrgica, para colar no Replit junto com a anterior ou depois dela.
+
+⸻
+
+PROMPT TÉCNICO COMPLEMENTAR — ARQUITETURA DE TEMA
+
+Quero refatorar o sistema de tema do app para corrigir definitivamente os bugs de dark mode inconsistente.
+
+Problema atual
+
+O dark mode está sendo aplicado de forma parcial.
+Algumas partes da interface ficam escuras e outras continuam claras, especialmente quando o tema é ativado por atalho/página/feed.
+Isso indica problema de arquitetura de tema, propagação de estado, tokens visuais e/ou hidratação inicial.
+
+⸻
+
+O que implementar
+
+1. Fonte única de verdade para o tema
+
+Criar ou corrigir um sistema centralizado de tema usando uma única fonte de verdade global.
+
+Quero algo como:
+	•	theme = 'light' | 'dark'
+	•	provider/context/store central
+	•	todos os componentes lendo desse mesmo estado
+	•	sem lógica paralela/local para decidir tema
+
+⸻
+
+2. Persistência do tema
+
+Persistir o tema escolhido pelo usuário.
+
+Garantir que:
+	•	ao recarregar a página o tema continue correto
+	•	ao navegar entre telas o tema continue correto
+	•	ao abrir post, explorar, perfil ou criar post o tema continue correto
+	•	não haja reset para light mode em nenhuma rota
+
+Pode usar:
+	•	localStorage
+	•	ou outro mecanismo persistente equivalente
+
+⸻
+
+3. Aplicação do tema no nível raiz
+
+Aplicar o tema corretamente no nível mais alto da aplicação.
+
+Verificar e corrigir:
+	•	html
+	•	body
+	•	app shell
+	•	route wrappers
+	•	layouts compartilhados
+
+Usar uma estratégia consistente, por exemplo:
+	•	classe global dark
+ou
+	•	atributo data-theme="dark"
+
+Mas precisa ser um padrão único no projeto inteiro.
+
+⸻
+
+4. Tokens semânticos por tema
+
+Substituir cores hardcoded por tokens semânticos.
+
+Exemplo de estrutura:
+	•	--bg-app
+	•	--bg-surface
+	•	--bg-card
+	•	--bg-muted
+	•	--text-primary
+	•	--text-secondary
+	•	--text-tertiary
+	•	--border-subtle
+	•	--border-strong
+	•	--accent
+	•	--accent-soft
+
+Esses tokens devem mudar automaticamente conforme o tema.
+
+Regra
+
+Nenhum componente deve usar:
+	•	branco fixo
+	•	preto fixo
+	•	parchment fixo
+	•	texto fixo
+	•	borda fixa
+
+Tudo precisa vir dos tokens.
+
+⸻
+
+5. Refatorar componentes reutilizáveis
+
+Revisar todos os componentes compartilhados para garantir compatibilidade total com light/dark mode.
+
+Prioridade:
+	•	post card
+	•	protected post card
+	•	book card
+	•	search input
+	•	textarea
+	•	buttons
+	•	chips
+	•	segmented controls / tabs
+	•	section headers
+	•	profile stats blocks
+	•	bottom navigation
+	•	top navigation
+	•	post preview
+	•	modais / drawers
+
+Todos devem usar apenas tokens semânticos.
+
+⸻
+
+6. Corrigir hidratação inicial
+
+Evitar flicker ou render inicial com tema errado.
+
+Garantir que:
+	•	o app não renderize primeiro em light e depois mude para dark
+	•	o tema persistido seja aplicado o mais cedo possível
+	•	a UI inicial já abra no tema correto
+
+⸻
+
+7. Corrigir navegação entre rotas
+
+Garantir consistência do tema ao navegar entre:
+	•	início
+	•	explorar
+	•	perfil
+	•	biblioteca
+	•	criar post
+	•	detalhe do post
+	•	post protegido
+	•	abrir via atalho/feed
+
+Nenhuma rota pode quebrar o tema.
+
+⸻
+
+8. Fazer revisão final de consistência
+
+Depois da refatoração, revisar visualmente todas as telas principais do app e garantir que:
+	•	não exista mistura de tema claro com escuro
+	•	o contraste esteja correto
+	•	o dark mode esteja elegante e funcional
+	•	o sistema esteja robusto para futuras telas
+
+⸻
+
+Resultado esperado
+
+Quero um sistema de tema sólido, escalável e consistente, com dark mode real em toda a aplicação, sem gambiarras e sem componentes vazando cores do modo claro.
+
+⸻
+
+Se quiser, eu também posso fazer agora uma terceira versão ultra objetiva, em formato de checklist curtinho, para você colar no Replit como complemento final.

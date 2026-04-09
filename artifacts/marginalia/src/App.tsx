@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { AppProvider, useApp } from "@/context/AppContext";
-import { ThemeProvider } from "@/context/ThemeContext";
 import { LogoMark } from "@/components/LogoMark";
 import { Navbar } from "@/components/Navbar";
 
@@ -278,15 +277,13 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <ThemeProvider>
-          <AuthProvider>
-            <AppProvider>
-              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-                <AppContent />
-              </WouterRouter>
-            </AppProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <AppProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <AppContent />
+            </WouterRouter>
+          </AppProvider>
+        </AuthProvider>
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>

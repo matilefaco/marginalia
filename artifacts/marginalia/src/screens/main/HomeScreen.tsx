@@ -1,5 +1,4 @@
 import { Bell, SlidersHorizontal, Moon, Sun } from "lucide-react";
-import { useTheme } from "@/context/ThemeContext";
 import { Link, useLocation } from "wouter";
 import { useApp } from "@/context/AppContext";
 import { MarginCard } from "@/components/cards/MarginCard";
@@ -403,8 +402,7 @@ function WishlistSection() {
 }
 
 export function HomeScreen() {
-  const { currentUser, margins, notifications, progress } = useApp();
-  const { theme, toggleTheme } = useTheme();
+  const { currentUser, margins, notifications, progress, isDark, toggleTheme } = useApp();
 
   const progressMap = Object.fromEntries(
     progress.filter((p) => p.userId === currentUser.id).map((p) => [p.bookId, p])
@@ -457,10 +455,10 @@ export function HomeScreen() {
           <button
             onClick={toggleTheme}
             className="text-[#2A2A2A]/40 hover:text-[#2A2A2A]/70 dark:text-white/30 dark:hover:text-white/60 transition-opacity p-1"
-            title={theme === "light" ? "Ativar modo noturno" : "Ativar modo claro"}
+            title={isDark ? "Ativar modo claro" : "Ativar modo noturno"}
             style={{ transition: "opacity 200ms" }}
           >
-            {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
           <Link href="/notifications">
             <button data-testid="button-notifications" className="relative text-[#2A2A2A]/40 hover:text-[#2A2A2A]/70 dark:text-white/30 dark:hover:text-white/60 transition-colors p-1">

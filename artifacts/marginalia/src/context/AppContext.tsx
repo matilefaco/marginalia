@@ -285,15 +285,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [progressLoading, setProgressLoading] = useState(false);
 
   const [isDark, setIsDark] = useState<boolean>(() => {
-    try { return localStorage.getItem(`mg_theme_${baseUser.id}`) === "dark"; } catch { return false; }
+    try { return localStorage.getItem("mg_theme") === "dark"; } catch { return false; }
   });
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(`mg_theme_${currentUser.id}`) === "dark";
-      setIsDark(saved);
-    } catch {}
-  }, [currentUser.id]);
 
   useEffect(() => {
     if (isDark) {
@@ -306,10 +299,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const toggleTheme = useCallback(() => {
     setIsDark((prev) => {
       const next = !prev;
-      try { localStorage.setItem(`mg_theme_${currentUser.id}`, next ? "dark" : "light"); } catch {}
+      try { localStorage.setItem("mg_theme", next ? "dark" : "light"); } catch {}
       return next;
     });
-  }, [currentUser.id]);
+  }, []);
 
   // Community margins (from mock data) — kept mutable so reaction counts update visually
   const [communityMargins, setCommunityMargins] = useState<Margin[]>(MOCK_MARGINS);
