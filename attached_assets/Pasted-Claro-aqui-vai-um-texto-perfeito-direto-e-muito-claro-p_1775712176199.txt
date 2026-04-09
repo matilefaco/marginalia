@@ -1,0 +1,362 @@
+Claro — aqui vai um texto perfeito, direto e muito claro para colar no Replit, focado só nesses dois problemas novos: configurações ilegíveis e notificações em dark mode praticamente invisíveis.
+
+⸻
+
+PROMPT PRONTO PARA COLAR NO REPLIT
+
+Quero corrigir imediatamente dois problemas graves de legibilidade no app:
+	1.	a tela de configurações/preferências ainda está clara demais e com contraste fraco
+	2.	a tela de notificações no modo noturno está praticamente ilegível
+
+Esses problemas precisam ser corrigidos com foco em contraste real, clareza visual e consistência com o sistema de tema do app.
+
+⸻
+
+1) CORRIGIR A TELA DE CONFIGURAÇÕES / PREFERÊNCIAS
+
+Problema atual
+
+Na tela de Preferências, vários elementos continuam com contraste fraco demais:
+	•	textos explicativos estão muito apagados
+	•	labels e subtítulos estão muito claros ou muito lavados
+	•	opções como “Modo protegido” e “Explorar livremente” não têm contraste suficiente
+	•	chips de gêneros ficam visualmente inconsistentes
+	•	alguns elementos parecem quase desabilitados mesmo quando não estão
+	•	a hierarquia entre título, descrição, estado selecionado e estado não selecionado está fraca
+
+A tela está esteticamente delicada, mas funcionalmente ainda está difícil de ler.
+
+⸻
+
+Objetivo
+
+Quero que a tela de Preferências continue elegante e leve, mas com legibilidade muito melhor, principalmente em:
+	•	títulos de seção
+	•	descrições
+	•	cards de opção
+	•	chips de gêneros
+	•	estados selecionados vs não selecionados
+	•	notas informativas
+	•	textos de apoio
+
+⸻
+
+O que corrigir na tela de Preferências
+
+A) Melhorar contraste dos títulos e subtítulos
+
+Corrigir:
+	•	“Ritmo da leitura”
+	•	“Gêneros de interesse”
+	•	frases explicativas abaixo
+
+Quero:
+	•	título de seção mais presente
+	•	linha divisória mais sutil, porém visível
+	•	subtítulo e frase de apoio com contraste suficiente para leitura fácil
+
+⸻
+
+B) Melhorar os cards de opção
+
+As opções:
+	•	“Modo protegido”
+	•	“Explorar livremente”
+
+precisam parecer estados realmente interativos e legíveis.
+
+Corrigir:
+	•	borda fraca demais
+	•	textos secundários quase sumindo
+	•	ícones sem presença suficiente
+	•	radio/check visual sem contraste forte
+
+Quero:
+	•	card selecionado claramente destacado
+	•	card não selecionado ainda totalmente legível
+	•	título da opção com mais contraste
+	•	descrição abaixo legível
+	•	ícone e indicador visual mais claros
+
+⸻
+
+C) Melhorar a mensagem de aviso
+
+A caixa de aviso tipo:
+	•	“Você pode ver spoilers neste modo”
+
+precisa ficar muito mais clara.
+
+Corrigir:
+	•	fundo muito apagado
+	•	texto muito lavado
+	•	pouca separação do restante da tela
+
+Quero:
+	•	fundo sutilmente destacado
+	•	texto visível
+	•	leitura imediata
+
+⸻
+
+D) Corrigir os chips de gêneros
+
+Os chips de gênero hoje estão visualmente inconsistentes.
+
+Corrigir:
+	•	chips não selecionados claros demais e lavados demais
+	•	texto com pouco contraste
+	•	chips selecionados sem destaque sofisticado suficiente
+	•	estados precisam ser lidos de forma instantânea
+
+Quero:
+	•	chip selecionado com contraste forte e elegante
+	•	chip não selecionado ainda claramente legível
+	•	bordas visíveis
+	•	texto centralizado e com contraste correto
+	•	sensação premium, não apagada
+
+Regra:
+
+A diferença entre selecionado e não selecionado precisa ser óbvia em menos de 1 segundo.
+
+⸻
+
+E) Melhorar o texto de apoio inferior
+
+Frases como:
+	•	“Salvo automaticamente…”
+	•	outras instruções secundárias
+
+precisam continuar discretas, mas não invisíveis.
+
+⸻
+
+2) CORRIGIR A TELA DE NOTIFICAÇÕES NO MODO NOTURNO
+
+Problema atual
+
+A tela de notificações no dark mode está quase totalmente ilegível.
+
+Os cards existem, mas:
+	•	o texto principal mal aparece
+	•	o contraste entre fundo e conteúdo está insuficiente
+	•	os ícones ficam fracos
+	•	os metadados como “2d”, “3d” etc. estão apagados
+	•	o ponto indicador lateral está visível, mas o conteúdo principal não
+	•	a página toda está bonita, porém praticamente impossível de ler
+
+Isso precisa ser corrigido com urgência.
+
+⸻
+
+Objetivo
+
+Quero que a tela de notificações em dark mode fique:
+	•	sofisticada
+	•	escura
+	•	consistente com o Marginalia
+	•	mas totalmente legível
+
+⸻
+
+O que corrigir na tela de Notificações
+
+A) Melhorar contraste do texto principal
+
+As frases das notificações precisam ser lidas imediatamente.
+
+Quero:
+	•	texto principal com contraste muito maior
+	•	sem depender de opacidade baixa
+	•	sem misturar texto importante com cor de metadata
+
+Regra:
+
+O texto principal da notificação deve ter prioridade visual clara.
+
+⸻
+
+B) Melhorar contraste dos timestamps
+
+Elementos como:
+	•	2d
+	•	3d
+	•	etc.
+
+podem ser secundários, mas não podem sumir.
+
+Quero:
+	•	cor de metadata correta
+	•	leitura fácil
+	•	ainda subordinados ao texto principal
+
+⸻
+
+C) Melhorar os cards de notificação
+
+Os cards precisam aparecer mais.
+
+Corrigir:
+	•	fundo muito próximo do background
+	•	borda fraca demais
+	•	pouca separação entre um card e outro
+
+Quero:
+	•	fundo de card um pouco mais destacado
+	•	borda sutil mas perceptível
+	•	espaçamento mais claro entre cards
+	•	hierarquia visual melhor
+
+⸻
+
+D) Melhorar ícones e pontos indicadores
+
+Os ícones laterais e pontos de status precisam continuar discretos, mas legíveis.
+
+Quero:
+	•	ícones com mais presença
+	•	badge/ponto de novo item equilibrado
+	•	sem competir com o texto, mas sem desaparecer
+
+⸻
+
+E) Garantir consistência de tema em toda a tela
+
+Quero revisar:
+	•	fundo da tela
+	•	header
+	•	título “Notificações”
+	•	contador “6 novas”
+	•	cards
+	•	texto
+	•	timestamps
+	•	ícones
+	•	estados de lido/não lido
+
+Tudo precisa seguir o mesmo sistema de dark mode.
+
+⸻
+
+3) AJUSTE DE TOKENS DE COR PARA ESSES CASOS
+
+Quero usar uma hierarquia de cor mais funcional nesses componentes.
+
+Para dark mode:
+
+Fundo da página:
+	•	#12100F
+
+Fundo dos cards:
+	•	#1A1614
+
+Fundo de superfície secundária:
+	•	#211C19
+
+Borda sutil:
+	•	rgba(223, 204, 188, 0.14)
+
+Borda mais visível:
+	•	rgba(223, 204, 188, 0.22)
+
+Texto principal:
+	•	#F2E9E0
+
+Texto secundário:
+	•	#D1BFB0
+
+Texto terciário / metadata:
+	•	#AE9C8E
+
+Accent rose:
+	•	#D7B3A0
+
+Accent muted:
+	•	#B99482
+
+⸻
+
+Para a tela clara de preferências:
+
+Fundo principal:
+	•	manter claro, mas com contraste melhor
+
+Texto principal:
+	•	#2B2623
+
+Texto secundário:
+	•	#6F6258
+
+Texto terciário:
+	•	#998B80
+
+Borda:
+	•	rgba(160, 132, 115, 0.18)
+
+Chip não selecionado:
+	•	fundo #F5F1EB
+	•	texto #6B5D52
+	•	borda rgba(160,132,115,0.18)
+
+Chip selecionado:
+	•	fundo #3B393B
+	•	texto #F5EFE8
+
+Card selecionado:
+	•	borda mais destacada
+	•	leve fundo de destaque suave
+
+⸻
+
+4) REVISÃO DE LEGIBILIDADE GERAL
+
+Quero aproveitar e revisar nessas telas:
+	•	textos pequenos
+	•	placeholders
+	•	descrições secundárias
+	•	labels em caixa alta
+	•	indicadores de estado
+	•	contadores
+	•	avisos
+	•	botões e áreas clicáveis
+
+Regra geral
+
+Nenhum texto importante pode depender de contraste “quase invisível” para parecer elegante.
+O app deve ser sofisticado pela composição, não pela dificuldade de leitura.
+
+⸻
+
+5) RESULTADO FINAL ESPERADO
+
+Depois da correção, quero que:
+
+Na tela de Preferências:
+	•	tudo fique leve, elegante e claro
+	•	opções e gêneros fiquem legíveis imediatamente
+	•	estados selecionados vs não selecionados fiquem evidentes
+	•	textos de apoio não sumam
+
+Na tela de Notificações em dark mode:
+	•	notificações fiquem 100% legíveis
+	•	cards tenham melhor separação
+	•	texto principal fique claro
+	•	timestamps e ícones apareçam corretamente
+	•	a tela pareça refinada, mas funcional
+
+⸻
+
+6) IMPLEMENTAÇÃO
+
+Quero que você:
+	1.	revise os tokens usados nessas duas telas
+	2.	aumente o contraste real dos textos
+	3.	corrija os cards e superfícies
+	4.	ajuste estados selecionados e não selecionados
+	5.	revise a hierarquia visual
+	6.	garanta consistência com o tema global do app
+	7.	entregue as duas telas totalmente legíveis sem perder a estética do Marginalia
+
+⸻
+
+Se quiser, eu também posso fazer uma versão ainda mais curta e agressiva, tipo “checklist técnico”, para você colar logo abaixo no Replit e reforçar exatamente o que ele não pode deixar passar.
