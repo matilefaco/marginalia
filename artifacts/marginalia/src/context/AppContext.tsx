@@ -13,6 +13,7 @@ import {
 } from "../data/mockData";
 import type { SpoilerPreference } from "../data/constants";
 import { useAuth } from "./AuthContext";
+import { getStreak, updateStreak } from "../utils/streak";
 
 export interface NotificationPrefs {
   reactions: boolean;
@@ -86,6 +87,7 @@ interface AppState {
   userPrefs: UserPreferences;
   progressLoading: boolean;
   isDark: boolean;
+  streak: number;
 }
 
 interface AppActions {
@@ -288,6 +290,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try { return localStorage.getItem("mg_theme") === "dark"; } catch { return false; }
   });
 
+  const [streak, setStreak] = useState<number>(() => {
+    try { return getStreak(baseUser.id); } catch { return 0; }
+  });
+
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add("dark");
@@ -399,6 +405,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     (bookId: number, updates: Partial<BookProgress>) => {
       const uid = currentUser.id;
 
+      // Update streak on book activity
+      const newStrk = updateStreak(uid);
+      setStreak(newStrk);
+
       // 1. Optimistic local update
       setUserProgress((prev) => {
         const existing = prev.find((p) => p.bookId === bookId && p.userId === uid);
@@ -455,6 +465,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         userInitials: currentUser.initials,
       };
 
+      // Update streak on publish
+      const newStreak = updateStreak(uid);
+      setStreak(newStreak);
+
       // Optimistic add
       setUserMargins((prev) => {
         const next = [newMargin, ...prev];
@@ -498,6 +512,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
 
   const addReaction = (marginId: number, emoji: string) => {
+    const uid = currentUser.id;
+    const newStreak = updateStreak(uid);
+    setStreak(newStreak);
     const prevEmoji = userReactions[marginId];
 
     const applyReactionToList = (list: Margin[], addingEmoji: string, removingEmoji: string | undefined): Margin[] =>
@@ -586,6 +603,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         markNotificationRead,
         isDark,
         toggleTheme,
+        streak,
       }}
     >
       {children}

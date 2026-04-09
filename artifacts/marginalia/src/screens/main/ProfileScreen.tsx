@@ -86,7 +86,7 @@ function DnaDeLeiturasSection({ topArquetipos }: { topArquetipos: ArquetipoResul
 }
 
 export function ProfileScreen() {
-  const { currentUser, progress, savedMargins, margins, userReactions } = useApp();
+  const { currentUser, progress, savedMargins, margins, userReactions, streak } = useApp();
   const { updateProfile: saveToSupabase } = useAuth();
 
   const [editing, setEditing] = useState(false);
@@ -364,9 +364,28 @@ export function ProfileScreen() {
                 <h1 className="font-serif text-[22px] text-[#2C2A27] leading-tight" data-testid="text-fullname">
                   {fullName}
                 </h1>
-                <p className="font-sans font-light text-[10px] text-[#8C837A] mt-0.5" data-testid="text-username">
-                  {currentUser.username}
-                </p>
+                <div className="flex items-center gap-2 flex-wrap mt-0.5">
+                  <p className="font-sans font-light text-[10px] text-[#8C837A]" data-testid="text-username">
+                    {currentUser.username}
+                  </p>
+                  {streak >= 3 && (
+                    <span
+                      className="font-sans font-light text-[13px]"
+                      style={{ color: streak >= 30 ? "#697962" : "#AE8F7D" }}
+                      title={`${streak} dias consecutivos de leitura`}
+                    >
+                      🔥 {streak} dias
+                    </span>
+                  )}
+                  {(() => {
+                    const isFounder = currentUser.createdAt
+                      ? new Date(currentUser.createdAt).getFullYear() <= 2025
+                      : currentUser.id === "user_me";
+                    return isFounder ? (
+                      <span className="founder-badge">✦ Fundador</span>
+                    ) : null;
+                  })()}
+                </div>
               </>
             )}
           </div>
@@ -689,6 +708,22 @@ export function ProfileScreen() {
 
         {/* DNA de Leitura */}
         <DnaDeLeiturasSection topArquetipos={topArquetipos} />
+
+        {/* Marginalia Wrapped Preview */}
+        <div className="mb-7">
+          <div className="wrapped-preview__label">
+            <span>Marginalia Wrapped</span>
+            <span className="wrapped-preview__year">2025</span>
+          </div>
+          <div className="wrapped-preview__card">
+            <p className="wrapped-preview__teaser">
+              Seu ano em livros está sendo preparado.
+            </p>
+            <p className="wrapped-preview__sub">
+              Continue lendo — quanto mais você postar, mais especial fica.
+            </p>
+          </div>
+        </div>
 
         {/* Estatísticas de leitura */}
         <div className="mb-7">

@@ -508,3 +508,74 @@ html.dark [role="button"] { color: inherit; }
 .screen-enter {
   animation: screenEnter 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* ── AO VIVO pulse (CSS-only, no JS) ────────────────────────────────── */
+@keyframes mg-live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.45; transform: scale(0.75); }
+}
+.mg-live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #697962;
+  animation: mg-live-pulse 2s ease-in-out infinite;
+}
+
+/* ── Founder badge ───────────────────────────────────────────────────── */
+.founder-badge {
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  color: #AE8F7D;
+  border: 1px solid rgba(174, 143, 125, 0.45);
+  border-radius: 4px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+html.dark .founder-badge {
+  color: #BDAB9C;
+  border-color: rgba(189, 171, 156, 0.35);
+}
+
+/* ── Marginalia Wrapped ──────────────────────────────────────────────── */
+.wrapped-preview__label {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #7A726A;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 300;
+}
+.wrapped-preview__year {
+  color: #AE8F7D;
+}
+.wrapped-preview__card {
+  background: linear-gradient(135deg, #1E1C19 0%, #2C2820 50%, #1A2F1A 100%);
+  border-radius: 16px;
+  padding: 24px;
+}
+.wrapped-preview__teaser {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 20px;
+  color: #EBE6DB;
+  line-height: 1.6;
+  margin: 0 0 8px 0;
+}
+.wrapped-preview__sub {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  color: #7A726A;
+  font-weight: 300;
+  margin: 0;
+  line-height: 1.5;
+}
+html.dark .wrapped-preview__label { color: rgba(215,198,182,0.45); }
+html.dark .wrapped-preview__year  { color: #BDAB9C; }

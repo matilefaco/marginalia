@@ -20,6 +20,9 @@ export interface User {
   favoriteAuthors: string[];
   readingSignature: string;
   compatibilityScore?: number;
+  isPremium?: boolean;
+  premiumSince?: string;
+  createdAt?: string;
   stats: {
     booksRead: number;
     totalMargins: number;
@@ -108,7 +111,17 @@ export interface Collection {
 export interface Notification {
   id: number;
   userId: string;
-  type: "reaction" | "comment" | "echo_unlocked" | "debate" | "follow";
+  type:
+    | "reaction"
+    | "comment"
+    | "echo_unlocked"
+    | "debate"
+    | "follow"
+    | "NEW_THEORY_ON_YOUR_BOOK"
+    | "MILESTONE_REACTIONS"
+    | "COMPATIBLE_READER_POSTED"
+    | "BOOK_GETTING_HOT"
+    | "STREAK_AT_RISK";
   body: string;
   isRead: boolean;
   createdAt: string;
@@ -4669,6 +4682,38 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
     body: "Thiago C. reagiu com 🔥 ao seu post em Grande Sertão",
     isRead: false,
     createdAt: "2026-04-06T07:00:00Z",
+  },
+  {
+    id: 7,
+    userId: "user_me",
+    type: "NEW_THEORY_ON_YOUR_BOOK",
+    body: "Uma teoria sobre Grande Sertão: Veredas acabou de ser postada. Você vai querer ler.",
+    isRead: false,
+    createdAt: "2026-04-06T09:30:00Z",
+  },
+  {
+    id: 8,
+    userId: "user_me",
+    type: "MILESTONE_REACTIONS",
+    body: "Seu post chegou a 10 reações. Tocou em algo real.",
+    isRead: false,
+    createdAt: "2026-04-06T11:00:00Z",
+  },
+  {
+    id: 9,
+    userId: "user_me",
+    type: "COMPATIBLE_READER_POSTED",
+    body: "@anaclara postou algo novo. O perfil é parecido com o seu.",
+    isRead: true,
+    createdAt: "2026-04-05T22:00:00Z",
+  },
+  {
+    id: 10,
+    userId: "user_me",
+    type: "BOOK_GETTING_HOT",
+    body: "A Hora da Estrela está sendo muito comentado agora.",
+    isRead: true,
+    createdAt: "2026-04-05T18:30:00Z",
   },
 ];
 

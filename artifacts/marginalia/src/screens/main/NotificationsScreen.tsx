@@ -1,22 +1,32 @@
-import { ArrowLeft, Bell, BookOpen, MessageCircle, Heart, Users } from "lucide-react";
+import { ArrowLeft, Bell, BookOpen, MessageCircle, Heart, Users, Sparkles, Flame, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
 import { useApp } from "@/context/AppContext";
 import { timeAgo } from "@/utils/formatting";
 
-const TYPE_ICONS = {
+const TYPE_ICONS: Record<string, React.ElementType> = {
   reaction: Heart,
   comment: MessageCircle,
   echo_unlocked: BookOpen,
   debate: MessageCircle,
   follow: Users,
+  NEW_THEORY_ON_YOUR_BOOK: Sparkles,
+  MILESTONE_REACTIONS: Heart,
+  COMPATIBLE_READER_POSTED: Users,
+  BOOK_GETTING_HOT: TrendingUp,
+  STREAK_AT_RISK: Flame,
 };
 
-const TYPE_COLORS = {
+const TYPE_COLORS: Record<string, string> = {
   reaction: "text-[#AE8F7D]",
   comment: "text-[#697962]",
   echo_unlocked: "text-[#2A2A2A]",
   debate: "text-[#697962]",
   follow: "text-[#AE8F7D]",
+  NEW_THEORY_ON_YOUR_BOOK: "text-[#AE8F7D]",
+  MILESTONE_REACTIONS: "text-[#AE8F7D]",
+  COMPATIBLE_READER_POSTED: "text-[#697962]",
+  BOOK_GETTING_HOT: "text-[#697962]",
+  STREAK_AT_RISK: "text-[#AE8F7D]",
 };
 
 export function NotificationsScreen() {

@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { Link } from "wouter";
-import { MOCK_BOOKS, MOCK_MARGINS } from "@/data/mockData";
+import { MOCK_BOOKS, MOCK_MARGINS, MOCK_USERS, type User } from "@/data/mockData";
 import { MarginCard } from "@/components/cards/MarginCard";
 import { BookCover } from "@/components/BookCover";
 import { useApp } from "@/context/AppContext";
 import { useCommunityTrending, type CommunityBook } from "@/hooks/useCommunity";
+import { AvatarIcon } from "@/components/AvatarIcon";
 
 interface GoogleBookResult {
   externalId: string;
@@ -70,6 +71,28 @@ const GENRE_ALL = [
   "Memória",
   "Terror",
 ];
+
+function getCompatibleReaders(currentUser: User, allUsers: User[]): Array<User & { sharedCount: number }> {
+  const myGenres = new Set(currentUser.preferredGenres ?? []);
+
+  if (myGenres.size === 0) {
+    return allUsers
+      .filter((u) => u.id !== currentUser.id && u.id !== "user_me")
+      .slice(0, 5)
+      .map((u) => ({ ...u, sharedCount: 0 }));
+  }
+
+  return allUsers
+    .filter((u) => u.id !== currentUser.id && u.id !== "user_me")
+    .map((u) => {
+      const theirGenres = new Set(u.preferredGenres ?? []);
+      const intersection = [...myGenres].filter((g) => theirGenres.has(g));
+      return { ...u, sharedCount: intersection.length };
+    })
+    .filter(({ sharedCount }) => sharedCount > 0)
+    .sort((a, b) => b.sharedCount - a.sharedCount)
+    .slice(0, 5);
+}
 
 export function ExploreScreen() {
   const { currentUser, isDark } = useApp();
@@ -619,6 +642,62 @@ export function ExploreScreen() {
             </div>
           </section>
         )}
+
+        {/* ── Leitores compatíveis ──────────────────────────────────── */}
+        {!query && (() => {
+          const compatible = getCompatibleReaders(currentUser, MOCK_USERS);
+          if (compatible.length === 0) return null;
+          return (
+            <section data-testid="section-compatible-readers">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="font-sans text-[8.5px] font-light tracking-[0.20em] uppercase" style={sectionLabel}>
+                  Leitores compatíveis
+                </span>
+                <div className="flex-1 h-px" style={{ backgroundColor: dividerColor }} />
+              </div>
+              <p className="font-sans font-light text-[9px] mb-3" style={{ color: "var(--text-soft)" }}>
+                Leitores com gostos parecidos com os seus
+              </p>
+              <div className="space-y-2">
+                {compatible.map((user) => {
+                  const postCount = MOCK_MARGINS.filter((m) => m.userId === user.id).length;
+                  const archetype = user.readerType ?? "leitor";
+                  return (
+                    <Link key={user.id} href={`/profile/${user.id}`}>
+                      <div
+                        className="rounded-[12px] p-4 flex items-center gap-3 transition-opacity active:opacity-70"
+                        style={{
+                          backgroundColor: isDark ? "#1E1A18" : "#FAF8F3",
+                          border: isDark ? "1px solid rgba(215,198,182,0.10)" : "1px solid rgba(174,143,125,0.14)",
+                        }}
+                      >
+                        <AvatarIcon
+                          initials={user.initials}
+                          color={user.avatarColor}
+                          avatarId={user.avatarId}
+                          size="sm"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-sans text-[14px] font-light truncate" style={{ color: "var(--text-primary)" }}>
+                            {user.username}
+                          </p>
+                          <p className="font-sans font-light text-[12px]" style={{ color: "var(--text-tertiary)" }}>
+                            {archetype.charAt(0).toUpperCase() + archetype.slice(1)} · {postCount} posts
+                          </p>
+                        </div>
+                        {user.sharedCount > 0 && (
+                          <p className="font-sans font-light text-[12px] flex-shrink-0" style={{ color: "#697962" }}>
+                            {user.sharedCount} gênero{user.sharedCount !== 1 ? "s" : ""} em comum
+                          </p>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })()}
 
         {/* ── Em alta esta semana ───────────────────────────────────── */}
         {!query && (

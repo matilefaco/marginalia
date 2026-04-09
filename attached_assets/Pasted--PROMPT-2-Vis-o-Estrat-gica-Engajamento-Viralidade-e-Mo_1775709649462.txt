@@ -1,0 +1,376 @@
+# PROMPT 2 — Visão Estratégica: Engajamento, Viralidade e Monetização
+
+# Colar no Replit (depois do Prompt 1)
+
+-----
+
+Implemente as seguintes features estratégicas no Marginalia. São 6 blocos. Aplique todos.
+
+-----
+
+## BLOCO A — STREAKS DE LEITURA (engajamento diário)
+
+### O que é
+
+Um contador de dias consecutivos que o usuário postou ou reagiu a algo. Aparece discretamente no perfil e no header.
+
+### Implementação
+
+**Lógica de streak** — criar `src/utils/streak.ts`:
+
+```typescript
+const STREAK_KEY = (uid: string) => `mg_streak_${uid}`;
+const LAST_ACTIVITY_KEY = (uid: string) => `mg_last_activity_${uid}`;
+
+export function getStreak(uid: string): number {
+  return parseInt(localStorage.getItem(STREAK_KEY(uid)) ?? "0");
+}
+
+export function updateStreak(uid: string): number {
+  const today = new Date().toDateString();
+  const lastActivity = localStorage.getItem(LAST_ACTIVITY_KEY(uid));
+
+  if (lastActivity === today) {
+    // Já registrou hoje — não muda streak
+    return getStreak(uid);
+  }
+
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  const currentStreak = getStreak(uid);
+
+  if (lastActivity === yesterday) {
+    // Dia consecutivo — incrementa
+    const newStreak = currentStreak + 1;
+    localStorage.setItem(STREAK_KEY(uid), String(newStreak));
+    localStorage.setItem(LAST_ACTIVITY_KEY(uid), today);
+    return newStreak;
+  } else {
+    // Quebrou — reinicia do 1
+    localStorage.setItem(STREAK_KEY(uid), "1");
+    localStorage.setItem(LAST_ACTIVITY_KEY(uid), today);
+    return 1;
+  }
+}
+```
+
+Chamar `updateStreak(uid)` sempre que o usuário:
+
+- Publicar um post
+- Reagir a um post
+- Adicionar um livro à biblioteca
+
+**Exibição no perfil:**
+
+- Se streak >= 3: mostrar `🔥 N dias` em Jost 13px, cor `#AE8F7D`, ao lado do username
+- Se streak >= 30: mostrar `🔥 N dias` em cor `#697962` (Old Vine) — destaque especial
+- Se streak = 0 ou 1: não mostrar nada
+
+**Exibição no header do Home:**
+
+- Badge discreto `🔥 N` no canto do avatar do usuário (se existir avatar no header)
+
+-----
+
+## BLOCO B — “MOMENTO DO LIVRO HOJE” — seção ao vivo no Home
+
+### O que é
+
+Uma seção no feed da Home que mostra em tempo real qual livro está gerando mais atividade agora. Já existe algo parecido no app (`MOMENTO DO LIVRO HOJE · AO VIVO`) — melhorar e expandir.
+
+### Melhorias
+
+**Indicador “AO VIVO”:**
+
+- Ponto verde `●` piscando com CSS animation `pulse` (não JS)
+- Label `AO VIVO` em Jost 10px uppercase, cor `#697962`
+- O ponto pulsa suavemente: `animation: pulse 2s infinite`
+
+```css
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+```
+
+**Conteúdo do card “Mais ativo agora”:**
+Mostrar o post mais reagido das últimas 6h (simular com o post mock de maior `reactions` total). Incluir:
+
+- Capa do livro (BookCover xs)
+- Título + autor
+- Trecho do post (1 linha + reticências)
+- Contagem: “X reações · em Y% do livro”
+- Botão “Ver post” que leva ao thread correto
+
+**Lógica de seleção** (mock):
+
+```typescript
+// Pegar o post com maior soma de reações do array MOCK_MARGINS
+const mostActive = MOCK_MARGINS
+  .filter(m => m.bookId !== null)
+  .reduce((max, m) => {
+    const total = Object.values(m.reactions ?? {}).reduce((s, n) => s + n, 0);
+    const maxTotal = Object.values(max.reactions ?? {}).reduce((s, n) => s + n, 0);
+    return total > maxTotal ? m : max;
+  });
+```
+
+-----
+
+## BLOCO C — “LEITORES COMPATÍVEIS” no Explorar
+
+### O que é
+
+Uma seção na tela Explorar que mostra outros leitores com perfil similar ao do usuário atual. Cria senso de comunidade e incentiva seguir pessoas.
+
+### Implementação
+
+**Algoritmo de compatibilidade** (baseado em gêneros do onboarding):
+
+```typescript
+function getCompatibleReaders(currentUser: User, allUsers: User[]): User[] {
+  const myGenres = new Set(currentUser.genres ?? []);
+
+  return allUsers
+    .filter(u => u.id !== currentUser.id)
+    .map(u => {
+      const theirGenres = new Set(u.genres ?? []);
+      const intersection = [...myGenres].filter(g => theirGenres.has(g));
+      return { user: u, score: intersection.length };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map(({ user }) => user);
+}
+```
+
+**Card de leitor compatível:**
+
+```
+[Avatar]  @username                    X gêneros em comum
+          O Analista · 34 posts        [ Ver perfil ]
+```
+
+- Avatar colorido (já existe no app)
+- Username em Jost 14px `#1E1C19`
+- Arquétipo + contagem de posts em Jost 12px `#7A726A`
+- “X gêneros em comum” em Jost 12px `#697962`
+- Botão “Ver perfil” que navega para `/profile/:userId`
+
+**Posição no Explorar:** após a seção de coleções editoriais, antes de “Em debate”.
+
+-----
+
+## BLOCO D — NOTIFICAÇÕES INTELIGENTES (engajamento de retorno)
+
+### O que é
+
+Melhorar o sistema de notificações para criar urgência e curiosidade que traz o usuário de volta.
+
+### Novos tipos de notificação a adicionar em `MOCK_NOTIFICATIONS` e no sistema real:
+
+```typescript
+// Tipos novos para adicionar em constants.ts:
+"NEW_THEORY_ON_YOUR_BOOK"  // alguém postou uma teoria no livro que você está lendo
+"MILESTONE_REACTIONS"       // seu post atingiu 10, 50, 100 reações
+"COMPATIBLE_READER_POSTED"  // um leitor compatível publicou algo
+"BOOK_GETTING_HOT"          // livro na sua biblioteca está em alta agora
+"STREAK_AT_RISK"            // você não posta há 20h — streak em risco
+```
+
+**Textos das notificações (tom editorial, não push genérico):**
+
+```typescript
+const NOTIFICATION_TEXTS = {
+  NEW_THEORY_ON_YOUR_BOOK: (book: string) =>
+    `Uma teoria sobre ${book} acabou de ser postada. Você vai querer ler.`,
+
+  MILESTONE_REACTIONS: (count: number) =>
+    `Seu post chegou a ${count} reações. Tocou em algo real.`,
+
+  COMPATIBLE_READER_POSTED: (username: string) =>
+    `@${username} postou algo novo. O perfil é parecido com o seu.`,
+
+  BOOK_GETTING_HOT: (book: string) =>
+    `${book} está sendo muito comentado agora.`,
+
+  STREAK_AT_RISK: (days: number) =>
+    `${days} dias de leitura consecutiva. Não pare hoje.`,
+};
+```
+
+Adicionar 3-4 exemplos desses novos tipos ao `MOCK_NOTIFICATIONS` para que apareçam na tela de notificações.
+
+-----
+
+## BLOCO E — ESTRUTURA PARA MONETIZAÇÃO FUTURA
+
+Implementar a estrutura técnica para suportar monetização sem ativar ainda. Isso são sementes que ficam prontas para colher.
+
+### E.1 — Campo `isPremium` no perfil
+
+No tipo de usuário e na tabela `profiles` do Supabase, adicionar:
+
+```typescript
+isPremium?: boolean; // default: false
+premiumSince?: string; // ISO date
+```
+
+### E.2 — Componente `PremiumGate`
+
+Criar `src/components/PremiumGate.tsx`:
+
+```tsx
+interface PremiumGateProps {
+  feature: string;
+  description: string;
+  children: React.ReactNode;
+}
+
+export function PremiumGate({ feature, description, children }: PremiumGateProps) {
+  const { currentUser } = useApp();
+
+  // Por agora, TODOS têm acesso — isPremium não bloqueia nada ainda
+  // Quando monetização ativar, trocar para: if (!currentUser.isPremium)
+  const isLocked = false;
+
+  if (isLocked) {
+    return (
+      <div className="premium-gate">
+        <div className="premium-gate__lock">
+          <span>✦</span>
+          <p>{feature}</p>
+          <p className="premium-gate__desc">{description}</p>
+          <button>Conhecer Marginalia Plus</button>
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
+```
+
+### E.3 — Features marcadas para premium (mas abertas agora)
+
+Envolver as seguintes features com `<PremiumGate>` (sem bloquear ainda):
+
+1. **Estatísticas avançadas de leitura** — no perfil, abaixo das estatísticas básicas
+1. **Exportar posts** — no perfil, um botão “Exportar meus posts” (download JSON)
+1. **Histórico de leitura anual** — seção “Meu ano em livros” que mostrará o Wrapped
+
+```tsx
+// Exemplo de uso:
+<PremiumGate
+  feature="Estatísticas Avançadas"
+  description="Veja padrões profundos dos seus hábitos de leitura."
+>
+  <AdvancedStatsSection />
+</PremiumGate>
+```
+
+### E.4 — Badge visual “Leitor Fundador”
+
+Para os primeiros usuários (baseado em `createdAt` do perfil — antes de uma data definida no futuro), mostrar um badge discreto no perfil:
+
+```tsx
+// Mostrar se conta foi criada em 2025
+const isFounder = profile?.created_at
+  ? new Date(profile.created_at).getFullYear() <= 2025
+  : false;
+
+{isFounder && (
+  <span className="founder-badge">✦ Fundador</span>
+)}
+```
+
+Estilo do badge:
+
+```css
+.founder-badge {
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #AE8F7D;
+  border: 1px solid #AE8F7D;
+  border-radius: 4px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+}
+```
+
+-----
+
+## BLOCO F — “MARGINALIA WRAPPED” PREVIEW (estrutura)
+
+Não implementar o Wrapped completo ainda — apenas criar a estrutura para que exista a seção no perfil.
+
+### O que criar agora
+
+No `ProfileScreen.tsx`, adicionar uma seção após “DNA de Leitura”:
+
+```tsx
+<section className="wrapped-preview">
+  <div className="wrapped-preview__label">
+    <span>MARGINALIA WRAPPED</span>
+    <span className="wrapped-preview__year">2025</span>
+  </div>
+  <div className="wrapped-preview__card">
+    <p className="wrapped-preview__teaser">
+      Seu ano em livros está sendo preparado.
+    </p>
+    <p className="wrapped-preview__sub">
+      Continue lendo — quanto mais você postar, mais especial fica.
+    </p>
+  </div>
+</section>
+```
+
+Estilo:
+
+```css
+.wrapped-preview__card {
+  background: linear-gradient(135deg, #1E1C19 0%, #2C2820 50%, #1A2F1A 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 12px;
+}
+
+.wrapped-preview__teaser {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 20px;
+  color: #EBE6DB;
+  line-height: 1.6;
+}
+
+.wrapped-preview__sub {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  color: #7A726A;
+  margin-top: 8px;
+}
+
+.wrapped-preview__label {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #7A726A;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+```
+
+-----
+
+## OBSERVAÇÕES FINAIS
+
+- Bloco A (streaks): chamar `updateStreak` no `AppContext` nos actions de publicar post e adicionar reação
+- Bloco B (ao vivo): o indicador pulsante deve usar CSS puro — sem setInterval
+- Bloco C (compatíveis): usar os `genres` já salvos no onboarding; se o usuário não tiver gêneros definidos, mostrar leitores aleatórios do mock
+- Bloco D (notificações): apenas adicionar ao mock e ao enum de tipos — não implementar push notifications reais ainda
+- Bloco E (monetização): nada bloqueia nada agora — o `isLocked` no PremiumGate fica `false`. A estrutura existe para quando você quiser ativar
+- Bloco F (Wrapped): apenas a seção placeholder — o conteúdo real virá numa fase futura
+- Não remover nenhuma funcionalidade existente

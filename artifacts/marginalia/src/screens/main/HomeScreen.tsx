@@ -62,10 +62,7 @@ function MomentosSection() {
           Momento do livro hoje
         </span>
         <div className="flex-1 h-px bg-[#AE8F7D]/20" />
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#697962] opacity-35" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#697962]" />
-        </span>
+        <span className="mg-live-dot" />
         <span className="font-sans text-[7px] font-light tracking-[0.14em] uppercase text-[#697962]/70">ao vivo</span>
       </div>
       <p className="font-sans font-light text-[9px] text-[#8C837A] mb-3">
@@ -79,44 +76,59 @@ function MomentosSection() {
           const reactionTotal = Object.values(topMargin.reactions).reduce((a, b) => a + b, 0);
 
           return (
-            <Link key={bookId} href={`/book/${bookId}`}>
-              <div
-                className={`rounded-[14px] border p-4 transition-colors hover:border-[#AE8F7D]/30 ${
-                  idx === 0
-                    ? "bg-[#EBE6DB]/40 border-[#AE8F7D]/20"
-                    : "bg-[#FAF8F3] border-[#AE8F7D]/12"
-                }`}
-              >
-                <div className="mb-2.5">
-                  <p className="font-sans text-[7px] font-light tracking-[0.2em] uppercase text-[#697962] mb-0.5">
-                    {idx === 0 ? "✦ Mais ativo agora" : "Em alta"}
+            <div
+              key={bookId}
+              className={`rounded-[14px] border p-4 ${
+                idx === 0
+                  ? "bg-[#EBE6DB]/40 border-[#AE8F7D]/20"
+                  : "bg-[#FAF8F3] border-[#AE8F7D]/12"
+              }`}
+            >
+              <div className="mb-2.5">
+                <p className="font-sans text-[7px] font-light tracking-[0.2em] uppercase text-[#697962] mb-0.5">
+                  {idx === 0 ? "✦ Mais ativo agora" : "Em alta"}
+                </p>
+                <p className="font-serif italic text-[15px] text-[#2C2A27] leading-tight">{book.title}</p>
+                <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#5C5650]">{book.author}</p>
+              </div>
+
+              {canSee ? (
+                <div className="border-l-2 border-[#AE8F7D]/40 pl-3 mb-2.5">
+                  <p className="font-serif italic text-[12px] text-[#2C2A27] leading-[1.65] line-clamp-2">
+                    &ldquo;{topMargin.excerpt}&rdquo;
                   </p>
-                  <p className="font-serif italic text-[15px] text-[#2C2A27] leading-tight">{book.title}</p>
-                  <p className="font-sans font-light text-[8px] tracking-[0.08em] uppercase text-[#5C5650]">{book.author}</p>
                 </div>
+              ) : (
+                <div className="bg-[#EBE6DB]/60 rounded-[8px] px-3 py-2 mb-2.5 flex items-center gap-2">
+                  <Shield className="w-3 h-3 text-[#AE8F7D]/50 flex-shrink-0" />
+                  <p className="font-sans font-light text-[9px] text-[#8C837A] italic">
+                    Leitores estão reagindo intensamente neste ponto.
+                  </p>
+                </div>
+              )}
 
-                {canSee ? (
-                  <div className="border-l-2 border-[#AE8F7D]/40 pl-3 mb-2.5">
-                    <p className="font-serif italic text-[12px] text-[#2C2A27] leading-[1.65] line-clamp-2">
-                      &ldquo;{topMargin.excerpt}&rdquo;
-                    </p>
-                  </div>
-                ) : (
-                  <div className="bg-[#EBE6DB]/60 rounded-[8px] px-3 py-2 mb-2.5 flex items-center gap-2">
-                    <Shield className="w-3 h-3 text-[#AE8F7D]/50 flex-shrink-0" />
-                    <p className="font-sans font-light text-[9px] text-[#8C837A] italic">
-                      Leitores estão reagindo intensamente neste ponto.
-                    </p>
-                  </div>
-                )}
-
+              <div className="flex items-center justify-between">
                 <p className="font-sans font-light text-[8px] text-[#8C837A]">
                   {reactionTotal > 0 ? `${reactionTotal} reações · ` : ""}
                   {topMargin.commentsCount} respostas
                   {topMargin.percent !== undefined ? ` · em ${topMargin.percent}% do livro` : ""}
                 </p>
+                {idx === 0 && (
+                  <Link href={`/eco/${topMargin.id}`}>
+                    <button className="font-sans text-[8px] font-light tracking-[0.12em] uppercase text-[#AE8F7D] border border-[#AE8F7D]/30 px-3 py-1 rounded-full hover:bg-[#AE8F7D]/8 transition-colors flex-shrink-0 ml-2">
+                      Ver post
+                    </button>
+                  </Link>
+                )}
+                {idx > 0 && (
+                  <Link href={`/book/${bookId}`}>
+                    <button className="font-sans text-[8px] font-light tracking-[0.12em] uppercase text-[#697962]/60 px-2 py-1 hover:text-[#697962] transition-colors flex-shrink-0">
+                      Ver livro →
+                    </button>
+                  </Link>
+                )}
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>
@@ -402,7 +414,7 @@ function WishlistSection() {
 }
 
 export function HomeScreen() {
-  const { currentUser, margins, notifications, progress, isDark, toggleTheme } = useApp();
+  const { currentUser, margins, notifications, progress, isDark, toggleTheme, streak } = useApp();
 
   const progressMap = Object.fromEntries(
     progress.filter((p) => p.userId === currentUser.id).map((p) => [p.bookId, p])
@@ -460,6 +472,15 @@ export function HomeScreen() {
           >
             {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
+          {streak >= 3 && (
+            <span
+              className="font-sans text-[11px] font-light"
+              style={{ color: streak >= 30 ? "#697962" : "#AE8F7D" }}
+              title={`${streak} dias consecutivos de leitura`}
+            >
+              🔥 {streak}
+            </span>
+          )}
           <Link href="/notifications">
             <button data-testid="button-notifications" className="relative text-[#2A2A2A]/40 hover:text-[#2A2A2A]/70 dark:text-white/30 dark:hover:text-white/60 transition-colors p-1">
               <Bell className="w-5 h-5" />
